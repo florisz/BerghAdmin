@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BIHZ.AdminPortaal
+namespace bihz.kantoorportaal
 {
     public class Program
     {

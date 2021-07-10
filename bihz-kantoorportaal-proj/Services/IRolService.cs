@@ -1,7 +1,7 @@
-using BIHZ.AdminPortaal.Data;
+using bihz.kantoorportaal.Data;
 using System.Collections.Generic;
 
-namespace BIHZ.AdminPortaal.Services
+namespace bihz.kantoorportaal.Services
 {
     public interface IRolService
     {

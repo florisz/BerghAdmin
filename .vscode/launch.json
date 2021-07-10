@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/bihz-adminportaal-proj/bin/Debug/net5.0/BIHZ.AdminPortaal.dll",
+            "program": "${workspaceFolder}/bihz-kantoorportaal-proj/bin/Debug/net5.0/bihz.kantoorportaal.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/bihz-adminportaal-proj",
+            "cwd": "${workspaceFolder}/bihz-kantoorportaal-proj",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {

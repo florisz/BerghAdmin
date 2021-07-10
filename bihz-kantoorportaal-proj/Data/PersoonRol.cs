@@ -1,4 +1,4 @@
-namespace BIHZ.AdminPortaal.Data
+namespace bihz.kantoorportaal.Data
 {
     public class PersoonRol
     {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace BIHZ.AdminPortaal.Data
+namespace bihz.kantoorportaal.Data
 {
     public class Rol
     {

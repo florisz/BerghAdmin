@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/bihz-adminportaal-proj/BIHZ.AdminPortaal.csproj",
+                "${workspaceFolder}/bihz-kantoorportaal-proj/bihz.kantoorportaal.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/bihz-adminportaal-proj/BIHZ.AdminPortaal.csproj",
+                "${workspaceFolder}/bihz-kantoorportaal-proj/bihz.kantoorportaal.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -32,7 +32,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/bihz-adminportaal-proj/BIHZ.AdminPortaal.csproj",
+                "${workspaceFolder}/bihz-kantoorportaal-proj/bihz.kantoorportaal.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

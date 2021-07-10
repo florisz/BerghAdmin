@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace BIHZ.AdminPortaal.Data
+namespace bihz.kantoorportaal.Data
 {
     public enum GeslachtEnum
     {

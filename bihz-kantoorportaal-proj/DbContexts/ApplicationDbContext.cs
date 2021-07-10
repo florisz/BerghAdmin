@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using BIHZ.AdminPortaal.Data;
+using bihz.kantoorportaal.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace BIHZ.AdminPortaal.DbContexts
+namespace bihz.kantoorportaal.DbContexts
 {
     public class ApplicationDbContext : DbContext
     {

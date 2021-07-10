@@ -1,12 +1,12 @@
-using BIHZ.AdminPortaal.Data;
-using BIHZ.AdminPortaal.DbContexts;
+using bihz.kantoorportaal.Data;
+using bihz.kantoorportaal.DbContexts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace BIHZ.AdminPortaal.Services
+namespace bihz.kantoorportaal.Services
 {
     public class PersoonService : IPersoonService
     {

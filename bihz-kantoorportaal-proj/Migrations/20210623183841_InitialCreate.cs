@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace BIHZ.AdminPortaal.Migrations
+namespace bihz.kantoorportaal.Migrations
 {
     public partial class InitialCreate : Migration
     {
