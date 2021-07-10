@@ -1,0 +1,153 @@
+﻿@page "/personen"
+
+@using BIHZ.AdminPortaal.Data
+@inject BIHZ.AdminPortaal.Services.IPersoonService persoonService
+@inject BIHZ.AdminPortaal.Services.IRolService rolService
+@inject MudBlazor.ISnackbar snackBar
+@inject NavigationManager navManager
+
+<MudCard Elevation="25">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h5">Overzicht personen</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="4">
+                <MudTextField @bind-Value="persoon.Voornaam" Label="Voornaam" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
+            </MudItem>
+            <MudItem xs="4">
+                <MudTextField @bind-Value="persoon.Voorletters" Label="Voorletters" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
+            </MudItem>
+            <MudItem xs="4">
+                <MudTextField @bind-Value="persoon.Achternaam" Label="Achternaam" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
+            </MudItem>
+            <MudItem xs="6">
+                <MudDatePicker @bind-Date="persoon.GeboorteDatum" Label="Geboorte datum" PickerVariant="PickerVariant.Dialog" DateFormat="dd-MM-yyyy"></MudDatePicker>
+            </MudItem>
+            <MudItem xs="6">
+                <MudSelect T="GeslachtEnum" Label="Geslacht" @bind-Value="persoon.Geslacht">
+                    @foreach (GeslachtEnum item in Enum.GetValues(typeof(GeslachtEnum)))
+                    {
+                        <MudSelectItem Value="@item">@item</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12">
+                <MudSelect T="Rol" Label="Rollen" MultiSelection="true" @bind-SelectedValues="persoon.Rollen" ToStringFunc="@rolBeschrijving">
+                @foreach (var rol in allRollen)
+                    {
+                        <MudSelectItem T="Rol" Value="@rol" >@rol.Beschrijving</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="3">
+                <MudTextField @bind-Value="persoon.Adres" Label="Adres" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
+            </MudItem>
+            <MudItem xs="3">
+                <MudTextField @bind-Value="persoon.Postcode" Label="Postcode" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
+            </MudItem>
+            <MudItem xs="3">
+                <MudTextField @bind-Value="persoon.Plaats" Label="Plaats" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
+            </MudItem>
+            <MudItem xs="3">
+                <MudTextField @bind-Value="persoon.Land" Label="Land" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
+            </MudItem>
+            <MudItem xs="4">
+                <MudTextField @bind-Value="persoon.Telefoon" Label="Telefoon" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
+            </MudItem>
+            <MudItem xs="4">
+                <MudTextField @bind-Value="persoon.Mobiel" Label="Mobiel" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
+            </MudItem>
+            <MudItem xs="4">
+                <MudTextField @bind-Value="persoon.EmailAdres" Label="Email adres" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
+            </MudItem>
+        </MudGrid>
+        <br />
+        <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="Save">Persoon opslaan</MudButton>
+    </MudCardContent>
+</MudCard>
+<br />
+<MudTable Elevation="25" Items="GetPersonen()" Filter="new Func<Persoon, bool>(Search)" @bind-persoon="persoon">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Personen</MudText>
+        <MudToolBarSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Zoek personen..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Voornaam</MudTh>
+        <MudTh>Achternaam</MudTh>
+        <MudTh>Mobiel</MudTh>
+        <MudTh>Acties</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Voornaam">@context.Voornaam</MudTd>
+        <MudTd DataLabel="Achternaam">@context.Achternaam</MudTd>
+        <MudTd DataLabel="Mobiel">@context.Mobiel</MudTd>
+        <MudTd DataLabel="">
+            <MudFab @onclick="@(()=>Edit(@context.Id))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small" />
+            <MudFab @onclick="@(()=>Delete(@context.Id))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code{
+    private string searchString = "";
+
+    private Persoon persoon = new Persoon();
+    private List<Persoon> personen = new List<Persoon>();
+    private List<Rol> allRollen = new List<Rol>();
+    Func<Rol,string> rolBeschrijving = r => r?.Beschrijving;
+    protected override async Task OnInitializedAsync()
+    {
+        GetRollen();
+        GetPersonen();
+    }
+
+    private List<Persoon> GetPersonen()
+    {
+        personen = persoonService.GetPersonen();
+        return personen;
+    }
+    private List<Rol> GetRollen()
+    {
+        allRollen = rolService
+                        .GetRollen()
+                        .OrderBy(r => r.Beschrijving)
+                        .ToList<Rol>();
+        return allRollen;
+    }
+    private bool Search(Persoon persoon)
+    {
+        if (string.IsNullOrWhiteSpace(searchString)) return true;
+        if (persoon.Voornaam.Contains(searchString, StringComparison.OrdinalIgnoreCase)
+            || persoon.Achternaam.Contains(searchString, StringComparison.OrdinalIgnoreCase)
+            || persoon.Mobiel.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private void Save()
+    {
+        persoonService.SavePersoon(persoon);
+        persoon = new Persoon();
+        snackBar.Add("Persoon opgeslagen.", Severity.Success);
+        GetPersonen();
+    }
+    private void Edit(int id)
+    {
+        persoon = personen.FirstOrDefault(c => c.Id == id);
+    }
+    private void Delete(int id)
+    {
+        persoonService.DeletePersoon(id);
+        snackBar.Add("Persoon Verwijderd.", Severity.Success);
+        GetPersonen();
+    }
+
+}

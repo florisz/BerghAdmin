@@ -1,0 +1,27 @@
+﻿@page "/donaties"
+
+<h1>Donaties</h1>
+
+<MudPaper Width="300px">
+    <MudList Clickable="false">
+        <MudListSubheader>Nog verder invullen</MudListSubheader>
+        <MudListItem>Financieel cumulatief overzicht (zie oude openingspagina)</MudListItem>
+        <MudListItem>Overzicht niet gematchde betalingen</MudListItem>
+        <MudListItem Text="Per niet gematchde betaling:" InitiallyExpanded="true">
+            <NestedList>
+                <MudListItem>Matchen met (nog niet gematchte) transactie</MudListItem>
+                <MudListItem>Aanmaak en versturen factuur (mbv email)</MudListItem>
+            </NestedList>
+        </MudListItem>
+        <MudListItem Text="Per renner:" InitiallyExpanded="true">
+            <NestedList>
+                <MudListItem>Persoonlijke gegevens</MudListItem>
+                <MudListItem>Statusoverzicht (betalingen)</MudListItem>
+                <MudListItem>Overzicht alle betalingen</MudListItem>
+                <MudListItem>Historie betalingen, emails, facturen</MudListItem>
+                <MudListItem>Versturen factuur (mbv email)</MudListItem>
+                <MudListItem>Versturen email</MudListItem>
+            </NestedList>
+        </MudListItem>
+    </MudList>
+</MudPaper>
