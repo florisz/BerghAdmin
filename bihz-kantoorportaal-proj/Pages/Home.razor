@@ -1,6 +1,14 @@
 ﻿@page "/"
+@inject bihz.kantoorportaal.Services.ISeedDataService seedDataService
 
 <h1>Homepage BihZ app</h1>
 
 <p>Nog verder invullen</p>
 
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        seedDataService.Initialize();
+    }
+
+}

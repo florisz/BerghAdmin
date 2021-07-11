@@ -32,18 +32,6 @@ namespace bihz.kantoorportaal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PersoonRol",
-                columns: table => new
-                {
-                    PersoonId = table.Column<int>(type: "int", nullable: false),
-                    RolId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PersoonRol", x => new { x.PersoonId, x.RolId });
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Rollen",
                 columns: table => new
                 {
@@ -57,7 +45,7 @@ namespace bihz.kantoorportaal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PersoonInRol",
+                name: "PersoonRol",
                 columns: table => new
                 {
                     PersonenId = table.Column<int>(type: "int", nullable: false),
@@ -65,56 +53,29 @@ namespace bihz.kantoorportaal.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PersoonInRol", x => new { x.PersonenId, x.RollenId });
+                    table.PrimaryKey("PK_PersoonRol", x => new { x.PersonenId, x.RollenId });
                     table.ForeignKey(
-                        name: "FK_PersoonInRol_Personen_PersonenId",
+                        name: "FK_PersoonRol_Personen_PersonenId",
                         column: x => x.PersonenId,
                         principalTable: "Personen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PersoonInRol_Rollen_RollenId",
+                        name: "FK_PersoonRol_Rollen_RollenId",
                         column: x => x.RollenId,
                         principalTable: "Rollen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "Personen",
-                columns: new[] { "Id", "Achternaam", "Adres", "EmailAdres", "GeboorteDatum", "Geslacht", "Land", "Mobiel", "Plaats", "Postcode", "Telefoon", "Voorletters", "Voornaam" },
-                values: new object[,]
-                {
-                    { 1, "Happie", "Straat 1", "ahappie@mail.com", new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Nederland", "06-12345678", "Amsterdam", "1234 AB", "onbekend", "A. B.", "Appie" },
-                    { 2, "Bengel", "Straat 2", "bbengel@mail.com", new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "Nederland", "06-12345678", "Rotterdam", "4321 AB", "onbekend", "B.", "Bert" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Rollen",
-                columns: new[] { "Id", "Beschrijving" },
-                values: new object[,]
-                {
-                    { 1, "Renner" },
-                    { 2, "Begeleider" },
-                    { 3, "Reserve" },
-                    { 4, "Commissielid" },
-                    { 5, "Vriend van" },
-                    { 6, "Mailing abonnee" },
-                    { 7, "Golfer" },
-                    { 8, "Ambassadeur" }
-                });
-
             migrationBuilder.CreateIndex(
-                name: "IX_PersoonInRol_RollenId",
-                table: "PersoonInRol",
+                name: "IX_PersoonRol_RollenId",
+                table: "PersoonRol",
                 column: "RollenId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "PersoonInRol");
-
             migrationBuilder.DropTable(
                 name: "PersoonRol");
 

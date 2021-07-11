@@ -3,3 +3,13 @@ dotnet ef migrations add <MigrationName>
 # Create database and scheme
 -> Create SQL Database manually
 dotnet ef database update
+
+
+DROP TABLE __EFMigrationsHistory;
+DROP TABLE PersoonRol;
+DROP TABLE Personen;
+DROP TABLE Rollen;
+
+DELETE FROM PersoonRol;
+DELETE FROM Rollen;
+DELETE FROM Personen;

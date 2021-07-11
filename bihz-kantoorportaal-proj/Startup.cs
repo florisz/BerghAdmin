@@ -35,6 +35,7 @@ namespace bihz.kantoorportaal
             services.AddMudServices();
             services.AddScoped<IPersoonService, PersoonService>();
             services.AddScoped<IRolService, RolService>();
+            services.AddScoped<ISeedDataService, SeedDataService>();
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BIHZ2021")));
             services.AddControllersWithViews();
         }
