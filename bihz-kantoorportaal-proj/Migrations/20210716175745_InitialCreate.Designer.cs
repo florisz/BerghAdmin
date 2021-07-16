@@ -10,7 +10,7 @@ using bihz.kantoorportaal.DbContexts;
 namespace bihz.kantoorportaal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210711115026_InitialCreate")]
+    [Migration("20210716175745_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,6 +92,9 @@ namespace bihz.kantoorportaal.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Beschrijving")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MeervoudBeschrijving")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

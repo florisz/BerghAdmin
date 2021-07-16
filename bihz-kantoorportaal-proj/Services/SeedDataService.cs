@@ -31,14 +31,15 @@ namespace bihz.kantoorportaal.Services
             }
 
             // Insert all testdata
-            var rolAmbassadeur = new Rol { Beschrijving = "Ambassadeur"};
-            var rolBegeleider = new Rol { Beschrijving = "Begeleider"};
-            var rolCommissieLid = new Rol { Beschrijving = "Commissielid"};
-            var rolGolfer = new Rol { Beschrijving = "Golfer"};
-            var rolMailingAbonnee = new Rol { Beschrijving = "Mailing abonnee"};
-            var rolRenner = new Rol { Beschrijving = "Renner"};
-            var rolReserve = new Rol { Beschrijving = "Reserve"};
-            var rolVriendVan = new Rol { Beschrijving = "Vriend van"};
+            var rolAmbassadeur = new Rol { Beschrijving = "Ambassadeur", MeervoudBeschrijving = "Ambassadeurs" };
+            var rolBegeleider = new Rol { Beschrijving = "Begeleider", MeervoudBeschrijving = "Begeleiders" };
+            var rolCommissieLid = new Rol { Beschrijving = "Commissielid", MeervoudBeschrijving = "Commissieleden" };
+            var rolGolfer = new Rol { Beschrijving = "Golfer", MeervoudBeschrijving = "Golfers" };
+            var rolMailingAbonnee = new Rol { Beschrijving = "Mailing abonnee", MeervoudBeschrijving = "Mailing Abonnees" };
+            var rolRenner = new Rol { Beschrijving = "Renner", MeervoudBeschrijving = "Renners" };
+            var rolReserve = new Rol { Beschrijving = "Reserve", MeervoudBeschrijving = "Reserves" };
+            var rolVriendVan = new Rol { Beschrijving = "Vriend van", MeervoudBeschrijving = "Vrienden van" };
+            var rolVrijwilliger = new Rol { Beschrijving = "Vrijwilliger", MeervoudBeschrijving = "Vrijwilligers" };
 
             context.AddRange(
                 new Persoon { 
@@ -204,7 +205,22 @@ namespace bihz.kantoorportaal.Services
                     Plaats = "Loerbeek",
                     Postcode = "4321 AB",
                     Telefoon = "onbekend",
-                    Rollen = new HashSet<Rol>() {rolRenner, rolReserve}
+                    Rollen = new HashSet<Rol>() {rolRenner, rolReserve, rolVrijwilliger}
+                },
+                new Persoon { 
+                    Voorletters = "L.",
+                    Voornaam = "Leo",
+                    Achternaam = "Leonidas", 
+                    Adres = "Straat 12", 
+                    EmailAdres = "lleonidas@mail.com", 
+                    GeboorteDatum = new DateTime(2002, 1, 1), 
+                    Geslacht = GeslachtEnum.Man, 
+                    Land = "Nederland", 
+                    Mobiel = "06-12345678", 
+                    Plaats = "Vethuizen",
+                    Postcode = "4333 AB",
+                    Telefoon = "onbekend",
+                    Rollen = new HashSet<Rol>() {rolRenner, rolVrijwilliger}
                 }
             );
 

@@ -92,6 +92,9 @@ namespace bihz.kantoorportaal.Migrations
                     b.Property<string>("Beschrijving")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("MeervoudBeschrijving")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Rollen");

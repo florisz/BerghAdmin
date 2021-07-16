@@ -37,7 +37,8 @@ namespace bihz.kantoorportaal.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MeervoudBeschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
