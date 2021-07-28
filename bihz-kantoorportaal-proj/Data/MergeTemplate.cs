@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
 using System.ComponentModel.DataAnnotations.Schema;
+using MailMerge;
+using System.IO;
 
 namespace bihz.kantoorportaal.Data
 {
@@ -17,19 +21,32 @@ namespace bihz.kantoorportaal.Data
             {
                 if (_mergeFields == null && MergeDocument.Content != null && MergeDocument.ContentType == ContentTypeEnum.Word)
                 {
-                    _mergeFields = GetMergeFields();
+                    _mergeFields = GetMergeFields(MergeDocument.Content);
                 }
                 return _mergeFields;
             }
         }
 
-        private static List<string> GetMergeFields()
+        // code makes use of and is inspired by the Mailmerger code
+        private List<string> GetMergeFields(byte[] document)
         {
             var mergeFields = new List<string>();
             
-            // to do scan word document and return list with all mergefields
+            var stream = new MemoryStream(document);
+            var xdoc = MailMerger.GetMainDocumentPartXml(stream);
+            var simpleMergeFields = xdoc.SelectNodes("//w:fldSimple[contains(@w:instr,'MERGEFIELD ')]", OoXmlNamespace.Manager);
+            foreach (XmlNode node in simpleMergeFields)
+            {
+                var fieldName = node.Attributes[OoXPath.winstr]
+                                    .Value
+                                    .Split(" ", StringSplitOptions.RemoveEmptyEntries)
+                                    .Skip(1)
+                                    .FirstOrDefault();
+                mergeFields.Add(fieldName);
+            }
 
             return mergeFields;
         }
+
     }
 }

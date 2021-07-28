@@ -23,7 +23,18 @@ namespace bihz.kantoorportaal.Services
 
         public MergeTemplate GetMergeTemplateById(int id)
         {
-            throw new NotImplementedException();
+            var doc = _documentService.GetDocumentById(id);
+            if (doc == null)
+            {
+                return null;
+            }
+            
+            if (! doc.IsMergeTemplate)
+            {
+                throw new ArgumentException($"document with name {doc.Name} is not a mergetemplate");
+            }
+
+            return new MergeTemplate { MergeDocument = doc };
         }
 
         public MergeTemplate GetMergeTemplateByName(string name)

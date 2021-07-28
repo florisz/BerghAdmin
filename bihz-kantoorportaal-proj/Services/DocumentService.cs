@@ -21,7 +21,11 @@ namespace bihz.kantoorportaal.Services
 
         public Document GetDocumentById(int id)
         {
-            throw new NotImplementedException();
+            var doc = _dbContext
+                        .Documenten
+                        .Find(id);
+                        
+            return doc;
         }
 
         public Document GetDocumentByName(string name)
@@ -41,7 +45,15 @@ namespace bihz.kantoorportaal.Services
 
         public void SaveDocument(Document document)
         {
-            throw new NotImplementedException();
+            if (document.Id == 0) 
+            {
+                _dbContext.Documenten.Add(document);
+            }
+            else
+            { 
+                _dbContext.Documenten.Update(document);
+            }
+            _dbContext.SaveChanges();
         }
     }
 }
