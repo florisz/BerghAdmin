@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.IO;
 using bihz.kantoorportaal.Data;
 
 namespace bihz.kantoorportaal.Services
@@ -11,6 +11,6 @@ namespace bihz.kantoorportaal.Services
         MergeTemplate GetMergeTemplateByName(string name);
         void SaveMergeTemplate(MergeTemplate mergeTemplate);
         void DeleteMergeTemplate(int id);
-        (bool, AggregateException) Merge(Dictionary<string, string> mergeFields);    
+        Stream Merge(MergeTemplate template, Dictionary<string, string> mergeFields);    
     }
 }

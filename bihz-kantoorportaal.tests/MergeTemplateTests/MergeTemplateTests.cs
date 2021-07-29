@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using bihz.kantoorportaal.Data;
+using System.IO;
 
 namespace bihz_kantoorportaal.tests
 {
@@ -75,6 +76,32 @@ namespace bihz_kantoorportaal.tests
             Assert.Contains("HuidigeDatum", mergeFields);
             Assert.Contains("SponsorBedrag", mergeFields);
             Assert.Pass();
+        }
+
+        [Test]
+        public void TestMergeTemplate2Document()
+        {
+            var mergeService = _serviceProvider.GetRequiredService<IMergeService>();
+            var template = mergeService.GetMergeTemplateById(2);
+            Assert.NotNull(template);
+            Assert.AreEqual(template.MergeDocument.Name, "TestTemplate2");
+            var mergeFields = template.MergeFields;
+            var mergeDictionary = new Dictionary<string, string>();
+            mergeDictionary["Bedrijfsnaam"] = "The Merge Company";
+            mergeDictionary["NaamAanhef"] = "Mr. the Merge";
+            mergeDictionary["StraatEnNummer"] = "Mergestreet 42";
+            mergeDictionary["Plaatsnaam"] = "Mergecity";
+            mergeDictionary["Postcode"] = "5555 XX";
+            mergeDictionary["HuidigeDatum"] = "12-12-2021";
+            mergeDictionary["SponsorBedrag"] = "42";
+
+            var mergedStream = mergeService.Merge(template, mergeDictionary);
+            Assert.IsTrue(mergedStream.Length > 0);
+            using(FileStream outputFileStream = new FileStream("c:/temp/output.docx", FileMode.Create))
+            { 
+                mergedStream.Position = 0;
+                mergedStream.CopyTo(outputFileStream);  
+            }
         }
 
     }

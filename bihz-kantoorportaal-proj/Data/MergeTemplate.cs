@@ -27,7 +27,7 @@ namespace bihz.kantoorportaal.Data
             }
         }
 
-        // code makes use of and is inspired by the Mailmerger code
+        // code makes use of and is inspired by the Mailmerger code (https://github.com/chrisfcarroll/MailMerge)
         private List<string> GetMergeFields(byte[] document)
         {
             var mergeFields = new List<string>();

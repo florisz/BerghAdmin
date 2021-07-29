@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using bihz.kantoorportaal.Data;
 using bihz.kantoorportaal.DbContexts;
+using MailMerge;
 
 namespace bihz.kantoorportaal.Services
 {
@@ -47,9 +49,17 @@ namespace bihz.kantoorportaal.Services
             throw new NotImplementedException();
         }
 
-        public (bool, AggregateException) Merge(Dictionary<string, string> mergeFields)
+        public Stream Merge(MergeTemplate template, Dictionary<string, string> mergeFields)
         {
-            throw new NotImplementedException();
+            var inputStream = new MemoryStream(template.MergeDocument.Content);
+            
+            var (outputStream, errors) = new MailMerger().Merge(inputStream, mergeFields); 
+            if (errors.InnerExceptions.Count > 0)
+            {
+                throw errors;
+            }
+
+            return outputStream;
         }
 
         public void SaveMergeTemplate(MergeTemplate mergeTemplate)
