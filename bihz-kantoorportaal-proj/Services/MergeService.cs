@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using bihz.kantoorportaal.Data;
 using bihz.kantoorportaal.DbContexts;
-using MailMerge;
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
 
 namespace bihz.kantoorportaal.Services
 {
@@ -53,11 +55,14 @@ namespace bihz.kantoorportaal.Services
         {
             var inputStream = new MemoryStream(template.MergeDocument.Content);
             
-            var (outputStream, errors) = new MailMerger().Merge(inputStream, mergeFields); 
-            if (errors.InnerExceptions.Count > 0)
-            {
-                throw errors;
-            }
+            var fieldNames = mergeFields.Keys.ToArray<string>();
+            var fieldValues = mergeFields.Values.ToArray<string>();
+
+            var wordDocument = new WordDocument(inputStream, FormatType.Docx);
+            wordDocument.MailMerge.Execute(fieldNames, fieldValues);
+
+            var outputStream = new MemoryStream();
+            wordDocument.Save(outputStream, FormatType.Docx);
 
             return outputStream;
         }

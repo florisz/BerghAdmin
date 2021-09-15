@@ -27,6 +27,12 @@ namespace bihz_kantoorportaal.tests
                 Name = "TestTemplate2", 
                 FilePath = $"{DocumentPath}/TemplateFactuurSponsor.docx"
             },
+            new TestDocument() 
+            { 
+                Id = 3, 
+                Name = "TestTemplate3", 
+                FilePath = $"{DocumentPath}/TestTemplate3.docx"
+            },
         };
                     
         [SetUp]
@@ -44,6 +50,7 @@ namespace bihz_kantoorportaal.tests
                 })
                 .AddEntityFrameworkSqlite()
                 .AddScoped<IDocumentService, DocumentService>()
+                .AddScoped<IPdfConverter, PdfConverter>()
                 .AddScoped<IMergeService, MergeService>();
             
             // Build the service provider
@@ -79,30 +86,62 @@ namespace bihz_kantoorportaal.tests
         }
 
         [Test]
-        public void TestMergeTemplate2Document()
+        public void TestMergeTemplate3Document()
+        {
+            var mergeService = _serviceProvider.GetRequiredService<IMergeService>();
+            var template = mergeService.GetMergeTemplateById(3);
+            Assert.NotNull(template);
+            Assert.AreEqual(template.MergeDocument.Name, "TestTemplate3");
+            var mergeFields = template.MergeFields;
+            var mergeDictionary = new Dictionary<string, string>();
+            mergeDictionary["MergeField1"] = "MergeField1.Value";
+
+            MergeDocument(mergeService, template, mergeDictionary);
+        }
+
+
+        [Test]
+        public void TestMergeTemplate4Document()
         {
             var mergeService = _serviceProvider.GetRequiredService<IMergeService>();
             var template = mergeService.GetMergeTemplateById(2);
+
             Assert.NotNull(template);
             Assert.AreEqual(template.MergeDocument.Name, "TestTemplate2");
-            var mergeFields = template.MergeFields;
-            var mergeDictionary = new Dictionary<string, string>();
-            mergeDictionary["Bedrijfsnaam"] = "The Merge Company";
-            mergeDictionary["NaamAanhef"] = "Mr. the Merge";
-            mergeDictionary["StraatEnNummer"] = "Mergestreet 42";
-            mergeDictionary["Plaatsnaam"] = "Mergecity";
-            mergeDictionary["Postcode"] = "5555 XX";
-            mergeDictionary["HuidigeDatum"] = "12-12-2021";
-            mergeDictionary["SponsorBedrag"] = "42";
 
-            var mergedStream = mergeService.Merge(template, mergeDictionary);
-            Assert.IsTrue(mergedStream.Length > 0);
-            using(FileStream outputFileStream = new FileStream("c:/temp/output.docx", FileMode.Create))
-            { 
-                mergedStream.Position = 0;
-                mergedStream.CopyTo(outputFileStream);  
-            }
+            var mergeDictionary = new Dictionary<string, string> 
+            {
+                { "Bedrijfsnaam", "Pieters en zn." },
+                { "NaamAanhef", "de heer P. Pieters" },
+                { "StraatEnNummer", "Pieterpad 12" },
+                { "Postcode", "2961 XY" },
+                { "Plaatsnaam", "Pieterbuuren" },
+                { "HuidigeDatum", "24 juli 2021" },
+                { "Sponsorbedrag", "€ 2.000,-" },
+            };
+
+            MergeDocument(mergeService, template, mergeDictionary);
         }
 
+        private void MergeDocument(IMergeService mergeService, MergeTemplate template, Dictionary<string, string> mergeDictionary)
+        {
+            var mergedStream = mergeService.Merge(template, mergeDictionary);
+            Assert.IsTrue(mergedStream.Length > 0);
+            using (FileStream outputFileStream = new FileStream($"c:/temp/{template.MergeDocument.Name}.docx", FileMode.Create))
+            {
+                mergedStream.Position = 0;
+                mergedStream.CopyTo(outputFileStream);
+                var pdfService = _serviceProvider.GetRequiredService<IPdfConverter>();
+
+                outputFileStream.Position = 0;
+                var pdfStream = pdfService.ConvertWordToPdf(outputFileStream);
+                var pdfOutputStream = new FileStream($"c:/temp/{template.MergeDocument.Name}.pdf", FileMode.Create);
+
+                pdfStream.Position = 0;
+                pdfStream.CopyTo(pdfOutputStream);
+                pdfStream.Close();
+                pdfOutputStream.Close();
+            }
+        }
     }
 }
