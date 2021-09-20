@@ -6,11 +6,11 @@ namespace bihz.kantoorportaal.Services
 {
     public interface IMergeService
     {
-        List<MergeTemplate> GetMergeTemplates();
-        MergeTemplate GetMergeTemplateById(int id);
-        MergeTemplate GetMergeTemplateByName(string name);
-        void SaveMergeTemplate(MergeTemplate mergeTemplate);
+        List<Document> GetMergeTemplates();
+        Document GetMergeTemplateById(int id);
+        Document GetMergeTemplateByName(string name);
+        void SaveMergeTemplate(Document mergeTemplate);
         void DeleteMergeTemplate(int id);
-        Stream Merge(MergeTemplate template, Dictionary<string, string> mergeFields);    
+        Stream Merge(Document template, Dictionary<string, string> mergeFields);    
     }
 }

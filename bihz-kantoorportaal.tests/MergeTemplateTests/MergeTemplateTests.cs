@@ -73,8 +73,8 @@ namespace bihz_kantoorportaal.tests
             var service = _serviceProvider.GetRequiredService<IMergeService>();
             var template = service.GetMergeTemplateById(2);
             Assert.NotNull(template);
-            Assert.AreEqual(template.MergeDocument.Name, "TestTemplate2");
-            var mergeFields = template.MergeFields;
+            Assert.AreEqual(template.Name, "TestTemplate2");
+            var mergeFields = template.GetMergeFields();
             Assert.Contains("Bedrijfsnaam", mergeFields);
             Assert.Contains("NaamAanhef", mergeFields);
             Assert.Contains("StraatEnNummer", mergeFields);
@@ -91,8 +91,8 @@ namespace bihz_kantoorportaal.tests
             var mergeService = _serviceProvider.GetRequiredService<IMergeService>();
             var template = mergeService.GetMergeTemplateById(3);
             Assert.NotNull(template);
-            Assert.AreEqual(template.MergeDocument.Name, "TestTemplate3");
-            var mergeFields = template.MergeFields;
+            Assert.AreEqual(template.Name, "TestTemplate3");
+            var mergeFields = template.GetMergeFields();
             var mergeDictionary = new Dictionary<string, string>();
             mergeDictionary["MergeField1"] = "MergeField1.Value";
 
@@ -107,7 +107,7 @@ namespace bihz_kantoorportaal.tests
             var template = mergeService.GetMergeTemplateById(2);
 
             Assert.NotNull(template);
-            Assert.AreEqual(template.MergeDocument.Name, "TestTemplate2");
+            Assert.AreEqual(template.Name, "TestTemplate2");
 
             var mergeDictionary = new Dictionary<string, string> 
             {
@@ -123,11 +123,11 @@ namespace bihz_kantoorportaal.tests
             MergeDocument(mergeService, template, mergeDictionary);
         }
 
-        private void MergeDocument(IMergeService mergeService, MergeTemplate template, Dictionary<string, string> mergeDictionary)
+        private void MergeDocument(IMergeService mergeService, Document template, Dictionary<string, string> mergeDictionary)
         {
             var mergedStream = mergeService.Merge(template, mergeDictionary);
             Assert.IsTrue(mergedStream.Length > 0);
-            using (FileStream outputFileStream = new FileStream($"c:/temp/{template.MergeDocument.Name}.docx", FileMode.Create))
+            using (FileStream outputFileStream = new FileStream($"c:/temp/{template.Name}.docx", FileMode.Create))
             {
                 mergedStream.Position = 0;
                 mergedStream.CopyTo(outputFileStream);
@@ -135,7 +135,7 @@ namespace bihz_kantoorportaal.tests
 
                 outputFileStream.Position = 0;
                 var pdfStream = pdfService.ConvertWordToPdf(outputFileStream);
-                var pdfOutputStream = new FileStream($"c:/temp/{template.MergeDocument.Name}.pdf", FileMode.Create);
+                var pdfOutputStream = new FileStream($"c:/temp/{template.Name}.pdf", FileMode.Create);
 
                 pdfStream.Position = 0;
                 pdfStream.CopyTo(pdfOutputStream);

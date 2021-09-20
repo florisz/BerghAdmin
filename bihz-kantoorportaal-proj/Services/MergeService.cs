@@ -25,7 +25,7 @@ namespace bihz.kantoorportaal.Services
             throw new NotImplementedException();
         }
 
-        public MergeTemplate GetMergeTemplateById(int id)
+        public Document GetMergeTemplateById(int id)
         {
             var doc = _documentService.GetDocumentById(id);
             if (doc == null)
@@ -38,22 +38,22 @@ namespace bihz.kantoorportaal.Services
                 throw new ArgumentException($"document with name {doc.Name} is not a mergetemplate");
             }
 
-            return new MergeTemplate { MergeDocument = doc };
+            return doc;
         }
 
-        public MergeTemplate GetMergeTemplateByName(string name)
+        public Document GetMergeTemplateByName(string name)
         {
             throw new NotImplementedException();
         }
 
-        public List<MergeTemplate> GetMergeTemplates()
+        public List<Document> GetMergeTemplates()
         {
             throw new NotImplementedException();
         }
 
-        public Stream Merge(MergeTemplate template, Dictionary<string, string> mergeFields)
+        public Stream Merge(Document template, Dictionary<string, string> mergeFields)
         {
-            var inputStream = new MemoryStream(template.MergeDocument.Content);
+            var inputStream = new MemoryStream(template.Content);
             
             var fieldNames = mergeFields.Keys.ToArray<string>();
             var fieldValues = mergeFields.Values.ToArray<string>();
@@ -67,7 +67,7 @@ namespace bihz.kantoorportaal.Services
             return outputStream;
         }
 
-        public void SaveMergeTemplate(MergeTemplate mergeTemplate)
+        public void SaveMergeTemplate(Document mergeTemplate)
         {
             throw new NotImplementedException();
         }
