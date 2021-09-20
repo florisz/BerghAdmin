@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using bihz.kantoorportaal.Data;
 using bihz.kantoorportaal.DbContexts;
 
@@ -7,6 +8,7 @@ namespace bihz.kantoorportaal.Services
 {
     public class SeedDataService : ISeedDataService
     {
+        private const string DocumentBasePath = "C:/git/bihz/bihz-kantoorportaal/bihz-kantoorportaal.tests/MergeTemplateTests/TestDocumenten"; 
         private readonly ApplicationDbContext _dbContext;
         private readonly IRolService _rolService;
 
@@ -224,7 +226,17 @@ namespace bihz.kantoorportaal.Services
                 }
             );
 
+            context.AddRange(
+                new Document {
+                    Name = "Sponsor Factuur",
+                    ContentType = ContentTypeEnum.Word,
+                    IsMergeTemplate = true,
+                    TemplateType = TemplateTypeEnum.Ambassadeur,
+                    Content = File.ReadAllBytes($"{DocumentBasePath}/TemplateFactuurSponsor.docx")
+                }
+            );
             context.SaveChanges();
         }
+
     }
 }

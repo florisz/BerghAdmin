@@ -10,7 +10,7 @@ using bihz.kantoorportaal.DbContexts;
 namespace bihz.kantoorportaal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210716175745_InitialCreate")]
+    [Migration("20210920192213_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,6 +34,33 @@ namespace bihz.kantoorportaal.Migrations
                     b.HasIndex("RollenId");
 
                     b.ToTable("PersoonRol");
+                });
+
+            modelBuilder.Entity("bihz.kantoorportaal.Data.Document", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<byte[]>("Content")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("ContentType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsMergeTemplate")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TemplateType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Documenten");
                 });
 
             modelBuilder.Entity("bihz.kantoorportaal.Data.Persoon", b =>

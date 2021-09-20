@@ -34,6 +34,33 @@ namespace bihz.kantoorportaal.Migrations
                     b.ToTable("PersoonRol");
                 });
 
+            modelBuilder.Entity("bihz.kantoorportaal.Data.Document", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<byte[]>("Content")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("ContentType")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsMergeTemplate")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TemplateType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Documenten");
+                });
+
             modelBuilder.Entity("bihz.kantoorportaal.Data.Persoon", b =>
                 {
                     b.Property<int>("Id")
