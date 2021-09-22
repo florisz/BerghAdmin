@@ -3,8 +3,9 @@
 
 @code
 {
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
+        base.OnInitialized();
         NavManager.NavigateTo("/personen?rol=Renner");
-    }    
+    }
 }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MudBlazor.Services;
+using Syncfusion.Blazor;
 using bihz.kantoorportaal.Data;
 using bihz.kantoorportaal.Services;
 using System;
@@ -31,8 +31,7 @@ namespace bihz.kantoorportaal
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.AddServerSideBlazor();
-            services.AddMudServices();
+            services.AddSyncfusionBlazor();
             services.AddScoped<IPersoonService, PersoonService>();
             services.AddScoped<IRolService, RolService>();
             services.AddScoped<ISeedDataService, SeedDataService>();
@@ -63,7 +62,6 @@ namespace bihz.kantoorportaal
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
         }
