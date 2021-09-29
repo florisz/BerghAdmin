@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace bihz.kantoorportaal
 {
@@ -31,7 +32,7 @@ namespace bihz.kantoorportaal
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.AddSyncfusionBlazor();
+            services.AddServerSideBlazor();
             services.AddScoped<IPersoonService, PersoonService>();
             services.AddScoped<IRolService, RolService>();
             services.AddScoped<ISeedDataService, SeedDataService>();
@@ -39,11 +40,18 @@ namespace bihz.kantoorportaal
             services.AddScoped<IMergeService, MergeService>();
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BIHZ2021")));
             services.AddControllersWithViews();
+            services.AddSyncfusionBlazor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Register Syncfusion license
+        	//Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTA0NzY4QDMxMzkyZTMyMmUzMGo4cHVmblpOUWx5aWxCY25QOXVJTXFHWkRlcHl3NnBlSkJKSlJsY0NvbHM9;NTA0NzY5QDMxMzkyZTMyMmUzMEkyWFpWVkdqa0RoeFlWOVBEYXJZS1FjUVNQVmlta3dHTnIxTjFsVGRLT2c9");
+
+            //loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            //loggerFactory.AddDebug();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

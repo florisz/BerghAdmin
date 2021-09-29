@@ -1,101 +1,23 @@
 ﻿@page "/personen"
 
-@using Syncfusion.Blazor.Grids
-
 @using bihz.kantoorportaal.Data
 @using Microsoft.AspNetCore.WebUtilities
 @inject bihz.kantoorportaal.Services.IPersoonService persoonService
 @inject bihz.kantoorportaal.Services.IRolService rolService
 @inject NavigationManager NavigationManager
 
-<div class="col-lg-12 control-section">
-    <div class="content-wrapper">
-        <div class="row">
-            <SfGrid DataSource="@personen" Toolbar="@ToolbarItems" AllowPaging="true" >
-                <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" Mode="EditMode.Dialog"></GridEditSettings>
-                <SfToolbar>
-                    <ToolbarItems>
-                        <ToolbarItem Type="ItemType.Input">
-                        </ToolbarItem>
-                    </ToolbarItems>
-                </SfToolbar>
-                <GridColumns>
-                    <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" IsPrimaryKey="true" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
-                    <GridColumn Field=@nameof(Persoon.Voornaam) HeaderText="Voornaam" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
-                    <GridColumn Field=@nameof(Persoon.Achternaam) HeaderText="Achternaam" Width="150"></GridColumn>
-                    <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right"  Width="130"></GridColumn>
-                </GridColumns>
-            </SfGrid>
-        </div>
-    </div>
-</div>
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Navigations
 
-@* <MudTable Elevation="25" Items="GetPersonen()" Filter="new Func<Persoon, bool>(Search)" @bind-persoon="persoon">
-    <ToolBarContent>
-        <MudText Typo="Typo.h5">Overzicht - @currentRolDescription</MudText>
-        <MudToolBarSpacer />
-        <MudTextField @bind-Value="searchString" Placeholder="Zoek personen..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-    </ToolBarContent>
-
-    </MudTable> *@
-<br />
-@* <MudCard Elevation="25">
-    <MudCardContent>
-        <MudGrid>
-            <MudItem xs="4">
-                <MudTextField @bind-Value="persoon.Voornaam" Label="Voornaam" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
-            </MudItem>
-            <MudItem xs="4">
-                <MudTextField @bind-Value="persoon.Voorletters" Label="Voorletters" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
-            </MudItem>
-            <MudItem xs="4">
-                <MudTextField @bind-Value="persoon.Achternaam" Label="Achternaam" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
-            </MudItem>
-            <MudItem xs="6">
-                <MudDatePicker @bind-Date="persoon.GeboorteDatum" Label="Geboorte datum" PickerVariant="PickerVariant.Dialog" DateFormat="dd-MM-yyyy"></MudDatePicker>
-            </MudItem>
-            <MudItem xs="6">
-                <MudSelect T="GeslachtEnum" Label="Geslacht" @bind-Value="persoon.Geslacht">
-                    @foreach (GeslachtEnum item in Enum.GetValues(typeof(GeslachtEnum)))
-                    {
-                        <MudSelectItem Value="@item">@item</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="12">
-                <MudSelect T="Rol" Label="Rollen" MultiSelection="true" @bind-SelectedValues="persoon.Rollen" ToStringFunc="@rolBeschrijving">
-                @foreach (var rol in allRollen)
-                    {
-                        <MudSelectItem T="Rol" Value="@rol" >@rol.Beschrijving</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="3">
-                <MudTextField @bind-Value="persoon.Adres" Label="Adres" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
-            </MudItem>
-            <MudItem xs="3">
-                <MudTextField @bind-Value="persoon.Postcode" Label="Postcode" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
-            </MudItem>
-            <MudItem xs="3">
-                <MudTextField @bind-Value="persoon.Plaats" Label="Plaats" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
-            </MudItem>
-            <MudItem xs="3">
-                <MudTextField @bind-Value="persoon.Land" Label="Land" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
-            </MudItem>
-            <MudItem xs="4">
-                <MudTextField @bind-Value="persoon.Telefoon" Label="Telefoon" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
-            </MudItem>
-            <MudItem xs="4">
-                <MudTextField @bind-Value="persoon.Mobiel" Label="Mobiel" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
-            </MudItem>
-            <MudItem xs="4">
-                <MudTextField @bind-Value="persoon.EmailAdres" Label="Email adres" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
-            </MudItem>
-        </MudGrid>
-        <br />
-        <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="Save">Persoon opslaan</MudButton>
-    </MudCardContent>
-</MudCard> *@
+<SfGrid DataSource="@personen" Toolbar="@ToolbarItems" AllowPaging="true" >
+    <GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true" Mode="EditMode.Dialog" AllowEditOnDblClick="true"></GridEditSettings>
+    <GridColumns>
+        <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" IsPrimaryKey="true" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Voornaam) HeaderText="Voornaam" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Achternaam) HeaderText="Achternaam" Width="150"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right"  Width="130"></GridColumn>
+    </GridColumns>
+</SfGrid>
 
 @code{
     private string searchString = "";
@@ -109,6 +31,7 @@
     Func<Rol,string> rolBeschrijving = r => r?.Beschrijving;
     protected override async Task OnInitializedAsync()
     {
+        base.OnInitialized();
         GetRollen();
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("rol", out var _rol))

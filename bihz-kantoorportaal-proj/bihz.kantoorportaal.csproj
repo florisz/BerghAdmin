@@ -15,8 +15,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Syncfusion.Blazor.Grid" Version="19.2.0.62" />
-    <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="19.2.0.62" />
-    <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="19.2.0.62" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+    <PackageReference Include="Syncfusion.Blazor.Grid" Version="19.2.0.44" />
+    <PackageReference Include="Syncfusion.Blazor.Navigations" Version="19.2.0.44" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="19.2.0.44" />
+    <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="19.2.0.44" />
+    <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="19.2.0.44" />
   </ItemGroup>
 </Project>

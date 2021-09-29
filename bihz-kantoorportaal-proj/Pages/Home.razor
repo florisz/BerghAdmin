@@ -8,6 +8,7 @@
 @code{
     protected override async Task OnInitializedAsync()
     {
+        base.OnInitialized();
         seedDataService.Initialize();
     }
 
