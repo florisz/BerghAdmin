@@ -1,0 +1,15 @@
+﻿@page "/"
+@inject BerghAdmin.Services.ISeedDataService seedDataService
+
+<h1>Homepage BihZ app</h1>
+
+<p>Nog verder invullen</p>
+
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        seedDataService.Initialize();
+    }
+
+}

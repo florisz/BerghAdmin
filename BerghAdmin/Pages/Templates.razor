@@ -1,0 +1,47 @@
+@page "/templates"
+
+@using BerghAdmin.Data
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Grids
+
+@inject BerghAdmin.Services.IDocumentService documentService
+
+<SfGrid DataSource="@templates" AllowPaging="true">
+    <GridEditSettings 
+        AllowAdding="true" 
+        AllowDeleting="true" 
+        AllowEditing="true" 
+        Mode="EditMode.Dialog" 
+        AllowEditOnDblClick="true">
+    </GridEditSettings>
+    <GridColumns>
+        <GridColumn Field=@nameof(Document.Id) HeaderText="Id" IsPrimaryKey="true" TextAlign="TextAlign.Left"  Width="30"></GridColumn>
+        <GridColumn Field=@nameof(Document.Name) HeaderText="Naam" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
+        <GridColumn Field=@nameof(Document.ContentType) HeaderText="Soort" Width="80"></GridColumn>
+        <GridColumn Field=@nameof(Document.Owner) HeaderText="Eigenaar" Format="d" Type="ColumnType.String" TextAlign="TextAlign.Left"  Width="130"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+@code{
+    public List<Document> templates = new List<Document>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        GetTemplates();
+    }
+
+    private List<Document> GetTemplates()
+    {
+        templates = documentService
+                    .GetMergeTemplates();
+
+        return templates;
+    }
+
+    private void Save()
+    {
+        return;
+    }
+
+}

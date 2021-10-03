@@ -1,0 +1,64 @@
+﻿<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">Bergh in het Zadel</a>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="/" >
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/home.png">
+                Home
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="ambassadeurs">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/ambassadeurs.png">
+                &nbsp; Ambassadeurs
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="renners">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/fietsers.png">
+                &nbsp; Fietsen
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="golfers">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/golf.png">
+                &nbsp; Golf
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="AllePersonen">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/personen.png">
+                &nbsp; Personen
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="donaties">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/donaties.png">
+                &nbsp; Donaties
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="templates">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/templates.png">
+                &nbsp; Templates
+            </NavLink>
+        </li>
+    </ul>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

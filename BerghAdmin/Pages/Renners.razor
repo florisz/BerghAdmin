@@ -1,0 +1,11 @@
+﻿@page "/renners"
+@inject NavigationManager NavManager
+
+@code
+{
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        NavManager.NavigateTo("/personen?rol=Renner");
+    }
+}
