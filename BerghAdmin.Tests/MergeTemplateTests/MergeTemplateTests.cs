@@ -13,7 +13,7 @@ namespace bihz_kantoorportaal.tests
     public class MergeTemplateTests
     {
         private ServiceProvider _serviceProvider;
-        private const string DocumentPath = "C:/git/bihz/bihz-kantoorportaal/bihz-kantoorportaal.tests/MergeTemplateTests/TestDocumenten"; 
+        private const string DocumentPath = "C:/git/bihz/BerghAdmin/BerghAdmin.Tests/MergeTemplateTests/TestDocumenten"; 
         private List<TestDocument> TestDocuments = new List<TestDocument> {
             new TestDocument() 
             { 
