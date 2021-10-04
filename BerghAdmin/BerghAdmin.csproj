@@ -24,6 +24,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Syncfusion.Blazor.Buttons" Version="19.2.0.44" />
+    <PackageReference Include="Syncfusion.Blazor.Cards" Version="19.2.0.44" />
     <PackageReference Include="Syncfusion.Blazor.Grid" Version="19.2.0.44" />
     <PackageReference Include="Syncfusion.Blazor.Navigations" Version="19.2.0.44" />
     <PackageReference Include="Syncfusion.Blazor.Themes" Version="19.2.0.44" />
