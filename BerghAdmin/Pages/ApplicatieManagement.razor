@@ -1,6 +1,12 @@
 @page "/ApplicatieManagement"
+@page "/ApplicatieManagement/templates"
+@page "/ApplicatieManagement/personen"
 
 @inject IJSRuntime jsRuntime
+
+<h3>Applicatie Management</h3>
+
+<PersonenComponent Context="personen" />
 
 @code
 {
@@ -9,4 +15,5 @@
     {
         await jsRuntime.InvokeAsync<object>("SetSideMenu", "applicatiemanagement");
     }
+
 }
