@@ -42,7 +42,7 @@ namespace BerghAdmin.Services
             var rolCommissieLid = new Rol { Beschrijving = "Commissielid", MeervoudBeschrijving = "Commissieleden" };
             var rolGolfer = new Rol { Beschrijving = "Golfer", MeervoudBeschrijving = "Golfers" };
             var rolMailingAbonnee = new Rol { Beschrijving = "Mailing abonnee", MeervoudBeschrijving = "Mailing Abonnees" };
-            var rolRenner = new Rol { Beschrijving = "Renner", MeervoudBeschrijving = "Renners" };
+            var rolFietser = new Rol { Beschrijving = "Fietser", MeervoudBeschrijving = "Fieters" };
             var rolReserve = new Rol { Beschrijving = "Reserve", MeervoudBeschrijving = "Reserves" };
             var rolVriendVan = new Rol { Beschrijving = "Vriend van", MeervoudBeschrijving = "Vrienden van" };
             var rolVrijwilliger = new Rol { Beschrijving = "Vrijwilliger", MeervoudBeschrijving = "Vrijwilligers" };
@@ -61,7 +61,7 @@ namespace BerghAdmin.Services
                     Plaats = "Amsterdam",
                     Postcode = "1234 AB",
                     Telefoon = "onbekend",
-                    Rollen = new HashSet<Rol>() {rolRenner, rolGolfer}
+                    Rollen = new HashSet<Rol>() {rolFietser, rolGolfer}
                 },
                 new Persoon { 
                     Voorletters = "B.",
@@ -76,7 +76,7 @@ namespace BerghAdmin.Services
                     Plaats = "Rotterdam",
                     Postcode = "4321 AB",
                     Telefoon = "onbekend",
-                    Rollen = new HashSet<Rol>() {rolRenner, rolGolfer}
+                    Rollen = new HashSet<Rol>() {rolFietser, rolGolfer}
                 },
                 new Persoon { 
                     Voorletters = "C.",
@@ -91,7 +91,7 @@ namespace BerghAdmin.Services
                     Plaats = "'Heerenberg'",
                     Postcode = "4321 AB",
                     Telefoon = "onbekend",
-                    Rollen = new HashSet<Rol>() {rolRenner, rolAmbassadeur}
+                    Rollen = new HashSet<Rol>() {rolFietser, rolAmbassadeur}
                 },
                 new Persoon { 
                     Voorletters = "BD.",
@@ -151,7 +151,7 @@ namespace BerghAdmin.Services
                     Plaats = "Lengel",
                     Postcode = "4321 AB",
                     Telefoon = "onbekend",
-                    Rollen = new HashSet<Rol>() {rolRenner, rolAmbassadeur}
+                    Rollen = new HashSet<Rol>() {rolFietser, rolAmbassadeur}
                 },
                 new Persoon { 
                     Voorletters = "H.",
@@ -211,7 +211,7 @@ namespace BerghAdmin.Services
                     Plaats = "Loerbeek",
                     Postcode = "4321 AB",
                     Telefoon = "onbekend",
-                    Rollen = new HashSet<Rol>() {rolRenner, rolReserve, rolVrijwilliger}
+                    Rollen = new HashSet<Rol>() {rolFietser, rolReserve, rolVrijwilliger}
                 },
                 new Persoon { 
                     Voorletters = "L.",
@@ -226,7 +226,7 @@ namespace BerghAdmin.Services
                     Plaats = "Vethuizen",
                     Postcode = "4333 AB",
                     Telefoon = "onbekend",
-                    Rollen = new HashSet<Rol>() {rolRenner, rolVrijwilliger}
+                    Rollen = new HashSet<Rol>() {rolFietser, rolVrijwilliger}
                 }
             );
 

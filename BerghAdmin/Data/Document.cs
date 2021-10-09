@@ -19,7 +19,7 @@ namespace BerghAdmin.Data
     public enum TemplateTypeEnum
     {
         Ambassadeur,
-        Renner,
+        Fietser,
         Golfer,
         Algemeen, 
         None

@@ -4,72 +4,157 @@
 @using Syncfusion.Blazor.Cards
 @using Syncfusion.Blazor.Buttons
 
-<div class="row">
-    <div class="control-section col-lg-9 e-card">
-        <SfCard ID="Tile-Ambassadeurs">
-            <CardHeader Title="Ambassadeurs" />
-            <CardImage Image="images/tile-ambassadeurs.jpg" />
-            <CardContent Content="Alle functies tav ambassadeurs" />
-        </SfCard>
-    </div>
-    <div class="control-section col-lg-9 e-card">
-        <SfCard ID="Tile-Fietsers">
-            <CardHeader Title="Fietsers" />
-            <CardImage Image="images/tile-fietsers.jpg" />
-            <CardContent Content="Alle functies tav fietsers" />
-        </SfCard>
-    </div>
-    <div class="control-section col-lg-9 e-card">
-        <SfCard ID="Tile-Golfers">
-            <CardHeader Title="Golfers" />
-            <CardImage Image="images/tile-golfers.jpg" />
-            <CardContent Content="Alle functies tav golfers" />
-        </SfCard>
-    </div>
-</div>
+@inject NavigationManager NavigationManager
+@inject IJSRuntime jsRuntime
 
-@code{
+<div class="e-card-layout">
+    <table>
+        <tr width="100%">
+            <td height="200px" width="200px">
+                <div id="Tile-Ambassadeurs">
+                    <SfCard class="e-card">
+                        <CardImage Image="images/tile-ambassadeurs.jpg"/>
+                        <CardFooter>
+                            <CardFooterContent>
+                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => Navigate("https://localhost:5001/Ambassadeurs"))">Beheer Ambassadeurs</SfButton>
+                            </CardFooterContent>
+                        </CardFooter>
+                    </SfCard>
+                </div>
+            </td>
+            <td height="200px" width="200px">
+                <div id="Tile-Fietsers">
+                    <SfCard ID="Tile-Fietsers" class="e-card">
+                        <CardImage Image="images/tile-fietsers.jpg" />
+                        <CardFooter>
+                            <CardFooterContent>
+                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => Navigate("https://localhost:5001/Fietsers"))">Beheer Fietsers</SfButton>
+                            </CardFooterContent>
+                        </CardFooter>
+                    </SfCard>
+                </div>
+            </td>
+            <td height="200px" width="200px">
+                <div id="Tile-Golfers">
+                    <SfCard ID="Tile-Golfers" class="e-card">
+                        <CardImage Image="images/tile-golfers.jpg"/>
+                        <CardFooter>
+                            <CardFooterContent>
+                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => Navigate("https://localhost:5001/Golfers"))">Beheer Golfers</SfButton>
+                            </CardFooterContent>
+                        </CardFooter>
+                    </SfCard>
+                </div>
+            </td>
+        </tr>
+        <tr width="100%">
+            <td height="200px" width="200px">
+                <div id="Tile-Financiën">
+                    <SfCard class="e-card">
+                        <CardImage Image="images/tile-financien.jpg"/>
+                        <CardFooter>
+                            <CardFooterContent>
+                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => Navigate("https://localhost:5001/"))">Beheer Financiën</SfButton>
+                            </CardFooterContent>
+                        </CardFooter>
+                    </SfCard>
+                </div>
+            </td>
+            <td height="200px" width="200px">
+                <div id="Tile-Secretariaat">
+                    <SfCard class="e-card">
+                        <CardImage Image="images/tile-secretariaat.jpg" />
+                        <CardFooter>
+                            <CardFooterContent>
+                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => Navigate("https://localhost:5001/"))">Secretariaat</SfButton>
+                            </CardFooterContent>
+                        </CardFooter>
+                    </SfCard>
+                </div>
+            </td>
+            <td height="200px" width="200px">
+                <div id="Tile-ApplicatieManagement">
+                    <SfCard class="e-card">
+                        <CardImage Image="images/tile-applmgmt.jpg" />
+                        <CardFooter>
+                            <CardFooterContent>
+                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => Navigate("https://localhost:5001/"))">Applicatie beheer</SfButton>
+                            </CardFooterContent>
+                        </CardFooter>
+                    </SfCard>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+@code
+{
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         seedDataService.Initialize();
     }
 
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "shared");
+    }
+
+    private void Navigate(string url) 
+    {
+        NavigationManager.NavigateTo(url);
+    }
+
 }
 
 <style>
-    .col-lg-9 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    table, th, td {
+        border: 20px solid white;
     }
-    #DynamicCard {
-        margin: auto;
-        width: 60%
+    .property-panel-section .property-panel-content td {
+        padding: 0 0 15px 0;
     }
-    .control-section {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    .e-btn {
+        align: center;
     }
-    td {
-        font-size: 14px;
+    .tile_layout.card-control-section .e-error {
+        height: 200px;
+        width: 100%;
     }
-    tr {
-        height: 25px;
+    .tile_layout.card-control-section .e-error .e-error-content {
+        color: red;
+        line-height: 100px;
+        text-align: center;
+    }
+    .tile_layout.card-control-section .e-card .e-card-image {
+        min-height: 200px;
+        width: inherit;
     }
     .e-card .e-card-image {
-        background-repeat: no-repeat;
-        background-size: contain;
-        height: 300px;
-        width: 300px;
+        min-height: 200px;
+        min-width: 200px;
     }
-    .e-card .e-card-header .e-card-header-caption .e-card-header-title {
+    .e-card-image {
+        border-radius: 10px;
+    }
+    .tile_layout.card-control-section .e-card .e-card-header .e-card-header-caption .e-card-header-title {
         font-size: 20px;
         font-family: Helvetica, 'Segoe UI';
         font-weight: bold;
     }
-    .e-card .e-card-header .e-card-header-caption .e-card-sub-title {
-        padding-top: 5px;
+    .tile_layout.card-control-section .e-card .e-card-header .e-card-header-caption .e-card-sub-title {
+        padding-top: 30px;
+    }
+    .tile_layout.card-control-section .e-card .e-card-content {
+        padding-top: 30px;
+        height: 110px;
+    }
+    .e-card .e-card-actions {
+        display: flex;
+        justify-content: center;
+    }
+    #source_link {
+        float: right;
+        margin-right: 10px;
     }
 </style>

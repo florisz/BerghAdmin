@@ -1,69 +1,102 @@
 ﻿<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">Bergh in het Zadel</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
 </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+<div id="SideMenu">
     <ul class="nav flex-column">
-        <li class="nav-item px-3">
+        <li class="nav-item px-3" data-context="shared">
             <NavLink class="nav-link" href="/" >
                 <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/home.png">
                 &nbsp; Home
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="ambassadeurs">
+        @* Ambassadeurs *@
+        <li class="nav-item px-3" data-context="ambassadeurs">
+            <NavLink class="nav-link" href="/Ambassadeurs/personen">
                 <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/ambassadeurs.png">
                 &nbsp; Ambassadeurs
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="renners">
+        @* Fietsers *@
+        <li class="nav-item px-3" data-context="fietsers">
+            <NavLink class="nav-link" href="/Fietsers/personen">
                 <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/fietsers.png">
-                &nbsp; Fietsen
+                &nbsp; Fietsers
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="golfers">
-                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/golf.png">
-                &nbsp; Golf
+        <li class="nav-item px-3" data-context="fietsers">
+            <NavLink class="nav-link" href="/Fietsers/tochten">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/fietsers.png">
+                &nbsp; Fietstochten
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="AllePersonen">
+        @* Golfers *@
+        <li class="nav-item px-3" data-context="golfers">
+            <NavLink class="nav-link" href="/Golfers/personen">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/golfers.png">
+                &nbsp; Golfers
+            </NavLink>
+        </li>
+        <li class="nav-item px-3" data-context="golfers">
+            <NavLink class="nav-link" href="/Golfers/golfdagen">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/golfers.png">
+                &nbsp; Golfdagen
+            </NavLink>
+        </li>
+        @* Financien *@
+        <li class="nav-item px-3" data-context="financien">
+            <NavLink class="nav-link" href="/Financien/donaties">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/templates.png">
+                &nbsp; Donaties
+            </NavLink>
+        </li>
+        <li class="nav-item px-3" data-context="financien">
+            <NavLink class="nav-link" href="/Financien/betalingen">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/templates.png">
+                &nbsp; Betalingen
+            </NavLink>
+        </li>
+        @* Secretariaat *@
+        <li class="nav-item px-3" data-context="secretariaat">
+            <NavLink class="nav-link" href="Secretariaat/personen">
                 <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/personen.png">
                 &nbsp; Personen
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="donaties">
-                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/donaties.png">
-                &nbsp; Donaties
+        <li class="nav-item px-3" data-context="secretariaat">
+            <NavLink class="nav-link" href="Secretariaat/email">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/email.png">
+                &nbsp; e-Mail
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="templates">
+        @* Applicatie management *@
+        <li class="nav-item px-3" data-context="applicatiemanagement">
+            <NavLink class="nav-link" href="/AM/templates">
                 <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/templates.png">
                 &nbsp; Templates
             </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <a href="https://www.berghinhetzadel.nl/" target="_blank">
-                <img style="width:128px;height:128px" src="./images/Logo-BIHZ.jpg">
-            </a>
+        @* Applicatie management *@
+        <li class="nav-item px-3" data-context="applicatiemanagement">
+            <NavLink class="nav-link" href="/AM/personen">
+                <img style="width:24px;height:24px" viewBox="0 0 24 24" src="./images/personen.png">
+                &nbsp; Personen
+            </NavLink>
         </li>
     </ul>
 </div>
+<div class="logo-menu">
+    <a href="https://www.berghinhetzadel.nl/" target="_blank">
+        <img style="width:128px;height:128px" src="./images/Logo-BIHZ-rectangle.jpg">
+    </a>
+</div>
 
-@code {
-    private bool collapseNavMenu = true;
-
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}
+<style>
+    .logo-menu {
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: auto;
+        width: 50%;
+        bottom: 10px;
+    } 
+</style>

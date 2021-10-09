@@ -1,11 +1,13 @@
-﻿@page "/golfers"
+﻿@page "/Golfers"
+
 @inject NavigationManager NavManager
+@inject IJSRuntime jsRuntime
 
 @code
 {
-    protected async override Task OnInitializedAsync()
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        await base.OnInitializedAsync();
-        NavManager.NavigateTo("/personen?rol=Golfer");
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "golfers");
     }
 }
