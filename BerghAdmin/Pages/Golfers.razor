@@ -1,13 +1,17 @@
 ﻿@page "/Golfers"
+@page "/Golfers/personen"
 
-@inject NavigationManager NavManager
 @inject IJSRuntime jsRuntime
+
+<h3>Golfers</h3>
+
+<PersonenComponent Context="golfer" />
 
 @code
 {
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        await jsRuntime.InvokeAsync<object>("SetSideMenu", "golfers");
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "golfer");
     }
 }

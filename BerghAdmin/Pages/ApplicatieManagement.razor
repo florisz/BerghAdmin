@@ -1,0 +1,12 @@
+@page "/ApplicatieManagement"
+
+@inject IJSRuntime jsRuntime
+
+@code
+{
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "applicatiemanagement");
+    }
+}

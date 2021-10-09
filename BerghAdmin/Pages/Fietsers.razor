@@ -1,12 +1,17 @@
 ﻿@page "/Fietsers"
-@inject NavigationManager NavManager
+@page "/Fietsers/personen"
+
 @inject IJSRuntime jsRuntime
+
+<h3>Fietsers</h3>
+
+<PersonenComponent Context="fietser" />
 
 @code
 {
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        await jsRuntime.InvokeAsync<object>("SetSideMenu", "fietsers");
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "fietser");
     }
 }

@@ -53,7 +53,7 @@ namespace BerghAdmin.Services
                     Voornaam = "Appie",
                     Achternaam = "Apenoot", 
                     Adres = "Straat 1", 
-                    EmailAdres = "aapenoot@mail.com", 
+                    EmailAdres = "aapnoot@mail.com", 
                     GeboorteDatum = new DateTime(1970, 1, 1), 
                     Geslacht = GeslachtEnum.Man, 
                     Land = "Nederland", 

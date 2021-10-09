@@ -1,0 +1,73 @@
+﻿@using BerghAdmin.Data
+@using Microsoft.AspNetCore.WebUtilities
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Grids
+
+@inject BerghAdmin.Services.IPersoonService persoonService
+@inject BerghAdmin.Services.IRolService rolService
+@inject NavigationManager NavigationManager
+
+<SfGrid DataSource="@personenList" AllowPaging="true">
+    <GridEditSettings 
+        AllowAdding="true" 
+        AllowDeleting="true" 
+        AllowEditing="true" 
+        Mode="EditMode.Dialog" 
+        AllowEditOnDblClick="true">
+    </GridEditSettings>
+    <GridColumns>
+        <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" IsPrimaryKey="true" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Voornaam) HeaderText="Voornaam" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Achternaam) HeaderText="Achternaam" Width="150"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right"  Width="130"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+
+@code{
+    [Parameter]
+    public string Context { get; set; }
+
+    public List<Persoon> personenList = new List<Persoon>();
+    private List<Rol> rollenList = new List<Rol>();
+    
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        rollenList = GetRollen();
+        personenList = GetPersonen(Context);
+    }
+
+    private List<Persoon> GetPersonen(string rolBeschrijving)
+    {
+        var personen = new List<Persoon>();
+
+        var currentRol = rollenList
+                            .FirstOrDefault<Rol>(r => r.Beschrijving.ToLower() == rolBeschrijving.ToLower());
+
+        if (currentRol == null)
+        {
+            personen = persoonService
+                        .GetPersonen();
+        }
+        else
+        {
+            personen = persoonService
+                        .GetPersonen()
+                        .Where(p => p.Rollen.Contains(currentRol))
+                        .ToList<Persoon>();
+        }
+
+        return personen;
+    }
+
+    private List<Rol> GetRollen()
+    {
+        var rollen = rolService
+                        .GetRollen()
+                        .OrderBy(r => r.Beschrijving)
+                        .ToList<Rol>();
+        return rollen;
+    }
+
+}
