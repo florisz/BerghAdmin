@@ -1,0 +1,84 @@
+@startuml
+Class Persoon {
+}
+
+Class Rol {
+}
+
+enum RolType {
+  Ambassadeur 
+  Begeleider
+  CommissieLid
+  Fietser 
+  Golfer
+  MailingAbonnee
+  Reserve 
+  VriendVan
+  Vrijwilliger
+}
+
+Class Organisatie {
+}
+Persoon -right- Organisatie : > is verbonden aan
+
+Persoon -down- Rol
+Rol -left- RolType : is één van >
+
+Class VerzondenMail {
+}
+
+Class Donateur {
+}
+
+class Donatie {
+}
+note "Relatie met Kentaa\nlater modelleren" as Note3
+Donatie .. Note3
+
+Donateur <|-up- Persoon
+Donateur <|-up- Organisatie
+Donateur *-- "1" Donatie : doet >
+
+class Factuur {
+  IsBetaald()
+}
+
+class Betaling {
+  
+}
+Donatie -- Factuur : > kan resulteren in
+Factuur -- Betaling : < is gelinkt aan
+
+class Document {
+
+}
+class Template {
+
+}
+Document <|-right- Template
+Document .. Template : > kan gebaseerd zijn op 
+
+Factuur ..> Document : > bevat tekst
+VerzondenMail ..> Document : > bevat tekst
+
+class Evenement {
+
+}
+class Fietstocht {
+
+}
+note "Deelnemers hebben de\nrol rolFietser" as Note1
+Fietstocht .. Note1
+class Golfdag {
+
+}
+note "Deelnemers hebben de\nrol rolGolfer" as Note2
+Golfdag .. Note2
+
+Evenement <|-up- Fietstocht
+Evenement <|-up- Golfdag
+
+VerzondenMail "*" -down- "*" Persoon : > verstuurd aan
+Evenement "*" -down- "*" Persoon : < neemt deel aan
+
+@enduml
