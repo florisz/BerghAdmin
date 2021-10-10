@@ -5,6 +5,7 @@ dotnet ef migrations add <MigrationName>
 dotnet ef database update
 
 
+USE BIHZ2021;
 DROP TABLE __EFMigrationsHistory;
 DROP TABLE PersoonRol;
 DROP TABLE Personen;
@@ -15,8 +16,8 @@ DROP TABLE AspNetRoles;
 DROP TABLE AspNetUserClaims;
 DROP TABLE AspNetUserLogins;
 DROP TABLE AspNetUserTokens;
-DROP TABLE AspNetUserRoles;
 DROP TABLE AspNetUsers;
+DROP TABLE AspNetUserRoles;
 
 
 DELETE FROM PersoonRol;
