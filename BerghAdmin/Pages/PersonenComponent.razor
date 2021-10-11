@@ -1,12 +1,33 @@
 ﻿@using BerghAdmin.Data
 @using Microsoft.AspNetCore.WebUtilities
-@using Syncfusion.Blazor.Navigations
-@using Syncfusion.Blazor.Grids
+
 
 @inject BerghAdmin.Services.IPersoonService persoonService
 @inject BerghAdmin.Services.IRolService rolService
 @inject NavigationManager NavigationManager
 
+<table>
+    <tr>
+        <td width="20%">Overzicht van:&nbsp</td>
+        <td width="80%">
+            <SfMultiSelect 
+                    TValue="int[]" 
+                    TItem="Rol"
+                    @bind-Value="@selectedRollen"
+                    Placeholder="e.g Ambassadeur, Fietser, Golfer"  
+                    ShowSelectAll=true 
+                    SelectAllText="Select All" 
+                    UnSelectAllText="unSelect All" 
+                    Mode="VisualMode.CheckBox" 
+                    DataSource="@rollenList"
+                    Width="700px">
+                <MultiSelectFieldSettings Value="Id" Text="Beschrijving"></MultiSelectFieldSettings>
+                <MultiSelectEvents TItem="Rol" TValue="int[]" DataBound="@RolSelectDataBoundHandler"></MultiSelectEvents>
+                <MultiSelectEvents TItem="Rol" TValue="int[]" OnValueSelect="@RolSelectOnValueSelect"></MultiSelectEvents>
+            </SfMultiSelect>
+        </td>
+    </tr>
+</table>
 <SfGrid DataSource="@personenList" AllowPaging="true">
     <GridEditSettings 
         AllowAdding="true" 
@@ -16,10 +37,11 @@
         AllowEditOnDblClick="true">
     </GridEditSettings>
     <GridColumns>
-        <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" IsPrimaryKey="true" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.Voornaam) HeaderText="Voornaam" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.Achternaam) HeaderText="Achternaam" Width="150"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right"  Width="130"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" IsPrimaryKey="true" TextAlign="TextAlign.Left"  Width="20"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Voornaam) HeaderText="Voornaam" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Achternaam) HeaderText="Achternaam" Width="90"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right"  Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.GetRollen) HeaderText="Rollen" TextAlign="TextAlign.Left"  Width="200"></GridColumn>
     </GridColumns>
 </SfGrid>
 
@@ -29,13 +51,23 @@
     public string Context { get; set; }
 
     public List<Persoon> personenList = new List<Persoon>();
-    private List<Rol> rollenList = new List<Rol>();
-    
+    public List<Rol> rollenList = new List<Rol>();
+    public int[] selectedRollen { get; set; } = new int[] { (int) RolTypeEnum.Ambassadeur };
     protected override void OnInitialized()
     {
         base.OnInitialized();
         rollenList = GetRollen();
         personenList = GetPersonen(Context);
+    }
+
+    private void RolSelectDataBoundHandler(DataBoundEventArgs args)
+    {
+        // Here you can customize your code
+    }
+
+    private void RolSelectOnValueSelect(SelectEventArgs<Rol> args)
+    {
+        // Here you can customize your code
     }
 
     private List<Persoon> GetPersonen(string rolBeschrijving)
@@ -63,11 +95,11 @@
 
     private List<Rol> GetRollen()
     {
-        var rollen = rolService
+        var rollenList = rolService
                         .GetRollen()
                         .OrderBy(r => r.Beschrijving)
                         .ToList<Rol>();
-        return rollen;
+        return rollenList;
     }
 
 }

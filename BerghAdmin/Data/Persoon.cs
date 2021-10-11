@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-
 
 namespace BerghAdmin.Data
 {
@@ -28,5 +28,11 @@ namespace BerghAdmin.Data
         public string Mobiel  { get; set; }
         public string EmailAdres  { get; set; } 
         public HashSet<Rol> Rollen { get; set; }
+       
+        [NotMapped]
+        public string GetRollen
+        {
+            get { return string.Join(", ", Rollen.Select(r => r.Beschrijving)); }
+        }
     }
 }
