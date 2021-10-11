@@ -32,7 +32,7 @@ namespace BerghAdmin.Data
         [NotMapped]
         public string GetRollen
         {
-            get { return string.Join(", ", Rollen.Select(r => r.Beschrijving)); }
+            get { return Rollen == null? null : string.Join(", ", Rollen.Select(r => r.Beschrijving)); }
         }
     }
 }
