@@ -2,14 +2,25 @@
 @page "/ApplicatieManagement/templates"
 @page "/ApplicatieManagement/personen"
 
+@using BerghAdmin.Data
+
 @inject IJSRuntime jsRuntime
 
 <h3>Applicatie Management</h3>
 
-<PersonenComponent Context="personen" />
+<PersonenComponent RolContext="@rolContext" />
 
 @code
 {
+    public RolTypeEnum[] rolContext = new RolTypeEnum[] { RolTypeEnum.Ambassadeur, 
+                                                          RolTypeEnum.Begeleider, 
+                                                          RolTypeEnum.CommissieLid, 
+                                                          RolTypeEnum.Contactpersoon,
+                                                          RolTypeEnum.Fietser,
+                                                          RolTypeEnum.Golfer,
+                                                          RolTypeEnum.MailingAbonnee,
+                                                          RolTypeEnum.VriendVan,
+                                                          RolTypeEnum.Vrijwilliger };
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {

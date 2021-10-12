@@ -92,8 +92,7 @@ namespace BerghAdmin.Migrations
                 name: "Rollen",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MeervoudBeschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },

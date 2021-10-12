@@ -1,14 +1,17 @@
 ﻿@page "/Ambassadeurs"
 @page "/Ambassadeurs/personen"
 
+@using BerghAdmin.Data
+
 @inject IJSRuntime jsRuntime
 
 <h3>Ambassadeurs</h3>
 
-<PersonenComponent Context="ambassadeur" />
+<PersonenComponent RolContext="@rolContext" />
 
 @code
 {
+    public RolTypeEnum[] rolContext = new RolTypeEnum[] { RolTypeEnum.Ambassadeur };
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {

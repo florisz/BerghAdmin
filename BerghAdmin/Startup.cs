@@ -50,6 +50,10 @@ namespace BerghAdmin
             services.AddScoped<IMergeService, MergeService>();
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddSyncfusionBlazor();
+            services.AddSignalR(e => 
+            { 
+                e.MaximumReceiveMessageSize = 10240000; 
+            });
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BIHZ2021")));
 
             /* enable next lines for authenticated access only

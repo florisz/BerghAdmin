@@ -2,14 +2,17 @@
 @page "/Fietsers/Personen"
 @page "/Fietsers/Tochten"
 
+@using BerghAdmin.Data
+
 @inject IJSRuntime jsRuntime
 
 <h3>Fietsers</h3>
 
-<PersonenComponent Context="fietser" />
+<PersonenComponent RolContext="@rolContext" />
 
 @code
 {
+    public RolTypeEnum[] rolContext = new RolTypeEnum[] { RolTypeEnum.Fietser };
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {

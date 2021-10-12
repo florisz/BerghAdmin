@@ -8,11 +8,10 @@ namespace BerghAdmin.Data
         Begeleider = 2, 
         CommissieLid = 3, 
         Contactpersoon = 4, 
-        Golfer = 5, 
-        MailingAbonnee = 6, 
-        Fietser = 7, 
-        Reserve = 8, 
-        VriendVan = 9,
-        Vrijwilliger = 10
+        Fietser = 5, 
+        Golfer = 6, 
+        MailingAbonnee = 7, 
+        VriendVan = 8,
+        Vrijwilliger = 9
     }
 }

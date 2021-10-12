@@ -30,7 +30,7 @@ namespace BerghAdmin.Data
         public HashSet<Rol> Rollen { get; set; }
        
         [NotMapped]
-        public string GetRollen
+        public string GetRollenAsString
         {
             get { return Rollen == null? null : string.Join(", ", Rollen.Select(r => r.Beschrijving)); }
         }

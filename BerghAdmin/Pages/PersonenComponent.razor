@@ -1,6 +1,6 @@
 ﻿@using BerghAdmin.Data
-@using Microsoft.AspNetCore.WebUtilities
-
+@using System.Linq;
+@using Syncfusion.Blazor.Buttons
 
 @inject BerghAdmin.Services.IPersoonService persoonService
 @inject BerghAdmin.Services.IRolService rolService
@@ -11,19 +11,37 @@
         <td width="20%">Overzicht van:&nbsp</td>
         <td width="80%">
             <SfMultiSelect 
-                    TValue="int[]" 
+                    TValue="RolTypeEnum[]" 
                     TItem="Rol"
-                    @bind-Value="@selectedRollen"
+                    ClosePopupOnSelect="false" 
+                    @bind-Value="@RolContext" 
                     Placeholder="e.g Ambassadeur, Fietser, Golfer"  
-                    ShowSelectAll=true 
-                    SelectAllText="Select All" 
-                    UnSelectAllText="unSelect All" 
-                    Mode="VisualMode.CheckBox" 
+                    Mode="VisualMode.Box" 
                     DataSource="@rollenList"
-                    Width="700px">
+                    Width="700px"
+                    ShowDropDownIcon="true" 
+                    ModelType="typeof(Rol)" >
                 <MultiSelectFieldSettings Value="Id" Text="Beschrijving"></MultiSelectFieldSettings>
-                <MultiSelectEvents TItem="Rol" TValue="int[]" DataBound="@RolSelectDataBoundHandler"></MultiSelectEvents>
-                <MultiSelectEvents TItem="Rol" TValue="int[]" OnValueSelect="@RolSelectOnValueSelect"></MultiSelectEvents>
+                <MultiSelectTemplates TItem="Rol">
+                    <ItemTemplate>
+                        @{
+                            var contextValue = (context as Rol);
+                            bool isChecked = RolContext != null ? RolContext.Contains(contextValue.Id) : false;
+
+                            <span>
+                                <SfCheckBox TChecked="bool" @bind-checked="@isChecked"></SfCheckBox>
+                                @contextValue.Beschrijving
+                            </span>
+                        }
+                    </ItemTemplate>
+                </MultiSelectTemplates>
+                <MultiSelectEvents 
+                    TItem="Rol" 
+                    TValue="RolTypeEnum[]" 
+                    OnValueSelect="@OnValueSelectHandler"
+                    ValueRemoved="@ValueRemovedHandler"
+                    Cleared="@ClearedHandler">
+                </MultiSelectEvents>
             </SfMultiSelect>
         </td>
     </tr>
@@ -41,54 +59,65 @@
         <GridColumn Field=@nameof(Persoon.Voornaam) HeaderText="Voornaam" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
         <GridColumn Field=@nameof(Persoon.Achternaam) HeaderText="Achternaam" Width="90"></GridColumn>
         <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right"  Width="70"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.GetRollen) HeaderText="Rollen" TextAlign="TextAlign.Left"  Width="200"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.GetRollenAsString) HeaderText="Rollen" TextAlign="TextAlign.Left"  Width="200"></GridColumn>
     </GridColumns>
 </SfGrid>
 
 
 @code{
     [Parameter]
-    public string Context { get; set; }
+    public RolTypeEnum[] RolContext { get; set; }
 
+    public List<RolTypeEnum> selectedRollen;
     public List<Persoon> personenList = new List<Persoon>();
     public List<Rol> rollenList = new List<Rol>();
-    public int[] selectedRollen { get; set; } = new int[] { (int) RolTypeEnum.Ambassadeur };
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        selectedRollen = RolContext.ToList<RolTypeEnum>();
         rollenList = GetRollen();
-        personenList = GetPersonen(Context);
+        personenList = GetPersonen(selectedRollen);
     }
 
-    private void RolSelectDataBoundHandler(DataBoundEventArgs args)
+    private void ValueRemovedHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args) 
+    { 
+        selectedRollen.Remove(args.ItemData.Id);
+        RefreshList();
+    } 
+
+    private void OnValueSelectHandler(Syncfusion.Blazor.DropDowns.SelectEventArgs<Rol> args) 
+    { 
+        selectedRollen.Add(args.ItemData.Id);
+        RefreshList();
+    } 
+
+    private void ClearedHandler(MouseEventArgs args)
     {
-        // Here you can customize your code
+        selectedRollen = new List<RolTypeEnum>();
+        RefreshList();
     }
 
-    private void RolSelectOnValueSelect(SelectEventArgs<Rol> args)
+    private void RefreshList()
     {
-        // Here you can customize your code
+        // refresh with value from multiselect dropdown box
+        if (selectedRollen == null || selectedRollen.Count<RolTypeEnum>() == 0)
+            personenList = new List<Persoon>();
+        else 
+            personenList = GetPersonen(selectedRollen);
     }
 
-    private List<Persoon> GetPersonen(string rolBeschrijving)
+    private List<Persoon> GetPersonen(List<RolTypeEnum> rolTypes)
     {
         var personen = new List<Persoon>();
 
-        var currentRol = rollenList
-                            .FirstOrDefault<Rol>(r => r.Beschrijving.ToLower() == rolBeschrijving.ToLower());
+        var currentRollen = rollenList
+                            .Where(r => rolTypes.Contains(r.Id))
+                            .ToList<Rol>();
 
-        if (currentRol == null)
-        {
-            personen = persoonService
-                        .GetPersonen();
-        }
-        else
-        {
-            personen = persoonService
-                        .GetPersonen()
-                        .Where(p => p.Rollen.Contains(currentRol))
-                        .ToList<Persoon>();
-        }
+        personen = persoonService
+                    .GetPersonen()
+                    .Where(p => p.Rollen.FirstOrDefault(r => rolTypes.Contains(r.Id) ) != null)
+                    .ToList<Persoon>();
 
         return personen;
     }

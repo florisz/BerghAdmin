@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211003141927_Initial")]
+    [Migration("20211012095137_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,9 +102,7 @@ namespace BerghAdmin.Migrations
             modelBuilder.Entity("BerghAdmin.Data.Rol", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("Beschrijving")
                         .HasColumnType("nvarchar(max)");

@@ -39,15 +39,14 @@ namespace BerghAdmin.Services
             }
 
             // Insert all testdata
-            var rolAmbassadeur = new Rol { Id = (int) RolTypeEnum.Ambassadeur, Beschrijving = "Ambassadeur", MeervoudBeschrijving = "Ambassadeurs" };
-            var rolBegeleider = new Rol { Id = (int) RolTypeEnum.Begeleider, Beschrijving = "Begeleider", MeervoudBeschrijving = "Begeleiders" };
-            var rolCommissieLid = new Rol { Id = (int) RolTypeEnum.CommissieLid, Beschrijving = "Commissielid", MeervoudBeschrijving = "Commissieleden" };
-            var rolGolfer = new Rol { Id = (int) RolTypeEnum.Golfer, Beschrijving = "Golfer", MeervoudBeschrijving = "Golfers" };
-            var rolMailingAbonnee = new Rol { Id = (int) RolTypeEnum.MailingAbonnee, Beschrijving = "Mailing abonnee", MeervoudBeschrijving = "Mailing Abonnees" };
-            var rolFietser = new Rol { Id = (int) RolTypeEnum.Fietser, Beschrijving = "Fietser", MeervoudBeschrijving = "Fieters" };
-            var rolReserve = new Rol { Id = (int) RolTypeEnum.Reserve, Beschrijving = "Reserve", MeervoudBeschrijving = "Reserves" };
-            var rolVriendVan = new Rol { Id = (int) RolTypeEnum.VriendVan, Beschrijving = "Vriend van", MeervoudBeschrijving = "Vrienden van" };
-            var rolVrijwilliger = new Rol { Id = (int) RolTypeEnum.Vrijwilliger, Beschrijving = "Vrijwilliger", MeervoudBeschrijving = "Vrijwilligers" };
+            var rolAmbassadeur = new Rol { Id = RolTypeEnum.Ambassadeur, Beschrijving = "Ambassadeur", MeervoudBeschrijving = "Ambassadeurs" };
+            var rolBegeleider = new Rol { Id = RolTypeEnum.Begeleider, Beschrijving = "Begeleider", MeervoudBeschrijving = "Begeleiders" };
+            var rolCommissieLid = new Rol { Id = RolTypeEnum.CommissieLid, Beschrijving = "Commissielid", MeervoudBeschrijving = "Commissieleden" };
+            var rolGolfer = new Rol { Id = RolTypeEnum.Golfer, Beschrijving = "Golfer", MeervoudBeschrijving = "Golfers" };
+            var rolMailingAbonnee = new Rol { Id = RolTypeEnum.MailingAbonnee, Beschrijving = "Mailing abonnee", MeervoudBeschrijving = "Mailing Abonnees" };
+            var rolFietser = new Rol { Id = RolTypeEnum.Fietser, Beschrijving = "Fietser", MeervoudBeschrijving = "Fieters" };
+            var rolVriendVan = new Rol { Id = RolTypeEnum.VriendVan, Beschrijving = "Vriend van", MeervoudBeschrijving = "Vrienden van" };
+            var rolVrijwilliger = new Rol { Id = RolTypeEnum.Vrijwilliger, Beschrijving = "Vrijwilliger", MeervoudBeschrijving = "Vrijwilligers" };
 
             context.AddRange(
                 new Persoon { 
@@ -213,7 +212,7 @@ namespace BerghAdmin.Services
                     Plaats = "Loerbeek",
                     Postcode = "4321 AB",
                     Telefoon = "onbekend",
-                    Rollen = new HashSet<Rol>() {rolFietser, rolReserve, rolVrijwilliger}
+                    Rollen = new HashSet<Rol>() {rolFietser, rolVrijwilliger}
                 },
                 new Persoon { 
                     Voorletters = "L.",

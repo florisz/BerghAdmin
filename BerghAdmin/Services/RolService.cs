@@ -16,7 +16,7 @@ namespace BerghAdmin.Services
             _dbContext = context;
         }
 
-        public Rol GetRolById(int id)
+        public Rol GetRolById(RolTypeEnum id)
         {
             var rol = _dbContext.Rollen.SingleOrDefault(x => x.Id == id);
             

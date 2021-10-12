@@ -100,9 +100,7 @@ namespace BerghAdmin.Migrations
             modelBuilder.Entity("BerghAdmin.Data.Rol", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("Beschrijving")
                         .HasColumnType("nvarchar(max)");
