@@ -65,11 +65,17 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("EmailAdres")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EmailAdresExtra")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("GeboorteDatum")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Geslacht")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsVerwijderd")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Land")
                         .HasColumnType("nvarchar(max)");
@@ -84,6 +90,9 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Telefoon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tussenvoegsel")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Voorletters")

@@ -74,6 +74,7 @@ namespace BerghAdmin.Migrations
                     Voorletters = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Voornaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Achternaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Tussenvoegsel = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GeboorteDatum = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Adres = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Postcode = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -81,7 +82,9 @@ namespace BerghAdmin.Migrations
                     Land = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Telefoon = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Mobiel = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmailAdres = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    EmailAdres = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmailAdresExtra = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsVerwijderd = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -19,6 +19,7 @@ namespace BerghAdmin.Data
         public string Voorletters { get; set; }
         public string Voornaam { get; set; }
         public string Achternaam { get; set; }
+        public string Tussenvoegsel { get; set; }
         public DateTime? GeboorteDatum { get; set; }
         public string Adres { get; set; }
         public string Postcode  { get; set; }
@@ -27,6 +28,8 @@ namespace BerghAdmin.Data
         public string Telefoon  { get; set; }
         public string Mobiel  { get; set; }
         public string EmailAdres  { get; set; } 
+        public string EmailAdresExtra  { get; set; } 
+        public bool IsVerwijderd { get; set; }
         public HashSet<Rol> Rollen { get; set; }
        
         [NotMapped]
@@ -36,3 +39,4 @@ namespace BerghAdmin.Data
         }
     }
 }
+

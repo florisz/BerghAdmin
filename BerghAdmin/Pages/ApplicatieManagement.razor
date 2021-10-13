@@ -2,14 +2,28 @@
 @page "/ApplicatieManagement/templates"
 @page "/ApplicatieManagement/personen"
 
+@using Syncfusion.Blazor.Buttons
 @using BerghAdmin.Data
+@using System.IO
 
 @inject IJSRuntime jsRuntime
+@inject BerghAdmin.Services.IDataImporterService importerService 
 
 <h3>Applicatie Management</h3>
 
 <PersonenComponent RolContext="@rolContext" />
+<br/>
+<SfButton @onclick="OpenDialog" CssClass="e-flat">Open import dialog</SfButton>
 
+<SfDialog Width="550px" IsModal="true" @bind-Visible="IsVisible">
+    <DialogEvents OnOverlayClick="@OnOverlayclick"></DialogEvents>
+    <DialogTemplates>
+        <Content> Download database CSV file </Content>
+    </DialogTemplates>
+    <SfUploader AutoUpload="false">
+        <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+    </SfUploader>
+</SfDialog>
 @code
 {
     public RolTypeEnum[] rolContext = new RolTypeEnum[] { RolTypeEnum.Ambassadeur, 
@@ -25,6 +39,30 @@
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         await jsRuntime.InvokeAsync<object>("SetSideMenu", "applicatiemanagement");
+    }
+
+    private bool IsVisible { get; set; } = false;
+
+    private void OpenDialog()
+    {
+        this.IsVisible = true;
+    }
+
+    private void OnOverlayclick(MouseEventArgs arg)
+    {
+        this.IsVisible = false;
+    }
+    private void OnChange(UploadChangeEventArgs args)
+    {
+        foreach (var file in args.Files)
+        {
+            var memoryStream = new MemoryStream();
+            file.Stream.WriteTo(memoryStream);
+            memoryStream.Position = 0;
+            importerService.ImportData(memoryStream);
+            file.Stream.Close();
+            memoryStream.Close();
+        }
     }
 
 }

@@ -87,6 +87,7 @@ namespace BerghAdmin.Tests.DomainTests
                     .Where(p => p.Rollen.FirstOrDefault(r => rollen.Contains(r) ) != null) 
                     .ToList<Persoon>();
         }
+
     }
 }
 

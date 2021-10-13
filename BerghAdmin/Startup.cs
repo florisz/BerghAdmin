@@ -48,6 +48,7 @@ namespace BerghAdmin
             services.AddScoped<ISeedDataService, SeedDataService>();
             services.AddScoped<IDocumentService, DocumentService>();
             services.AddScoped<IMergeService, MergeService>();
+            services.AddScoped<IDataImporterService, DataImporterService>();
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddSyncfusionBlazor();
             services.AddSignalR(e => 

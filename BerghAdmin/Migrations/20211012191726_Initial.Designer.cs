@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211012095137_Initial")]
+    [Migration("20211012191726_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,11 +67,17 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("EmailAdres")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EmailAdresExtra")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("GeboorteDatum")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("Geslacht")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsVerwijderd")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Land")
                         .HasColumnType("nvarchar(max)");
@@ -86,6 +92,9 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Telefoon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tussenvoegsel")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Voorletters")
