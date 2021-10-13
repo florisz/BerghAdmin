@@ -46,7 +46,7 @@
         </td>
     </tr>
 </table>
-<SfGrid DataSource="@personenList" AllowPaging="true">
+<SfGrid DataSource="@personenList" AllowPaging="true" AllowResizing="true" ShowColumnMenu="true" >
     <GridEditSettings 
         AllowAdding="true" 
         AllowDeleting="true" 
@@ -55,10 +55,10 @@
         AllowEditOnDblClick="true">
     </GridEditSettings>
     <GridColumns>
-        <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" IsPrimaryKey="true" TextAlign="TextAlign.Left"  Width="20"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.Voornaam) HeaderText="Voornaam" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.Achternaam) HeaderText="Achternaam" Width="90"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Right"  Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left"  Width="110"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
         <GridColumn Field=@nameof(Persoon.GetRollenAsString) HeaderText="Rollen" TextAlign="TextAlign.Left"  Width="200"></GridColumn>
     </GridColumns>
 </SfGrid>
@@ -76,7 +76,7 @@
         base.OnInitialized();
         selectedRollen = RolContext.ToList<RolTypeEnum>();
         rollenList = GetRollen();
-        personenList = GetPersonen(selectedRollen);
+        RefreshList();
     }
 
     private void ValueRemovedHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args) 
@@ -103,7 +103,7 @@
         if (selectedRollen == null || selectedRollen.Count<RolTypeEnum>() == 0)
             personenList = new List<Persoon>();
         else 
-            personenList = GetPersonen(selectedRollen);
+            personenList = GetPersonen(selectedRollen).OrderBy(p => p.Achternaam).ToList<Persoon>();
     }
 
     private List<Persoon> GetPersonen(List<RolTypeEnum> rolTypes)

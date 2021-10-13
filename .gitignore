@@ -340,5 +340,5 @@ ASALocalRun/
 healthchecksdb
 
 # database downloads with personal data
-./DBDownload*.csv
-./DBDownload*.xlsx
+DBDownload*.csv
+DBDownload*.xlsx

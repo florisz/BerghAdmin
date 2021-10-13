@@ -37,6 +37,12 @@ namespace BerghAdmin.Data
         {
             get { return Rollen == null? null : string.Join(", ", Rollen.Select(r => r.Beschrijving)); }
         }
+
+        [NotMapped]
+        public string VolledigeNaam
+        {
+            get { return string.Join(" ", new string[] { Voornaam, string.IsNullOrEmpty(Voorletters)? "" : $"({Voorletters})", Tussenvoegsel, Achternaam } ); }
+        }
     }
 }
 
