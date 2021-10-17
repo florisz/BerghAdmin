@@ -22,11 +22,12 @@ using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
 
 using Syncfusion.Blazor;
-using BerghAdmin.Services.Import;
-using BerghAdmin.Services.Context;
+
 using System.Data.Common;
 using Microsoft.Data.SqlClient;
+using BerghAdmin.Services.Import;
 using BerghAdmin.Services.Configuration;
+using BerghAdmin.Services.Context;
 
 namespace BerghAdmin
 {
@@ -55,6 +56,7 @@ namespace BerghAdmin
             services.AddScoped<IMergeService, MergeService>();
             services.AddScoped<IDataImporterService, DataImporterService>();
             services.AddScoped<IContextService, ContextService>();
+            services.AddScoped<ISendMailService, SendMailService>();
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddSyncfusionBlazor();
             services.AddSignalR(e => 
