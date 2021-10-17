@@ -1,7 +1,7 @@
 using System;
 using CsvHelper.Configuration.Attributes;
 
-namespace BerghAdmin.Services
+namespace BerghAdmin.Services.Import
 {
     public class OldDataRecord
     {

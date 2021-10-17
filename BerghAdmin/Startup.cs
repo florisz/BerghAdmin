@@ -22,6 +22,11 @@ using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
 
 using Syncfusion.Blazor;
+using BerghAdmin.Services.Import;
+using BerghAdmin.Services.Context;
+using System.Data.Common;
+using Microsoft.Data.SqlClient;
+using BerghAdmin.Services.Configuration;
 
 namespace BerghAdmin
 {
@@ -49,13 +54,15 @@ namespace BerghAdmin
             services.AddScoped<IDocumentService, DocumentService>();
             services.AddScoped<IMergeService, MergeService>();
             services.AddScoped<IDataImporterService, DataImporterService>();
+            services.AddScoped<IContextService, ContextService>();
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddSyncfusionBlazor();
             services.AddSignalR(e => 
             { 
                 e.MaximumReceiveMessageSize = 10240000; 
             });
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BIHZ2021")));
+            services.AddDbContext<ApplicationDbContext>(
+                options => options.UseSqlServer(GetDatabaseConnectionString(), po => po.EnableRetryOnFailure()));
 
             /* enable next lines for authenticated access only
             services.AddAuthorization(options =>
@@ -96,6 +103,16 @@ namespace BerghAdmin
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+        }
+
+        private string GetDatabaseConnectionString()
+        {
+            var databaseConfiguration = Configuration.GetSection("DatabaseConfiguration").Get<DatabaseConfiguration>();
+            if (databaseConfiguration == null)
+            {
+                throw new ApplicationException("Secrets for Database access (connection string & password) can not be found in configuration");
+            }
+            return databaseConfiguration.ConnectionString;
         }
     }
 }

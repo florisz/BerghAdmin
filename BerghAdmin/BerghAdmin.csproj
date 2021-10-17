@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="27.1.1" />
+    <PackageReference Include="MailJet.API" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.3" />

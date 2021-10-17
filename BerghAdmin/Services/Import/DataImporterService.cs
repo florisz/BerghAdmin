@@ -6,7 +6,7 @@ using System.Linq;
 using BerghAdmin.Data;
 using CsvHelper;
 
-namespace BerghAdmin.Services
+namespace BerghAdmin.Services.Import
 {
     public class DataImporterService : IDataImporterService
     {

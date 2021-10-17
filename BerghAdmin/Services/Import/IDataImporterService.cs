@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace BerghAdmin.Services
+namespace BerghAdmin.Services.Import
 {
     public interface IDataImporterService
     {

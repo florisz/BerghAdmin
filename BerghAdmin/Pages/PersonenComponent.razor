@@ -46,7 +46,19 @@
         </td>
     </tr>
 </table>
-<SfGrid DataSource="@personenList" AllowPaging="true" AllowResizing="true" ShowColumnMenu="true" >
+
+<br/>
+
+<span> The selected row index is : @SelectedValue </span>
+
+<br/>
+
+<SfGrid @ref="@PersonenGrid" 
+        DataSource="@personenList" 
+        AllowPaging="true" 
+        AllowResizing="true" 
+        AllowSelection="true" 
+        ShowColumnMenu="true" >
     <GridEditSettings 
         AllowAdding="true" 
         AllowDeleting="true" 
@@ -54,7 +66,10 @@
         Mode="EditMode.Dialog" 
         AllowEditOnDblClick="true">
     </GridEditSettings>
+    <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple" PersistSelection="true"></GridSelectionSettings>
+    <GridEvents RowSelected="GetSelectedRecords" TValue="Persoon"></GridEvents>
     <GridColumns>
+        <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
         <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left"  Width="110"></GridColumn>
         <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
         <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
@@ -71,6 +86,11 @@
     public List<RolTypeEnum> selectedRollen;
     public List<Persoon> personenList = new List<Persoon>();
     public List<Rol> rollenList = new List<Rol>();
+    SfGrid<Persoon> PersonenGrid;
+    public List<double> SelectedRowIndexes { get; set; }
+    public double[] TotalValue { get; set; }
+    public string SelectedValue;        
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -97,7 +117,18 @@
         RefreshList();
     }
 
-    private void RefreshList()
+    public async Task GetSelectedRecords(RowSelectEventArgs<Persoon> args)
+    {
+        SelectedRowIndexes = await this.PersonenGrid.GetSelectedRowIndexes();
+        TotalValue = SelectedRowIndexes.ToArray();
+        SelectedValue = "";
+        foreach (var data in TotalValue)
+        {
+            SelectedValue = SelectedValue + " " + data;
+        }
+        StateHasChanged();
+    }
+        private void RefreshList()
     {
         // refresh with value from multiselect dropdown box
         if (selectedRollen == null || selectedRollen.Count<RolTypeEnum>() == 0)

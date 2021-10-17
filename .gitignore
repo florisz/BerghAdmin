@@ -342,3 +342,7 @@ healthchecksdb
 # database downloads with personal data
 DBDownload*.csv
 DBDownload*.xlsx
+
+# Secrets stuff
+SetSecrets.sh
+secrets.json
