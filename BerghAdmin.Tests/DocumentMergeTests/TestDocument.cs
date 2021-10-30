@@ -1,4 +1,4 @@
-namespace bihz_kantoorportaal.tests
+namespace BerghAdmin.DocumentMergeTests
 {
     public class TestDocument
     {

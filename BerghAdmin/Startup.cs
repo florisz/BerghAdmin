@@ -53,7 +53,7 @@ namespace BerghAdmin
             services.AddScoped<IRolService, RolService>();
             services.AddScoped<ISeedDataService, SeedDataService>();
             services.AddScoped<IDocumentService, DocumentService>();
-            services.AddScoped<IMergeService, MergeService>();
+            services.AddScoped<IDocumentMergeService, DocumentMergeService>();
             services.AddScoped<IDataImporterService, DataImporterService>();
             services.AddScoped<IContextService, ContextService>();
             services.AddScoped<ISendMailService, SendMailService>();

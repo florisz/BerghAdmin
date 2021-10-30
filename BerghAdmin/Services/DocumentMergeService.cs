@@ -9,12 +9,12 @@ using Syncfusion.DocIO.DLS;
 
 namespace BerghAdmin.Services
 {
-    public class MergeService : IMergeService
+    public class DocumentMergeService : IDocumentMergeService
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IDocumentService _documentService;
 
-        public MergeService(ApplicationDbContext context, IDocumentService documentService)
+        public DocumentMergeService(ApplicationDbContext context, IDocumentService documentService)
         {
             _dbContext = context;
             _documentService = documentService;

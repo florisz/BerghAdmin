@@ -6,9 +6,9 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
-namespace bihz_kantoorportaal.tests
+namespace BerghAdmin.DocumentMergeTests
 {
-    public static class MergeTemplateHelperTests
+    public static class DocumentMergeHelperTests
     {
         public static SqliteConnection GetSqliteInMemoryConnection()
         {

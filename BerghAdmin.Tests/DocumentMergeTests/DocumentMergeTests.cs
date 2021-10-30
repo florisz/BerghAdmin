@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using BerghAdmin.Data;
 using System.IO;
 
-namespace bihz_kantoorportaal.tests
+namespace BerghAdmin.DocumentMergeTests
 {
     [TestFixture]
-    public class MergeTemplateTests
+    public class DocumentMergeTests
     {
         private ServiceProvider _serviceProvider;
         private const string DocumentPath = "C:/git/bihz/BerghAdmin/BerghAdmin.Tests/MergeTemplateTests/TestDocumenten"; 
@@ -38,9 +38,9 @@ namespace bihz_kantoorportaal.tests
         [SetUp]
         public void SetupMergeTemplateTests()
         {
-            var connection = MergeTemplateHelperTests.GetSqliteInMemoryConnection();
-            var options = MergeTemplateHelperTests.GetApplicationDbContextOptions(connection);
-            MergeTemplateHelperTests.CreateTestDataBaseInMemory(options, TestDocuments);
+            var connection = DocumentMergeHelperTests.GetSqliteInMemoryConnection();
+            var options = DocumentMergeHelperTests.GetApplicationDbContextOptions(connection);
+            DocumentMergeHelperTests.CreateTestDataBaseInMemory(options, TestDocuments);
 
             var services = new ServiceCollection();
             services
@@ -51,7 +51,7 @@ namespace bihz_kantoorportaal.tests
                 .AddEntityFrameworkSqlite()
                 .AddScoped<IDocumentService, DocumentService>()
                 .AddScoped<IPdfConverter, PdfConverter>()
-                .AddScoped<IMergeService, MergeService>();
+                .AddScoped<IDocumentMergeService, DocumentMergeService>();
             
             // Build the service provider
             _serviceProvider = services.BuildServiceProvider();
@@ -70,7 +70,7 @@ namespace bihz_kantoorportaal.tests
         [Test]
         public void TestHasDocumentMergeFields()
         {
-            var service = _serviceProvider.GetRequiredService<IMergeService>();
+            var service = _serviceProvider.GetRequiredService<IDocumentMergeService>();
             var template = service.GetMergeTemplateById(2);
             Assert.NotNull(template);
             Assert.AreEqual(template.Name, "TestTemplate2");
@@ -88,7 +88,7 @@ namespace bihz_kantoorportaal.tests
         [Test]
         public void TestMergeTemplate3Document()
         {
-            var mergeService = _serviceProvider.GetRequiredService<IMergeService>();
+            var mergeService = _serviceProvider.GetRequiredService<IDocumentMergeService>();
             var template = mergeService.GetMergeTemplateById(3);
             Assert.NotNull(template);
             Assert.AreEqual(template.Name, "TestTemplate3");
@@ -103,7 +103,7 @@ namespace bihz_kantoorportaal.tests
         [Test]
         public void TestMergeTemplate4Document()
         {
-            var mergeService = _serviceProvider.GetRequiredService<IMergeService>();
+            var mergeService = _serviceProvider.GetRequiredService<IDocumentMergeService>();
             var template = mergeService.GetMergeTemplateById(2);
 
             Assert.NotNull(template);
@@ -123,7 +123,7 @@ namespace bihz_kantoorportaal.tests
             MergeDocument(mergeService, template, mergeDictionary);
         }
 
-        private void MergeDocument(IMergeService mergeService, Document template, Dictionary<string, string> mergeDictionary)
+        private void MergeDocument(IDocumentMergeService mergeService, Document template, Dictionary<string, string> mergeDictionary)
         {
             var mergedStream = mergeService.Merge(template, mergeDictionary);
             Assert.IsTrue(mergedStream.Length > 0);

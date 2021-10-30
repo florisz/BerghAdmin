@@ -4,7 +4,7 @@ using BerghAdmin.Data;
 
 namespace BerghAdmin.Services
 {
-    public interface IMergeService
+    public interface IDocumentMergeService
     {
         List<Document> GetMergeTemplates();
         Document GetMergeTemplateById(int id);
