@@ -34,6 +34,7 @@
     <PackageReference Include="Syncfusion.Blazor.Inputs" Version="19.2.0.44" />
     <PackageReference Include="Syncfusion.Blazor.Navigations" Version="19.2.0.44" />
     <PackageReference Include="Syncfusion.Blazor.Popups" Version="19.2.0.44" />
+    <PackageReference Include="Syncfusion.Blazor.RichTextEditor" Version="19.2.0.44" />
     <PackageReference Include="Syncfusion.Blazor.Themes" Version="19.2.0.44" />
     <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="19.2.0.44" />
     <PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="19.2.0.44" />

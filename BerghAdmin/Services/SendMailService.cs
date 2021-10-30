@@ -20,28 +20,8 @@ namespace BerghAdmin.Services
             _mailJetClient = new MailjetClient(apiKey, apiSecret);
         }
 
-        public async Task SendMail()
+        public async Task SendMail(string mailBody)
         {
-            var requestJson = "{\"Messages\":[" +
-    				"{" +
-						"\"From\": {" +
-								"\"Email\": \"fzwarteveen@gmail.com\"," +
-								"\"Name\": \"Floris\"" +
-						"}," +
-						"\"To\": [" +
-								"{" +
-										"\"Email\": \"fzwarteveen@gmail.com\"," +
-										"\"Name\": \"Floris\"" +
-								"}" +
-						"]," +
-						"\"Subject\": \"Greetings from Mailjet.\"," +
-						"\"TextPart\": \"My first Mailjet email\"," +
-						"\"HTMLPart\": \"<h3>Hi there, welcome to <a href='https://www.mailjet.com/'>Mailjet</a>!</h3><br />May the delivery force be with you!\"" +
-	    			"}" +
-		        "]" +
-	        "}";
-            // var request = new MailjetRequest { Resource = SendV31.Resource }
-            //     .Property(Send.Messages, JToken.Parse(requestJson)); 
             var request = new MailjetRequest { Resource = SendV31.Resource }
                 .Property(Send.Messages, new JArray 
                 {
@@ -50,25 +30,33 @@ namespace BerghAdmin.Services
                         {
                             "From", new JObject {
                                 {"Email", "fzwarteveen@gmail.com"}, 
-                                {"Name", "Floris"}
+                                {"Name", "Floris Zwarteveen"}
                             }
                         }, 
                         {
                             "To", new JArray {
                                     new JObject {
+                                        {"Email", "lpreumer@me.com" }, 
+                                        {"Name", "Lars Peter Reumer" }
+                                    },
+                                    new JObject {
+                                        {"Email", "secretaris@berghinhetzadel.nl" }, 
+                                        {"Name", "Secretariaat" }
+                                    },
+                                    new JObject {
                                         {"Email", "fzwarteveen@gmail.com" }, 
-                                        {"Name", "Floris" }
+                                        {"Name", "Floris Zwarteveen" }
                                     },
                             }
                         }, 
                         {
-                            "Subject", "Greetings from Mailjet."
+                            "Subject", "Test mail nieuwe admin site"
                         }, 
                         {
-                            "TextPart", "My first Mailjet email"
+                            "TextPart", "no text"
                         }, 
                         {
-                            "HTMLPart", "<h3>Hi there, welcome to <a href='https://www.mailjet.com/'>Mailjet</a>!</h3><br />May the delivery force be with you!"
+                            "HTMLPart", mailBody
                         }
                     }
                 });

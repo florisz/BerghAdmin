@@ -47,6 +47,7 @@ namespace BerghAdmin.Tests.DomainTests
             Assert.AreEqual("Aap, Noot, Mies", persoon.GetRollenAsString);
         }
 
+        // Actually not a real test but a search for the correct lambda
         // Test can be deleted somewhere in the future
         [Test]
         public void TestNotARealTestButALambdaTest()

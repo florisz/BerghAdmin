@@ -2,14 +2,22 @@
 
 @using Syncfusion.Blazor.Popups
 @using BerghAdmin.Services
+@using Syncfusion.Blazor.RichTextEditor
 
 @inject ISendMailService SendMailService
 
 <div id="DialogTarget">
-    <SfDialog Target="#DialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsOpen">
+    <SfDialog Target="#DialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+        <DialogEvents OnOverlayClick="@OnOverlayclick" Opened="@DialogOpen">
+        </DialogEvents>
         <DialogTemplates>
             <Header> Send email(s) </Header>
             <Content>
+                @* <div class="control-wrapper" width="100%"> *@
+                    <SfRichTextEditor @ref="rteObject" Value="@rteValue" ShowCharCount="true" AutoSaveOnIdle="true">
+                        <RichTextEditorToolbarSettings Items="@Tools" />
+                    </SfRichTextEditor>
+                @* </div> *@
             </Content>
         </DialogTemplates>
         <DialogButtons>
@@ -17,7 +25,79 @@
             <DialogButton Content="Close" IsPrimary="false" OnClick="@DialogClose" />
         </DialogButtons>
     </SfDialog>
+
 </div>
+
+@code {
+    SfDialog DialogObj;
+
+    [Parameter]
+    public bool IsVisible { get; set; } = true;
+
+    private List<ToolbarItemModel> Tools = new List<ToolbarItemModel>()
+    {
+        new ToolbarItemModel() { Command = ToolbarCommand.Bold },
+        new ToolbarItemModel() { Command = ToolbarCommand.Italic },
+        new ToolbarItemModel() { Command = ToolbarCommand.Underline },
+        new ToolbarItemModel() { Command = ToolbarCommand.StrikeThrough },
+        new ToolbarItemModel() { Command = ToolbarCommand.FontName },
+        new ToolbarItemModel() { Command = ToolbarCommand.FontSize },
+        new ToolbarItemModel() { Command = ToolbarCommand.FontColor },
+        new ToolbarItemModel() { Command = ToolbarCommand.BackgroundColor },
+        new ToolbarItemModel() { Command = ToolbarCommand.LowerCase },
+        new ToolbarItemModel() { Command = ToolbarCommand.UpperCase },
+        new ToolbarItemModel() { Command = ToolbarCommand.SuperScript },
+        new ToolbarItemModel() { Command = ToolbarCommand.SubScript },
+        new ToolbarItemModel() { Command = ToolbarCommand.Separator },
+        new ToolbarItemModel() { Command = ToolbarCommand.Formats },
+        new ToolbarItemModel() { Command = ToolbarCommand.Alignments },
+        new ToolbarItemModel() { Command = ToolbarCommand.NumberFormatList },
+        new ToolbarItemModel() { Command = ToolbarCommand.BulletFormatList },
+        new ToolbarItemModel() { Command = ToolbarCommand.Outdent },
+        new ToolbarItemModel() { Command = ToolbarCommand.Indent },
+        new ToolbarItemModel() { Command = ToolbarCommand.Separator },
+        new ToolbarItemModel() { Command = ToolbarCommand.CreateLink },
+        new ToolbarItemModel() { Command = ToolbarCommand.Image },
+        new ToolbarItemModel() { Command = ToolbarCommand.CreateTable },
+        new ToolbarItemModel() { Command = ToolbarCommand.Separator },
+        new ToolbarItemModel() { Command = ToolbarCommand.ClearFormat },
+        new ToolbarItemModel() { Command = ToolbarCommand.Print },
+        new ToolbarItemModel() { Command = ToolbarCommand.SourceCode },
+        new ToolbarItemModel() { Command = ToolbarCommand.FullScreen },
+        new ToolbarItemModel() { Command = ToolbarCommand.Separator },
+        new ToolbarItemModel() { Command = ToolbarCommand.Undo },
+        new ToolbarItemModel() { Command = ToolbarCommand.Redo }
+    };
+    SfRichTextEditor rteObject;
+    private string rteValue= @"<p>Type email text here</p>";
+    private string Content;
+
+    public void DialogOpen()
+    {
+        IsVisible = true;
+        this.rteObject.RefreshUIAsync();
+        this.StateHasChanged();
+    }
+
+    private void OnOverlayclick(MouseEventArgs arg)
+    {
+        this.IsVisible = false;
+    }
+
+    private async Task SendEMail()
+    {
+        this.Content = await this.rteObject.GetXhtmlAsync();
+        await SendMailService.SendMail(this.Content);
+        IsVisible = false;
+        this.StateHasChanged();
+    }
+
+    private void DialogClose()
+    {
+        IsVisible = false;
+        this.StateHasChanged();
+    }
+} 
 
 <style>
     a, a:hover, .highcontrast #dialog a, .highcontrast #dialog a:hover {
@@ -39,30 +119,62 @@
     #target {
         height: 500px;
     }
+    .e-code-mirror::before {
+        content: '\e345';
+    }
+    .e-html-preview::before {
+        content: '\e350';
+    }
+    .CodeMirror-linenumber,
+    .CodeMirror-gutters {
+        display: none;
+    }
+    .sb-header {
+        z-index: 100;
+    }
+    .fabric-dark .cm-s-default .cm-tag,
+    .bootstrap5-dark .cm-s-default .cm-tag,
+    .material-dark .cm-s-default .cm-tag,
+    .tailwind-dark .cm-s-default .cm-tag,
+    .highcontrast .cm-s-default .cm-tag {
+        color: #00ff00;
+    }
+    .fabric-dark .cm-s-default .cm-string,
+    .bootstrap5-dark .cm-s-default .cm-string,
+    .material-dark .cm-s-default .cm-string,
+    .tailwind-dark .cm-s-default .cm-string {
+        color: blue;
+    }
+    .highcontrast .cm-s-default .cm-string {
+        color: #ffd939;
+    }
+    .fabric-dark .cm-s-default .cm-attribute,
+    .bootstrap5-dark .cm-s-default .cm-attribute,
+    .material-dark .cm-s-default .cm-attribute,
+    .tailwind-dark .cm-s-default .cm-attribute,
+    .highcontrast .cm-s-default .cm-attribute {
+        color: #f00;
+    }
+    .fabric-dark .CodeMirror,
+    .bootstrap5-dark .CodeMirror,
+    .material-dark .CodeMirror,
+    .tailwind-dark .CodeMirror {
+        background:  #303030;
+    }
+    .highcontrast .CodeMirror {
+        background: black;
+    }
+    .e-richtexteditor .e-rte-content .e-content pre {
+        padding: 10px;
+        background: #F4F5F7;
+    }
+    .fabric-dark .e-richtexteditor .e-rte-content .e-content pre,
+    .bootstrap5-dark .e-richtexteditor .e-rte-content .e-content pre,
+    .material-dark .e-richtexteditor .e-rte-content .e-content pre,
+    .tailwind-dark .e-richtexteditor .e-rte-content .e-content pre,
+    .highcontrast .e-richtexteditor .e-rte-content .e-content pre {
+        padding: 10px;
+        background: #303030;
+    }
 </style>
 
-@code {
-    SfDialog DialogObj;
-
-    [Parameter]
-    public bool IsOpen { get; set; } = false;
-
-    public void DialogOpen()
-    {
-        IsOpen = true;
-        this.StateHasChanged();
-    }
-
-    private void SendEMail()
-    {
-        SendMailService.SendMail();
-        IsOpen = false;
-        this.StateHasChanged();
-    }
-
-    private void DialogClose()
-    {
-        IsOpen = false;
-        this.StateHasChanged();
-    }
-} 

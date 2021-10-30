@@ -5,6 +5,6 @@ namespace BerghAdmin.Services
 {
     public interface ISendMailService
     {
-        Task SendMail();
+        Task SendMail(string mailBody);
     }
 }
