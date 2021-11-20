@@ -16,7 +16,7 @@
                         <CardImage Image="images/tile-ambassadeurs.jpg"/>
                         <CardFooter>
                             <CardFooterContent>
-                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => Navigate("https://localhost:5001/Ambassadeurs"))">Beheer Ambassadeurs</SfButton>
+                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => NavigateTo("Ambassadeurs"))">Beheer Ambassadeurs</SfButton>
                             </CardFooterContent>
                         </CardFooter>
                     </SfCard>
@@ -28,7 +28,7 @@
                         <CardImage Image="images/tile-fietsers.jpg" />
                         <CardFooter>
                             <CardFooterContent>
-                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => Navigate("https://localhost:5001/Fietsers"))">Beheer Fietsers</SfButton>
+                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => NavigateTo("Fietsers"))">Beheer Fietsers</SfButton>
                             </CardFooterContent>
                         </CardFooter>
                     </SfCard>
@@ -40,7 +40,7 @@
                         <CardImage Image="images/tile-golfers.jpg"/>
                         <CardFooter>
                             <CardFooterContent>
-                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => Navigate("https://localhost:5001/Golfers"))">Beheer Golfers</SfButton>
+                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => NavigateTo("Golfers"))">Beheer Golfers</SfButton>
                             </CardFooterContent>
                         </CardFooter>
                     </SfCard>
@@ -54,7 +54,7 @@
                         <CardImage Image="images/tile-financien.jpg"/>
                         <CardFooter>
                             <CardFooterContent>
-                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => Navigate("https://localhost:5001/Financien"))">Beheer Financiën</SfButton>
+                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => NavigateTo("Financien"))">Beheer Financiën</SfButton>
                             </CardFooterContent>
                         </CardFooter>
                     </SfCard>
@@ -66,7 +66,7 @@
                         <CardImage Image="images/tile-secretariaat.jpg" />
                         <CardFooter>
                             <CardFooterContent>
-                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => Navigate("https://localhost:5001/Secretariaat"))">Secretariaat</SfButton>
+                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => NavigateTo("Secretariaat"))">Secretariaat</SfButton>
                             </CardFooterContent>
                         </CardFooter>
                     </SfCard>
@@ -78,7 +78,7 @@
                         <CardImage Image="images/tile-applmgmt.jpg" />
                         <CardFooter>
                             <CardFooterContent>
-                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => Navigate("https://localhost:5001/ApplicatieManagement"))">Applicatie beheer</SfButton>
+                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => NavigateTo("ApplicatieManagement"))">Applicatie beheer</SfButton>
                             </CardFooterContent>
                         </CardFooter>
                     </SfCard>
@@ -100,9 +100,11 @@
         await jsRuntime.InvokeAsync<object>("SetSideMenu", "shared");
     }
 
-    private void Navigate(string url) 
+    private void NavigateTo(string relativeUrl) 
     {
-        NavigationManager.NavigateTo(url);
+        var uri = new Uri(new Uri(NavigationManager.BaseUri), relativeUrl); 
+
+        NavigationManager.NavigateTo(uri.ToString());
     }
 
 }
