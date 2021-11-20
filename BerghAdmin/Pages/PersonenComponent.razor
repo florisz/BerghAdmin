@@ -113,11 +113,6 @@
         sendMailDialog.DialogOpen();
     }
 
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        await jsRuntime.InvokeAsync<object>("SetSideMenu", "secretariaat");
-    }
-
     public MenuItem SelectedItem;
     // Triggers when the item is selected
     private void selectedHandler(MenuEventArgs<MenuItem> args) {

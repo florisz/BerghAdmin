@@ -1,5 +1,4 @@
 @page "/ApplicatieManagement"
-@page "/ApplicatieManagement/templates"
 @page "/ApplicatieManagement/personen"
 
 @using Syncfusion.Blazor.Buttons
@@ -13,6 +12,8 @@
 
 <PersonenComponent RolContext="@rolContext" />
 <br/>
+
+
 <SfButton @onclick="OpenDialog" CssClass="e-flat">Open import dialog</SfButton>
 
 <SfDialog Width="550px" IsModal="true" @bind-Visible="IsVisible">
@@ -24,6 +25,7 @@
         <UploaderEvents ValueChange="OnChange"></UploaderEvents>
     </SfUploader>
 </SfDialog>
+
 @code
 {
     public RolTypeEnum[] rolContext = new RolTypeEnum[] { RolTypeEnum.Ambassadeur, 
@@ -64,5 +66,4 @@
             memoryStream.Close();
         }
     }
-
 }
