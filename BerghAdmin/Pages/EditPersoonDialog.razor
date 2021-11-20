@@ -1,0 +1,56 @@
+﻿@page "/edit-person-dialog"
+
+@using Syncfusion.Blazor.Popups
+
+@using BerghAdmin.Services
+
+@inject IPersoonService _persoonService
+
+<div id="EditPersoonDialogTarget">
+
+    <SfDialog Target="#EditPersoonDialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+        <DialogEvents OnOverlayClick="@OnOverlayclick" Opened="@DialogOpen">
+        </DialogEvents>
+        <DialogTemplates>
+            <Header> Wijzig persoon gegevens </Header>
+            <Content>
+            </Content>
+        </DialogTemplates>
+        <DialogButtons>
+            <DialogButton Content="Save" IsPrimary="true" OnClick="@SavePersoon" />
+            <DialogButton Content="Close" IsPrimary="false" OnClick="@DialogClose" />
+        </DialogButtons>
+    </SfDialog>
+
+</div>
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+
+    private string Content;
+
+    public void DialogOpen()
+    {
+        IsVisible = true;
+        this.StateHasChanged();
+    }
+
+    private void OnOverlayclick(MouseEventArgs arg)
+    {
+        this.IsVisible = false;
+    }
+
+    private async Task SavePersoon()
+    {
+        IsVisible = false;
+        this.StateHasChanged();
+    }
+
+    private void DialogClose()
+    {
+        IsVisible = false;
+        this.StateHasChanged();
+    }
+} 
+

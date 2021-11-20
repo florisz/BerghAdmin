@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BerghAdmin", "BerghAdmin\BerghAdmin.csproj", "{D8AFEB8D-2900-438D-8C8A-7B9142C9D882}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BerghAdmin", "BerghAdmin\BerghAdmin.csproj", "{D8AFEB8D-2900-438D-8C8A-7B9142C9D882}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BerghAdmin.Tests", "BerghAdmin.Tests\BerghAdmin.Tests.csproj", "{2010F4B8-175A-4632-8C81-6B1EF9C89BE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BerghAdmin.Tests", "BerghAdmin.Tests\BerghAdmin.Tests.csproj", "{2010F4B8-175A-4632-8C81-6B1EF9C89BE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D8AFEB8D-2900-438D-8C8A-7B9142C9D882}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,5 +41,11 @@ Global
 		{2010F4B8-175A-4632-8C81-6B1EF9C89BE7}.Release|x64.Build.0 = Release|Any CPU
 		{2010F4B8-175A-4632-8C81-6B1EF9C89BE7}.Release|x86.ActiveCfg = Release|Any CPU
 		{2010F4B8-175A-4632-8C81-6B1EF9C89BE7}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E131B27A-F86B-4970-850B-CDA7D9AD8652}
 	EndGlobalSection
 EndGlobal

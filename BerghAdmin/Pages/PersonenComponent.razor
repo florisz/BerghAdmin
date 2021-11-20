@@ -59,7 +59,9 @@
 
     <br/>
 
-    The grid showing all persons
+    @*
+        The grid showing all persons
+    *@
     <SfGrid @ref="@PersonenGrid" 
             DataSource="@personenList" 
             AllowPaging="true" 
@@ -87,10 +89,11 @@
 </div>
 
 <SendMailDialog @ref="sendMailDialog"></SendMailDialog>
+<EditPersoonDialog @ref="editPersoonDialog"></EditPersoonDialog>
 
 <SfContextMenu Target="#contextmenutarget" TValue="MenuItem">
     <MenuItems>
-        <MenuItem Text="Wijzig persoon" ></MenuItem>
+        <MenuItem Text="Wijzig Persoon" ></MenuItem>
         <MenuItem Text="Add Persoon" ></MenuItem>
         <MenuItem Text="Verwijder Persoon" ></MenuItem>
         <MenuItem Separator="true"></MenuItem>
@@ -107,17 +110,27 @@
 
     // Everything to handle the email dialog
     SendMailDialog sendMailDialog;
-
     private void ShowSendMailDialog()
     {
         sendMailDialog.DialogOpen();
     }
 
-    public MenuItem SelectedItem;
+    // Everything to handle the edit persoon dialog
+    EditPersoonDialog editPersoonDialog;
+    private void ShowEditPersoonDialog()
+    {
+        editPersoonDialog.DialogOpen();
+    }
+
+    // Everything to handle the context menu
     // Triggers when the item is selected
+    public MenuItem SelectedItem;
     private void selectedHandler(MenuEventArgs<MenuItem> args) {
         SelectedItem = args.Item;
         switch(SelectedItem.Text){
+            case "Wijzig Persoon":
+                ShowEditPersoonDialog();
+                break;
             case "Stuur email":
                 ShowSendMailDialog();
                 break;
@@ -125,7 +138,7 @@
 
     }
 
-    // everything to handle persons
+    // Everything to handle persons
     public List<RolTypeEnum> selectedRollen;
     public List<Persoon> personenList = new List<Persoon>();
     public List<Rol> rollenList = new List<Rol>();

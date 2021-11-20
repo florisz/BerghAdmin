@@ -1,4 +1,4 @@
-@page "/reusable-dialog"
+@page "/send-email-dialog"
 
 @using Syncfusion.Blazor.Popups
 @using BerghAdmin.Services
@@ -6,8 +6,8 @@
 
 @inject ISendMailService SendMailService
 
-<div id="DialogTarget">
-    <SfDialog Target="#DialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+<div id="SendEmailDialogTarget">
+    <SfDialog Target="#SendEmailDialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
         <DialogEvents OnOverlayClick="@OnOverlayclick" Opened="@DialogOpen">
         </DialogEvents>
         <DialogTemplates>
@@ -27,8 +27,6 @@
 </div>
 
 @code {
-    SfDialog DialogObj;
-
     [Parameter]
     public bool IsVisible { get; set; } = false;
 
