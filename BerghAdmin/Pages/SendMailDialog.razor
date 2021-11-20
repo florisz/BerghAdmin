@@ -13,11 +13,9 @@
         <DialogTemplates>
             <Header> Send email(s) </Header>
             <Content>
-                @* <div class="control-wrapper" width="100%"> *@
-                    <SfRichTextEditor @ref="rteObject" Value="@rteValue" ShowCharCount="true" AutoSaveOnIdle="true">
-                        <RichTextEditorToolbarSettings Items="@Tools" />
-                    </SfRichTextEditor>
-                @* </div> *@
+                <SfRichTextEditor @ref="rteObject" Value="@rteValue" ShowCharCount="true" AutoSaveOnIdle="true">
+                    <RichTextEditorToolbarSettings Items="@Tools" />
+                </SfRichTextEditor>
             </Content>
         </DialogTemplates>
         <DialogButtons>
@@ -32,7 +30,7 @@
     SfDialog DialogObj;
 
     [Parameter]
-    public bool IsVisible { get; set; } = true;
+    public bool IsVisible { get; set; } = false;
 
     private List<ToolbarItemModel> Tools = new List<ToolbarItemModel>()
     {
