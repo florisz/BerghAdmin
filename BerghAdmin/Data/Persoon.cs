@@ -14,6 +14,12 @@ namespace BerghAdmin.Data
 
     public class Persoon
     {
+        public Persoon()
+        {
+            Geslacht = GeslachtEnum.Onbekend;
+            Rollen = new HashSet<Rol>();
+            IsVerwijderd = false;
+        }
         public int Id { get; set; }
         public GeslachtEnum Geslacht { get; set; }
         public string Voorletters { get; set; }

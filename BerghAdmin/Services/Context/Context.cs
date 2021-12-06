@@ -1,6 +1,7 @@
 using System;
 using BerghAdmin.Data;
 using BerghAdmin.Services.Configuration;
+using Microsoft.AspNetCore.Identity;
 
 namespace BerghAdmin.Services.Context
 {
@@ -8,9 +9,6 @@ namespace BerghAdmin.Services.Context
     {
         public SyncfusionConfiguration SyncfusionConfiguration { get; set; }
         public MailJetConfiguration MailJetConfiguration { get; set; }
-        
-        // reference to the persoon who is currently logged in as user
-        // to be done: not used yet
-        public Persoon CurrentUser { get; set;}
+        public User CurrentUser { get; set; }
     }
 }

@@ -1,38 +1,215 @@
 ﻿@page "/edit-person-dialog"
 
 @using Syncfusion.Blazor.Popups
+@using System.Collections.Generic
+@using System.Linq
 
 @using BerghAdmin.Services
+@using BerghAdmin.Data
 
 @inject IPersoonService _persoonService
+@inject IRolService _rolService
 
 <div id="EditPersoonDialogTarget">
 
     <SfDialog Target="#EditPersoonDialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
-        <DialogEvents OnOverlayClick="@OnOverlayclick" Opened="@DialogOpen">
-        </DialogEvents>
+        <DialogEvents OnOverlayClick="@OnOverlayclick" />
         <DialogTemplates>
-            <Header> Wijzig persoon gegevens </Header>
+            <Header>@headerText</Header>
             <Content>
+                <EditForm Model="@_currentPersoon" OnValidSubmit="@ValidSubmit">
+                    <DataAnnotationsValidator/>
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Voorletters:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.Voorletters"></SfTextBox>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Voornaam:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.Voornaam"></SfTextBox>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Tussenvoegsel:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.Tussenvoegsel"></SfTextBox>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Achternaam:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.Achternaam"></SfTextBox>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Adres:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.Adres"></SfTextBox>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Postcode:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.Postcode"></SfTextBox>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Woonplaats:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.Plaats"></SfTextBox>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Geboortedatum:</label>
+                                    <SfDatePicker @bind-Value="@_currentPersoon.GeboorteDatum"></SfDatePicker>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Geslacht:</label>
+                                    <SfDropDownList TValue="GeslachtEnum" TItem="GeslachtFields" DataSource="@geslachtValues" @bind-Value="@_currentPersoon.Geslacht">
+                                        <DropDownListFieldSettings  Value="GeslachtValue"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Telefoon:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.Telefoon"></SfTextBox>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Mobiel:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.Mobiel"></SfTextBox>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Email:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.EmailAdres"></SfTextBox>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Email extra:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.EmailAdresExtra"></SfTextBox>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">IsVerwijderd:</label>
+                                    <SfCheckBox TChecked="bool" @bind-Checked="@_currentPersoon.IsVerwijderd" />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Rollen:</label>
+                                    <SfListBox TValue="int[]" TItem="RolData" DataSource="@allRolData" @bind-Value="@selectedRollen" @ref="rollenListBox">
+                                        <ListBoxFieldSettings Text="Text" Value="Id" />
+                                        <ListBoxSelectionSettings ShowCheckbox="true" />
+                                    </SfListBox>
+                                </div>
+                            </td>
+                        </tr>
+                        <div class="form-group">
+                            <SfButton Type="submit" CssClass="e-flat" IsToggle="true" IsPrimary="true" Content="Opslaan"></SfButton> 
+                            <SfButton Type="button" CssClass="e-flat" IsToggle="false " IsPrimary="false" Content="Afbreken" OnClick="@DialogClose"></SfButton> 
+                        </div>
+                    </table>
+                </EditForm>
             </Content>
         </DialogTemplates>
-        <DialogButtons>
-            <DialogButton Content="Save" IsPrimary="true" OnClick="@SavePersoon" />
-            <DialogButton Content="Close" IsPrimary="false" OnClick="@DialogClose" />
-        </DialogButtons>
     </SfDialog>
 
 </div>
 
 @code {
+
     [Parameter]
     public bool IsVisible { get; set; } = false;
 
-    private string Content;
+    public Persoon _currentPersoon { get; set; } = new Persoon();
+    private List<Rol> _rollenList  = null;
+    private SfGrid<Persoon> _originatingGrid = null;
+    private bool _isNewPersoon;
 
-    public void DialogOpen()
+    SfListBox<int[],RolData> rollenListBox;
+    public int[] selectedRollen;
+
+    public string headerText;
+    public class GeslachtFields
     {
+        public GeslachtEnum GeslachtValue { get; set; }
+        public string GeslachtText { get; set; }
+    }
+    public List<GeslachtFields> geslachtValues = new List<GeslachtFields>()
+    {
+        new GeslachtFields() { GeslachtValue = GeslachtEnum.Man, GeslachtText = GeslachtEnum.Man.ToString() },
+        new GeslachtFields() { GeslachtValue = GeslachtEnum.Vrouw, GeslachtText = GeslachtEnum.Vrouw.ToString() },
+        new GeslachtFields() { GeslachtValue = GeslachtEnum.Onbekend, GeslachtText = GeslachtEnum.Onbekend.ToString() }
+    };
+
+    public class RolData
+    {
+        public string Text { get; set; }
+        public int Id { get; set; }
+    }
+
+    public RolData[] allRolData = new RolData[] {};
+
+    protected override void OnInitialized()
+    {
+        allRolData =  GetAllRolData().ToArray();
+    }
+
+    protected async Task ValidSubmit(EditContext editContext)
+    {
+        SetRollen(selectedRollen, _currentPersoon, _rollenList);
+        _persoonService.SavePersoon(_currentPersoon);
+        if (_isNewPersoon)
+        {
+            await _originatingGrid.AddRecordAsync(_currentPersoon);
+        }
+        else
+        {
+            await _originatingGrid.SetRowData(_currentPersoon.Id, _currentPersoon);
+        }
+    }
+
+    public void ShowDialog(Persoon persoon, List<Rol> rollen, SfGrid<Persoon> grid)
+    {
+        _currentPersoon = persoon;
+        _rollenList = rollen;
+        _originatingGrid = grid;
+        _isNewPersoon = _currentPersoon.Id == 0;
+
+        headerText = _isNewPersoon ? "Nieuwe persoon toevoegen" : "Wijzig persoon gegevens";
+
         IsVisible = true;
+        
+        // fill selected rollen
+        selectedRollen = _currentPersoon
+                            .Rollen
+                            .Select(r => (int) r.Id)
+                            .ToArray();
+
+        // pas active record id
         this.StateHasChanged();
     }
 
@@ -41,16 +218,93 @@
         this.IsVisible = false;
     }
 
-    private async Task SavePersoon()
-    {
-        IsVisible = false;
-        this.StateHasChanged();
-    }
-
     private void DialogClose()
     {
         IsVisible = false;
         this.StateHasChanged();
     }
+
+    /// <summary>
+    /// 
+    /// set the correct rollen for this person
+    /// do it the blunt way: new person -> just add, existing person -> delete all and add the selected ones
+    /// 
+    /// </summary>
+    /// <returns>void</returns>
+    private void SetRollen(int[] selectedRollen, Persoon person, List<Rol> rollenList)
+    {
+        // only delete rollen for an existing person
+        if (person.Id != 0)
+        {
+            // delete all rol referenties for this person
+            foreach(var rol in rollenList)
+            {
+                rol.Personen?.RemoveWhere(p => p.Id == person.Id);
+            }
+        }
+
+        // add the selected rollen
+        foreach(var rolId in selectedRollen)
+        {
+            var isEnumParsed = Enum.TryParse(rolId.ToString(), true, out RolTypeEnum selectedRolId);
+            if (!isEnumParsed)
+            {
+                throw new ApplicationException($"RolTypeEnum with integer value {rolId} does not exist");
+            }
+
+            var rol = rollenList.FirstOrDefault(r => r.Id == selectedRolId);
+            if (rol != null)
+            {
+                if (rol.Personen == null)
+                {
+                    rol.Personen = new HashSet<Persoon>();
+                }
+                rol.Personen.Add(person);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// Enumerate all values of the RolTypeEnum and return a list with id, description of
+    /// all enum values
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private RolData[] GetAllRolData()
+    {
+        var rolData = new List<RolData>();
+
+        foreach (int rolType in Enum.GetValues(typeof(RolTypeEnum)))
+        {
+            if (rolType == 0)
+            {
+                // value 0 is equivalent to RolTypeEnum.Alle; this rol can not be selected
+                continue;
+            }
+            var isEnumParsed = Enum.TryParse(rolType.ToString(), true, out RolTypeEnum parsedEnumValue);
+
+            if (isEnumParsed)
+            {
+                rolData.Add(new RolData() { Id = rolType, Text = parsedEnumValue.ToString() });
+            }
+        }
+
+        return rolData.ToArray<RolData>();
+    }
+
 } 
 
+<style>
+    .col-form-label {
+        padding-top: 1px;
+        padding-bottom: 1px;
+        color: #8d7f7f;
+    }
+    .e-listbox-wrapper:not(.e-list-template) .e-list-item, .e-listbox-wrapper .e-list-nrt, .e-listbox-wrapper .e-selectall-parent, .e-listbox-container:not(.e-list-template) .e-list-item, .e-listbox-container .e-list-nrt, .e-listbox-container .e-selectall-parent {
+        height: 25px;
+        line-height: 1.5;
+        padding: 1px 16px 1px 16px;
+        position: relative;
+    }
+</style>

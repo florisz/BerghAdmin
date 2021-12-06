@@ -1,10 +1,12 @@
-﻿@page "/"
+﻿@page "/Home"
 @inject BerghAdmin.Services.ISeedDataService seedDataService
 
 @using Syncfusion.Blazor.Cards
 @using Syncfusion.Blazor.Buttons
 
 @inject NavigationManager NavigationManager
+@inject IAuthorizationService AuthorizationService
+
 @inject IJSRuntime jsRuntime
 
 <div class="e-card-layout">
@@ -12,7 +14,7 @@
         <tr width="100%">
             <td height="200px" width="200px">
                 <div id="Tile-Ambassadeurs">
-                    <SfCard class="e-card">
+                    <SfCard class="e-card" >
                         <CardImage Image="images/tile-ambassadeurs.jpg"/>
                         <CardFooter>
                             <CardFooterContent>
