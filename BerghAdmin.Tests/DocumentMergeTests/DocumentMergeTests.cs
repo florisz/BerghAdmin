@@ -12,9 +12,10 @@ namespace BerghAdmin.DocumentMergeTests
     [TestFixture]
     public class DocumentMergeTests
     {
-        private ServiceProvider _serviceProvider;
+        private readonly ServiceProvider _serviceProvider;
         private const string DocumentPath = "C:/git/bihz/BerghAdmin/BerghAdmin.Tests/MergeTemplateTests/TestDocumenten"; 
-        private List<TestDocument> TestDocuments = new List<TestDocument> {
+        private readonly List<TestDocument> TestDocuments = new()
+        {
             new TestDocument() 
             { 
                 Id = 1, 
@@ -96,9 +97,10 @@ namespace BerghAdmin.DocumentMergeTests
             var template = mergeService.GetMergeTemplateById(3);
             Assert.NotNull(template);
             Assert.AreEqual(template!.Name, "TestTemplate3");
-            var mergeFields = template!.GetMergeFields();
-            var mergeDictionary = new Dictionary<string, string>();
-            mergeDictionary["MergeField1"] = "MergeField1.Value";
+            var mergeDictionary = new Dictionary<string, string>
+            {
+                ["MergeField1"] = "MergeField1.Value"
+            };
 
             MergeDocument(mergeService, template, mergeDictionary);
         }
@@ -131,21 +133,19 @@ namespace BerghAdmin.DocumentMergeTests
         {
             var mergedStream = mergeService.Merge(template, mergeDictionary);
             Assert.IsTrue(mergedStream.Length > 0);
-            using (FileStream outputFileStream = new FileStream($"c:/temp/{template.Name}.docx", FileMode.Create))
-            {
-                mergedStream.Position = 0;
-                mergedStream.CopyTo(outputFileStream);
-                var pdfService = _serviceProvider.GetRequiredService<IPdfConverter>();
+            using FileStream outputFileStream = new($"c:/temp/{template.Name}.docx", FileMode.Create);
+            mergedStream.Position = 0;
+            mergedStream.CopyTo(outputFileStream);
+            var pdfService = _serviceProvider.GetRequiredService<IPdfConverter>();
 
-                outputFileStream.Position = 0;
-                var pdfStream = pdfService.ConvertWordToPdf(outputFileStream);
-                var pdfOutputStream = new FileStream($"c:/temp/{template.Name}.pdf", FileMode.Create);
+            outputFileStream.Position = 0;
+            var pdfStream = pdfService.ConvertWordToPdf(outputFileStream);
+            var pdfOutputStream = new FileStream($"c:/temp/{template.Name}.pdf", FileMode.Create);
 
-                pdfStream.Position = 0;
-                pdfStream.CopyTo(pdfOutputStream);
-                pdfStream.Close();
-                pdfOutputStream.Close();
-            }
+            pdfStream.Position = 0;
+            pdfStream.CopyTo(pdfOutputStream);
+            pdfStream.Close();
+            pdfOutputStream.Close();
         }
     }
 }

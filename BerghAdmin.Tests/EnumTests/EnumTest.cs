@@ -16,7 +16,7 @@ namespace BerghAdmin.Tests.EnumTests
             Assert.AreEqual(9, rolData.Length);
         }
 
-        private RolData[] GetAlleRollen()
+        private static RolData[] GetAlleRollen()
         {
             var rolData = new List<RolData>();
 

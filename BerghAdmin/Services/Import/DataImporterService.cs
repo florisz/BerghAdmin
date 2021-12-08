@@ -26,56 +26,56 @@ namespace BerghAdmin.Services.Import
             {
                 // Create an instance of StreamReader to read from a file.
                 // The using statement also closes the StreamReader.
-                using (StreamReader reader = new StreamReader(csvData))
-                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                using StreamReader reader = new(csvData);
+                using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+                var records = csv.GetRecords<OldDataRecord>().ToList<OldDataRecord>();
+                foreach (var record in records)
                 {
-                    var records = csv.GetRecords<OldDataRecord>().ToList<OldDataRecord>();
-                    foreach (var record in records)
+                    var persoon = new Persoon
                     {
-                        var persoon = new Persoon();
-                        persoon.Geslacht = string.IsNullOrEmpty(record.GeslachtId) ? GeslachtEnum.Onbekend : record.GeslachtId == "1" ? GeslachtEnum.Man : GeslachtEnum.Vrouw;
-                        persoon.Voornaam = record.Voornaam;
-                        persoon.Voorletters = record.Voorletters;
-                        persoon.Tussenvoegsel = record.Tussenvoegsel;
-                        persoon.Achternaam = record.Achternaam;
-                        persoon.Adres = record.Adres;
-                        persoon.Postcode = record.Postcode;
-                        persoon.Plaats = record.Plaats;
-                        persoon.Land = record.Land;
-                        persoon.GeboorteDatum = ConvertToDateType(record.GeboorteDag, record.GeboorteMaand, record.GeboorteJaar);
+                        Geslacht = string.IsNullOrEmpty(record.GeslachtId) ? GeslachtEnum.Onbekend : record.GeslachtId == "1" ? GeslachtEnum.Man : GeslachtEnum.Vrouw,
+                        Voornaam = record.Voornaam,
+                        Voorletters = record.Voorletters,
+                        Tussenvoegsel = record.Tussenvoegsel,
+                        Achternaam = record.Achternaam,
+                        Adres = record.Adres,
+                        Postcode = record.Postcode,
+                        Plaats = record.Plaats,
+                        Land = record.Land,
+                        GeboorteDatum = ConvertToDateType(record.GeboorteDag, record.GeboorteMaand, record.GeboorteJaar),
 
-                        persoon.Telefoon = record.Telefoon;
-                        persoon.Mobiel = record.Mobiel;
-                        persoon.EmailAdres = record.Emailadres;
-                        persoon.IsVerwijderd = record.IsVerwijderd == "1" ? true : false;
-                        persoon.Rollen = new HashSet<Rol>();
-                        if (record.IsRenner == "1")
-                        {
-                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Fietser) ?? throw new ArgumentNullException("GetRole Fietser"));
-                        }
-                        if (record.IsBegeleider == "1")
-                        {
-                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Begeleider) ?? throw new ArgumentNullException("GetRole Begeleider"));
-                        }
-                        if (record.IsReserve == "1")
-                        {
-                            // TO BE DONE!
-                        }
-                        if (record.IsCommissielid == "1")
-                        {
-                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.CommissieLid) ?? throw new ArgumentNullException("GetRole CommissieLid"));
-                        }
-                        if (record.IsVriendvan == "1")
-                        {
-                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.VriendVan) ?? throw new ArgumentNullException("GetRole VriendVan"));
-                        }
-                        if (record.IsMailingAbonnee == "1")
-                        {
-                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.MailingAbonnee) ?? throw new ArgumentNullException("GetRole MailingAbonne"));
-                        }
-
-                        _persoonService.SavePersoon(persoon);
+                        Telefoon = record.Telefoon,
+                        Mobiel = record.Mobiel,
+                        EmailAdres = record.Emailadres,
+                        IsVerwijderd = record.IsVerwijderd == "1",
+                        Rollen = new HashSet<Rol>()
+                    };
+                    if (record.IsRenner == "1")
+                    {
+                        persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Fietser) ?? throw new ArgumentNullException("Id", "GetRole Fietser"));
                     }
+                    if (record.IsBegeleider == "1")
+                    {
+                        persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Begeleider) ?? throw new ArgumentNullException("Id", "GetRole Begeleider"));
+                    }
+                    if (record.IsReserve == "1")
+                    {
+                        // TO BE DONE!
+                    }
+                    if (record.IsCommissielid == "1")
+                    {
+                        persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.CommissieLid) ?? throw new ArgumentNullException("Id", "GetRole CommissieLid"));
+                    }
+                    if (record.IsVriendvan == "1")
+                    {
+                        persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.VriendVan) ?? throw new ArgumentNullException("Id", "GetRole VriendVan"));
+                    }
+                    if (record.IsMailingAbonnee == "1")
+                    {
+                        persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.MailingAbonnee) ?? throw new ArgumentNullException("Id", "GetRole MailingAbonne"));
+                    }
+
+                    _persoonService.SavePersoon(persoon);
                 }
             }
             catch (Exception)
@@ -83,7 +83,7 @@ namespace BerghAdmin.Services.Import
                 // Let the user know what went wrong.
             }
         }
-        private DateTime? ConvertToDateType(string day, string month, string year)
+        private static DateTime? ConvertToDateType(string day, string month, string year)
         {
             if (DateTime.TryParseExact($"{day}/{month}/{year}", "d/M/yyyy", null, DateTimeStyles.None, out var date))
                 return date;

@@ -13,8 +13,8 @@ namespace BerghAdmin.Services.TextMerge
     
     public class TextMergeService : ITextMergeService
     {
-        private string OPENINGS_TAG = "&lt;&lt;";
-        private string CLOSING_TAG = "&gt;&gt;";
+        private readonly string OPENINGS_TAG = "&lt;&lt;";
+        private readonly string CLOSING_TAG = "&gt;&gt;";
 
         public bool IsValidMergeText(string htmlText, Dictionary<string,string> mergeFieldValues)
         {
@@ -42,11 +42,10 @@ namespace BerghAdmin.Services.TextMerge
             }
 
             var mergeFields = FindMergeFields(htmlText);
-            string missingMergeValues;
-            if (! MergeFieldsHaveValues(mergeFields, mergeFieldValues, out missingMergeValues))
+            if (!MergeFieldsHaveValues(mergeFields, mergeFieldValues, out string missingMergeValues))
             {
                 throw new TextMergeNoMergeFieldException($"The following merge fields are unspecified: {missingMergeValues}");
-            } 
+            }
 
             var mergedText = PerformMerge(htmlText, mergeFields, mergeFieldValues);
 
@@ -58,7 +57,6 @@ namespace BerghAdmin.Services.TextMerge
             var foundTags = new Dictionary<string, MergeField>();
 
             var searchFromPosition = 0;
-            var totalNumberOfCharacters = htmlText.Length - searchFromPosition;
             while (true)
             {
                 // start with a search for the openings tag
@@ -96,7 +94,7 @@ namespace BerghAdmin.Services.TextMerge
             return foundTags;
         }
 
-        private bool MergeFieldsHaveValues(Dictionary<string, MergeField> mergeFields, Dictionary<string, string> mergeFieldValues, out string missingMergeValues)
+        private static bool MergeFieldsHaveValues(Dictionary<string, MergeField> mergeFields, Dictionary<string, string> mergeFieldValues, out string missingMergeValues)
         {
             var missingMergeValuesArray = mergeFields.Keys
                 .Where(key => !mergeFieldValues.ContainsKey(key))

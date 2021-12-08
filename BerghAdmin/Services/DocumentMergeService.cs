@@ -1,22 +1,21 @@
+using BerghAdmin.Data;
+
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using BerghAdmin.Data;
-using BerghAdmin.DbContexts;
-using Syncfusion.DocIO;
-using Syncfusion.DocIO.DLS;
 
 namespace BerghAdmin.Services
 {
     public class DocumentMergeService : IDocumentMergeService
     {
-        private readonly ApplicationDbContext _dbContext;
         private readonly IDocumentService _documentService;
 
-        public DocumentMergeService(ApplicationDbContext context, IDocumentService documentService)
+        public DocumentMergeService(IDocumentService documentService)
         {
-            _dbContext = context;
             _documentService = documentService;
         }
 

@@ -27,7 +27,7 @@ namespace BerghAdmin.Tests.MailMergeTests
         private const string _textWithOneMergeFieldTwice = "<p>Hallo &lt;&lt;naam&gt;&gt;&lt;&lt;naam&gt;&gt;</p>";
         private const string _textWithMultipleMergeFields = "<p>Hallo &lt;&lt;naam&gt;&gt;<br/>wonend op: &lt;&lt;adres&gt;&gt;<br/>te: &lt;&lt;postcode&gt;&gt; &lt;&lt;woonplaats&gt;&gt;</p>";
 
-        private Dictionary<string, string> _mergeFieldValues = new Dictionary<string, string>()
+        private readonly Dictionary<string, string> _mergeFieldValues = new()
             {
                 { "naam", "Jan Jansen" },
                 { "adres", "Hoofdstraat 1" },
