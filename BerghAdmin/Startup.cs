@@ -107,7 +107,7 @@ namespace BerghAdmin
             });
         }
 
-        private string GetDatabaseConnectionString()
+        private string? GetDatabaseConnectionString()
         {
             var databaseConfiguration = Configuration.GetSection("DatabaseConfiguration").Get<DatabaseConfiguration>();
             if (databaseConfiguration == null)

@@ -45,7 +45,7 @@ namespace BerghAdmin.Services.TextMerge
     [Serializable]
     public class TextMergeNoMergeFieldException : Exception
     {
-        public string MissingMergeFields { get; }
+        public string MissingMergeFields { get; } = string.Empty;
 
         public TextMergeNoMergeFieldException() { }
 

@@ -25,7 +25,7 @@ namespace BerghAdmin.Services
             throw new NotImplementedException();
         }
 
-        public Document GetMergeTemplateById(int id)
+        public Document? GetMergeTemplateById(int id)
         {
             var doc = _documentService.GetDocumentById(id);
             if (doc == null)

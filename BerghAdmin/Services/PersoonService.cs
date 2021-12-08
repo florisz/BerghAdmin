@@ -27,7 +27,7 @@ namespace BerghAdmin.Services
             }
         }
 
-        public Persoon GetPersoonById(int id)
+        public Persoon? GetPersoonById(int id)
         {
             var persoon = _dbContext.Personen
                             .Include(p => p.Rollen)

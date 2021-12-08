@@ -38,7 +38,7 @@ namespace BerghAdmin.Tests.EnumTests
 
     public class RolData
     {
-        public string Text { get; set; }
-        public int Id { get; set; }
+        public string Text { get; set; } = "admin";
+        public int Id { get; set; } = 1;
     }
 }

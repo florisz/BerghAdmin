@@ -94,17 +94,17 @@
 
 @code{
     [Parameter]
-    public RolTypeEnum[] RolContext { get; set; }
+    public RolTypeEnum[] RolContext { get; set; } = Array.Empty<RolTypeEnum>();
 
     // Everything to handle the email dialog
-    SendMailDialog sendMailDialog;
+    SendMailDialog sendMailDialog = new();
     private void ShowSendMailDialog()
     {
         sendMailDialog.DialogOpen();
     }
 
     // Everything to handle the edit persoon dialog
-    EditPersoonDialog editPersoonDialog;
+    EditPersoonDialog editPersoonDialog = new();
 
     // Everything to handle the context menu
     // Triggers when the item is selected
@@ -129,13 +129,13 @@
     }
 
     // Everything to handle persons
-    public List<RolTypeEnum> selectedRollen;
-    public List<Persoon> personenList = new List<Persoon>();
-    public List<Rol> rollenList = new List<Rol>();
-    SfGrid<Persoon> PersonenGrid;
-    public List<double> SelectedRowIndexes { get; set; }
-    public double[] TotalValue { get; set; }
-    public string SelectedValue;        
+    public List<RolTypeEnum> selectedRollen = new();
+    public List<Persoon> personenList = new();
+    public List<Rol> rollenList = new();
+    SfGrid<Persoon> PersonenGrid = new();
+    public List<double> SelectedRowIndexes { get; set; } = new();
+    public double[] TotalValue { get; set; } = Array.Empty<double>();
+    public string SelectedValue = string.Empty;        
 
     protected override void OnInitialized()
     {

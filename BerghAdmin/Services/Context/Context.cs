@@ -1,14 +1,11 @@
-using System;
 using BerghAdmin.Data;
 using BerghAdmin.Services.Configuration;
-using Microsoft.AspNetCore.Identity;
 
-namespace BerghAdmin.Services.Context
+namespace BerghAdmin.Services.Context;
+
+public class Context
 {
-    public class Context
-    {
-        public SyncfusionConfiguration SyncfusionConfiguration { get; set; }
-        public MailJetConfiguration MailJetConfiguration { get; set; }
-        public User CurrentUser { get; set; }
-    }
+    public SyncfusionConfiguration SyncfusionConfiguration { get; set; } = new();
+    public MailJetConfiguration MailJetConfiguration { get; set; } = new();
+    public User CurrentUser { get; set; } = new();
 }

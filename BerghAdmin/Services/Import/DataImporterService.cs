@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+
 using BerghAdmin.Data;
+
 using CsvHelper;
 
 namespace BerghAdmin.Services.Import
@@ -28,10 +30,10 @@ namespace BerghAdmin.Services.Import
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
                     var records = csv.GetRecords<OldDataRecord>().ToList<OldDataRecord>();
-                    foreach(var record in records)
+                    foreach (var record in records)
                     {
                         var persoon = new Persoon();
-                        persoon.Geslacht = string.IsNullOrEmpty(record.GeslachtId)? GeslachtEnum.Onbekend : record.GeslachtId == "1"? GeslachtEnum.Man : GeslachtEnum.Vrouw;
+                        persoon.Geslacht = string.IsNullOrEmpty(record.GeslachtId) ? GeslachtEnum.Onbekend : record.GeslachtId == "1" ? GeslachtEnum.Man : GeslachtEnum.Vrouw;
                         persoon.Voornaam = record.Voornaam;
                         persoon.Voorletters = record.Voorletters;
                         persoon.Tussenvoegsel = record.Tussenvoegsel;
@@ -45,15 +47,15 @@ namespace BerghAdmin.Services.Import
                         persoon.Telefoon = record.Telefoon;
                         persoon.Mobiel = record.Mobiel;
                         persoon.EmailAdres = record.Emailadres;
-                        persoon.IsVerwijderd = record.IsVerwijderd == "1"? true : false;
+                        persoon.IsVerwijderd = record.IsVerwijderd == "1" ? true : false;
                         persoon.Rollen = new HashSet<Rol>();
                         if (record.IsRenner == "1")
                         {
-                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Fietser));
+                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Fietser) ?? throw new ArgumentNullException("GetRole Fietser"));
                         }
                         if (record.IsBegeleider == "1")
                         {
-                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Begeleider));
+                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Begeleider) ?? throw new ArgumentNullException("GetRole Begeleider"));
                         }
                         if (record.IsReserve == "1")
                         {
@@ -61,15 +63,15 @@ namespace BerghAdmin.Services.Import
                         }
                         if (record.IsCommissielid == "1")
                         {
-                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.CommissieLid));
+                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.CommissieLid) ?? throw new ArgumentNullException("GetRole CommissieLid"));
                         }
                         if (record.IsVriendvan == "1")
                         {
-                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.VriendVan));
+                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.VriendVan) ?? throw new ArgumentNullException("GetRole VriendVan"));
                         }
                         if (record.IsMailingAbonnee == "1")
                         {
-                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.MailingAbonnee));
+                            persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.MailingAbonnee) ?? throw new ArgumentNullException("GetRole MailingAbonne"));
                         }
 
                         _persoonService.SavePersoon(persoon);
@@ -83,16 +85,10 @@ namespace BerghAdmin.Services.Import
         }
         private DateTime? ConvertToDateType(string day, string month, string year)
         {
-            try
-            {
-                var date = DateTime.ParseExact($"{day}/{month}/{year}", "d/M/yyyy", null);
+            if (DateTime.TryParseExact($"{day}/{month}/{year}", "d/M/yyyy", null, DateTimeStyles.None, out var date))
                 return date;
-            }
-            catch(Exception e)
-            {
-                return null;
-            }
-
+         
+            return null;
         }
     }
 }

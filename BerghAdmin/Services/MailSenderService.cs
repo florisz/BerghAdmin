@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace BerghAdmin.Services
-{
-    public class MailAddress
-    {
-        string EmailAddres { get; set;}
-        string Name { get; set;}
-    }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+namespace BerghAdmin.Services;
 
-    public class MailSenderService : IMailSenderService
+public class MailAddress
+{
+    string EmailAddres { get; set; }
+    string Name { get; set; }
+}
+
+public class MailSenderService : IMailSenderService
+{
+    public Task SendMailAsync(MailAddress from, IEnumerable<MailAddress> to, Stream mailBody)
     {
-        public Task SendMailAsync(MailAddress from, IEnumerable<MailAddress> to, Stream mailBody)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
 }

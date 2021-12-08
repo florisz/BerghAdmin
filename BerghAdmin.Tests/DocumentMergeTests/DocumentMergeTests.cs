@@ -34,17 +34,13 @@ namespace BerghAdmin.DocumentMergeTests
                 FilePath = $"{DocumentPath}/TestTemplate3.docx"
             },
         };
-                    
-        [SetUp]
-        public void SetupMergeTemplateTests()
+
+        public DocumentMergeTests()
         {
             var connection = DocumentMergeHelperTests.GetSqliteInMemoryConnection();
-            var options = DocumentMergeHelperTests.GetApplicationDbContextOptions(connection);
-            DocumentMergeHelperTests.CreateTestDataBaseInMemory(options, TestDocuments);
-
             var services = new ServiceCollection();
             services
-                .AddDbContext<ApplicationDbContext>(builder => 
+                .AddDbContext<ApplicationDbContext>(builder =>
                 {
                     builder.UseSqlite(connection);
                 })
@@ -52,10 +48,18 @@ namespace BerghAdmin.DocumentMergeTests
                 .AddScoped<IDocumentService, DocumentService>()
                 .AddScoped<IPdfConverter, PdfConverter>()
                 .AddScoped<IDocumentMergeService, DocumentMergeService>();
-            
+
             // Build the service provider
             _serviceProvider = services.BuildServiceProvider();
-        }        
+        }
+
+        [SetUp]
+        public void SetupMergeTemplateTests()
+        {
+            var connection = DocumentMergeHelperTests.GetSqliteInMemoryConnection();
+            var options = DocumentMergeHelperTests.GetApplicationDbContextOptions(connection);
+            DocumentMergeHelperTests.CreateTestDataBaseInMemory(options, TestDocuments);
+        }
 
         [Test]
         public void TestIsDocumentPresent()
@@ -73,8 +77,8 @@ namespace BerghAdmin.DocumentMergeTests
             var service = _serviceProvider.GetRequiredService<IDocumentMergeService>();
             var template = service.GetMergeTemplateById(2);
             Assert.NotNull(template);
-            Assert.AreEqual(template.Name, "TestTemplate2");
-            var mergeFields = template.GetMergeFields();
+            Assert.AreEqual(template!.Name, "TestTemplate2");
+            var mergeFields = template!.GetMergeFields();
             Assert.Contains("Bedrijfsnaam", mergeFields);
             Assert.Contains("NaamAanhef", mergeFields);
             Assert.Contains("StraatEnNummer", mergeFields);
@@ -91,8 +95,8 @@ namespace BerghAdmin.DocumentMergeTests
             var mergeService = _serviceProvider.GetRequiredService<IDocumentMergeService>();
             var template = mergeService.GetMergeTemplateById(3);
             Assert.NotNull(template);
-            Assert.AreEqual(template.Name, "TestTemplate3");
-            var mergeFields = template.GetMergeFields();
+            Assert.AreEqual(template!.Name, "TestTemplate3");
+            var mergeFields = template!.GetMergeFields();
             var mergeDictionary = new Dictionary<string, string>();
             mergeDictionary["MergeField1"] = "MergeField1.Value";
 
@@ -107,7 +111,7 @@ namespace BerghAdmin.DocumentMergeTests
             var template = mergeService.GetMergeTemplateById(2);
 
             Assert.NotNull(template);
-            Assert.AreEqual(template.Name, "TestTemplate2");
+            Assert.AreEqual(template!.Name, "TestTemplate2");
 
             var mergeDictionary = new Dictionary<string, string> 
             {

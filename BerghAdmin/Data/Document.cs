@@ -4,6 +4,8 @@ using System.Linq;
 using System.IO;
 
 using BerghAdmin.General;
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 namespace BerghAdmin.Data
 {
     public enum ContentTypeEnum
@@ -27,7 +29,7 @@ namespace BerghAdmin.Data
 
     public class Document
     {
-        private List<string> _mergeFields = null;
+        private List<string>? _mergeFields = null;
 
         public int Id { get; set; }
         public string Name { get; set; }

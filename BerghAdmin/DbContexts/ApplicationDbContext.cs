@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BerghAdmin.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using BerghAdmin.Data;
+
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-namespace BerghAdmin.DbContexts
+namespace BerghAdmin.DbContexts;
+
+public class ApplicationDbContext : IdentityDbContext
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
-        }
-
-        public DbSet<Persoon> Personen { get; set; }
-        public DbSet<Rol> Rollen { get; set; }
-        public DbSet<Document> Documenten { get; set; }
     }
+
+    public DbSet<Persoon> Personen { get; set; }
+    public DbSet<Rol> Rollen { get; set; }
+    public DbSet<Document> Documenten { get; set; }
 }

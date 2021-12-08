@@ -26,7 +26,7 @@ namespace BerghAdmin.Services.TextMerge
             throw new NotImplementedException();
         }
 
-        public string Merge(string htmlText, Dictionary<string, string> mergeFieldValues)
+        public string Merge(string? htmlText, Dictionary<string, string>? mergeFieldValues)
         {
             if (string.IsNullOrEmpty(htmlText))
             {

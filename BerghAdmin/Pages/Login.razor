@@ -38,7 +38,7 @@
         new User { Id = 5, Name = "Ingrid (financien)", EmailAddress = "Penningmeester@berghinhetzadel.nl", Roles = new string[] { "Penningmeester" } },
         new User { Id = 6, Name = "Floris (applicatie beheer)", EmailAddress = "fzwarteveen@gmail.com", Roles = new string[] { "ApplicatieBeheer" } },
     };
-    public string[] selectedRole;
+    public string[]? selectedRole;
     string ErrorMessage = "";
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -56,7 +56,7 @@
         else
         {
             var id = int.Parse(selectedRole[0]);
-            contextService.Context.CurrentUser = Users.Find(u => u.Id == id);
+            contextService.Context.CurrentUser = Users.Find(u => u.Id == id) ?? throw new ArgumentException($"Gebruiker met Id {id} niet gevonden");
             NavigateTo("Home");
         }
     }
