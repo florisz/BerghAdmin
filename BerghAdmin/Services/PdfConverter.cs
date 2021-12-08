@@ -23,10 +23,10 @@ namespace BerghAdmin.Services
         public Stream ConvertWordToPdf(Stream inputStream)
         {
             // Loads file stream into Word document
-            WordDocument wordDocument = new WordDocument(inputStream, Syncfusion.DocIO.FormatType.Automatic);
+            WordDocument wordDocument = new(inputStream, Syncfusion.DocIO.FormatType.Automatic);
             
             // Instantiation of DocIORenderer for Word to PDF conversion
-            DocIORenderer render = new DocIORenderer();
+            DocIORenderer render = new();
 
             // Sets Chart rendering Options.
             render.Settings.ChartRenderingOptions.ImageFormat =  ExportImageFormat.Jpeg;
@@ -39,7 +39,7 @@ namespace BerghAdmin.Services
             wordDocument.Dispose();
 
             // Saves the PDF file
-            MemoryStream outputStream = new MemoryStream();
+            MemoryStream outputStream = new();
             pdfDocument.Save(outputStream);
             pdfDocument.Close();
 
