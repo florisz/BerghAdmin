@@ -4,6 +4,7 @@ using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Context;
 using BerghAdmin.Services.Import;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services
-    .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultIdentity<IdentityUser>(options => {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.Password.RequiredLength = 12;
+        options.Password.RequireDigit= false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+    })
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -39,6 +47,12 @@ builder.Services.AddSignalR(e =>
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseSqlServer(GetDatabaseConnectionString(), po => po.EnableRetryOnFailure()));
 
+builder.Services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new    ()
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
