@@ -49,7 +49,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 
 builder.Services.AddAuthorization(options =>
             {
-                options.FallbackPolicy = new    ()
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
             });
