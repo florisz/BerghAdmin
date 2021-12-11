@@ -1,4 +1,3 @@
-using BerghAdmin.Data;
 using BerghAdmin.Services.Configuration;
 
 namespace BerghAdmin.Services.Context;

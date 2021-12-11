@@ -1,26 +1,81 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
+using BerghAdmin.DbContexts;
+using BerghAdmin.Services;
+using BerghAdmin.Services.Configuration;
+using BerghAdmin.Services.Context;
+using BerghAdmin.Services.Import;
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-namespace BerghAdmin
+using Syncfusion.Blazor;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services
+    .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+//builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+builder.Services.AddScoped<IPersoonService, PersoonService>();
+builder.Services.AddScoped<IRolService, RolService>();
+builder.Services.AddScoped<ISeedDataService, SeedDataService>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
+builder.Services.AddScoped<IDataImporterService, DataImporterService>();
+builder.Services.AddScoped<IContextService, ContextService>();
+builder.Services.AddScoped<ISendMailService, SendMailService>();
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddSyncfusionBlazor();
+builder.Services.AddSignalR(e =>
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+    e.MaximumReceiveMessageSize = 10240000;
+});
+builder.Services.AddDbContext<ApplicationDbContext>(
+    options => options.UseSqlServer(GetDatabaseConnectionString(), po => po.EnableRetryOnFailure()));
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+
+var app = builder.Build();
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseMigrationsEndPoint();
+}
+else
+{
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapBlazorHub();
+    endpoints.MapFallbackToPage("/_Host");
+});
+
+app.Run();
+
+string GetDatabaseConnectionString()
+{
+    var databaseConfiguration = builder.Configuration.GetSection("DatabaseConfiguration").Get<DatabaseConfiguration>();
+    if (databaseConfiguration == null)
+    {
+        throw new ApplicationException("Secrets for Database access (connection string & password) can not be found in configuration");
     }
+    return databaseConfiguration.ConnectionString ?? throw new ArgumentNullException("ConnectionString");
 }
