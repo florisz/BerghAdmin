@@ -1,12 +1,16 @@
 @page "/ApplicatieManagement"
 @page "/ApplicatieManagement/personen"
 
+@using BerghAdmin.Authorization
+@using Microsoft.AspNetCore.Identity
 @using Syncfusion.Blazor.Buttons
 @using BerghAdmin.Data
 @using System.IO
 
 @inject IJSRuntime jsRuntime
 @inject BerghAdmin.Services.Import.IDataImporterService importerService 
+@inject UserManager userManager;
+@attribute [Authorize(Policy = "IsAdministrator")]
 
 <h3>Applicatie Management</h3>
 
