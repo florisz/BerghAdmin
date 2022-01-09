@@ -7,11 +7,9 @@ using BerghAdmin.Services.Import;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 using Syncfusion.Blazor;
@@ -72,6 +70,8 @@ void RegisterServices()
     builder.Services.AddRazorPages();
     builder.Services.AddServerSideBlazor();
     //builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+    builder.Services.AddOptions();
+    builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
     builder.Services.AddScoped<IPersoonService, PersoonService>();
     builder.Services.AddScoped<IRolService, RolService>();
     builder.Services.AddTransient<ISeedDataService, SeedDataService>();

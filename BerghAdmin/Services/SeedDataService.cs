@@ -8,12 +8,14 @@ namespace BerghAdmin.Services;
 
 public class SeedDataService : ISeedDataService
 {
-    private const string DocumentBasePath = "C:/git/bihz/BerghAdmin/BerghAdmin.Tests/DocumentMergeTests/TestDocumenten"; 
+    private const string DocumentBasePath = ""; 
     private readonly IServiceProvider _serviceProvider;
+    private readonly SeedSettings _settings;
 
-    public SeedDataService(IServiceProvider serviceProvider)
+    public SeedDataService(IServiceProvider serviceProvider, IOptions<SeedSettings> settings)
     {
         _serviceProvider = serviceProvider;
+        _settings = settings.Value;
     }
 
     public void Initialize()
@@ -239,7 +241,7 @@ public class SeedDataService : ISeedDataService
                 ContentType = ContentTypeEnum.Word,
                 IsMergeTemplate = true,
                 TemplateType = TemplateTypeEnum.Ambassadeur,
-                Content = File.ReadAllBytes($"{DocumentBasePath}/TemplateFactuurSponsor.docx"),
+                Content = File.ReadAllBytes($"{_settings.DocumentBasePath}/TemplateFactuurSponsor.docx"),
                 Owner = "Henk"
             }
         );
