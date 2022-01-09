@@ -248,30 +248,34 @@ public class SeedDataService : ISeedDataService
 
         context.SaveChanges();
 
+        var persoon = new Persoon
+        {
+            Voorletters = "F.",
+            Voornaam = "Floris",
+            Achternaam = "Zwarteveen",
+            Adres = "Berkenlaan 12",
+            EmailAdres = "fzwarteveen@mail.com",
+            GeboorteDatum = new DateTime(2002, 1, 1),
+            Geslacht = GeslachtEnum.Man,
+            Land = "Nederland",
+            Mobiel = "06-12345678",
+            Plaats = "Beek",
+            Postcode = "7037 CA",
+            Telefoon = "onbekend",
+            Rollen = new HashSet<Rol>() { rolFietser, rolVrijwilliger }
+        };
+        context.Add( persoon );
+        context.SaveChanges();
+
         var user = new User
         {
+            CurrentPersoonId = persoon.Id,
             Name = "fzwarteveen@gmail.com",
             Roles = new string[] { "admin" },
             UserName = "fzwarteveen@gmail.com",
             Email = "fzwarteveen@gmail.com",
             AccessFailedCount = 0,
-            CurrentUser = new Persoon
-            {
-                Voorletters = "F.",
-                Voornaam = "Floris",
-                Achternaam = "Zwarteveen",
-                Adres = "Berkenlaan 12",
-                EmailAdres = "fzwarteveen@mail.com",
-                GeboorteDatum = new DateTime(2002, 1, 1),
-                Geslacht = GeslachtEnum.Man,
-                Land = "Nederland",
-                Mobiel = "06-12345678",
-                Plaats = "Beek",
-                Postcode = "7037 CA",
-                Telefoon = "onbekend",
-                Rollen = new HashSet<Rol>() { rolFietser, rolVrijwilliger }
-            },
-            EmailConfirmed = false,
+            EmailConfirmed = true,
             LockoutEnabled = false,
             LockoutEnd = null,
             PhoneNumber = "",
