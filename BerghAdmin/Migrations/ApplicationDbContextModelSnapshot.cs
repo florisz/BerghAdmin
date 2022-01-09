@@ -233,7 +233,7 @@ namespace BerghAdmin.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CurrentUserId")
+                    b.Property<int>("CurrentPersoonId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
@@ -280,8 +280,6 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CurrentUserId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -561,17 +559,6 @@ namespace BerghAdmin.Migrations
                     b.Navigation("EmailTekst");
 
                     b.Navigation("FactuurTekst");
-                });
-
-            modelBuilder.Entity("BerghAdmin.Data.User", b =>
-                {
-                    b.HasOne("BerghAdmin.Data.Persoon", "CurrentUser")
-                        .WithMany()
-                        .HasForeignKey("CurrentUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CurrentUser");
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.VerzondenMail", b =>

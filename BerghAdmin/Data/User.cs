@@ -7,7 +7,7 @@ namespace BerghAdmin.Data;
 public class User:IdentityUser<int>
 {
     // reference to the persoon who is currently logged in as user
-    public Persoon CurrentUser { get; set; }
+    public int CurrentPersoonId { get; set; }
 
     public string? Name { get; set; }
     [NotMapped]
