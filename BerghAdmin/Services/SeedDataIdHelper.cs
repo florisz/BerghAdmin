@@ -17,13 +17,20 @@ namespace BerghAdmin.Services
             return context.Database.ExecuteSqlRawAsync(sqlStmt);
         }
 
-        public static void SaveChangesWithoutIdentityInsert<T>(this DbContext context)
+        public static async void SaveChangesWithoutIdentityInsert<T>(this DbContext context)
         {
-            using var transaction = context.Database.BeginTransaction();
-            context.EnableIdentityInsert<T>();
-            context.SaveChanges();
-            context.DisableIdentityInsert<T>();
-            transaction.Commit();
+            var strategy = context.Database.CreateExecutionStrategy();
+            await strategy.ExecuteAsync(async () =>
+            {
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    await context.EnableIdentityInsert<T>();
+                    await context.SaveChangesAsync();
+                    await context.DisableIdentityInsert<T>();
+
+                    transaction.Commit();
+                }
+            });
         }    
     }
 }

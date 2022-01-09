@@ -1,4 +1,4 @@
-﻿@page "/Home"
+﻿@page "/"
 @inject BerghAdmin.Services.ISeedDataService seedDataService
 
 @using Syncfusion.Blazor.Cards
@@ -91,12 +91,6 @@
 </div>
 @code
 {
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        //seedDataService.Initialize();
-    }
-
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         await jsRuntime.InvokeAsync<object>("SetSideMenu", "shared");

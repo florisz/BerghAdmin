@@ -6,22 +6,32 @@ dotnet ef database update
 
 
 USE BIHZ2021;
-DROP TABLE __EFMigrationsHistory;
-DROP TABLE PersoonRol;
-DROP TABLE Personen;
-DROP TABLE Rollen;
-DROP TABLE Documenten;
-DROP TABLE AspNetRoleClaims;
-DROP TABLE AspNetRoles;
-DROP TABLE AspNetUserClaims;
-DROP TABLE AspNetUserLogins;
-DROP TABLE AspNetUserTokens;
-DROP TABLE AspNetUsers;
-DROP TABLE AspNetUserRoles;
+USE BIHZ2021
+DROP TABLE __EFMigrationsHistory
+DROP TABLE MailGeadresserden
+DROP TABLE MailccGeadresserden
+DROP TABLE MailbccGeadresserden
+DROP TABLE VerzondenMails
+DROP TABLE Facturen
+DROP TABLE Documenten
+DROP TABLE Betalingen
+DROP TABLE Donateur
+DROP TABLE Donaties
+DROP TABLE EvenementPersoon
+DROP TABLE Evenement
+DROP TABLE PersoonRol
+DROP TABLE Personen
+DROP TABLE Rollen
+DROP TABLE AspNetRoleClaims
+DROP TABLE AspNetUserClaims
+DROP TABLE AspNetUserLogins
+DROP TABLE AspNetUserTokens
+DROP TABLE AspNetUserRoles
+DROP TABLE AspNetRoles
+DROP TABLE AspNetUsers
 
-
-DELETE FROM PersoonRol;
-DELETE FROM Rollen;
-DELETE FROM Personen;
-DELETE FROM Documenten;
-
+/* clean to seed again */
+DELETE FROM Documenten 
+DELETE FROM Donateur
+DELETE FROM AspNetUsers
+DELETE FROM Rollen

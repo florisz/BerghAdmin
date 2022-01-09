@@ -12,32 +12,29 @@ namespace BerghAdmin.Data
         Vrouw
     }
 
-    public class Persoon
+    public class Persoon : Donateur
     {
         public Persoon()
         {
             Geslacht = GeslachtEnum.Onbekend;
             Rollen = new HashSet<Rol>();
-            IsVerwijderd = false;
         }
-        public int Id { get; set; }
         public GeslachtEnum Geslacht { get; set; }
         public string? Voorletters { get; set; }
         public string? Voornaam { get; set; }
         public string? Achternaam { get; set; }
         public string? Tussenvoegsel { get; set; }
         public DateTime? GeboorteDatum { get; set; }
-        public string? Adres { get; set; }
-        public string? Postcode  { get; set; }
-        public string? Plaats  { get; set; }
-        public string? Land  { get; set; }
         public string? Telefoon  { get; set; }
         public string? Mobiel  { get; set; }
         public string? EmailAdres  { get; set; } 
         public string? EmailAdresExtra  { get; set; } 
-        public bool IsVerwijderd { get; set; }
         public HashSet<Rol> Rollen { get; set; } = new();
-       
+        public ICollection<VerzondenMail> Geadresseerden { get; set; } = new List<VerzondenMail>();
+        public ICollection<VerzondenMail> ccGeadresseerden { get; set; } = new List<VerzondenMail>();
+        public ICollection<VerzondenMail> bccGeadresseerden { get; set; } = new List<VerzondenMail>();
+        public ICollection<Evenement>? IsDeelnemerVan { get; set; }
+        
         [NotMapped]
         public string GetRollenAsString
             => string.Join(", ", Rollen.Select(r => r.Beschrijving));

@@ -13,7 +13,7 @@ namespace BerghAdmin.DocumentMergeTests
     public class DocumentMergeTests
     {
         private readonly ServiceProvider _serviceProvider;
-        private const string DocumentPath = "C:/git/bihz/BerghAdmin/BerghAdmin.Tests/MergeTemplateTests/TestDocumenten"; 
+        private const string DocumentPath = "C:/git/bihz/BerghAdmin/BerghAdmin.Tests/DocumentMergeTests/TestDocumenten"; 
         private readonly List<TestDocument> TestDocuments = new()
         {
             new TestDocument() 

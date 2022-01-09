@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 using Syncfusion.Blazor;
@@ -23,8 +24,11 @@ RegisterServices();
 var app = builder.Build();
 UseServices();
 
-app.Run();
 
+var seedService = app.Services.GetRequiredService<ISeedDataService>();
+seedService.Initialize();
+
+app.Run();
 
 string GetDatabaseConnectionString()
 {
@@ -38,25 +42,10 @@ string GetDatabaseConnectionString()
 
 void RegisterAuthorization()
 {
-    //builder.Services.AddScoped<UserManager>();
-    //builder.Services.AddScoped<IUserValidator<User>, UserValidator<User>>();
-    //builder.Services.AddScoped<IPasswordValidator<User>, PasswordValidator<User>>();
-    //builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-    //builder.Services.AddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
-    ////builder.Services.AddScoped<IRoleValidator<TRole>, RoleValidator<TRole>>();
-    //builder.Services.AddScoped<IdentityErrorDescriber>();
-    //builder.Services.AddScoped<ISecurityStampValidator, SecurityStampValidator<User>>();
-    //builder.Services.AddScoped<ITwoFactorSecurityStampValidator, TwoFactorSecurityStampValidator<User>>();
-    ////builder.Services.AddScoped<IUserClaimsPrincipalFactory<User>, UserClaimsPrincipalFactory<User, TRole>>();
-    //builder.Services.AddScoped<UserManager<User>>();
-    //builder.Services.AddScoped<SignInManager<User>>();
-    //builder.Services.AddScoped<RoleManager<TRole>>();
-
-
     builder.Services
         .AddDefaultIdentity<User>(options => {
             options.SignIn.RequireConfirmedAccount = true;
-            options.Password.RequiredLength = 12;
+            options.Password.RequiredLength = 6;
             options.Password.RequireDigit = false;
             options.Password.RequireLowercase = false;
             options.Password.RequireUppercase = false;
@@ -85,7 +74,7 @@ void RegisterServices()
     //builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
     builder.Services.AddScoped<IPersoonService, PersoonService>();
     builder.Services.AddScoped<IRolService, RolService>();
-    builder.Services.AddScoped<ISeedDataService, SeedDataService>();
+    builder.Services.AddTransient<ISeedDataService, SeedDataService>();
     builder.Services.AddScoped<IDocumentService, DocumentService>();
     builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
     builder.Services.AddScoped<IDataImporterService, DataImporterService>();

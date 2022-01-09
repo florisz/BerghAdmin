@@ -1,4 +1,5 @@
-﻿DROP TABLE __EFMigrationsHistory
+﻿USE BIHZ2021
+DROP TABLE __EFMigrationsHistory
 DROP TABLE Documenten
 DROP TABLE PersoonRol
 DROP TABLE Personen

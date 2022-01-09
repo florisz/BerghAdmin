@@ -32,6 +32,7 @@ Class Donateur {
 
 class Donatie {
 }
+
 note "Relatie met Kentaa\nlater modelleren" as Note3
 Donatie .. Note3
 
@@ -42,10 +43,25 @@ Donateur *-- "1" Donatie : doet >
 class Factuur {
   IsBetaald()
 }
+enum FactuurType {
+  Mail
+  Post
+  Pdf
+  Kentaa
+}
+Factuur -right- FactuurType : is één van >
 
 class Betaling {
   
 }
+enum BetalingType {
+  Unknown
+  Cash
+  Kentaa
+  Bank
+}
+Betaling -right- BetalingType : is één van >
+
 Donatie -- Factuur : > kan resulteren in
 Factuur -- Betaling : < is gelinkt aan
 
