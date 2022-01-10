@@ -2,6 +2,6 @@ namespace BerghAdmin.Services
 {
     public interface ISeedDataService
     {
-        void Initialize();
+        void SeedInitialData();
     }
 }

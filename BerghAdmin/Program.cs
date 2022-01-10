@@ -24,7 +24,7 @@ UseServices();
 
 
 var seedService = app.Services.GetRequiredService<ISeedDataService>();
-seedService.Initialize();
+seedService.SeedInitialData();
 
 app.Run();
 
