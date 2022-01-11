@@ -21,8 +21,7 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
     public DbSet<VerzondenMail>? VerzondenMails { get; set; }
     public DbSet<Organisatie>? Organisaties { get; set; }
     public DbSet<Donatie>? Donaties { get; set; }
-    public DbSet<GolfDag>? Golfdagen { get; set; }
-    public DbSet<FietsTocht>? FietsTochten { get; set; }
+    public DbSet<Evenement>? Evenementen{ get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -44,7 +43,12 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .HasMany(p => p.bccGeadresseerden)
             .WithMany(m => m.bccGeadresseerden)
             .UsingEntity(j => j.ToTable("MailbccGeadresseerden"));
-            
+
+        modelBuilder
+            .Entity<FietsTocht>().ToTable("FietsTocht");
+
+        modelBuilder
+            .Entity<GolfDag>().ToTable("GolfDag");
     }
 
 }

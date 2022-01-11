@@ -18,7 +18,7 @@ namespace BerghAdmin.Services
 
         public Rol? GetRolById(RolTypeEnum id)
         {
-            var rol = _dbContext.Rollen.SingleOrDefault(x => x.Id == id);
+            var rol = _dbContext.Rollen?.SingleOrDefault(x => x.Id == id);
             
             return rol;
         }

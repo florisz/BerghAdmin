@@ -3,6 +3,7 @@ using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
 using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Context;
+using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 
 using Microsoft.AspNetCore.Authorization;
@@ -80,6 +81,7 @@ void RegisterServices()
     builder.Services.AddScoped<IDataImporterService, DataImporterService>();
     builder.Services.AddScoped<IContextService, ContextService>();
     builder.Services.AddScoped<ISendMailService, SendMailService>();
+    builder.Services.AddScoped<IEvenementService, EvenementService>();
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddSyncfusionBlazor();
     builder.Services.AddSignalR(e =>

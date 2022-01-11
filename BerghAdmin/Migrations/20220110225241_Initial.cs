@@ -106,21 +106,16 @@ namespace BerghAdmin.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Evenement",
+                name: "Evenementen",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Naam = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GeplandJaar = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    GeplandeDatum = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Locatie = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Omschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Naam = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Evenement", x => x.Id);
+                    table.PrimaryKey("PK_Evenementen", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -284,11 +279,47 @@ namespace BerghAdmin.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EvenementPersoon_Evenement_IsDeelnemerVanId",
+                        name: "FK_EvenementPersoon_Evenementen_IsDeelnemerVanId",
                         column: x => x.IsDeelnemerVanId,
-                        principalTable: "Evenement",
+                        principalTable: "Evenementen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FietsTocht",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    GeplandJaar = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FietsTocht", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FietsTocht_Evenementen_Id",
+                        column: x => x.Id,
+                        principalTable: "Evenementen",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GolDag",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    GeplandeDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Locatie = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Omschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GolDag", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GolDag_Evenementen_Id",
+                        column: x => x.Id,
+                        principalTable: "Evenementen",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -484,6 +515,12 @@ namespace BerghAdmin.Migrations
                 name: "Facturen");
 
             migrationBuilder.DropTable(
+                name: "FietsTocht");
+
+            migrationBuilder.DropTable(
+                name: "GolDag");
+
+            migrationBuilder.DropTable(
                 name: "MailbccGeadresseerden");
 
             migrationBuilder.DropTable(
@@ -499,7 +536,7 @@ namespace BerghAdmin.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Evenement");
+                name: "Evenementen");
 
             migrationBuilder.DropTable(
                 name: "VerzondenMails");

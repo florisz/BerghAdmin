@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220109183850_Initial")]
+    [Migration("20220110225241_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -146,18 +146,12 @@ namespace BerghAdmin.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Naam")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Evenement");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Evenement");
+                    b.ToTable("Evenementen");
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Factuur", b =>
@@ -468,7 +462,7 @@ namespace BerghAdmin.Migrations
                     b.Property<DateTime?>("GeplandJaar")
                         .HasColumnType("datetime2");
 
-                    b.HasDiscriminator().HasValue("FietsTocht");
+                    b.ToTable("FietsTocht", (string)null);
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.GolfDag", b =>
@@ -484,7 +478,7 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("Omschrijving")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("GolfDag");
+                    b.ToTable("GolDag", (string)null);
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Organisatie", b =>
@@ -671,6 +665,24 @@ namespace BerghAdmin.Migrations
                         .WithMany()
                         .HasForeignKey("bccGeadresseerdenId1")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BerghAdmin.Data.FietsTocht", b =>
+                {
+                    b.HasOne("BerghAdmin.Data.Evenement", null)
+                        .WithOne()
+                        .HasForeignKey("BerghAdmin.Data.FietsTocht", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BerghAdmin.Data.GolfDag", b =>
+                {
+                    b.HasOne("BerghAdmin.Data.Evenement", null)
+                        .WithOne()
+                        .HasForeignKey("BerghAdmin.Data.GolfDag", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 

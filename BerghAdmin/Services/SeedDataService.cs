@@ -1,5 +1,6 @@
 using System.IO;
 using BerghAdmin.DbContexts;
+using BerghAdmin.Services.Evenementen;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -34,9 +35,12 @@ public class SeedDataService : ISeedDataService
 
             InsertUsers(scope, dbContext, rollen);
 
+            InsertEvenementen(scope, dbContext);
+
             InsertDocumenten(dbContext);
         }
     }
+
 
     private ApplicationDbContext GetDbContext(IServiceScope scope)
     {
@@ -367,4 +371,15 @@ public class SeedDataService : ISeedDataService
         dbContext.SaveChanges();
     }
 
+    private void InsertEvenementen(IServiceScope scope, ApplicationDbContext dbContext)
+    {
+        var evenementService = (IEvenementService) scope.ServiceProvider.GetRequiredService<IEvenementService>();
+        var fietstocht = new FietsTocht()
+        {
+            Id = 0,
+            GeplandJaar = new DateTime(2032, 1, 1),
+            Naam = "Hanzetocht"
+        };
+        evenementService.SaveEvenement(fietstocht);
+    }
 }

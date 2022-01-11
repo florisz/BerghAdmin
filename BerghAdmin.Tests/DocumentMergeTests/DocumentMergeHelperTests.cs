@@ -5,6 +5,8 @@ using BerghAdmin.Data;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
+using BerghAdmin.Services;
 
 namespace BerghAdmin.DocumentMergeTests
 {
@@ -12,8 +14,7 @@ namespace BerghAdmin.DocumentMergeTests
     {
         public static SqliteConnection GetSqliteInMemoryConnection()
         {
-            var connectionStringBuilder =
-                new SqliteConnectionStringBuilder { DataSource = ":memory:" };
+            var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
             
             return new SqliteConnection(connectionStringBuilder.ToString());
         }
@@ -27,17 +28,30 @@ namespace BerghAdmin.DocumentMergeTests
             return options;
         }
 
-        public static async void CreateTestDataBaseInMemory(DbContextOptions<ApplicationDbContext> options, List<TestDocument> testDocuments)
+        //public static async void CreateTestDataBaseInMemory(DbContextOptions<ApplicationDbContext> options, List<TestDocument> testDocuments)
+        //{
+        //    await using (var context = new ApplicationDbContext(options))
+        //    {
+        //        await context.Database.OpenConnectionAsync();
+        //        await context.Database.EnsureCreatedAsync();
+        //        CreateData(context, testDocuments);
+        //    }
+        //}
+
+        public static void CreateTestDataBaseInMemory(IServiceProvider serviceProvider, List<TestDocument> testDocuments)
         {
-            await using (var context = new ApplicationDbContext(options))
+            using (var scope = serviceProvider.CreateScope())
+            using (var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>())
             {
-                await context.Database.OpenConnectionAsync();
-                await context.Database.EnsureCreatedAsync();
-                CreateData(context, testDocuments);
-            }
+                dbContext.Database.OpenConnection();
+                dbContext.Database.EnsureCreated();
+                CreateData(dbContext, testDocuments);
+           }
+
+
         }
 
-        private static void CreateData(ApplicationDbContext applicationDbContext, List<TestDocument> testDocuments)
+        private static void CreateData(ApplicationDbContext dbContext, List<TestDocument> testDocuments)
         {
             foreach (var testDocument in testDocuments)
             {
@@ -46,16 +60,16 @@ namespace BerghAdmin.DocumentMergeTests
                     throw new ApplicationException($"Test document with path {testDocument.FilePath} does not exist");
                 }
                 var content = File.ReadAllBytes (testDocument.FilePath);
-                applicationDbContext.Documenten.Add(new Document 
-                                                            {
-                                                                Id = testDocument.Id,
-                                                                Name = testDocument.Name,
-                                                                ContentType = ContentTypeEnum.Word,
-                                                                Content = content,
-                                                                IsMergeTemplate = true
-                                                            });
+                dbContext.Documenten?.Add(new Document 
+                                        {
+                                            Id = testDocument.Id,
+                                            Name = testDocument.Name,
+                                            ContentType = ContentTypeEnum.Word,
+                                            Content = content,
+                                            IsMergeTemplate = true
+                                        });
             }
-            applicationDbContext.SaveChangesAsync();
+            dbContext.SaveChangesAsync();
         }
     }
 }
