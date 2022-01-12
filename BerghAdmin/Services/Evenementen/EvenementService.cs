@@ -1,4 +1,6 @@
 ﻿using BerghAdmin.DbContexts;
+using BerghAdmin.General;
+using static System.Net.WebRequestMethods;
 
 namespace BerghAdmin.Services.Evenementen;
 
@@ -30,10 +32,15 @@ public class EvenementService : IEvenementService
     }
 
 
-    public void SaveEvenement(Evenement evenement)
+    public ErrorCodeEnum SaveEvenement(Evenement evenement)
     {
         if (evenement.Id == 0)
         {
+            if (GetByName(evenement.Naam) != null)
+            {
+                return ErrorCodeEnum.Conflict;
+            }
+
             _dbContext.Evenementen?.Add(evenement);
         }
         else
@@ -41,6 +48,8 @@ public class EvenementService : IEvenementService
             _dbContext.Evenementen?.Update(evenement);
         }
         _dbContext.SaveChanges();
+
+        return ErrorCodeEnum.Ok;
     }
 
 }

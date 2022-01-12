@@ -1,8 +1,10 @@
-﻿namespace BerghAdmin.Services.Evenementen;
+﻿using BerghAdmin.General;
+
+namespace BerghAdmin.Services.Evenementen;
 
 public interface IEvenementService
 {
-    void SaveEvenement(Evenement evenement);
+    ErrorCodeEnum SaveEvenement(Evenement evenement);
     Evenement GetById(int id);
     Evenement GetByName(string name);
 

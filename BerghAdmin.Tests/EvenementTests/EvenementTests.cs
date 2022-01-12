@@ -1,5 +1,6 @@
 ﻿using BerghAdmin.Data;
 using BerghAdmin.DbContexts;
+using BerghAdmin.General;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Tests.TestHelpers;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,7 @@ namespace BerghAdmin.Tests.EvenementTests
             _applicationDbContext?.Database.OpenConnection();
             _applicationDbContext?.Database.EnsureCreated();
         }
+
         [Test]
         public void GetByNameTest()
         {
@@ -72,5 +74,19 @@ namespace BerghAdmin.Tests.EvenementTests
             Assert.AreEqual(fietsTochtById.Naam, fietsTochtNaam);
             Assert.Pass();
         }
+
+        [Test]
+        public void AddWithExistingName()
+        {
+            const string fietsTochtNaam = "Fietstocht3";
+
+            var service = _serviceProvider.GetRequiredService<IEvenementService>();
+            service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
+            var errorCode = service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2023, 1, 1) });
+
+            Assert.AreEqual(errorCode, ErrorCodeEnum.Conflict);
+            Assert.Pass();
+        }
+
     }
 }
