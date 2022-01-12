@@ -52,4 +52,11 @@ public class EvenementService : IEvenementService
         return ErrorCodeEnum.Ok;
     }
 
+    public IEnumerable<T>? GetAllEvenementen<T>()
+    {
+        return _dbContext
+                    .Evenementen?
+                    .OfType<T>();
+    }
+
 }
