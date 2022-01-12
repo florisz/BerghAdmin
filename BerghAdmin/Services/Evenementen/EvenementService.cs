@@ -13,14 +13,9 @@ public class EvenementService : IEvenementService
         _dbContext = context;
     }
 
-    public Evenement GetById(int id)
-    {
-        var evenement = _dbContext
-                    .Evenementen
-                    .Find(id);
-
-        return evenement;
-    }
+    public Evenement GetById(int id) => _dbContext
+                                            .Evenementen
+                                            .Find(id);
 
     public Evenement GetByName(string name)
     {

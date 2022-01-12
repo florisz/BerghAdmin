@@ -20,4 +20,13 @@
 		<ProjectReference Include="..\BerghAdmin\BerghAdmin.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="DocumentMergeTests\TestDocumenten\TemplateFactuurSponsor.docx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="DocumentMergeTests\TestDocumenten\TestTemplate3.docx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>

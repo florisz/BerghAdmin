@@ -20,19 +20,19 @@ namespace BerghAdmin.DocumentMergeTests
             { 
                 Id = 1, 
                 Name = "TestTemplate1", 
-                FilePath = $"{DocumentPath}/TemplateFactuurSponsor.docx"
+                FilePath = $"./DocumentMergeTests/TestDocumenten/TemplateFactuurSponsor.docx"
             },
             new TestDocument() 
             { 
                 Id = 2, 
                 Name = "TestTemplate2", 
-                FilePath = $"{DocumentPath}/TemplateFactuurSponsor.docx"
+                FilePath = $"./DocumentMergeTests/TestDocumenten/TemplateFactuurSponsor.docx"
             },
             new TestDocument() 
             { 
                 Id = 3, 
                 Name = "TestTemplate3", 
-                FilePath = $"{DocumentPath}/TestTemplate3.docx"
+                FilePath = $"./DocumentMergeTests/TestDocumenten/TestTemplate3.docx"
             },
         };
 
@@ -51,31 +51,24 @@ namespace BerghAdmin.DocumentMergeTests
                 .AddScoped<IDocumentMergeService, DocumentMergeService>();
 
             _serviceProvider = services.BuildServiceProvider();
+        
+            DocumentMergeHelperTests.CreateTestDataBaseInMemory(_serviceProvider, TestDocuments);
         }
 
         [SetUp]
         public void SetupMergeTemplateTests()
         {
-            DocumentMergeHelperTests.CreateTestDataBaseInMemory(_serviceProvider, TestDocuments);
+            //DocumentMergeHelperTests.CreateTestDataBaseInMemory(_serviceProvider, TestDocuments);
         }
 
         [Test]
         public void TestIsDocumentPresent()
         {
-            using (var scope = _serviceProvider.CreateScope())
-            using (var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>())
-            {
-                var service = new DocumentService(dbContext);
-                var doc = service.GetDocumentById(1);
-                Assert.NotNull(doc);
-                Assert.AreEqual(doc.Name, "TestTemplate1");
-                Assert.Pass();
-            }
-            //var service = _serviceProvider.GetRequiredService<IDocumentService>();
-            //var doc = service.GetDocumentById(1);
-            //Assert.NotNull(doc);
-            //Assert.AreEqual(doc.Name, "TestTemplate1");
-            //Assert.Pass();
+            var service = _serviceProvider.GetRequiredService<IDocumentService>();
+            var doc = service.GetDocumentById(1);
+            Assert.NotNull(doc);
+            Assert.AreEqual(doc.Name, "TestTemplate1");
+            Assert.Pass();
         }
 
         [Test]

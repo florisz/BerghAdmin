@@ -15,7 +15,7 @@ namespace BerghAdmin.DocumentMergeTests
         public static SqliteConnection GetSqliteInMemoryConnection()
         {
             var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
-            
+
             return new SqliteConnection(connectionStringBuilder.ToString());
         }
 
@@ -28,46 +28,32 @@ namespace BerghAdmin.DocumentMergeTests
             return options;
         }
 
-        //public static async void CreateTestDataBaseInMemory(DbContextOptions<ApplicationDbContext> options, List<TestDocument> testDocuments)
-        //{
-        //    await using (var context = new ApplicationDbContext(options))
-        //    {
-        //        await context.Database.OpenConnectionAsync();
-        //        await context.Database.EnsureCreatedAsync();
-        //        CreateData(context, testDocuments);
-        //    }
-        //}
-
         public static void CreateTestDataBaseInMemory(IServiceProvider serviceProvider, List<TestDocument> testDocuments)
         {
-            using (var scope = serviceProvider.CreateScope())
-            using (var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>())
-            {
-                dbContext.Database.OpenConnection();
-                dbContext.Database.EnsureCreated();
-                CreateData(dbContext, testDocuments);
-           }
-
-
+            // You cannot use 'using' here. Otherwise you are disposing the context that the serviceProvider holds for us
+            var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            dbContext.Database.OpenConnection();
+            dbContext.Database.EnsureCreated();
+            CreateData(dbContext, testDocuments);
         }
 
         private static void CreateData(ApplicationDbContext dbContext, List<TestDocument> testDocuments)
         {
             foreach (var testDocument in testDocuments)
             {
-                if (! File.Exists(testDocument.FilePath))
+                if (!File.Exists(testDocument.FilePath))
                 {
                     throw new ApplicationException($"Test document with path {testDocument.FilePath} does not exist");
                 }
-                var content = File.ReadAllBytes (testDocument.FilePath);
-                dbContext.Documenten?.Add(new Document 
-                                        {
-                                            Id = testDocument.Id,
-                                            Name = testDocument.Name,
-                                            ContentType = ContentTypeEnum.Word,
-                                            Content = content,
-                                            IsMergeTemplate = true
-                                        });
+                var content = File.ReadAllBytes(testDocument.FilePath);
+                dbContext.Documenten?.Add(new Document
+                {
+                    Id = testDocument.Id,
+                    Name = testDocument.Name,
+                    ContentType = ContentTypeEnum.Word,
+                    Content = content,
+                    IsMergeTemplate = true
+                });
             }
             dbContext.SaveChangesAsync();
         }
