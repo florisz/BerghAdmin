@@ -304,7 +304,7 @@ namespace BerghAdmin.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GolDag",
+                name: "GolfDag",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
@@ -314,9 +314,9 @@ namespace BerghAdmin.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GolDag", x => x.Id);
+                    table.PrimaryKey("PK_GolfDag", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GolDag_Evenementen_Id",
+                        name: "FK_GolfDag_Evenementen_Id",
                         column: x => x.Id,
                         principalTable: "Evenementen",
                         principalColumn: "Id");
@@ -518,7 +518,7 @@ namespace BerghAdmin.Migrations
                 name: "FietsTocht");
 
             migrationBuilder.DropTable(
-                name: "GolDag");
+                name: "GolfDag");
 
             migrationBuilder.DropTable(
                 name: "MailbccGeadresseerden");

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220110225241_Initial")]
+    [Migration("20220112185639_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -478,7 +478,7 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("Omschrijving")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("GolDag", (string)null);
+                    b.ToTable("GolfDag", (string)null);
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Organisatie", b =>

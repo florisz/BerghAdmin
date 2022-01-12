@@ -476,7 +476,7 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("Omschrijving")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("GolDag", (string)null);
+                    b.ToTable("GolfDag", (string)null);
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Organisatie", b =>
