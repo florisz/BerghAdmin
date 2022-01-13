@@ -6,24 +6,29 @@ using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Tests.TestHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-
 using NUnit.Framework;
-
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BerghAdmin.Tests.EvenementTests
 {
     [TestFixture]
-    public class EvenementTests : DatabasedTests
+    public class EvenementTests
     {
-        private ServiceProvider ServiceProvider { get; set; }
-        protected override void RegisterServices(ServiceCollection services)
+        private ServiceProvider _serviceProvider;
+        private ApplicationDbContext _applicationDbContext;
+
+
+        [SetUp]
+        public void SetupTests()
         {
             // give each test its own separate database and service setup
             var connection = InMemoryDatabaseHelper.GetSqliteInMemoryConnection();
-            var serviceCollection = new ServiceCollection();
-            serviceCollection
+            var services = new ServiceCollection();
+            services
                 .AddEntityFrameworkSqlite()
                 .AddDbContext<ApplicationDbContext>(builder =>
                 {
@@ -32,10 +37,10 @@ namespace BerghAdmin.Tests.EvenementTests
                 .AddScoped<IEvenementService, EvenementService>()
                 .AddScoped<IPersoonService, PersoonService>();
 
-            this.ServiceProvider = services.BuildServiceProvider();
+            _serviceProvider = services.BuildServiceProvider();
 
-            var scope = this.ServiceProvider.CreateScope();
-            var _applicationDbContext = scope?.ServiceProvider.GetService<ApplicationDbContext>();
+            var scope = _serviceProvider.CreateScope();
+            _applicationDbContext = scope?.ServiceProvider.GetService<ApplicationDbContext>();
 
             _applicationDbContext?.Database.OpenConnection();
             _applicationDbContext?.Database.EnsureCreated();
@@ -46,7 +51,7 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht1";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = _serviceProvider.GetRequiredService<IEvenementService>();
             service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
             var fietsTocht = service.GetByName(fietsTochtNaam);
 
@@ -58,7 +63,7 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht2";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = _serviceProvider.GetRequiredService<IEvenementService>();
             service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
             var fietsTocht = service.GetByName(fietsTochtNaam);
 
@@ -74,7 +79,7 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht3";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = _serviceProvider.GetRequiredService<IEvenementService>();
             service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
             var errorCode = service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2023, 1, 1) });
 
@@ -87,7 +92,7 @@ namespace BerghAdmin.Tests.EvenementTests
             const string fietsTochtNaam = "Fietstocht4";
             const string fietsTochtUpdatedNaam = "Fietstocht4.1";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = _serviceProvider.GetRequiredService<IEvenementService>();
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
             service.SaveEvenement(fietsTocht);
 
@@ -102,7 +107,7 @@ namespace BerghAdmin.Tests.EvenementTests
         [Test]
         public void GetAllEvenementen()
         {
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = _serviceProvider.GetRequiredService<IEvenementService>();
 
             var strArray = new string[] { "aap", "noot", "mies" };
             foreach (var name in strArray)
@@ -130,14 +135,14 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht4";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = _serviceProvider.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
             service.SaveEvenement(fietsTocht);
-            service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" } );
+            service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
             service = null;
 
-            var service2 = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service2 = _serviceProvider.GetRequiredService<IEvenementService>();
             var fietsTochtById = service2.GetById(fietsTocht.Id);
             var persoon = fietsTochtById?.Deelnemers.FirstOrDefault();
             var isDeelnemerVan = persoon?.IsDeelnemerVan?.FirstOrDefault(f => f.Id == fietsTocht.Id) != null;
@@ -152,14 +157,14 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht4";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = _serviceProvider.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
             service.SaveEvenement(fietsTocht);
             service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
             service = null;
 
-            var service2 = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service2 = _serviceProvider.GetRequiredService<IEvenementService>();
             var fietsTochtById = service2.GetById(fietsTocht.Id);
             var persoon = fietsTochtById?.Deelnemers.FirstOrDefault();
             Assert.IsNotNull(fietsTochtById);
@@ -180,16 +185,16 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht4";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = _serviceProvider.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
             service.SaveEvenement(fietsTocht);
             var persoon = new Persoon() { EmailAdres = "aap@noot.com" };
             service.AddDeelnemer(fietsTocht, persoon);
-        
+
             service = null;
 
-            var service2 = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service2 = _serviceProvider.GetRequiredService<IEvenementService>();
             var fietsTochtById = service2.GetById(fietsTocht.Id);
             Assert.IsNotNull(fietsTochtById);
 
