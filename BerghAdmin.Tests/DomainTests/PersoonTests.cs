@@ -17,7 +17,7 @@ namespace BerghAdmin.Tests.DomainTests
         public void TestGetRollenEmpty()
         {
             var persoon = new Persoon { Id = 1 };
-            Assert.AreEqual(null, persoon.GetRollenAsString);
+            Assert.AreEqual(string.Empty, persoon.GetRollenAsString);
         }
         
         [Test]
