@@ -13,27 +13,14 @@ namespace BerghAdmin.Tests.EnumTests
         public void TestTextIsEmpty()
         {
             var rolData = GetAlleRollen();
-            Assert.AreEqual(9, rolData.Length);
+            Assert.AreEqual(10, rolData.Length);
         }
 
         private static RolData[] GetAlleRollen()
-        {
-            var rolData = new List<RolData>();
-
-            foreach (int rolType in Enum.GetValues(typeof(RolTypeEnum)))
-            {
-                var isEnumParsed = Enum.TryParse(rolType.ToString(), true, out RolTypeEnum parsedEnumValue);
-
-                if (isEnumParsed)
-                {
-                    rolData.Add(new RolData() { Id = rolType, Text = parsedEnumValue.ToString() });
-                }
-            }
-
-            return rolData.ToArray<RolData>();
-        }
-
-
+            =>
+            Enum.GetNames<RolTypeEnum>()
+                .Select(t => new RolData { Text = t })
+                .ToArray();
     }
 
     public class RolData
