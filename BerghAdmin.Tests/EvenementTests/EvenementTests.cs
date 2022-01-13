@@ -1,47 +1,22 @@
 ﻿using BerghAdmin.Data;
-using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 using BerghAdmin.Services.Evenementen;
-using BerghAdmin.Tests.TestHelpers;
-using Microsoft.EntityFrameworkCore;
+
 using Microsoft.Extensions.DependencyInjection;
+
 using NUnit.Framework;
+
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BerghAdmin.Tests.EvenementTests
 {
     [TestFixture]
-    public class EvenementTests
+    public class EvenementTests : DatabasedTests
     {
-        private ServiceProvider _serviceProvider;
-        private ApplicationDbContext _applicationDbContext;
-
-
-        [SetUp]
-        public void SetupTests()
+        protected override void RegisterServices(ServiceCollection services)
         {
-            // give each test its own separate database and service setup
-            var connection = InMemoryDatabaseHelper.GetSqliteInMemoryConnection();
-            var services = new ServiceCollection();
-            services
-                .AddEntityFrameworkSqlite()
-                .AddDbContext<ApplicationDbContext>(builder =>
-                {
-                    builder.UseSqlite(connection);
-                }, ServiceLifetime.Singleton, ServiceLifetime.Singleton)
-                .AddScoped<IEvenementService, EvenementService>();
-
-            _serviceProvider = services.BuildServiceProvider();
-
-            var scope = _serviceProvider.CreateScope();
-            _applicationDbContext = scope?.ServiceProvider.GetService<ApplicationDbContext>();
-
-            _applicationDbContext?.Database.OpenConnection();
-            _applicationDbContext?.Database.EnsureCreated();
+            services.AddScoped<IEvenementService, EvenementService>();
         }
 
         [Test]
@@ -49,7 +24,7 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht1";
 
-            var service = _serviceProvider.GetRequiredService<IEvenementService>();
+            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
             service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
             var fietsTocht = service.GetByName(fietsTochtNaam);
 
@@ -61,7 +36,7 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht2";
 
-            var service = _serviceProvider.GetRequiredService<IEvenementService>();
+            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
             service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
             var fietsTocht = service.GetByName(fietsTochtNaam);
 
@@ -77,7 +52,7 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht3";
 
-            var service = _serviceProvider.GetRequiredService<IEvenementService>();
+            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
             service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
             var errorCode = service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2023, 1, 1) });
 
@@ -90,10 +65,10 @@ namespace BerghAdmin.Tests.EvenementTests
             const string fietsTochtNaam = "Fietstocht4";
             const string fietsTochtUpdatedNaam = "Fietstocht4.1";
 
-            var service = _serviceProvider.GetRequiredService<IEvenementService>();
+            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
             service.SaveEvenement(fietsTocht);
-            
+
             fietsTocht.Naam = fietsTochtUpdatedNaam;
             service.SaveEvenement(fietsTocht);
 
@@ -105,7 +80,7 @@ namespace BerghAdmin.Tests.EvenementTests
         [Test]
         public void GetAllEvenementen()
         {
-            var service = _serviceProvider.GetRequiredService<IEvenementService>();
+            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
 
             var strArray = new string[] { "aap", "noot", "mies" };
             foreach (var name in strArray)
