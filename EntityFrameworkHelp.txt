@@ -23,8 +23,11 @@ DROP TABLE PersoonRol
 DROP TABLE EvenementPersoon
 DROP TABLE Donaties
 DROP TABLE Donateur
-DROP TABLE Evenement
+DROP TABLE FietsTocht
+DROP TABLE GolfDag
+DROP TABLE Evenementen
 DROP TABLE Rollen
+
 
 /* clean to seed again */
 DELETE FROM Documenten 
