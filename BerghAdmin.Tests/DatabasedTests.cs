@@ -29,11 +29,9 @@ namespace BerghAdmin.Tests
                 }, ServiceLifetime.Singleton, ServiceLifetime.Singleton);
 
             RegisterServices(services);
-                //.AddScoped<IEvenementService, EvenementService>();
 
             ServiceProvider = services.BuildServiceProvider();
 
-            //var scope = serviceProvider.CreateScope();
             ApplicationDbContext = ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             ApplicationDbContext?.Database.OpenConnection();
