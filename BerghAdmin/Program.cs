@@ -3,6 +3,7 @@ using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
 using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Context;
+using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 
@@ -82,6 +83,7 @@ void RegisterServices()
     builder.Services.AddScoped<IContextService, ContextService>();
     builder.Services.AddScoped<ISendMailService, SendMailService>();
     builder.Services.AddScoped<IEvenementService, EvenementService>();
+    builder.Services.AddScoped<IDonatieService, DonatieService>();
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddSyncfusionBlazor();
     builder.Services.AddSignalR(e =>

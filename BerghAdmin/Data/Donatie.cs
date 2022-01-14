@@ -1,12 +1,13 @@
 using System;
 
-namespace BerghAdmin.Data
+namespace BerghAdmin.Data;
+
+public class Donatie
 {
-    public class Donatie
-    {
-        public int Id { get; set; }
-        public DateTime? Datum { get; set; }
-        public float? Bedrag { get; set; }
-        public Donateur? Donateur { get; set; }
-    }
+    public int Id { get; set; }
+    public DateTime? Datum { get; set; }
+    public float? Bedrag { get; set; }
+    public Donateur? Donateur { get; set; }
+    public KentaaDonatie? KentaaDonatie { get; set; }
+    public Factuur? Factuur { get; set; }
 }

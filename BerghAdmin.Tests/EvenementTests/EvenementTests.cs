@@ -13,7 +13,7 @@ using System.Linq;
 namespace BerghAdmin.Tests.EvenementTests
 {
     [TestFixture]
-    public class EvenementTests : DatabasedTests
+    public class DonatieTests : DatabasedTests
     {
         protected override void RegisterServices(ServiceCollection services)
         {

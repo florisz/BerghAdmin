@@ -1,10 +1,7 @@
-using System;
+namespace BerghAdmin.Data;
 
-namespace BerghAdmin.Data
+public class Organisatie : Donateur
 {
-    public class Organisatie : Donateur
-    {
-        public string? Naam { get; set; }
-        public Persoon? ContactPersoon { get; set; } 
-    }
+    public string? Naam { get; set; }
+    public Persoon? ContactPersoon { get; set; } 
 }

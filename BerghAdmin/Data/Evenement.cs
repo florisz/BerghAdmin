@@ -1,11 +1,16 @@
-using System;
+namespace BerghAdmin.Data;
 
-namespace BerghAdmin.Data
+public abstract class Evenement
 {
-    public abstract class Evenement
-    {
-        public int Id { get; set; }
-        public string? Naam { get; set; }
-        public HashSet<Persoon> Deelnemers { get; set;} = new();
-    }
+    public int Id { get; set; }
+    public string? Naam { get; set; }
+    public HashSet<Persoon> Deelnemers { get; set;} = new();
 }
+
+public enum EvenementTypeEnum
+{
+    Unknown,
+    Fietstocht,
+    Golfdag
+}
+
