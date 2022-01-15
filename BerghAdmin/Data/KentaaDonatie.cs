@@ -60,6 +60,7 @@ public enum CurrencyCodeEnum
     NoorseKroon,        // NOK
     ZweedseKroon,       // SEK
     AmerikaanseDollar,  // USD
+    Unknown
 }
 
 public enum PaymentStatusEnum

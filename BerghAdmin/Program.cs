@@ -84,6 +84,7 @@ void RegisterServices()
     builder.Services.AddScoped<ISendMailService, SendMailService>();
     builder.Services.AddScoped<IEvenementService, EvenementService>();
     builder.Services.AddScoped<IDonatieService, DonatieService>();
+    builder.Services.AddScoped<IKentaaService, KentaaService>();
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddSyncfusionBlazor();
     builder.Services.AddSignalR(e =>

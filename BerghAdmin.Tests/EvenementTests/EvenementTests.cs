@@ -28,7 +28,7 @@ namespace BerghAdmin.Tests.EvenementTests
             const string fietsTochtNaam = "Fietstocht1";
 
             var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
-            service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
+            service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
             var fietsTocht = service.GetByName(fietsTochtNaam);
 
             Assert.AreEqual(fietsTocht.Naam, fietsTochtNaam);
@@ -40,7 +40,7 @@ namespace BerghAdmin.Tests.EvenementTests
             const string fietsTochtNaam = "Fietstocht2";
 
             var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
-            service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
+            service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
             var fietsTocht = service.GetByName(fietsTochtNaam);
 
             Assert.IsNotNull(fietsTocht);
@@ -56,8 +56,8 @@ namespace BerghAdmin.Tests.EvenementTests
             const string fietsTochtNaam = "Fietstocht3";
 
             var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
-            service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
-            var errorCode = service.SaveEvenement(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2023, 1, 1) });
+            service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
+            var errorCode = service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2023, 1, 1) });
 
             Assert.AreEqual(errorCode, ErrorCodeEnum.Conflict);
         }
@@ -70,10 +70,10 @@ namespace BerghAdmin.Tests.EvenementTests
 
             var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
-            service.SaveEvenement(fietsTocht);
+            service.Save(fietsTocht);
 
             fietsTocht.Naam = fietsTochtUpdatedNaam;
-            service.SaveEvenement(fietsTocht);
+            service.Save(fietsTocht);
 
             var fietsTochtById = service.GetById(fietsTocht.Id);
 
@@ -81,7 +81,7 @@ namespace BerghAdmin.Tests.EvenementTests
         }
 
         [Test]
-        public void GetAllEvenementen()
+        public void GetAll()
         {
             var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
 
@@ -89,18 +89,18 @@ namespace BerghAdmin.Tests.EvenementTests
             foreach (var name in strArray)
             {
                 var fietsTocht = new FietsTocht() { Naam = name, GeplandJaar = new DateTime(2022, 1, 1) };
-                service.SaveEvenement(fietsTocht);
+                service.Save(fietsTocht);
             }
 
             strArray = new string[] { "wim", "zus", "jet" };
             foreach (var name in strArray)
             {
                 var golfDag = new GolfDag() { Naam = name, GeplandeDatum = new DateTime(2022, 1, 1) };
-                service.SaveEvenement(golfDag);
+                service.Save(golfDag);
             }
 
-            var fietsTochten = service.GetAllEvenementen<FietsTocht>();
-            var golfDagen = service.GetAllEvenementen<GolfDag>();
+            var fietsTochten = service.GetAll<FietsTocht>();
+            var golfDagen = service.GetAll<GolfDag>();
 
             Assert.AreEqual(3, fietsTochten?.ToList().Count);
             Assert.AreEqual(3, golfDagen?.ToList().Count);
@@ -114,7 +114,7 @@ namespace BerghAdmin.Tests.EvenementTests
             var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
-            service.SaveEvenement(fietsTocht);
+            service.Save(fietsTocht);
             service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
             service = null;
 
@@ -136,7 +136,7 @@ namespace BerghAdmin.Tests.EvenementTests
             var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
-            service.SaveEvenement(fietsTocht);
+            service.Save(fietsTocht);
             service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
             service = null;
 
@@ -164,7 +164,7 @@ namespace BerghAdmin.Tests.EvenementTests
             var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
-            service.SaveEvenement(fietsTocht);
+            service.Save(fietsTocht);
             var persoon = new Persoon() { EmailAdres = "aap@noot.com" };
             service.AddDeelnemer(fietsTocht, persoon);
 

@@ -1,9 +1,8 @@
 using System;
 
-namespace BerghAdmin.Services.Configuration
+namespace BerghAdmin.Services.Configuration;
+
+public class DatabaseConfiguration
 {
-    public class DatabaseConfiguration
-    {
-        public string? ConnectionString { get; set; }
-    }
+    public string? ConnectionString { get; set; }
 }

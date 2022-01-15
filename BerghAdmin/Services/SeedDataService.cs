@@ -380,6 +380,6 @@ public class SeedDataService : ISeedDataService
             GeplandJaar = new DateTime(2032, 1, 1),
             Naam = "Hanzetocht"
         };
-        evenementService.SaveEvenement(fietstocht);
+        evenementService.Save(fietstocht);
     }
 }

@@ -29,7 +29,7 @@ public class EvenementService : IEvenementService
     }
 
 
-    public ErrorCodeEnum SaveEvenement(Evenement evenement)
+    public ErrorCodeEnum Save(Evenement evenement)
     {
         if (evenement == null) { throw new ApplicationException("Evenement parameter can never be null"); }
 
@@ -51,7 +51,7 @@ public class EvenementService : IEvenementService
         return ErrorCodeEnum.Ok;
     }
 
-    public IEnumerable<T>? GetAllEvenementen<T>()
+    public IEnumerable<T>? GetAll<T>()
     {
         return _dbContext
                     .Evenementen?

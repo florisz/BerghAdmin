@@ -21,6 +21,7 @@ DROP TABLE Documenten
 DROP TABLE Betalingen
 DROP TABLE PersoonRol
 DROP TABLE EvenementPersoon
+DROP TABLE KentaaDonatie
 DROP TABLE Donaties
 DROP TABLE Donateur
 DROP TABLE FietsTocht

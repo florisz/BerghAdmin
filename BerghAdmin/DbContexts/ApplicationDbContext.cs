@@ -22,6 +22,7 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
     public DbSet<Organisatie>? Organisaties { get; set; }
     public DbSet<Donatie>? Donaties { get; set; }
     public DbSet<Evenement>? Evenementen{ get; set; }
+    public DbSet<KentaaDonatie>? KentaaDonaties{ get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

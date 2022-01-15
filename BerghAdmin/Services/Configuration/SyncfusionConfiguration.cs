@@ -1,9 +1,6 @@
-using System;
+namespace BerghAdmin.Services.Configuration;
 
-namespace BerghAdmin.Services.Configuration
+public class SyncfusionConfiguration
 {
-    public class SyncfusionConfiguration
-    {
-        public string LicenseKey { get; set; } = string.Empty;
-    }
+    public string LicenseKey { get; set; } = string.Empty;
 }
