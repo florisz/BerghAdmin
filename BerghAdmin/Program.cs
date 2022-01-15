@@ -38,7 +38,7 @@ string GetDatabaseConnectionString()
     {
         throw new ApplicationException("Secrets for Database access (connection string & password) can not be found in configuration");
     }
-    return databaseConfiguration.ConnectionString ?? throw new ArgumentNullException("ConnectionString");
+    return databaseConfiguration.ConnectionString ?? throw new ArgumentException("ConnectionString not specified");
 }
 
 void RegisterAuthorization()

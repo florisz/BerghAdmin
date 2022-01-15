@@ -1,6 +1,5 @@
 ﻿using BerghAdmin.DbContexts;
 using BerghAdmin.General;
-using static System.Net.WebRequestMethods;
 
 namespace BerghAdmin.Services.Evenementen;
 
@@ -15,21 +14,18 @@ public class EvenementService : IEvenementService
         _persoonService = persoonService;
     }
 
-    public Evenement? GetById(int id) => _dbContext
-                                            .Evenementen?
-                                            .Find(id);
+    public Evenement? GetById(int id) 
+        => _dbContext
+            .Evenementen?
+            .Find(id);
 
-    public Evenement? GetByName(string? name)
-    {
-        var evenement = _dbContext
-                    .Evenementen?
-                    .FirstOrDefault(e => e.Naam == name);
-
-        return evenement;
-    }
+    public Evenement? GetByName(string? name) 
+        => _dbContext
+            .Evenementen?
+            .FirstOrDefault(e => e.Naam == name);
 
 
-    public ErrorCodeEnum Save(Evenement evenement)
+    public async Task<ErrorCodeEnum> Save(Evenement evenement)
     {
         if (evenement == null) 
         { 
@@ -49,19 +45,17 @@ public class EvenementService : IEvenementService
         {
             _dbContext.Evenementen?.Update(evenement);
         }
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
 
         return ErrorCodeEnum.Ok;
     }
 
     public IEnumerable<T>? GetAll<T>()
-    {
-        return _dbContext
-                    .Evenementen?
-                    .OfType<T>();
-    }
+        => _dbContext
+            .Evenementen?
+            .OfType<T>();
 
-    public ErrorCodeEnum AddDeelnemer(Evenement evenement, Persoon persoon)
+    public async Task<ErrorCodeEnum> AddDeelnemer(Evenement evenement, Persoon persoon)
     {
         if (evenement == null) { throw new ApplicationException("parameter evenement can not be null"); }
         if (persoon == null) { throw new ApplicationException("parameter persoon can not be null"); }
@@ -78,12 +72,12 @@ public class EvenementService : IEvenementService
 
         evenement.Deelnemers.Add (persoon);
 
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
 
         return ErrorCodeEnum.Ok;
     }
 
-    public ErrorCodeEnum AddDeelnemer(Evenement evenement, int persoonId)
+    public async Task<ErrorCodeEnum> AddDeelnemer(Evenement evenement, int persoonId)
     {
         if (evenement == null) { throw new ApplicationException("parameter evenement can not be null"); }
 
@@ -93,10 +87,10 @@ public class EvenementService : IEvenementService
             return ErrorCodeEnum.NotFound;
         }
 
-        return AddDeelnemer (evenement, persoon);
+        return await AddDeelnemer(evenement, persoon);
     }
 
-    public ErrorCodeEnum DeleteDeelnemer(Evenement evenement, Persoon persoon)
+    public async Task<ErrorCodeEnum> DeleteDeelnemer(Evenement evenement, Persoon persoon)
     {
         if (evenement == null) { throw new ApplicationException("parameter evenement can not be null"); }
         if (persoon == null) { throw new ApplicationException("parameter persoon can not be null"); }
@@ -108,12 +102,12 @@ public class EvenementService : IEvenementService
 
         evenement.Deelnemers.Remove(persoon);
 
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
 
         return ErrorCodeEnum.Ok;
     }
 
-    public ErrorCodeEnum DeleteDeelnemer(Evenement evenement, int persoonId)
+    public async Task<ErrorCodeEnum> DeleteDeelnemer(Evenement evenement, int persoonId)
     {
         if (evenement == null) { throw new ApplicationException("parameter evenement can not be null"); }
 
@@ -123,6 +117,6 @@ public class EvenementService : IEvenementService
             return ErrorCodeEnum.NotFound;
         }
 
-        return DeleteDeelnemer(evenement, persoon);
+        return await DeleteDeelnemer(evenement, persoon);
     }
 }

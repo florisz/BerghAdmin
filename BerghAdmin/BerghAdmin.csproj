@@ -5,6 +5,7 @@
 		<UserSecretsId>aspnet-BerghAdmin-9AFCF752-B7B2-47B4-92D5-2BFD689C8574</UserSecretsId>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -57,13 +57,13 @@ namespace BerghAdmin.Tests.EvenementTests
         }
 
         [Test]
-        public void AddWithExistingName()
+        public async Task AddWithExistingName()
         {
             const string fietsTochtNaam = "Fietstocht3";
 
             var service = this.GetRequiredService<IEvenementService>();
-            service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
-            var errorCode = service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2023, 1, 1) });
+            await service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
+            var errorCode = await service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2023, 1, 1) });
 
             Assert.AreEqual(errorCode, ErrorCodeEnum.Conflict);
         }
@@ -140,17 +140,16 @@ namespace BerghAdmin.Tests.EvenementTests
         }
 
         [Test]
-        public void DeletePersoon()
+        public async Task DeletePersoon()
         {
             const string fietsTochtNaam = "Fietstocht4";
 
             var service = this.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
-            service.Save(fietsTocht);
-            service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
-            service = null;
-
+            await service.Save(fietsTocht);
+            await service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
+            
             var service2 = this.GetRequiredService<IEvenementService>();
             var fietsTochtById = service2.GetById(fietsTocht.Id);
             var persoon = fietsTochtById?.Deelnemers.FirstOrDefault();
@@ -161,27 +160,27 @@ namespace BerghAdmin.Tests.EvenementTests
             if (fietsTochtById != null && persoon != null)
             {
                 // try to delete an exisitng deelnemer from the evenement
-                var result = service2.DeleteDeelnemer(fietsTochtById, persoon);
+                var result = await service2.DeleteDeelnemer(fietsTochtById, persoon);
                 Assert.AreEqual(ErrorCodeEnum.Ok, result);
                 Assert.AreEqual(0, fietsTochtById.Deelnemers?.Count());
 
                 // try to delete a non exisitng deelnemer from the evenement
-                result = service2.DeleteDeelnemer(fietsTochtById, persoon);
+                result = await service2.DeleteDeelnemer(fietsTochtById, persoon);
                 Assert.AreEqual(ErrorCodeEnum.Ok, result);
             }
         }
 
         [Test]
-        public void DeletePersoonById()
+        public async Task DeletePersoonById()
         {
             const string fietsTochtNaam = "Fietstocht4";
 
             var service = this.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
-            service.Save(fietsTocht);
+            await service.Save(fietsTocht);
             var persoon = new Persoon() { EmailAdres = "aap@noot.com" };
-            service.AddDeelnemer(fietsTocht, persoon);
+            await service.AddDeelnemer(fietsTocht, persoon);
 
             service = null;
 
@@ -193,12 +192,12 @@ namespace BerghAdmin.Tests.EvenementTests
             if (fietsTochtById != null)
             {
                 // try to delete an exisitng deelnemer from the evenement
-                var result = service2.DeleteDeelnemer(fietsTochtById, persoon.Id);
+                var result = await service2.DeleteDeelnemer(fietsTochtById, persoon.Id);
                 Assert.AreEqual(ErrorCodeEnum.Ok, result);
                 Assert.AreEqual(0, fietsTochtById.Deelnemers?.Count());
 
                 // try to delete a non exisitng deelnemer from the evenement
-                result = service2.DeleteDeelnemer(fietsTochtById, persoon);
+                result = await service2.DeleteDeelnemer(fietsTochtById, persoon);
                 Assert.AreEqual(ErrorCodeEnum.Ok, result);
             }
         }

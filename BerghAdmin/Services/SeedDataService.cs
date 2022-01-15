@@ -1,105 +1,85 @@
-using System.IO;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services.Evenementen;
+
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace BerghAdmin.Services;
 
 public class SeedDataService : ISeedDataService
 {
-    private const string DocumentBasePath = ""; 
-    private readonly IServiceProvider _serviceProvider;
-    private readonly SeedSettings _settings;
+    private readonly SeedSettings settings;
+    private readonly ApplicationDbContext dbContext;
+    private readonly IRolService rolService;
+    private readonly UserManager<User> userManager;
+    private readonly IEvenementService evenementService;
 
-    public SeedDataService(IServiceProvider serviceProvider, IOptions<SeedSettings> settings)
+    public SeedDataService(
+        ApplicationDbContext dbContext,
+        UserManager<User> userManager,
+        IRolService rolService,
+        IEvenementService evenementService,
+        IOptions<SeedSettings> settings)
     {
-        _serviceProvider = serviceProvider;
-        _settings = settings.Value;
+        this.settings = settings.Value;
+        this.dbContext = dbContext;
+        this.rolService = rolService;
+        this.userManager = userManager;
+        this.evenementService = evenementService;
     }
 
-    public void SeedInitialData()
+    public async Task SeedInitialData()
     {
-        using (var scope = _serviceProvider.CreateScope())
-        using (var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>())
-        {
             if (dbContext == null)
             {
                 throw new InvalidOperationException("dbcontext can not be null");
             }
 
-            if (!DatabaseIsEmpty(scope))
+            if (DatabaseHasData())
             {
                 return;
             }
 
-            var rollen = InsertRollen(dbContext);
+            var rollen = await InsertRollen();
 
-            InsertTestPersonen(dbContext, rollen);
-
-            InsertUsers(scope, dbContext, rollen);
-
-            InsertEvenementen(scope, dbContext);
-
-            //InsertDocumenten(dbContext);
-        }
+            await InsertTestPersonen(rollen);
+            await InsertUsers(rollen);
+            await InsertEvenementen();
+            //await InsertDocumenten();
     }
 
+    private bool DatabaseHasData()
+        => this.rolService
+            .GetRollen()
+            .Any();
 
-    private ApplicationDbContext GetDbContext(IServiceScope scope)
-    {
-
-        var context = scope.ServiceProvider.GetService<ApplicationDbContext>();
-        if (context == null)
-        {
-            throw new ApplicationException("can not create application db context in SeedDataService");
-        }
-
-        return context; 
-    }
-
-    private bool DatabaseIsEmpty(IServiceScope scope)
-    {
-        var rolService = (IRolService)scope.ServiceProvider.GetRequiredService<IRolService>();
-        var rollen = rolService.GetRollen();
-        if (rollen.Count > 0)
-        {
-            // no need to seed with testdata, it is there already
-            return false;
-        }
-        
-        return true;
-    }
-
-    private Dictionary<RolTypeEnum, Rol> InsertRollen(ApplicationDbContext dbContext)
+    private async Task<Dictionary<RolTypeEnum, Rol>> InsertRollen()
     {        
-
         var rolAmbassadeur = new Rol { Id = RolTypeEnum.Ambassadeur, Beschrijving = "Ambassadeur", MeervoudBeschrijving = "Ambassadeurs" };
-        dbContext.Add(rolAmbassadeur);
+        await dbContext.AddAsync(rolAmbassadeur);
 
         var rolBegeleider = new Rol { Id = RolTypeEnum.Begeleider, Beschrijving = "Begeleider", MeervoudBeschrijving = "Begeleiders" };
-        dbContext.Add(rolBegeleider);
+        await dbContext.AddAsync(rolBegeleider);
 
         var rolCommissieLid = new Rol { Id = RolTypeEnum.CommissieLid, Beschrijving = "Commissielid", MeervoudBeschrijving = "Commissieleden" };
-        dbContext.Add(rolCommissieLid);
+        await dbContext.AddAsync(rolCommissieLid);
 
         var rolGolfer = new Rol { Id = RolTypeEnum.Golfer, Beschrijving = "Golfer", MeervoudBeschrijving = "Golfers" };
-        dbContext.Add(rolGolfer);
+        await dbContext.AddAsync(rolGolfer);
 
         var rolMailingAbonnee = new Rol { Id = RolTypeEnum.MailingAbonnee, Beschrijving = "Mailing abonnee", MeervoudBeschrijving = "Mailing Abonnees" };
-        dbContext.Add(rolMailingAbonnee);
+        await dbContext.AddAsync(rolMailingAbonnee);
 
         var rolFietser = new Rol { Id = RolTypeEnum.Fietser, Beschrijving = "Fietser", MeervoudBeschrijving = "Fieters" };
-        dbContext.Add(rolFietser);
+        await dbContext.AddAsync(rolFietser);
 
         var rolVriendVan = new Rol { Id = RolTypeEnum.VriendVan, Beschrijving = "Vriend van", MeervoudBeschrijving = "Vrienden van" };
-        dbContext.Add(rolVriendVan);
+        await dbContext.AddAsync(rolVriendVan);
 
         var rolVrijwilliger = new Rol { Id = RolTypeEnum.Vrijwilliger, Beschrijving = "Vrijwilliger", MeervoudBeschrijving = "Vrijwilligers" };
-        dbContext.Add(rolVrijwilliger);
+        await dbContext.AddAsync(rolVrijwilliger);
 
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
 
         var rollen = new Dictionary<RolTypeEnum, Rol>
             {
@@ -115,9 +95,9 @@ public class SeedDataService : ISeedDataService
         return rollen;
     }
 
-    private void InsertTestPersonen(ApplicationDbContext dbContext, Dictionary<RolTypeEnum, Rol> rollen)
+    private async Task InsertTestPersonen(Dictionary<RolTypeEnum, Rol> rollen)
     {
-        dbContext.AddRange(
+        await dbContext.AddRangeAsync(
             new Persoon
             {
                 Voorletters = "A. B.",
@@ -315,7 +295,7 @@ public class SeedDataService : ISeedDataService
         dbContext.SaveChanges();
     }
 
-    private void InsertUsers(IServiceScope scope, ApplicationDbContext dbContext, Dictionary<RolTypeEnum, Rol> rollen)
+    private async Task InsertUsers(Dictionary<RolTypeEnum, Rol> rollen)
     {
         var persoon = new Persoon
         {
@@ -333,8 +313,9 @@ public class SeedDataService : ISeedDataService
             Telefoon = "onbekend",
             Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.Vrijwilliger] }
         };
-        dbContext.Add(persoon);
-        dbContext.SaveChanges();
+        
+        await dbContext.AddAsync(persoon);
+        await dbContext.SaveChangesAsync();
 
         var user = new User
         {
@@ -352,39 +333,37 @@ public class SeedDataService : ISeedDataService
             TwoFactorEnabled = false
         };
 
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-        var result = userManager.CreateAsync(user, "qwerty@123").Result;
+        var result = await this.userManager.CreateAsync(user, "qwerty@123");
         if (result.Succeeded)
         {
         }
     }
 
-    private void InsertDocumenten(ApplicationDbContext dbContext)
+    private async Task InsertDocumenten()
     {
-        dbContext.AddRange(
+        await dbContext.AddRangeAsync(
             new Document
             {
                 Name = "Sponsor Factuur",
                 ContentType = ContentTypeEnum.Word,
                 IsMergeTemplate = true,
                 TemplateType = TemplateTypeEnum.Ambassadeur,
-                Content = File.ReadAllBytes($"{_settings.DocumentBasePath}/TemplateFactuurSponsor.docx"),
+                Content = File.ReadAllBytes($"{settings.DocumentBasePath}/TemplateFactuurSponsor.docx"),
                 Owner = "Henk"
             }
         );
 
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
     }
 
-    private void InsertEvenementen(IServiceScope scope, ApplicationDbContext dbContext)
+    private async Task InsertEvenementen()
     {
-        var evenementService = (IEvenementService) scope.ServiceProvider.GetRequiredService<IEvenementService>();
         var fietstocht = new FietsTocht()
         {
             Id = 0,
             GeplandJaar = new DateTime(2032, 1, 1),
             Naam = "Hanzetocht"
         };
-        evenementService.Save(fietstocht);
+        await this.evenementService.Save(fietstocht);
     }
 }
