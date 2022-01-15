@@ -8,6 +8,7 @@ using BerghAdmin.Services.Import;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,8 +51,8 @@ void RegisterAuthorization()
             options.Password.RequireUppercase = false;
             options.Password.RequireNonAlphanumeric = false;
         })
-        //.AddUserManager<UserManager>()
-        //.AddSignInManager<UserManager>()
+        .AddUserManager<UserManager<User>>()
+        .AddSignInManager<SignInManager<User>>()
         .AddEntityFrameworkStores<ApplicationDbContext>();
 
     builder.Services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
@@ -70,7 +71,7 @@ void RegisterServices()
     // Add services to the container.
     builder.Services.AddRazorPages();
     builder.Services.AddServerSideBlazor();
-    //builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+
     builder.Services.AddOptions();
     builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
     builder.Services.AddScoped<IPersoonService, PersoonService>();

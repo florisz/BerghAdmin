@@ -347,7 +347,7 @@ public class SeedDataService : ISeedDataService
             TwoFactorEnabled = false
         };
 
-        var userManager = (UserManager<User>)scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
         var result = userManager.CreateAsync(user, "qwerty@123").Result;
         if (result.Succeeded)
         {
