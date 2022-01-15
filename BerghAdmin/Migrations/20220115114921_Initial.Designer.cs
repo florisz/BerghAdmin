@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220112185639_Initial")]
+    [Migration("20220115114921_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -122,18 +122,28 @@ namespace BerghAdmin.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<float?>("Bedrag")
-                        .HasColumnType("real");
+                    b.Property<decimal>("Bedrag")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("Datum")
+                    b.Property<DateTime>("Datum")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("DonateurId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("FactuurId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("KentaaDonatieId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DonateurId");
+
+                    b.HasIndex("FactuurId");
+
+                    b.HasIndex("KentaaDonatieId");
 
                     b.ToTable("Donaties");
                 });
@@ -194,6 +204,120 @@ namespace BerghAdmin.Migrations
                     b.HasIndex("FactuurTekstId");
 
                     b.ToTable("Facturen");
+                });
+
+            modelBuilder.Entity("BerghAdmin.Data.KentaaDonatie", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AccountBic")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccountIban")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccountName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("Anonymous")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Countable")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Currency")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CurrencyCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DeviceType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FrequencyType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Infix")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("KentaaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("NewsLetter")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PaymentDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PaymentStatusAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentTransactionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ReceivableAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("RegistrationFee")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("RegistrationFeeAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("StartDonation")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("TransactionCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("KentaaDonaties");
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Rol", b =>
@@ -539,7 +663,19 @@ namespace BerghAdmin.Migrations
                         .WithMany()
                         .HasForeignKey("DonateurId");
 
+                    b.HasOne("BerghAdmin.Data.Factuur", "Factuur")
+                        .WithMany()
+                        .HasForeignKey("FactuurId");
+
+                    b.HasOne("BerghAdmin.Data.KentaaDonatie", "KentaaDonatie")
+                        .WithMany()
+                        .HasForeignKey("KentaaDonatieId");
+
                     b.Navigation("Donateur");
+
+                    b.Navigation("Factuur");
+
+                    b.Navigation("KentaaDonatie");
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Factuur", b =>

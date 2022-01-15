@@ -45,7 +45,7 @@ namespace BerghAdmin.Tests.MailMergeTests
         public void TestTextIsEmpty()
         {
             var mailMergeService = new TextMergeService();
-            var mergeResult = mailMergeService.Merge((string) null, null);
+            var mergeResult = mailMergeService.Merge((string?)null, null);
             Assert.AreEqual("", mergeResult);
         }
 

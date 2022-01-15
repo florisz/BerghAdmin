@@ -6,5 +6,6 @@ public class Context
 {
     public SyncfusionConfiguration SyncfusionConfiguration { get; set; } = new();
     public MailJetConfiguration MailJetConfiguration { get; set; } = new();
+    public KentaaConfiguration KentaaConfiguration { get; set; } = new();
     public User CurrentUser { get; set; } = new();
 }

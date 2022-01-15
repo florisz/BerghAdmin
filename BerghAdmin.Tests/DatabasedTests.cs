@@ -1,11 +1,11 @@
 ﻿using BerghAdmin.DbContexts;
-using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Tests.TestHelpers;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
+using System;
 
 namespace BerghAdmin.Tests
 {
@@ -29,15 +29,25 @@ namespace BerghAdmin.Tests
                 }, ServiceLifetime.Singleton, ServiceLifetime.Singleton);
 
             RegisterServices(services);
-                //.AddScoped<IEvenementService, EvenementService>();
 
             ServiceProvider = services.BuildServiceProvider();
 
-            //var scope = serviceProvider.CreateScope();
             ApplicationDbContext = ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             ApplicationDbContext?.Database.OpenConnection();
             ApplicationDbContext?.Database.EnsureCreated();
+        }
+
+        // Helper function to avoid warnings in unit tests
+        internal T GetRequiredService<T>()
+        {
+#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
+            T? serviceInstance = ServiceProvider.GetRequiredService<T>();
+#pragma warning restore CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
+#pragma warning restore CS8604 // Possible null reference argument.
+
+            return serviceInstance;
         }
     }
 }

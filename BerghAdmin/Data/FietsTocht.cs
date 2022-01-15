@@ -1,9 +1,6 @@
-using System;
+namespace BerghAdmin.Data;
 
-namespace BerghAdmin.Data
+public class FietsTocht : Evenement
 {
-    public class FietsTocht : Evenement
-    {
-        public DateTime? GeplandJaar { get; set; }
-    }
+    public DateTime? GeplandJaar { get; set; }
 }

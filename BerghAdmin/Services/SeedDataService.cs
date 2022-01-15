@@ -24,6 +24,11 @@ public class SeedDataService : ISeedDataService
         using (var scope = _serviceProvider.CreateScope())
         using (var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>())
         {
+            if (dbContext == null)
+            {
+                throw new InvalidOperationException("dbcontext can not be null");
+            }
+
             if (!DatabaseIsEmpty(scope))
             {
                 return;
@@ -37,7 +42,7 @@ public class SeedDataService : ISeedDataService
 
             InsertEvenementen(scope, dbContext);
 
-            InsertDocumenten(dbContext);
+            //InsertDocumenten(dbContext);
         }
     }
 
@@ -380,6 +385,6 @@ public class SeedDataService : ISeedDataService
             GeplandJaar = new DateTime(2032, 1, 1),
             Naam = "Hanzetocht"
         };
-        evenementService.SaveEvenement(fietstocht);
+        evenementService.Save(fietstocht);
     }
 }

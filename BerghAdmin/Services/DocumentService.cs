@@ -21,29 +21,29 @@ namespace BerghAdmin.Services
             throw new NotImplementedException();
         }
 
-        public Document GetDocumentById(int id)
+        public Document? GetDocumentById(int id)
         {
             var doc = _dbContext
-                        .Documenten
+                        .Documenten?
                         .Find(id);
                         
             return doc;
         }
 
-        public Document GetDocumentByName(string name)
+        public Document? GetDocumentByName(string name)
         {
             throw new NotImplementedException();
         }
 
-        public List<Document> GetDocuments()
+        public IEnumerable<Document> GetDocuments()
         {
             throw new NotImplementedException();
         }
 
-        public List<Document> GetMergeTemplates()
+        public IEnumerable<Document>? GetMergeTemplates()
         {
             var templates = _dbContext
-                        .Documenten
+                        .Documenten?
                         .Where(d => d.TemplateType != TemplateTypeEnum.None)
                         .ToList<Document>();
                         
@@ -54,11 +54,11 @@ namespace BerghAdmin.Services
         {
             if (document.Id == 0) 
             {
-                _dbContext.Documenten.Add(document);
+                _dbContext.Documenten?.Add(document);
             }
             else
             { 
-                _dbContext.Documenten.Update(document);
+                _dbContext.Documenten?.Update(document);
             }
             _dbContext.SaveChanges();
         }

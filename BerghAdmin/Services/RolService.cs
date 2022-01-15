@@ -25,6 +25,11 @@ namespace BerghAdmin.Services
 
         public List<Rol> GetRollen()
         {
+            if (_dbContext.Rollen == null)
+            {
+                return new List<Rol>();
+            }
+
             return _dbContext.Rollen.ToList();
         }
 

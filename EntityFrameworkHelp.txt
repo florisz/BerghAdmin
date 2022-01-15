@@ -21,15 +21,17 @@ DROP TABLE Documenten
 DROP TABLE Betalingen
 DROP TABLE PersoonRol
 DROP TABLE EvenementPersoon
+DROP TABLE KentaaDonatie
 DROP TABLE Donaties
 DROP TABLE Donateur
-DROP TABLE Fietstocht
-DROP TABLE Golfdag
+DROP TABLE FietsTocht
+DROP TABLE GolfDag
 DROP TABLE Evenementen
 DROP TABLE Rollen
 
 
 /* clean to seed again */
+DELETE FROM Evenementen 
 DELETE FROM Documenten 
 DELETE FROM Donateur
 DELETE FROM AspNetUsers

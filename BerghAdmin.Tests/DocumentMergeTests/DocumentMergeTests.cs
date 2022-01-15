@@ -14,7 +14,6 @@ namespace BerghAdmin.DocumentMergeTests
     [TestFixture]
     public class DocumentMergeTests : DatabasedTests
     {
-        //private readonly ServiceProvider _serviceProvider;
         private readonly List<TestDocument> TestDocuments = new()
         {
             new TestDocument()
@@ -49,17 +48,21 @@ namespace BerghAdmin.DocumentMergeTests
         [Test]
         public void TestIsDocumentPresent()
         {
-            var service = this.ServiceProvider.GetRequiredService<IDocumentService>();
+            var service = this.GetRequiredService<IDocumentService>();
             var doc = service.GetDocumentById(1);
             Assert.NotNull(doc);
-            Assert.AreEqual(doc.Name, "TestTemplate1");
-            Assert.Pass();
+            
+            // not really necessary but to avoid warnings
+            if (doc != null)
+            {
+                Assert.AreEqual(doc.Name, "TestTemplate1");
+            }
         }
 
         [Test]
         public void TestHasDocumentMergeFields()
         {
-            var service = this.ServiceProvider.GetRequiredService<IDocumentMergeService>();
+            var service = this.GetRequiredService<IDocumentMergeService>();
             var template = service.GetMergeTemplateById(2);
             Assert.NotNull(template);
             Assert.AreEqual(template!.Name, "TestTemplate2");
@@ -77,7 +80,7 @@ namespace BerghAdmin.DocumentMergeTests
         [Test]
         public void TestMergeTemplate3Document()
         {
-            var mergeService = this.ServiceProvider.GetRequiredService<IDocumentMergeService>();
+            var mergeService = this.GetRequiredService<IDocumentMergeService>();
             var template = mergeService.GetMergeTemplateById(3);
             Assert.NotNull(template);
             Assert.AreEqual(template!.Name, "TestTemplate3");
@@ -93,7 +96,7 @@ namespace BerghAdmin.DocumentMergeTests
         [Test]
         public void TestMergeTemplate4Document()
         {
-            var mergeService = this.ServiceProvider.GetRequiredService<IDocumentMergeService>();
+            var mergeService = this.GetRequiredService<IDocumentMergeService>();
             var template = mergeService.GetMergeTemplateById(2);
 
             Assert.NotNull(template);
@@ -120,7 +123,7 @@ namespace BerghAdmin.DocumentMergeTests
             using FileStream outputFileStream = new($"c:/temp/{template.Name}.docx", FileMode.Create);
             mergedStream.Position = 0;
             mergedStream.CopyTo(outputFileStream);
-            var pdfService = this.ServiceProvider.GetRequiredService<IPdfConverter>();
+            var pdfService = this.GetRequiredService<IPdfConverter>();
 
             outputFileStream.Position = 0;
             var pdfStream = pdfService.ConvertWordToPdf(outputFileStream);
