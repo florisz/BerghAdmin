@@ -42,7 +42,7 @@ public class SeedDataService : ISeedDataService
 
             InsertEvenementen(scope, dbContext);
 
-            InsertDocumenten(dbContext);
+            //InsertDocumenten(dbContext);
         }
     }
 

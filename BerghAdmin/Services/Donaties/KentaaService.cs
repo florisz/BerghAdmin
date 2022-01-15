@@ -12,7 +12,17 @@ public class KentaaService : IKentaaService
         var apiKey = _contextService.Context.MailJetConfiguration.ApiKey;
     }
 
-    public IEnumerable<KentaaDonatie> GetDonations()
+    public IEnumerable<KentaaDonatie> GetDonaties()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<KentaaDonatie> GetDonaties(Donateur persoon)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<KentaaDonatie> GetDonaties(Evenement evenement)
     {
         throw new NotImplementedException();
     }

@@ -4,7 +4,9 @@ namespace BerghAdmin.Services.Donaties
 {
     public interface IKentaaService
     {
-        IEnumerable<KentaaDonatie> GetDonations();
+        IEnumerable<KentaaDonatie> GetDonaties();
+        IEnumerable<KentaaDonatie> GetDonaties(Donateur persoon);
+        IEnumerable<KentaaDonatie> GetDonaties(Evenement evenement);
         IEnumerable<KentaaDonatie> GetDonationsFromDate(DateTime startDate);
     }
 }

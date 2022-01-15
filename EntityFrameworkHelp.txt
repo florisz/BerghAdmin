@@ -31,6 +31,7 @@ DROP TABLE Rollen
 
 
 /* clean to seed again */
+DELETE FROM Evenementen 
 DELETE FROM Documenten 
 DELETE FROM Donateur
 DELETE FROM AspNetUsers
