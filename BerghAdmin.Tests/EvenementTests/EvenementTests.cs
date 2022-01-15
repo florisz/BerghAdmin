@@ -27,11 +27,11 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht1";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = this.GetRequiredService<IEvenementService>();
             service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
             var fietsTocht = service.GetByName(fietsTochtNaam);
 
-            Assert.AreEqual(fietsTocht.Naam, fietsTochtNaam);
+            Assert.AreEqual(fietsTocht?.Naam, fietsTochtNaam);
         }
 
         [Test]
@@ -39,15 +39,21 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht2";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = this.GetRequiredService<IEvenementService>();
             service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
             var fietsTocht = service.GetByName(fietsTochtNaam);
 
             Assert.IsNotNull(fietsTocht);
-
-            var fietsTochtById = service.GetById(fietsTocht.Id);
-
-            Assert.AreEqual(fietsTochtById.Naam, fietsTochtNaam);
+            if (fietsTocht != null)
+            {
+                var fietsTochtById = service.GetById(fietsTocht.Id);
+                Assert.IsNotNull(fietsTochtById);
+                // not really necessary but to avoid warnings
+                if (fietsTochtById != null)
+                {
+                    Assert.AreEqual(fietsTochtById.Naam, fietsTochtNaam);
+                }
+            }
         }
 
         [Test]
@@ -55,7 +61,7 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht3";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = this.GetRequiredService<IEvenementService>();
             service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
             var errorCode = service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2023, 1, 1) });
 
@@ -68,7 +74,7 @@ namespace BerghAdmin.Tests.EvenementTests
             const string fietsTochtNaam = "Fietstocht4";
             const string fietsTochtUpdatedNaam = "Fietstocht4.1";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = this.GetRequiredService<IEvenementService>();
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
             service.Save(fietsTocht);
 
@@ -76,14 +82,19 @@ namespace BerghAdmin.Tests.EvenementTests
             service.Save(fietsTocht);
 
             var fietsTochtById = service.GetById(fietsTocht.Id);
+            Assert.IsNotNull(fietsTochtById);
 
-            Assert.AreEqual(fietsTochtById.Naam, fietsTochtUpdatedNaam);
+            // not really necessary but to avoid warnings
+            if (fietsTochtById != null)
+            {
+                Assert.AreEqual(fietsTochtById.Naam, fietsTochtUpdatedNaam);
+            }
         }
 
         [Test]
         public void GetAll()
         {
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = this.GetRequiredService<IEvenementService>();
 
             var strArray = new string[] { "aap", "noot", "mies" };
             foreach (var name in strArray)
@@ -111,14 +122,14 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht4";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = this.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
             service.Save(fietsTocht);
             service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
             service = null;
 
-            var service2 = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service2 = this.GetRequiredService<IEvenementService>();
             var fietsTochtById = service2.GetById(fietsTocht.Id);
             var persoon = fietsTochtById?.Deelnemers.FirstOrDefault();
             var isDeelnemerVan = persoon?.IsDeelnemerVan?.FirstOrDefault(f => f.Id == fietsTocht.Id) != null;
@@ -133,27 +144,31 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht4";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = this.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
             service.Save(fietsTocht);
             service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
             service = null;
 
-            var service2 = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service2 = this.GetRequiredService<IEvenementService>();
             var fietsTochtById = service2.GetById(fietsTocht.Id);
             var persoon = fietsTochtById?.Deelnemers.FirstOrDefault();
             Assert.IsNotNull(fietsTochtById);
             Assert.IsNotNull(persoon);
 
-            // try to delete an exisitng deelnemer from the evenement
-            var result = service2.DeleteDeelnemer(fietsTochtById, persoon);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
-            Assert.AreEqual(0, fietsTochtById.Deelnemers?.Count());
+            // not really necessary but to avoid warnings
+            if (fietsTochtById != null && persoon != null)
+            {
+                // try to delete an exisitng deelnemer from the evenement
+                var result = service2.DeleteDeelnemer(fietsTochtById, persoon);
+                Assert.AreEqual(ErrorCodeEnum.Ok, result);
+                Assert.AreEqual(0, fietsTochtById.Deelnemers?.Count());
 
-            // try to delete a non exisitng deelnemer from the evenement
-            result = service2.DeleteDeelnemer(fietsTochtById, persoon);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
+                // try to delete a non exisitng deelnemer from the evenement
+                result = service2.DeleteDeelnemer(fietsTochtById, persoon);
+                Assert.AreEqual(ErrorCodeEnum.Ok, result);
+            }
         }
 
         [Test]
@@ -161,7 +176,7 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             const string fietsTochtNaam = "Fietstocht4";
 
-            var service = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service = this.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
             service.Save(fietsTocht);
@@ -170,18 +185,22 @@ namespace BerghAdmin.Tests.EvenementTests
 
             service = null;
 
-            var service2 = this.ServiceProvider.GetRequiredService<IEvenementService>();
+            var service2 = this.GetRequiredService<IEvenementService>();
             var fietsTochtById = service2.GetById(fietsTocht.Id);
             Assert.IsNotNull(fietsTochtById);
 
-            // try to delete an exisitng deelnemer from the evenement
-            var result = service2.DeleteDeelnemer(fietsTochtById, persoon.Id);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
-            Assert.AreEqual(0, fietsTochtById.Deelnemers?.Count());
+            // not really necessary but to avoid warnings
+            if (fietsTochtById != null)
+            {
+                // try to delete an exisitng deelnemer from the evenement
+                var result = service2.DeleteDeelnemer(fietsTochtById, persoon.Id);
+                Assert.AreEqual(ErrorCodeEnum.Ok, result);
+                Assert.AreEqual(0, fietsTochtById.Deelnemers?.Count());
 
-            // try to delete a non exisitng deelnemer from the evenement
-            result = service2.DeleteDeelnemer(fietsTochtById, persoon);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
+                // try to delete a non exisitng deelnemer from the evenement
+                result = service2.DeleteDeelnemer(fietsTochtById, persoon);
+                Assert.AreEqual(ErrorCodeEnum.Ok, result);
+            }
         }
     }
 }

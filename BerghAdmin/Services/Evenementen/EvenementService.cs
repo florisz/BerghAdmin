@@ -16,10 +16,10 @@ public class EvenementService : IEvenementService
     }
 
     public Evenement? GetById(int id) => _dbContext
-                                            .Evenementen
+                                            .Evenementen?
                                             .Find(id);
 
-    public Evenement? GetByName(string name)
+    public Evenement? GetByName(string? name)
     {
         var evenement = _dbContext
                     .Evenementen?
@@ -31,7 +31,10 @@ public class EvenementService : IEvenementService
 
     public ErrorCodeEnum Save(Evenement evenement)
     {
-        if (evenement == null) { throw new ApplicationException("Evenement parameter can never be null"); }
+        if (evenement == null) 
+        { 
+            throw new ApplicationException("Evenement parameter can not be null"); 
+        }
 
         if (evenement.Id == 0)
         {

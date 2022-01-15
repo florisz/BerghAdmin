@@ -24,6 +24,11 @@ public class SeedDataService : ISeedDataService
         using (var scope = _serviceProvider.CreateScope())
         using (var dbContext = scope.ServiceProvider.GetService<ApplicationDbContext>())
         {
+            if (dbContext == null)
+            {
+                throw new InvalidOperationException("dbcontext can not be null");
+            }
+
             if (!DatabaseIsEmpty(scope))
             {
                 return;

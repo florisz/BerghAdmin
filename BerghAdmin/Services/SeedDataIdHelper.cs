@@ -13,7 +13,7 @@ namespace BerghAdmin.Services
         {
             var entityType = context.Model.FindEntityType(typeof(T));
             var value = enable ? "ON" : "OFF";
-            var sqlStmt = $"SET IDENTITY_INSERT dbo.{entityType.GetTableName()} {value}";
+            var sqlStmt = $"SET IDENTITY_INSERT dbo.{entityType?.GetTableName()} {value}";
             return context.Database.ExecuteSqlRawAsync(sqlStmt);
         }
 

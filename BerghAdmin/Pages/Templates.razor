@@ -31,12 +31,16 @@
         GetTemplates();
     }
 
-    private List<Document> GetTemplates()
+    private void GetTemplates()
     {
-        templates = documentService
-                    .GetMergeTemplates();
-
-        return templates;
+        var templates = documentService
+                    .GetMergeTemplates()?
+                    .ToList<Document>();
+        
+        if (templates == null)
+        {
+            templates = new List<Document>();
+        }
     }
 
     private void Save()
