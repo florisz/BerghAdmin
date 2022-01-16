@@ -6,11 +6,6 @@ namespace BerghAdmin.Services.Donaties;
 
 public class KentaaService : IKentaaService
 {
-    public KentaaService(IOptions<KentaaConfiguration> settings)
-    {
-        var apiKey = settings.Value.ApiKey;
-    }
-
     public IEnumerable<KentaaDonatie> GetDonaties()
     {
         throw new NotImplementedException();

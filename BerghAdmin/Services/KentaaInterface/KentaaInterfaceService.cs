@@ -1,4 +1,6 @@
-﻿using BerghAdmin.Services.KentaaInterface.KentaaModel;
+﻿using BerghAdmin.Services.Configuration;
+using BerghAdmin.Services.KentaaInterface.KentaaModel;
+using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 
 namespace BerghAdmin.Services.KentaaInterface;
@@ -7,9 +9,9 @@ public class KentaaInterfaceService : IKentaaInterfaceService
 {
     readonly IKentaaClient _kentaaClient;
 
-    public KentaaInterfaceService(string JiraServerUrl, string ApiKey)
+    public KentaaInterfaceService(IOptions<KentaaConfiguration> settings)
     {
-        var kentaaSession = new KentaaSession(JiraServerUrl, ApiKey);
+        var kentaaSession = new KentaaSession(settings.Value.ServerUrl, settings.Value.ApiKey);
         _kentaaClient = kentaaSession.Connect();
     }
 
