@@ -1,11 +1,12 @@
-﻿using RestEase;
+﻿using System.Net.Http.Headers;
 
 namespace BerghAdmin.Services.KentaaInterface;
 
 public class KentaaSession
 {
-    string _apiKey;
-    string _jiraServerUrl;
+    private readonly string _apiKey;
+    private readonly string _jiraServerUrl;
+    private HttpClient? _httpClient = null;
 
     public KentaaSession(string jiraServerUrl, string apiKey)
     {
@@ -13,10 +14,18 @@ public class KentaaSession
         _jiraServerUrl = jiraServerUrl;
     }
 
-    public IKentaaClient Connect()
-    {
-        var client = RestClient.For<IKentaaClient>(_jiraServerUrl);
+    public string Url => _jiraServerUrl;
 
-        return client;
+    public string ApiKey => _apiKey;
+
+    public HttpClient Connect()
+    {
+        _httpClient = new HttpClient();
+        _httpClient.DefaultRequestHeaders.Accept.Clear();
+        _httpClient.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+        _httpClient.DefaultRequestHeaders.Add("User-Agent", "BerghAdmin - Kentaa interface");
+
+        return _httpClient;
     }
 }

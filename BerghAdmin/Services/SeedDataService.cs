@@ -1,7 +1,7 @@
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services.Evenementen;
-
+using BerghAdmin.Services.KentaaInterface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
@@ -11,28 +11,32 @@ namespace BerghAdmin.Services;
 
 public class SeedDataService : ISeedDataService
 {
-    private readonly SeedSettings settings;
-    private readonly ApplicationDbContext dbContext;
-    private readonly UserManager<User> userManager;
-    private readonly IRolService rolService;
-    private readonly IEvenementService evenementService;
+    private readonly SeedSettings _settings;
+    private readonly ApplicationDbContext _dbContext;
+    private readonly UserManager<User> _userManager;
+    private readonly IRolService _rolService;
+    private readonly IEvenementService _evenementService;
+    private readonly IKentaaInterfaceService _kentaaInterfaceService;
 
     public SeedDataService(
         ApplicationDbContext dbContext,
         UserManager<User> userManager,
         IRolService rolService,
         IEvenementService evenementService,
-        IOptions<SeedSettings> settings)
+        IOptions<SeedSettings> settings,
+        IKentaaInterfaceService kentaaInterfaceService)
     {
-        this.settings = settings.Value;
-        this.dbContext = dbContext;
-        this.rolService = rolService;
-        this.userManager = userManager;
-        this.evenementService = evenementService;
+        this._settings = settings.Value;
+        this._dbContext = dbContext;
+        this._rolService = rolService;
+        this._userManager = userManager;
+        this._evenementService = evenementService;
+        this._kentaaInterfaceService = kentaaInterfaceService;
     }
 
     public async Task SeedInitialData()
     {
+        //await TestKentaaInterface();
         if (DatabaseHasData())
         {
             return;
@@ -50,37 +54,37 @@ public class SeedDataService : ISeedDataService
     }
 
     private bool DatabaseHasData()
-        => this.rolService
+        => this._rolService
             .GetRollen()
             .Any();
 
     private async Task<Dictionary<RolTypeEnum, Rol>> InsertRollen()
     {
         var rolAmbassadeur = new Rol { Id = RolTypeEnum.Ambassadeur, Beschrijving = "Ambassadeur", MeervoudBeschrijving = "Ambassadeurs" };
-        await dbContext.AddAsync(rolAmbassadeur);
+        await _dbContext.AddAsync(rolAmbassadeur);
 
         var rolBegeleider = new Rol { Id = RolTypeEnum.Begeleider, Beschrijving = "Begeleider", MeervoudBeschrijving = "Begeleiders" };
-        await dbContext.AddAsync(rolBegeleider);
+        await _dbContext.AddAsync(rolBegeleider);
 
         var rolCommissieLid = new Rol { Id = RolTypeEnum.CommissieLid, Beschrijving = "Commissielid", MeervoudBeschrijving = "Commissieleden" };
-        await dbContext.AddAsync(rolCommissieLid);
+        await _dbContext.AddAsync(rolCommissieLid);
 
         var rolGolfer = new Rol { Id = RolTypeEnum.Golfer, Beschrijving = "Golfer", MeervoudBeschrijving = "Golfers" };
-        await dbContext.AddAsync(rolGolfer);
+        await _dbContext.AddAsync(rolGolfer);
 
         var rolMailingAbonnee = new Rol { Id = RolTypeEnum.MailingAbonnee, Beschrijving = "Mailing abonnee", MeervoudBeschrijving = "Mailing Abonnees" };
-        await dbContext.AddAsync(rolMailingAbonnee);
+        await _dbContext.AddAsync(rolMailingAbonnee);
 
         var rolFietser = new Rol { Id = RolTypeEnum.Fietser, Beschrijving = "Fietser", MeervoudBeschrijving = "Fieters" };
-        await dbContext.AddAsync(rolFietser);
+        await _dbContext.AddAsync(rolFietser);
 
         var rolVriendVan = new Rol { Id = RolTypeEnum.VriendVan, Beschrijving = "Vriend van", MeervoudBeschrijving = "Vrienden van" };
-        await dbContext.AddAsync(rolVriendVan);
+        await _dbContext.AddAsync(rolVriendVan);
 
         var rolVrijwilliger = new Rol { Id = RolTypeEnum.Vrijwilliger, Beschrijving = "Vrijwilliger", MeervoudBeschrijving = "Vrijwilligers" };
-        await dbContext.AddAsync(rolVrijwilliger);
+        await _dbContext.AddAsync(rolVrijwilliger);
 
-        await dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
 
         var rollen = new Dictionary<RolTypeEnum, Rol>
             {
@@ -98,7 +102,7 @@ public class SeedDataService : ISeedDataService
 
     private async Task InsertTestPersonen(Dictionary<RolTypeEnum, Rol> rollen)
     {
-        await dbContext.AddRangeAsync(
+        await _dbContext.AddRangeAsync(
             new Persoon
             {
                 Voorletters = "A. B.",
@@ -293,7 +297,7 @@ public class SeedDataService : ISeedDataService
             }
         );
 
-        dbContext.SaveChanges();
+        _dbContext.SaveChanges();
     }
 
     private async Task InsertUser(Dictionary<RolTypeEnum, Rol> rollen, string naam, Claim claim)
@@ -315,8 +319,8 @@ public class SeedDataService : ISeedDataService
             Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.Vrijwilliger] }
         };
 
-        await dbContext.AddAsync(persoon);
-        await dbContext.SaveChangesAsync();
+        await _dbContext.AddAsync(persoon);
+        await _dbContext.SaveChangesAsync();
 
         var user = new User
         {
@@ -334,28 +338,28 @@ public class SeedDataService : ISeedDataService
             TwoFactorEnabled = false
         };
 
-        var result = await this.userManager.CreateAsync(user, "qwerty@123");
+        var result = await this._userManager.CreateAsync(user, "qwerty@123");
         if (result.Succeeded)
         {
-            await this.userManager.AddClaimAsync(user, claim);
+            await this._userManager.AddClaimAsync(user, claim);
         }
     }
 
     private async Task InsertDocumenten()
     {
-        await dbContext.AddRangeAsync(
+        await _dbContext.AddRangeAsync(
             new Document
             {
                 Name = "Sponsor Factuur",
                 ContentType = ContentTypeEnum.Word,
                 IsMergeTemplate = true,
                 TemplateType = TemplateTypeEnum.Ambassadeur,
-                Content = File.ReadAllBytes($"{settings.DocumentBasePath}/TemplateFactuurSponsor.docx"),
+                Content = File.ReadAllBytes($"{_settings.DocumentBasePath}/TemplateFactuurSponsor.docx"),
                 Owner = "Henk"
             }
         );
 
-        await dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync();
     }
 
     private async Task InsertEvenementen()
@@ -366,6 +370,20 @@ public class SeedDataService : ISeedDataService
             GeplandJaar = new DateTime(2032, 1, 1),
             Naam = "Hanzetocht"
         };
-        await this.evenementService.Save(fietstocht);
+        await this._evenementService.Save(fietstocht);
+    }
+
+    private async Task TestKentaaInterface()
+    {
+        var kentaaDonation = await _kentaaInterfaceService.GetDonationById(2587623);
+
+        var x = kentaaDonation.LastName;
+
+        var filter = new KentaaFilter()
+        {
+            StartAt = 1,
+            PageSize = 4
+        };
+        var kentaaDonations = await _kentaaInterfaceService.GetDonationsByQuery(filter);
     }
 }

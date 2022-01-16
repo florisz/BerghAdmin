@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using System.Net.Http.Headers;
-using RestEase;
 using BerghAdmin.Services.KentaaInterface.KentaaModel;
 
 namespace BerghAdmin.Services.KentaaInterface;
@@ -20,10 +19,5 @@ namespace BerghAdmin.Services.KentaaInterface;
     */
 public interface IKentaaClient
 {
-    [Get("donations/{id}?api_key=")]
-    Task<DonationResponse> GetDonationById([Path] string id);
-
-    [Get("donations?api_key=")]
-    Task<DonationPageResponse> GetDonationMessages([RawQueryString] string kentaaQuery);
 
 }

@@ -1,25 +1,25 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace BerghAdmin.Services.KentaaInterface.KentaaModel;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-public class DonationPageResponse
+public class Donations
 {
-    [JsonProperty(PropertyName = "total_entries")]
+    [JsonPropertyName("total_entries")]
     public int TotalEntries { get; set; }
 
-    [JsonProperty(PropertyName = "total_entries")]
+    [JsonPropertyName("total_pages")]
     public int TotalPages { get; set; }
 
-    [JsonProperty(PropertyName = "total_entries")]
+    [JsonPropertyName("per_page")]
     public int PerPage { get; set; }
 
-    [JsonProperty(PropertyName = "total_entries")]
+    [JsonPropertyName("current_page")]
     public int CurrentPage { get; set; }
 
-    [JsonProperty(PropertyName = "donations")]
-    public DonationResponse[] Donations { get; set; }
+    [JsonPropertyName("donations")]
+    public Donation[] DonationArray { get; set; }
 }
 
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

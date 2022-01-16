@@ -5,7 +5,7 @@ namespace BerghAdmin.Services.KentaaInterface;
 
 public interface IKentaaInterfaceService
 {
-    Task<DonationResponse> GetDonationById(string donationId);
+    Task<Donation> GetDonationById(int donationId);
 
-    Task<IEnumerable<DonationResponse>> GetIssuesByQuery(KentaaFilter filter);
+    Task<IEnumerable<Donation>> GetDonationsByQuery(KentaaFilter filter);
 }

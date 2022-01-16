@@ -1,39 +1,82 @@
 ﻿using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.KentaaInterface.KentaaModel;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BerghAdmin.Services.KentaaInterface;
 
 public class KentaaInterfaceService : IKentaaInterfaceService
 {
-    readonly IKentaaClient _kentaaClient;
-
+    readonly HttpClient _httpClient;
+    readonly KentaaSession _session;
     public KentaaInterfaceService(IOptions<KentaaConfiguration> settings)
     {
-        var kentaaSession = new KentaaSession(settings.Value.ServerUrl, settings.Value.ApiKey);
-        _kentaaClient = kentaaSession.Connect();
+        _session = new KentaaSession(settings.Value.KentaaUrl, settings.Value.ApiKey);
+        _httpClient = _session.Connect();
     }
 
-    public async Task<DonationResponse> GetDonationById(string donationId)
+    public async Task<Donation?> GetDonationById(int donationId)
     {
-        return await _kentaaClient.GetDonationById(donationId);
+        try
+        {
+            var streamTask = _httpClient.GetStreamAsync($"{_session.Url}/donations/{donationId}?api_key={_session.ApiKey}");
+
+            var options = new JsonSerializerOptions
+            {
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true,
+                NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+            };
+
+            var donation = await JsonSerializer.DeserializeAsync<DonationResponse>(await streamTask, options);
+            
+            return donation?.data;
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException("Json deserialize error", ex);
+        }
     }
 
-    public async Task<IEnumerable<DonationResponse>> GetIssuesByQuery(KentaaFilter filter)
+    public async Task<IEnumerable<Donation>> GetDonationsByQuery(KentaaFilter filter)
     {
-        var kentaaIssues = new List<DonationResponse>();
-        var response = await _kentaaClient.GetDonationMessages(filter.Build());
-        kentaaIssues.AddRange(response.Donations);
+        var kentaaIssues = new List<Donation>();
 
-        //if (response.StartAt + filter.PageSize >= response.Total) return kentaaIssues;
+        try
+        {
+            var url = $"{_session.Url}/donations?{filter.Build()};api_key={_session.ApiKey}";
+            var streamTask = _httpClient.GetStreamAsync(url);
 
-        //do
-        //{
-        //    filter = filter.NextPage();
-        //    response = await _kentaaClient.GetDonationMessages((filter.Build()));
-        //    kentaaIssues.AddRange(response.Issues);
-        //} while (response.StartAt + filter.PageSize < response.Total);
+            var options = new JsonSerializerOptions
+            {
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true,
+                NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+            };
+            while (true)
+            {
+                var donations = await JsonSerializer.DeserializeAsync<Donations>(await streamTask, options);
+
+                if (donations.DonationArray.Length == 0)
+                {
+                    break;
+                }
+
+                if (donations != null)
+                {
+                    kentaaIssues.AddRange(donations.DonationArray);
+                }
+
+                filter = filter.NextPage();
+                url = $"{_session.Url}/donations?{filter.Build()};api_key={_session.ApiKey}";
+                streamTask = _httpClient.GetStreamAsync(url);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException("Json deserialize error", ex);
+        }
 
         return kentaaIssues;
     }

@@ -5,5 +5,5 @@ namespace BerghAdmin.Services.Configuration;
 public class KentaaConfiguration
 {
     public string ApiKey { get; set; }
-    public string ServerUrl { get; set; }
+    public string KentaaUrl { get; set; }
 }

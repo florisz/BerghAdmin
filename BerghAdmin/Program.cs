@@ -6,7 +6,7 @@ using BerghAdmin.Services.Context;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
-
+using BerghAdmin.Services.KentaaInterface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -83,8 +83,9 @@ void RegisterServices()
     builder.Services.AddScoped<ISendMailService, SendMailService>();
     builder.Services.AddScoped<IEvenementService, EvenementService>();
     builder.Services.AddScoped<IDonatieService, DonatieService>();
-    builder.Services.Configure<KentaaConfiguration>(builder.Configuration.GetSection("Kentaa"));
+    builder.Services.Configure<KentaaConfiguration>(builder.Configuration.GetSection("KentaaConfiguration"));
     builder.Services.AddScoped<IKentaaService, KentaaService>();
+    builder.Services.AddScoped<IKentaaInterfaceService, KentaaInterfaceService>();
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddSyncfusionBlazor();
     builder.Services.AddSignalR(e =>
