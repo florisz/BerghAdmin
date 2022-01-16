@@ -7,9 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
 
-using System;
-using System.Linq;
-
 namespace BerghAdmin.Tests.EvenementTests
 {
     [TestFixture]

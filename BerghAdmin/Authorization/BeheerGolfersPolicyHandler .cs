@@ -3,11 +3,11 @@
 using System.Security.Claims;
 
 namespace BerghAdmin.Authorization;
-public class AdministratorPolicyHandler : AuthorizationHandler<IsAdministratorRequirement>
+public class BeheerGolfersPolicyHandler : AuthorizationHandler<IsGolfersBeheerderRequirement>
 {
     public static Claim Claim
-        => new("role", "administrator");
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsAdministratorRequirement requirement)
+        => new("role", "beheergolfers");
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsGolfersBeheerderRequirement requirement)
     {
         if (context.User.HasClaim(Claim.Type, Claim.Value))
             context.Succeed(requirement);

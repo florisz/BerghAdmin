@@ -1,8 +1,11 @@
+using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services.Evenementen;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+
+using System.Security.Claims;
 
 namespace BerghAdmin.Services;
 
@@ -10,8 +13,8 @@ public class SeedDataService : ISeedDataService
 {
     private readonly SeedSettings settings;
     private readonly ApplicationDbContext dbContext;
-    private readonly IRolService rolService;
     private readonly UserManager<User> userManager;
+    private readonly IRolService rolService;
     private readonly IEvenementService evenementService;
 
     public SeedDataService(
@@ -30,22 +33,20 @@ public class SeedDataService : ISeedDataService
 
     public async Task SeedInitialData()
     {
-            if (dbContext == null)
-            {
-                throw new InvalidOperationException("dbcontext can not be null");
-            }
+        if (DatabaseHasData())
+        {
+            return;
+        }
 
-            if (DatabaseHasData())
-            {
-                return;
-            }
+        var rollen = await InsertRollen();
 
-            var rollen = await InsertRollen();
-
-            await InsertTestPersonen(rollen);
-            await InsertUsers(rollen);
-            await InsertEvenementen();
-            //await InsertDocumenten();
+        await InsertTestPersonen(rollen);
+        await InsertUser(rollen, "admin", AdministratorPolicyHandler.Claim);
+        await InsertUser(rollen, "aap", BeheerFietsersPolicyHandler.Claim);
+        await InsertUser(rollen, "noot", BeheerGolfersPolicyHandler.Claim);
+        await InsertUser(rollen, "mies", BeheerAmbassadeursPolicyHandler.Claim);
+        await InsertEvenementen();
+        //await InsertDocumenten();
     }
 
     private bool DatabaseHasData()
@@ -54,7 +55,7 @@ public class SeedDataService : ISeedDataService
             .Any();
 
     private async Task<Dictionary<RolTypeEnum, Rol>> InsertRollen()
-    {        
+    {
         var rolAmbassadeur = new Rol { Id = RolTypeEnum.Ambassadeur, Beschrijving = "Ambassadeur", MeervoudBeschrijving = "Ambassadeurs" };
         await dbContext.AddAsync(rolAmbassadeur);
 
@@ -295,13 +296,13 @@ public class SeedDataService : ISeedDataService
         dbContext.SaveChanges();
     }
 
-    private async Task InsertUsers(Dictionary<RolTypeEnum, Rol> rollen)
+    private async Task InsertUser(Dictionary<RolTypeEnum, Rol> rollen, string naam, Claim claim)
     {
         var persoon = new Persoon
         {
             Voorletters = "F.",
             Voornaam = "Floris",
-            Achternaam = "Zwarteveen",
+            Achternaam = naam,
             Adres = "Berkenlaan 12",
             EmailAdres = "fzwarteveen@mail.com",
             GeboorteDatum = new DateTime(2002, 1, 1),
@@ -313,16 +314,16 @@ public class SeedDataService : ISeedDataService
             Telefoon = "onbekend",
             Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.Vrijwilliger] }
         };
-        
+
         await dbContext.AddAsync(persoon);
         await dbContext.SaveChangesAsync();
 
         var user = new User
         {
             CurrentPersoonId = persoon.Id,
-            Name = "fzwarteveen@gmail.com",
-            Roles = new string[] { "admin" },
-            UserName = "fzwarteveen@gmail.com",
+            Name = naam,
+            //Roles = new string[] { "admin" },
+            UserName = $"{naam}@bihz.nl",
             Email = "fzwarteveen@gmail.com",
             AccessFailedCount = 0,
             EmailConfirmed = true,
@@ -336,6 +337,7 @@ public class SeedDataService : ISeedDataService
         var result = await this.userManager.CreateAsync(user, "qwerty@123");
         if (result.Succeeded)
         {
+            await this.userManager.AddClaimAsync(user, claim);
         }
     }
 

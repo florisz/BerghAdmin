@@ -1,5 +1,4 @@
 using BerghAdmin.Services.Configuration;
-using Microsoft.Extensions.Configuration;
 
 namespace BerghAdmin.Services.Context;
 
@@ -23,12 +22,6 @@ public class ContextService : IContextService
         if (_context.MailJetConfiguration == null)
         {
             throw new ApplicationException("Secrets for MailJet configuration can not be found in configuration");
-        }
-
-        _context.KentaaConfiguration = _configuration.GetSection("KentaaConfiguration").Get<KentaaConfiguration>();
-        if (_context.KentaaConfiguration == null)
-        {
-            throw new ApplicationException("Secret for Kentaa configuration can not be found in configuration");
         }
     }
 

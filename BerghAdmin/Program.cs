@@ -8,12 +8,8 @@ using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 using Syncfusion.Blazor;
 
@@ -26,7 +22,7 @@ var app = builder.Build();
 UseServices();
 
 
-var seedService = app.Services.GetRequiredService<ISeedDataService>();
+var seedService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
 seedService.SeedInitialData();
 
 app.Run();
@@ -57,9 +53,11 @@ void RegisterAuthorization()
         .AddEntityFrameworkStores<ApplicationDbContext>();
 
     builder.Services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
+    builder.Services.AddSingleton<IAuthorizationHandler, BeheerFietsersPolicyHandler>();
     builder.Services.AddAuthorization(options =>
     {
         options.AddPolicy("IsAdministrator", policy => policy.Requirements.Add(new IsAdministratorRequirement()));
+        options.AddPolicy("BeheerFietsers", policy => policy.Requirements.Add(new IsFietsersBeheerderRequirement()));
         options.FallbackPolicy = new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
             .Build();
@@ -85,6 +83,7 @@ void RegisterServices()
     builder.Services.AddScoped<ISendMailService, SendMailService>();
     builder.Services.AddScoped<IEvenementService, EvenementService>();
     builder.Services.AddScoped<IDonatieService, DonatieService>();
+    builder.Services.Configure<KentaaConfiguration>(builder.Configuration.GetSection("Kentaa"));
     builder.Services.AddScoped<IKentaaService, KentaaService>();
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddSyncfusionBlazor();

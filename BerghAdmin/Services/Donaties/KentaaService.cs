@@ -1,15 +1,14 @@
-﻿using BerghAdmin.Services.Context;
+﻿using BerghAdmin.Services.Configuration;
+
+using Microsoft.Extensions.Options;
 
 namespace BerghAdmin.Services.Donaties;
 
 public class KentaaService : IKentaaService
 {
-    IContextService _contextService;
-
-    public KentaaService(IContextService contextService)
+    public KentaaService(IOptions<KentaaConfiguration> settings)
     {
-        _contextService = contextService;
-        var apiKey = _contextService.Context.MailJetConfiguration.ApiKey;
+        var apiKey = settings.Value.ApiKey;
     }
 
     public IEnumerable<KentaaDonatie> GetDonaties()
