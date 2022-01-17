@@ -1,7 +1,9 @@
 ﻿using BerghAdmin.DbContexts;
+using BerghAdmin.Services.Configuration;
 using BerghAdmin.Tests.TestHelpers;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
@@ -20,6 +22,7 @@ namespace BerghAdmin.Tests
         {
             // give each test its own separate database and service setup
             var connection = InMemoryDatabaseHelper.GetSqliteInMemoryConnection();
+
             var services = new ServiceCollection();
             services
                 .AddEntityFrameworkSqlite()

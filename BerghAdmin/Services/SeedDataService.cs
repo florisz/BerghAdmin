@@ -36,7 +36,6 @@ public class SeedDataService : ISeedDataService
 
     public async Task SeedInitialData()
     {
-        //await TestKentaaInterface();
         if (DatabaseHasData())
         {
             return;
@@ -373,17 +372,4 @@ public class SeedDataService : ISeedDataService
         await this._evenementService.Save(fietstocht);
     }
 
-    private async Task TestKentaaInterface()
-    {
-        var kentaaDonation = await _kentaaInterfaceService.GetDonationById(2587623);
-
-        var x = kentaaDonation.LastName;
-
-        var filter = new KentaaFilter()
-        {
-            StartAt = 1,
-            PageSize = 4
-        };
-        var kentaaDonations = await _kentaaInterfaceService.GetDonationsByQuery(filter);
-    }
 }
