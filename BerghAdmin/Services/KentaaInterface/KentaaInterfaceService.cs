@@ -58,7 +58,7 @@ public class KentaaInterfaceService : IKentaaInterfaceService
             {
                 var donations = await JsonSerializer.DeserializeAsync<Donations>(await streamTask, options);
 
-                if (donations.DonationArray.Length == 0)
+                if (donations?.DonationArray.Length == 0)
                 {
                     break;
                 }

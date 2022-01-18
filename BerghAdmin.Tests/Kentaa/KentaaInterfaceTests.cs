@@ -34,7 +34,7 @@ public class KentaaInterfaceTests : DatabasedTests
     }
 
     [Test]
-    public async Task GetKentaaDonations()
+    public async Task GetKentaaDonationsPer4()
     {
         var service = this.GetRequiredService<IKentaaInterfaceService>();
         var filter = new KentaaFilter()
@@ -44,7 +44,52 @@ public class KentaaInterfaceTests : DatabasedTests
         };
         var kentaaDonations = await service.GetDonationsByQuery(filter);
 
-        Assert.IsTrue(kentaaDonations.Count() >= 13);
+        Assert.IsTrue(kentaaDonations.Count() > 0);
     }
 
+    [Test]
+    public async Task GetKentaaDonationsPer25()
+    {
+        var service = this.GetRequiredService<IKentaaInterfaceService>();
+        var filter = new KentaaFilter()
+        {
+            StartAt = 1,
+            PageSize = 25
+        };
+        var kentaaDonations = await service.GetDonationsByQuery(filter);
+
+        Assert.IsTrue(kentaaDonations.Count() > 0);
+    }
+
+    [Test]
+    public async Task GetKentaaDonationsOnDate20220116()
+    {
+        var service = this.GetRequiredService<IKentaaInterfaceService>();
+        var filter = new KentaaFilter()
+        {
+            StartAt = 1,
+            PageSize = 25,
+            CreatedAfter = new DateTime(2022, 1, 16),
+            CreatedBefore = new DateTime(2022, 1, 17)
+        };
+        var kentaaDonations = await service.GetDonationsByQuery(filter);
+
+        Assert.IsTrue(kentaaDonations.Count() == 8);
+    }
+
+    [Test]
+    public async Task GetKentaaDonationsBetweenDates()
+    {
+        var service = this.GetRequiredService<IKentaaInterfaceService>();
+        var filter = new KentaaFilter()
+        {
+            StartAt = 1,
+            PageSize = 25,
+            CreatedAfter = new DateTime(2021, 12, 6),
+            CreatedBefore = new DateTime(2022, 1, 17)
+        };
+        var kentaaDonations = await service.GetDonationsByQuery(filter);
+
+        Assert.IsTrue(kentaaDonations.Count() == 8);
+    }
 }
