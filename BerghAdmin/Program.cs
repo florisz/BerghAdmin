@@ -72,6 +72,7 @@ void RegisterServices()
     builder.Services.AddServerSideBlazor();
 
     builder.Services.AddOptions();
+    builder.Services.AddHttpClient();
     builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
     builder.Services.AddScoped<IPersoonService, PersoonService>();
     builder.Services.AddScoped<IRolService, RolService>();

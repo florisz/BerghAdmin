@@ -16,9 +16,10 @@ public class KentaaInterfaceTests : DatabasedTests
             .AddUserSecrets<KentaaConfiguration>()
             .Build();
 
-        services.AddScoped<IKentaaInterfaceService, KentaaInterfaceService>();
-        services.Configure<KentaaConfiguration>(configuration.GetSection("KentaaConfiguration"));
-        services.AddScoped<IKentaaService, KentaaService>();
+        services.AddHttpClient()
+            .AddScoped<IKentaaInterfaceService, KentaaInterfaceService>()
+            .Configure<KentaaConfiguration>(configuration.GetSection("KentaaConfiguration"))
+            .AddScoped<IKentaaService, KentaaService>();
     }
 
     [Test]
@@ -90,6 +91,6 @@ public class KentaaInterfaceTests : DatabasedTests
         };
         var kentaaDonations = await service.GetDonationsByQuery(filter);
 
-        Assert.IsTrue(kentaaDonations.Count() == 8);
+        Assert.IsTrue(kentaaDonations.Count() == 11);
     }
 }
