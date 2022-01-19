@@ -19,5 +19,6 @@ public class Startup : FunctionsStartup
                 configuration.GetSection("KentaaConfiguration").Bind(settings);
             });
         builder.Services.AddScoped<IKentaaInterfaceService, KentaaInterfaceService>();
+        builder.Services.AddHttpClient<FunctionApp>();
     }
 }

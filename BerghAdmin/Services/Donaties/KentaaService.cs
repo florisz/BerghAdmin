@@ -1,11 +1,11 @@
-﻿using BerghAdmin.Services.Configuration;
-
-using Microsoft.Extensions.Options;
-
-namespace BerghAdmin.Services.Donaties;
+﻿namespace BerghAdmin.Services.Donaties;
 
 public class KentaaService : IKentaaService
 {
+    public void AddDonation(KentaaDonatie donation)
+    {
+    }
+
     public IEnumerable<KentaaDonatie> GetDonaties()
     {
         throw new NotImplementedException();

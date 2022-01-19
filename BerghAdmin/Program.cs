@@ -20,6 +20,11 @@ var app = builder.Build();
 UseServices();
 
 
+app.MapPost("/donaties", 
+    [AllowAnonymous]
+    (Donatie donatie, IKentaaService service) => HandleNewDonatie(donatie, service));
+
+
 var seedService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
 seedService.SeedInitialData();
 
@@ -122,4 +127,10 @@ void UseServices()
         endpoints.MapBlazorHub();
         endpoints.MapFallbackToPage("/_Host");
     });
+}
+
+IResult HandleNewDonatie(Donatie donatie, IKentaaService service)
+{
+    service.AddDonation(new KentaaDonatie());
+    return Results.Ok("Ik heb m toegevoegd");
 }

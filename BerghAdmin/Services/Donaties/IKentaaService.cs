@@ -8,5 +8,6 @@ namespace BerghAdmin.Services.Donaties
         IEnumerable<KentaaDonatie> GetDonaties(Donateur persoon);
         IEnumerable<KentaaDonatie> GetDonaties(Evenement evenement);
         IEnumerable<KentaaDonatie> GetDonationsFromDate(DateTime startDate);
+        void AddDonation(KentaaDonatie donation);
     }
 }
