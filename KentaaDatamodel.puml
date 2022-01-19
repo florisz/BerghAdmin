@@ -1,0 +1,33 @@
+@startuml
+Class Site {
+}
+
+Class User {
+}
+
+Class Action {
+
+}
+
+Class Project {
+
+}
+
+Class Donation {
+
+}
+
+Site -down- User
+Site .. Action
+Site -- Project
+Site .. Donation
+
+User -- Action
+
+Project -- Action
+Project .. Donation
+Action -right- Donation
+
+note "ook Evenement\ngenoemd" as ProjectNote
+Project .right. ProjectNote
+@enduml
