@@ -3,6 +3,7 @@ using BerghAdmin.Services.KentaaInterface;
 
 using Microsoft.Extensions.Options;
 
+using System.Net.Http;
 using System.Text.Json;
 
 namespace BerghAdmin.ApplicationServices.KentaaInterface;
@@ -17,68 +18,52 @@ public class KentaaInterfaceService : IKentaaInterfaceService
         _httpClient = _session.Connect(factory);
     }
 
-    public async Task<Donation?> GetDonationById(int donationId)
+    public async Task<Donation> GetDonationById(int donationId)
     {
-        try
-        {
-            var streamTask = _httpClient.GetStreamAsync($"{_session.Url}/donations/{donationId}?api_key={_session.ApiKey}");
-
-            var options = new JsonSerializerOptions
-            {
-                ReadCommentHandling = JsonCommentHandling.Skip,
-                AllowTrailingCommas = true,
-                NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
-            };
-
-            var donation = await JsonSerializer.DeserializeAsync<DonationResponse>(await streamTask, options);
-
-            return donation?.data;
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException("Json deserialize error", ex);
-        }
+        var url = $"{_session.Url}/donations/{donationId}?api_key={_session.ApiKey}";
+        var donation = await GetKentaaResponse<DonationResponse>(url);
+        return donation.data;
     }
 
     public async Task<IEnumerable<Donation>> GetDonationsByQuery(KentaaFilter filter)
     {
         var kentaaIssues = new List<Donation>();
 
-        try
+        var url = $"{_session.Url}/donations?{filter.Build()};api_key={_session.ApiKey}";
+        var donations = await GetKentaaResponse<Donations>(url);
+
+        while (donations.DonationArray.Any())
         {
-            var url = $"{_session.Url}/donations?{filter.Build()};api_key={_session.ApiKey}";
-            var streamTask = _httpClient.GetStreamAsync(url);
+            kentaaIssues.AddRange(donations.DonationArray);
 
-            var options = new JsonSerializerOptions
-            {
-                ReadCommentHandling = JsonCommentHandling.Skip,
-                AllowTrailingCommas = true,
-                NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
-            };
-            while (true)
-            {
-                var donations = await JsonSerializer.DeserializeAsync<Donations>(await streamTask, options);
-
-                if (donations?.DonationArray.Length == 0)
-                {
-                    break;
-                }
-
-                if (donations != null)
-                {
-                    kentaaIssues.AddRange(donations.DonationArray);
-                }
-
-                filter = filter.NextPage();
-                url = $"{_session.Url}/donations?{filter.Build()};api_key={_session.ApiKey}";
-                streamTask = _httpClient.GetStreamAsync(url);
-            }
-        }
-        catch (Exception ex)
-        {
-            throw new ApplicationException("Json deserialize error", ex);
+            filter = filter.NextPage();
+            url = $"{_session.Url}/donations?{filter.Build()};api_key={_session.ApiKey}";
+            donations = await GetKentaaResponse<Donations>(url);
         }
 
         return kentaaIssues;
+    }
+
+    private async Task<T> GetKentaaResponse<T>(string url)
+    {
+        var options = new JsonSerializerOptions
+        {
+            ReadCommentHandling = JsonCommentHandling.Skip,
+            AllowTrailingCommas = true,
+            NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+        };
+
+        var response = await _httpClient.GetAsync(url);
+        if (response.IsSuccessStatusCode)
+        {
+            var json = await response.Content.ReadAsStringAsync();
+            var o = JsonSerializer.Deserialize<T>(json, options);
+            if (o == null)
+                throw new ApplicationException($"Could not deserialize JSON '{o}' into donation list");
+
+            return o;
+        }
+    
+        throw new ApplicationException($"Could not get {typeof(T).Name} donation from Kentaa; {url}");
     }
 }

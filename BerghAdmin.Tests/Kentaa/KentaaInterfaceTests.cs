@@ -1,5 +1,4 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface;
-using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
 
 using Microsoft.Extensions.Configuration;
@@ -15,12 +14,12 @@ public class KentaaInterfaceTests : DatabasedTests
     protected override void RegisterServices(ServiceCollection services)
     {
         var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<KentaaConfiguration>()
+            .AddUserSecrets<BerghAdmin.Services.Configuration.MailJetConfiguration>()
             .Build();
 
         services.AddHttpClient()
-            .AddScoped<IKentaaInterfaceService, KentaaInterfaceService>()
             .Configure<KentaaConfiguration>(configuration.GetSection("KentaaConfiguration"))
+            .AddScoped<IKentaaInterfaceService, KentaaInterfaceService>()
             .AddScoped<IKentaaService, KentaaService>();
     }
 

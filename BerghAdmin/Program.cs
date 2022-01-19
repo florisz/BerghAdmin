@@ -81,7 +81,6 @@ void RegisterServices()
     builder.Services.AddScoped<ISendMailService, SendMailService>();
     builder.Services.AddScoped<IEvenementService, EvenementService>();
     builder.Services.AddScoped<IDonatieService, DonatieService>();
-    builder.Services.Configure<KentaaConfiguration>(builder.Configuration.GetSection("KentaaConfiguration"));
     builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
     builder.Services.AddScoped<IKentaaService, KentaaService>();
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();

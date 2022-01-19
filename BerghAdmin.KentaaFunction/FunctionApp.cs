@@ -9,16 +9,22 @@ namespace BerghAdmin.KentaaFunction;
 public class FunctionApp
 {
     private readonly IKentaaInterfaceService service;
+    private readonly HttpClient berghClient;
 
-    public FunctionApp(IKentaaInterfaceService service)
+    public FunctionApp(IKentaaInterfaceService service, HttpClient berghClient)
     {
         this.service = service;
+        this.berghClient = berghClient;
     }
 
     [FunctionName("ReadDonations")]
-    public void ReadDonations([TimerTrigger("0/10 * * * * *")] TimerInfo myTimer, ILogger log)
+    public async Task ReadDonations([TimerTrigger("0/10 * * * * *")] TimerInfo myTimer, ILogger log)
     {
         log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-        service.GetDonationsByQuery();
+        var donaties = await service.GetDonationsByQuery(new KentaaFilter());
+        foreach (var donatie in donaties)
+        {
+            await berghClient.PostAsJsonAsync("", donatie);
+        }
     }
 }
