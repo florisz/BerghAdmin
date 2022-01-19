@@ -1,7 +1,6 @@
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services.Evenementen;
-using BerghAdmin.Services.KentaaInterface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
@@ -16,22 +15,19 @@ public class SeedDataService : ISeedDataService
     private readonly UserManager<User> _userManager;
     private readonly IRolService _rolService;
     private readonly IEvenementService _evenementService;
-    private readonly IKentaaInterfaceService _kentaaInterfaceService;
 
     public SeedDataService(
         ApplicationDbContext dbContext,
         UserManager<User> userManager,
         IRolService rolService,
         IEvenementService evenementService,
-        IOptions<SeedSettings> settings,
-        IKentaaInterfaceService kentaaInterfaceService)
+        IOptions<SeedSettings> settings)
     {
         this._settings = settings.Value;
         this._dbContext = dbContext;
         this._rolService = rolService;
         this._userManager = userManager;
         this._evenementService = evenementService;
-        this._kentaaInterfaceService = kentaaInterfaceService;
     }
 
     public async Task SeedInitialData()

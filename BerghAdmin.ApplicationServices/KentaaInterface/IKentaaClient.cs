@@ -1,8 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Net.Http.Headers;
-using BerghAdmin.Services.KentaaInterface.KentaaModel;
-
-namespace BerghAdmin.Services.KentaaInterface;
+﻿namespace BerghAdmin.ApplicationServices.KentaaInterface;
 
 /*  Query parameters     
     Parameter	    Description

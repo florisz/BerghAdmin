@@ -1,4 +1,4 @@
-﻿namespace BerghAdmin.Services.KentaaInterface;
+﻿namespace BerghAdmin.ApplicationServices.KentaaInterface;
 
 public class KentaaFilter : IKentaaFilter
 {
@@ -19,7 +19,7 @@ public class KentaaFilter : IKentaaFilter
 
     public KentaaFilter NextPage()
     {
-        return new KentaaFilter(StartAt+1, PageSize);
+        return new KentaaFilter(StartAt + 1, PageSize);
     }
 
     public string Build()

@@ -18,6 +18,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\BerghAdmin.ApplicationServices\BerghAdmin.ApplicationServices.csproj" />
 		<ProjectReference Include="..\BerghAdmin\BerghAdmin.csproj" />
 	</ItemGroup>
 

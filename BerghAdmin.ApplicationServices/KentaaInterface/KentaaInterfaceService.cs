@@ -1,10 +1,11 @@
-﻿using BerghAdmin.Services.Configuration;
-using BerghAdmin.Services.KentaaInterface.KentaaModel;
-using Microsoft.Extensions.Options;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+using BerghAdmin.Services.KentaaInterface;
 
-namespace BerghAdmin.Services.KentaaInterface;
+using Microsoft.Extensions.Options;
+
+using System.Text.Json;
+
+namespace BerghAdmin.ApplicationServices.KentaaInterface;
 
 public class KentaaInterfaceService : IKentaaInterfaceService
 {
@@ -30,7 +31,7 @@ public class KentaaInterfaceService : IKentaaInterfaceService
             };
 
             var donation = await JsonSerializer.DeserializeAsync<DonationResponse>(await streamTask, options);
-            
+
             return donation?.data;
         }
         catch (Exception ex)

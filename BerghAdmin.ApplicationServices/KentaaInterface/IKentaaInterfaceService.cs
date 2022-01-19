@@ -1,7 +1,6 @@
-﻿using BerghAdmin.Services.KentaaInterface.KentaaModel;
-using System.Threading.Tasks;
+﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
-namespace BerghAdmin.Services.KentaaInterface;
+namespace BerghAdmin.ApplicationServices.KentaaInterface;
 
 public interface IKentaaInterfaceService
 {
