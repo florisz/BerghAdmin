@@ -18,9 +18,9 @@ public class KentaaSession
 
     public string ApiKey => _apiKey;
 
-    public HttpClient Connect()
+    public HttpClient Connect(IHttpClientFactory factory)
     {
-        _httpClient = new HttpClient();
+        _httpClient = factory.CreateClient();
         _httpClient.DefaultRequestHeaders.Accept.Clear();
         _httpClient.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));

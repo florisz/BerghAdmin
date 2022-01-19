@@ -11,10 +11,10 @@ public class KentaaInterfaceService : IKentaaInterfaceService
 {
     readonly HttpClient _httpClient;
     readonly KentaaSession _session;
-    public KentaaInterfaceService(IOptions<KentaaConfiguration> settings)
+    public KentaaInterfaceService(IOptions<KentaaConfiguration> settings, IHttpClientFactory factory)
     {
         _session = new KentaaSession(settings.Value.KentaaUrl, settings.Value.ApiKey);
-        _httpClient = _session.Connect();
+        _httpClient = _session.Connect(factory);
     }
 
     public async Task<Donation?> GetDonationById(int donationId)
@@ -59,7 +59,7 @@ public class KentaaInterfaceService : IKentaaInterfaceService
             {
                 var donations = await JsonSerializer.DeserializeAsync<Donations>(await streamTask, options);
 
-                if (donations.DonationArray.Length == 0)
+                if (donations?.DonationArray.Length == 0)
                 {
                     break;
                 }

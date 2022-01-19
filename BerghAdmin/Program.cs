@@ -2,7 +2,6 @@ using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
 using BerghAdmin.Services.Configuration;
-using BerghAdmin.Services.Context;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
@@ -71,6 +70,7 @@ void RegisterServices()
     builder.Services.AddServerSideBlazor();
 
     builder.Services.AddOptions();
+    builder.Services.AddHttpClient();
     builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
     builder.Services.AddScoped<IPersoonService, PersoonService>();
     builder.Services.AddScoped<IRolService, RolService>();
@@ -78,10 +78,11 @@ void RegisterServices()
     builder.Services.AddScoped<IDocumentService, DocumentService>();
     builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
     builder.Services.AddScoped<IDataImporterService, DataImporterService>();
-    builder.Services.AddScoped<IContextService, ContextService>();
     builder.Services.AddScoped<ISendMailService, SendMailService>();
     builder.Services.AddScoped<IEvenementService, EvenementService>();
     builder.Services.AddScoped<IDonatieService, DonatieService>();
+    builder.Services.Configure<KentaaConfiguration>(builder.Configuration.GetSection("KentaaConfiguration"));
+    builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
     builder.Services.AddScoped<IKentaaService, KentaaService>();
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddSyncfusionBlazor();
