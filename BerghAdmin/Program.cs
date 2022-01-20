@@ -1,3 +1,4 @@
+using BerghAdmin.ApplicationServices.KentaaInterface;
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
@@ -5,7 +6,6 @@ using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
-using BerghAdmin.Services.KentaaInterface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +20,10 @@ RegisterServices();
 var app = builder.Build();
 UseServices();
 
+
+app.MapPost("/donaties",
+    [AllowAnonymous]
+(Donatie donatie, IKentaaService service) => HandleNewDonatie(donatie, service));
 
 var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
 seedDataService.SeedInitialData();
@@ -83,9 +87,9 @@ void RegisterServices()
     builder.Services.AddScoped<ISendMailService, SendMailService>();
     builder.Services.AddScoped<IEvenementService, EvenementService>();
     builder.Services.AddScoped<IDonatieService, DonatieService>();
-    builder.Services.Configure<KentaaConfiguration>(builder.Configuration.GetSection("KentaaConfiguration"));
     builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
     builder.Services.AddScoped<IKentaaInterfaceService, KentaaInterfaceService>();
+    builder.Services.AddScoped<IKentaaService, KentaaService>();
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddSyncfusionBlazor();
     builder.Services.AddSignalR(e =>
@@ -125,4 +129,10 @@ void UseServices()
         endpoints.MapBlazorHub();
         endpoints.MapFallbackToPage("/_Host");
     });
+}
+
+IResult HandleNewDonatie(Donatie donatie, IKentaaService service)
+{
+    service.AddDonation(new KentaaDonatie());
+    return Results.Ok("Ik heb m toegevoegd");
 }
