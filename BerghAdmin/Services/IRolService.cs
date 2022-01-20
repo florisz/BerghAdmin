@@ -6,5 +6,5 @@ namespace BerghAdmin.Services;
 public interface IRolService
 {
     List<Rol> GetRollen();
-    Rol? GetRolById(RolTypeEnum id);
+    Rol GetRolById(RolTypeEnum id);
 }

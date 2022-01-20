@@ -18,8 +18,7 @@ public class KentaaInterfaceTests : DatabasedTests
 
         services.AddHttpClient()
             .AddScoped<IKentaaInterfaceService, KentaaInterfaceService>()
-            .Configure<KentaaConfiguration>(configuration.GetSection("KentaaConfiguration"))
-            .AddScoped<IKentaaService, KentaaService>();
+            .Configure<KentaaConfiguration>(configuration.GetSection("KentaaConfiguration"));
     }
 
     [Test]

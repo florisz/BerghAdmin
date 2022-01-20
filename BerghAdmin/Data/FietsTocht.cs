@@ -2,5 +2,5 @@ namespace BerghAdmin.Data;
 
 public class FietsTocht : Evenement
 {
-    public DateTime? GeplandJaar { get; set; }
+    public int KentaaProjectId { get; set; } = 0; 
 }

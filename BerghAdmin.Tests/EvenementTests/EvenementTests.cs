@@ -25,7 +25,7 @@ namespace BerghAdmin.Tests.EvenementTests
             const string fietsTochtNaam = "Fietstocht1";
 
             var service = this.GetRequiredService<IEvenementService>();
-            service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
+            service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
             var fietsTocht = service.GetByName(fietsTochtNaam);
 
             Assert.AreEqual(fietsTocht?.Naam, fietsTochtNaam);
@@ -37,7 +37,7 @@ namespace BerghAdmin.Tests.EvenementTests
             const string fietsTochtNaam = "Fietstocht2";
 
             var service = this.GetRequiredService<IEvenementService>();
-            service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
+            service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
             var fietsTocht = service.GetByName(fietsTochtNaam);
 
             Assert.IsNotNull(fietsTocht);
@@ -59,8 +59,8 @@ namespace BerghAdmin.Tests.EvenementTests
             const string fietsTochtNaam = "Fietstocht3";
 
             var service = this.GetRequiredService<IEvenementService>();
-            await service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) });
-            var errorCode = await service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2023, 1, 1) });
+            await service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
+            var errorCode = await service.Save(new FietsTocht() { Naam = fietsTochtNaam, GeplandeDatum = new DateTime(2023, 1, 1) });
 
             Assert.AreEqual(errorCode, ErrorCodeEnum.Conflict);
         }
@@ -72,7 +72,7 @@ namespace BerghAdmin.Tests.EvenementTests
             const string fietsTochtUpdatedNaam = "Fietstocht4.1";
 
             var service = this.GetRequiredService<IEvenementService>();
-            var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
+            var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
             service.Save(fietsTocht);
 
             fietsTocht.Naam = fietsTochtUpdatedNaam;
@@ -96,7 +96,7 @@ namespace BerghAdmin.Tests.EvenementTests
             var strArray = new string[] { "aap", "noot", "mies" };
             foreach (var name in strArray)
             {
-                var fietsTocht = new FietsTocht() { Naam = name, GeplandJaar = new DateTime(2022, 1, 1) };
+                var fietsTocht = new FietsTocht() { Naam = name, GeplandeDatum = new DateTime(2022, 1, 1) };
                 service.Save(fietsTocht);
             }
 
@@ -121,7 +121,7 @@ namespace BerghAdmin.Tests.EvenementTests
 
             var service = this.GetRequiredService<IEvenementService>();
 
-            var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
+            var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
             service.Save(fietsTocht);
             service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
             service = null;
@@ -143,7 +143,7 @@ namespace BerghAdmin.Tests.EvenementTests
 
             var service = this.GetRequiredService<IEvenementService>();
 
-            var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
+            var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
             await service.Save(fietsTocht);
             await service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
             
@@ -174,7 +174,7 @@ namespace BerghAdmin.Tests.EvenementTests
 
             var service = this.GetRequiredService<IEvenementService>();
 
-            var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandJaar = new DateTime(2022, 1, 1) };
+            var fietsTocht = new FietsTocht() { Naam = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
             await service.Save(fietsTocht);
             var persoon = new Persoon() { EmailAdres = "aap@noot.com" };
             await service.AddDeelnemer(fietsTocht, persoon);

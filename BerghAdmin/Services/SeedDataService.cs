@@ -13,25 +13,19 @@ public class SeedDataService : ISeedDataService
 {
     private readonly SeedSettings _settings;
     private readonly ApplicationDbContext _dbContext;
-    private readonly UserManager<User> _userManager;
     private readonly IRolService _rolService;
     private readonly IEvenementService _evenementService;
-    private readonly IKentaaInterfaceService _kentaaInterfaceService;
 
     public SeedDataService(
         ApplicationDbContext dbContext,
-        UserManager<User> userManager,
         IRolService rolService,
         IEvenementService evenementService,
-        IOptions<SeedSettings> settings,
-        IKentaaInterfaceService kentaaInterfaceService)
+        IOptions<SeedSettings> settings)
     {
         this._settings = settings.Value;
         this._dbContext = dbContext;
         this._rolService = rolService;
-        this._userManager = userManager;
         this._evenementService = evenementService;
-        this._kentaaInterfaceService = kentaaInterfaceService;
     }
 
     public async Task SeedInitialData()
@@ -44,10 +38,6 @@ public class SeedDataService : ISeedDataService
         var rollen = await InsertRollen();
 
         await InsertTestPersonen(rollen);
-        await InsertUser(rollen, "admin", AdministratorPolicyHandler.Claim);
-        await InsertUser(rollen, "aap", BeheerFietsersPolicyHandler.Claim);
-        await InsertUser(rollen, "noot", BeheerGolfersPolicyHandler.Claim);
-        await InsertUser(rollen, "mies", BeheerAmbassadeursPolicyHandler.Claim);
         await InsertEvenementen();
         //await InsertDocumenten();
     }
@@ -108,7 +98,7 @@ public class SeedDataService : ISeedDataService
                 Voornaam = "Appie",
                 Achternaam = "Apenoot",
                 Adres = "Straat 1",
-                EmailAdres = "aapnoot@mail.com",
+                EmailAdres = "appie@aapnootmies.com",
                 GeboorteDatum = new DateTime(1970, 1, 1),
                 Geslacht = GeslachtEnum.Man,
                 Land = "Nederland",
@@ -124,7 +114,7 @@ public class SeedDataService : ISeedDataService
                 Voornaam = "Bert",
                 Achternaam = "Bengel",
                 Adres = "Straat 2",
-                EmailAdres = "bbengel@mail.com",
+                EmailAdres = "bert@aapnootmies.com",
                 GeboorteDatum = new DateTime(1970, 1, 1),
                 Geslacht = GeslachtEnum.Man,
                 Land = "Nederland",
@@ -137,10 +127,10 @@ public class SeedDataService : ISeedDataService
             new Persoon
             {
                 Voorletters = "C.",
-                Voornaam = "Charles",
+                Voornaam = "Chappie",
                 Achternaam = "Claassen",
                 Adres = "Straat 3",
-                EmailAdres = "bbengel@mail.com",
+                EmailAdres = "chappie@aapnootmies.com",
                 GeboorteDatum = new DateTime(1945, 1, 1),
                 Geslacht = GeslachtEnum.Man,
                 Land = "Nederland",
@@ -299,51 +289,6 @@ public class SeedDataService : ISeedDataService
         _dbContext.SaveChanges();
     }
 
-    private async Task InsertUser(Dictionary<RolTypeEnum, Rol> rollen, string naam, Claim claim)
-    {
-        var persoon = new Persoon
-        {
-            Voorletters = "F.",
-            Voornaam = "Floris",
-            Achternaam = naam,
-            Adres = "Berkenlaan 12",
-            EmailAdres = "fzwarteveen@mail.com",
-            GeboorteDatum = new DateTime(2002, 1, 1),
-            Geslacht = GeslachtEnum.Man,
-            Land = "Nederland",
-            Mobiel = "06-12345678",
-            Plaats = "Beek",
-            Postcode = "7037 CA",
-            Telefoon = "onbekend",
-            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.Vrijwilliger] }
-        };
-
-        await _dbContext.AddAsync(persoon);
-        await _dbContext.SaveChangesAsync();
-
-        var user = new User
-        {
-            CurrentPersoonId = persoon.Id,
-            Name = naam,
-            //Roles = new string[] { "admin" },
-            UserName = $"{naam}@bihz.nl",
-            Email = "fzwarteveen@gmail.com",
-            AccessFailedCount = 0,
-            EmailConfirmed = true,
-            LockoutEnabled = false,
-            LockoutEnd = null,
-            PhoneNumber = "",
-            PhoneNumberConfirmed = true,
-            TwoFactorEnabled = false
-        };
-
-        var result = await this._userManager.CreateAsync(user, "qwerty@123");
-        if (result.Succeeded)
-        {
-            await this._userManager.AddClaimAsync(user, claim);
-        }
-    }
-
     private async Task InsertDocumenten()
     {
         await _dbContext.AddRangeAsync(
@@ -366,8 +311,9 @@ public class SeedDataService : ISeedDataService
         var fietstocht = new FietsTocht()
         {
             Id = 0,
-            GeplandJaar = new DateTime(2032, 1, 1),
-            Naam = "Hanzetocht"
+            GeplandeDatum = new DateTime(2023, 5, 3),
+            Naam = "Hanzetocht",
+            KentaaProjectId = 17805
         };
         await this._evenementService.Save(fietstocht);
     }

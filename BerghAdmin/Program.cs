@@ -21,8 +21,10 @@ var app = builder.Build();
 UseServices();
 
 
-var seedService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
-seedService.SeedInitialData();
+var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
+seedDataService.SeedInitialData();
+var seedUsersService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedUsersService>();
+seedUsersService.SeedUsersData();
 
 app.Run();
 
@@ -69,7 +71,6 @@ void RegisterServices()
     // Add services to the container.
     builder.Services.AddRazorPages();
     builder.Services.AddServerSideBlazor();
-
     builder.Services.AddOptions();
     builder.Services.AddHttpClient();
     builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
@@ -84,7 +85,6 @@ void RegisterServices()
     builder.Services.AddScoped<IDonatieService, DonatieService>();
     builder.Services.Configure<KentaaConfiguration>(builder.Configuration.GetSection("KentaaConfiguration"));
     builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
-    builder.Services.AddScoped<IKentaaService, KentaaService>();
     builder.Services.AddScoped<IKentaaInterfaceService, KentaaInterfaceService>();
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddSyncfusionBlazor();
