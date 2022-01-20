@@ -1,4 +1,3 @@
-using BerghAdmin.ApplicationServices.KentaaInterface;
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
@@ -88,7 +87,6 @@ void RegisterServices()
     builder.Services.AddScoped<IEvenementService, EvenementService>();
     builder.Services.AddScoped<IDonatieService, DonatieService>();
     builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
-    builder.Services.AddScoped<IKentaaInterfaceService, KentaaInterfaceService>();
     builder.Services.AddScoped<IKentaaService, KentaaService>();
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddSyncfusionBlazor();

@@ -1,4 +1,5 @@
-﻿using BerghAdmin.Data;
+﻿using BerghAdmin.ApplicationServices.KentaaInterface;
+using BerghAdmin.Data;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 using BerghAdmin.Services;

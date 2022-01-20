@@ -1,9 +1,6 @@
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
-using BerghAdmin.Services.Evenementen;
-using BerghAdmin.Services.KentaaInterface;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 
 using System.Security.Claims;
 
