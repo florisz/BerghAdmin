@@ -19,6 +19,12 @@ public class Donation
     [JsonPropertyName("site_id")]
     public int SiteId { get; set; }
 
+    [JsonPropertyName("project_id")]
+    public int ProjectId { get; set; } = 0;
+
+    [JsonPropertyName("action_id")]
+    public int ActionId { get; set; } = 0;
+
     [JsonPropertyName("created_at")]
     public string CreatedAt { get; set; }
 

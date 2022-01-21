@@ -111,7 +111,8 @@ namespace BerghAdmin.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Naam = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Naam = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GeplandeDatum = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -124,37 +125,35 @@ namespace BerghAdmin.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    KentaaId = table.Column<int>(type: "int", nullable: false),
+                    SiteId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Anonymous = table.Column<bool>(type: "bit", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Infix = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NewsLetter = table.Column<bool>(type: "bit", nullable: false),
+                    DonateurNaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Anoniem = table.Column<bool>(type: "bit", nullable: false),
+                    DonateurEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DonateurBericht = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NieuwsbriefGewenst = table.Column<bool>(type: "bit", nullable: false),
                     DeviceType = table.Column<int>(type: "int", nullable: false),
                     FrequencyType = table.Column<int>(type: "int", nullable: false),
-                    CurrencyCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Currency = table.Column<int>(type: "int", nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    RegistrationFeeAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    TransactionCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ReceivableAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Countable = table.Column<bool>(type: "bit", nullable: false),
-                    StartDonation = table.Column<bool>(type: "bit", nullable: false),
+                    Bedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TransactionKosten = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     RegistrationFee = table.Column<bool>(type: "bit", nullable: false),
-                    InvoiceNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
-                    PaymentStatusAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentTransactionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AccountIban = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AccountBic = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AccountName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    RegistrationFeeAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    NettoBedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Countable = table.Column<bool>(type: "bit", nullable: false),
+                    BetaalFactuurNummer = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BetaalMethode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BetaalStatus = table.Column<int>(type: "int", nullable: false),
+                    BetaalStatusOp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BetaalTransactieId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BetaalId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BetaalOmschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountIban = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountBic = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DonatieUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -314,7 +313,7 @@ namespace BerghAdmin.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    GeplandJaar = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    KentaaProjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -331,7 +330,6 @@ namespace BerghAdmin.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    GeplandeDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Locatie = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Omschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -378,6 +376,7 @@ namespace BerghAdmin.Migrations
                     Datum = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Bedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DonateurId = table.Column<int>(type: "int", nullable: true),
+                    KentaaActionId = table.Column<int>(type: "int", nullable: true),
                     KentaaDonatieId = table.Column<int>(type: "int", nullable: true),
                     FactuurId = table.Column<int>(type: "int", nullable: true)
                 },

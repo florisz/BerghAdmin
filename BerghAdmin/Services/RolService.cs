@@ -11,10 +11,15 @@ namespace BerghAdmin.Services
             _dbContext = context;
         }
 
-        public Rol? GetRolById(RolTypeEnum id)
+        public Rol GetRolById(RolTypeEnum id)
         {
             var rol = _dbContext.Rollen?.SingleOrDefault(x => x.Id == id);
             
+            if (rol == null)
+            {
+                throw new ApplicationException($"Rol with id {id} does not exist");
+            }
+
             return rol;
         }
 

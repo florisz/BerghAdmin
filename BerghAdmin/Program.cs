@@ -53,12 +53,12 @@ public class Program
             (Donatie donatie, IKentaaService service) => HandleNewDonatie(donatie, service))
             .AllowAnonymous();
 
+var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
+seedDataService.SeedInitialData();
+var seedUsersService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedUsersService>();
+seedUsersService.SeedUsersData();
 
-        var seedService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
-        seedService.SeedInitialData();
-
-        app.Run();
-    }
+app.Run();
 
     static string GetDatabaseConnectionString(WebApplicationBuilder builder)
     {
