@@ -7,6 +7,9 @@ using NUnit.Framework;
 
 namespace BerghAdmin.Tests.Kentaa;
 
+
+// Test only works with test site from Kentaa 
+// 
 [TestFixture]
 public class KentaaInterfaceTests : DatabasedTests
 {
@@ -59,6 +62,48 @@ public class KentaaInterfaceTests : DatabasedTests
         var kentaaDonations = await service.GetDonationsByQuery(filter);
 
         Assert.IsTrue(kentaaDonations.Count() > 0);
+    }
+
+    [Test]
+    public async Task GetKentaaUsersPer25()
+    {
+        var service = this.GetRequiredService<IKentaaInterfaceService>();
+        var filter = new KentaaFilter()
+        {
+            StartAt = 1,
+            PageSize = 25
+        };
+        var kentaaUsers = await service.GetUsersByQuery(filter);
+
+        Assert.IsTrue(kentaaUsers.Count() > 0);
+    }
+
+    [Test]
+    public async Task GetKentaaActionsPer25()
+    {
+        var service = this.GetRequiredService<IKentaaInterfaceService>();
+        var filter = new KentaaFilter()
+        {
+            StartAt = 1,
+            PageSize = 25
+        };
+        var kentaaActions = await service.GetActionsByQuery(filter);
+
+        Assert.IsTrue(kentaaActions.Count() > 0);
+    }
+
+    [Test]
+    public async Task GetKentaaProjectsPer25()
+    {
+        var service = this.GetRequiredService<IKentaaInterfaceService>();
+        var filter = new KentaaFilter()
+        {
+            StartAt = 1,
+            PageSize = 25
+        };
+        var kentaaProjects = await service.GetProjectsByQuery(filter);
+
+        Assert.IsTrue(kentaaProjects.Count() > 0);
     }
 
     [Test]

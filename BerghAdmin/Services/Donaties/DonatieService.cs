@@ -32,10 +32,10 @@ public class DonatieService : IDonatieService
         throw new NotImplementedException();
     }
 
-    public Donatie? GetByKentaaId(int kentaaActionId)
-        => _dbContext
-            .Donaties?
-            .SingleOrDefault(d => d.KentaaActionId == kentaaActionId);
+    //public Donatie? GetByKentaaId(int kentaaActionId)
+    //    => _dbContext
+    //        .Donaties?
+    //        .SingleOrDefault(d => d.KentaaActionId == kentaaActionId);
 
     public Donatie? GetByName(string name)
     {

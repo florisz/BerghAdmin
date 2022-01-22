@@ -38,7 +38,6 @@ public class KentaaFilter : IKentaaFilter
                                 this.CreatedBefore,
                                 this.UpdatedAfter,
                                 this.UpdatedBefore);
-        return new KentaaFilter(StartAt + 1, PageSize);
     }
 
     public string Build()

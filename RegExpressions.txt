@@ -1,0 +1,7 @@
+Copy overview text uit Kentaa documentatie page en 
+gebruik onderstaand search/replace in een Visual Studio window (reg expressions aan!)
+Wordt de KentaaInterface class voor het grootste gedeelte gegeneerd
+
+find:    ([a-z_]*)[ \t]*([a-z]*)[ \t]*(.*)\n
+replace: [JsonPropertyName("$1")]\npublic $2 $1 { get; set; }\t // $3\n\n
+

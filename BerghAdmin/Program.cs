@@ -1,5 +1,7 @@
+using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
+using BD = BerghAdmin.Data;
 using BerghAdmin.Services;
 using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
@@ -22,7 +24,7 @@ UseServices();
 
 app.MapPost("/donaties",
     [AllowAnonymous]
-(Donatie donatie, IKentaaService service) => HandleNewDonatie(donatie, service));
+(Donation kentaaDonatie, IKentaaService service) => HandleNewDonatie(kentaaDonatie, service));
 
 var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
 seedDataService.SeedInitialData();
@@ -44,7 +46,7 @@ string GetDatabaseConnectionString()
 void RegisterAuthorization()
 {
     builder.Services
-        .AddDefaultIdentity<User>(options => {
+        .AddDefaultIdentity<BD.User>(options => {
             options.SignIn.RequireConfirmedAccount = true;
             options.Password.RequiredLength = 6;
             options.Password.RequireDigit = false;
@@ -52,8 +54,8 @@ void RegisterAuthorization()
             options.Password.RequireUppercase = false;
             options.Password.RequireNonAlphanumeric = false;
         })
-        .AddUserManager<UserManager<User>>()
-        .AddSignInManager<SignInManager<User>>()
+        .AddUserManager<UserManager<BD.User>>()
+        .AddSignInManager<SignInManager<BD.User>>()
         .AddEntityFrameworkStores<ApplicationDbContext>();
 
     builder.Services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
@@ -129,8 +131,8 @@ void UseServices()
     });
 }
 
-IResult HandleNewDonatie(Donatie donatie, IKentaaService service)
+IResult HandleNewDonatie(Donation kentaaDonatie, IKentaaService service)
 {
-    service.AddDonation(new KentaaDonatie());
+    service.AddDonation(new KentaaDonatie()/* new KentaaDonatie(kentaaDonatie)*/);
     return Results.Ok("Ik heb m toegevoegd");
 }

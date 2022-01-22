@@ -11,7 +11,7 @@ public class DonationResponse
 
 }
 
-public class Donation
+public class Donation 
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }
@@ -26,10 +26,10 @@ public class Donation
     public int ActionId { get; set; } = 0;
 
     [JsonPropertyName("created_at")]
-    public string CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
     [JsonPropertyName("updated_at")]
-    public string UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     [JsonPropertyName("first_name")]
     public string? FirstName { get; set; }

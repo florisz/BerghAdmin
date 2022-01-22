@@ -6,7 +6,6 @@ using BerghAdmin.Services;
 using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
-using BerghAdmin.Services.KentaaInterface;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -92,7 +91,7 @@ namespace BerghAdmin.Tests.DonatieTests
                     var fietsTochtDonations = kentaaDonations.Where(kd => kd.ProjectId == fietsTocht.KentaaProjectId);
                     foreach (var kentaaDonatie in fietsTochtDonations)
                     {
-                        var donation = new Donatie(/* kentaaDonatie.UpdatedAt */ new DateTime(), kentaaDonatie.Amount);
+                        var donation = new KentaaDonatie(/*kentaaDonatie*/);
                         var result = donatieService.Save(donation);
                         Assert.AreEqual(ErrorCodeEnum.Ok, result);
                     }

@@ -5,7 +5,7 @@ namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-public class Donations
+public class Users
 {
     [JsonPropertyName("total_entries")]
     public int TotalEntries { get; set; }
@@ -19,9 +19,8 @@ public class Donations
     [JsonPropertyName("current_page")]
     public int CurrentPage { get; set; }
 
-    [JsonPropertyName("donations")]
-    public Donation[] DonationArray { get; set; }
-
+    [JsonPropertyName("users")]
+    public User[] UserArray { get; set; }
 }
 
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
