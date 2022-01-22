@@ -1,4 +1,6 @@
 
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace BerghAdmin.Data;
 
 #pragma warning disable IDE0060 // Remove unused parameter

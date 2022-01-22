@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
@@ -64,21 +65,26 @@ public class Donation
     [JsonPropertyName("currency")]
     public string Currency { get; set; } = "EUR";
 
+    [Column(TypeName = "decimal(18,2)")]
     [JsonPropertyName("amount")]
     public decimal Amount { get; set; }
 
+    [Column(TypeName = "decimal(18,2)")]
     [JsonPropertyName("transaction_costs")]
     public decimal? TransactionCost { get; set; }
 
     [JsonPropertyName("registration_fee")]
     public bool RegistrationFee { get; set; } = false;
 
+    [Column(TypeName = "decimal(18,2)")]
     [JsonPropertyName("registration_fee_amount")]
     public decimal? RegistrationFeeAmount { get; set; }
 
+    [Column(TypeName = "decimal(18,2)")]
     [JsonPropertyName("total_amount")]
     public decimal TotalAmount { get; set; }
 
+    [Column(TypeName = "decimal(18,2)")]
     [JsonPropertyName("receivable_amount")]
     public decimal ReceivableAmount { get; set; }
 
@@ -95,7 +101,7 @@ public class Donation
     public string PaymentStatus { get; set; }
 
     [JsonPropertyName("payment_status_at")]
-    public string PaymentStatusAt { get; set; }
+    public DateTime? PaymentStatusAt { get; set; }
 
     [JsonPropertyName("transaction_id")]
     public string PaymentTransactionId { get; set; }

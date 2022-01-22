@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
@@ -40,9 +41,6 @@ public class Action
     [JsonPropertyName("external_reference")]
     public string ExternalReference { get; set; }
 
-    [JsonPropertyName("owner")]
-    public object Owner { get; set; }
-
     [JsonPropertyName("team_captain")]
     public bool TeamCaptain { get; set; }
 
@@ -67,9 +65,11 @@ public class Action
     [JsonPropertyName("description")]
     public string Description { get; set; }
 
+    [Column(TypeName = "decimal(18,2)")]
     [JsonPropertyName("target_amount")]
     public decimal TargetAmount { get; set; }
 
+    [Column(TypeName = "decimal(18,2)")]
     [JsonPropertyName("total_amount")]
     public decimal TotalAmount { get; set; }
 

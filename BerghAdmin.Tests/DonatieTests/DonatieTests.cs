@@ -58,7 +58,12 @@ namespace BerghAdmin.Tests.DonatieTests
         [Test]
         public async Task ProcessKentaaDonations()
         {
-            var seedService = this.ServiceProvider.GetService<ISeedDataService>();
+            var seedService = this.ServiceProvider?.GetService<ISeedDataService>();
+            if (seedService == null)
+            {
+                Assert.Fail();
+                return;
+            }
             await seedService.SeedInitialData();
 
             var service = this.ServiceProvider?.GetRequiredService<IEvenementService>();
@@ -91,7 +96,7 @@ namespace BerghAdmin.Tests.DonatieTests
                     var fietsTochtDonations = kentaaDonations.Where(kd => kd.ProjectId == fietsTocht.KentaaProjectId);
                     foreach (var kentaaDonatie in fietsTochtDonations)
                     {
-                        var donation = new KentaaDonatie(/*kentaaDonatie*/);
+                        var donation = new KentaaDonatie(kentaaDonatie);
                         var result = donatieService.Save(donation);
                         Assert.AreEqual(ErrorCodeEnum.Ok, result);
                     }

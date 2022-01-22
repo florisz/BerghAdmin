@@ -82,6 +82,7 @@ void RegisterServices()
     builder.Services.AddScoped<IPersoonService, PersoonService>();
     builder.Services.AddScoped<IRolService, RolService>();
     builder.Services.AddTransient<ISeedDataService, SeedDataService>();
+    builder.Services.AddTransient<ISeedUsersService, SeedUsersService>();
     builder.Services.AddScoped<IDocumentService, DocumentService>();
     builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
     builder.Services.AddScoped<IDataImporterService, DataImporterService>();
@@ -133,6 +134,6 @@ void UseServices()
 
 IResult HandleNewDonatie(Donation kentaaDonatie, IKentaaService service)
 {
-    service.AddDonation(new KentaaDonatie()/* new KentaaDonatie(kentaaDonatie)*/);
+    service.AddDonation(new KentaaDonatie(kentaaDonatie));
     return Results.Ok("Ik heb m toegevoegd");
 }
