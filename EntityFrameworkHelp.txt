@@ -5,8 +5,7 @@ dotnet ef migrations add <MigrationName>
 dotnet ef database update
 
 
-USE BIHZ2021;
-USE BIHZ2021
+use BIHZ2021
 DROP TABLE __EFMigrationsHistory
 DROP TABLE AspNetUserClaims
 DROP TABLE AspNetUserLogins
@@ -16,19 +15,21 @@ DROP TABLE MailGeadresseerden
 DROP TABLE MailccGeadresseerden
 DROP TABLE MailbccGeadresseerden
 DROP TABLE VerzondenMails
-DROP TABLE Facturen
-DROP TABLE Documenten
 DROP TABLE Betalingen
 DROP TABLE PersoonRol
 DROP TABLE EvenementPersoon
-DROP TABLE KentaaDonatie
+DROP TABLE KentaaDonaties
 DROP TABLE Donaties
 DROP TABLE Donateur
-DROP TABLE FietsTocht
-DROP TABLE GolfDag
+DROP TABLE Facturen
+DROP TABLE Documenten
+DROP TABLE FietsTochten
+DROP TABLE GolfDagen
 DROP TABLE Evenementen
 DROP TABLE Rollen
-
+DROP TABLE Action
+DROP TABLE Donation
+DROP TABLE Gebruikers
 
 /* clean to seed again */
 DELETE FROM Evenementen 

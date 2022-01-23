@@ -1,5 +1,7 @@
+using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
+using BD = BerghAdmin.Data;
 using BerghAdmin.Services;
 using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
@@ -34,6 +36,10 @@ public class Program
         var app = builder.Build();
         UseServices(app);
 
+
+app.MapPost("/donaties",
+    [AllowAnonymous]
+(Donation kentaaDonatie, IKentaaService service) => HandleNewDonatie(kentaaDonatie, service));
         app.MapPost("/donaties",
             (Donatie donatie, IKentaaService service) => HandleNewDonatie(donatie, service))
             .AllowAnonymous();
@@ -57,21 +63,20 @@ public class Program
             return databaseConfiguration.ConnectionString ?? throw new ArgumentException("ConnectionString not specified");
         }
 
-        static void RegisterAuthorization(IServiceCollection services)
-        {
-            services
-                .AddDefaultIdentity<User>(options =>
-                {
-                    options.SignIn.RequireConfirmedAccount = true;
-                    options.Password.RequiredLength = 6;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequireNonAlphanumeric = false;
-                })
-                .AddUserManager<UserManager<User>>()
-                .AddSignInManager<SignInManager<User>>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+void RegisterAuthorization()
+{
+    builder.Services
+        .AddDefaultIdentity<BD.User>(options => {
+            options.SignIn.RequireConfirmedAccount = true;
+            options.Password.RequiredLength = 6;
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+        })
+        .AddUserManager<UserManager<BD.User>>()
+        .AddSignInManager<SignInManager<BD.User>>()
+        .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
             services.AddSingleton<IAuthorizationHandler, BeheerFietsersPolicyHandler>();

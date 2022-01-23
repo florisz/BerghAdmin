@@ -27,15 +27,82 @@ public class SeedUsersService : ISeedUsersService
         if (DatabaseHasUsers())
         {
             return;
-        }
+            }
         var rollen = GetRollen();
 
         if (rollen != null)
         {
-            await InsertUser(rollen, "admin", AdministratorPolicyHandler.Claim);
-            await InsertUser(rollen, "aap", BeheerFietsersPolicyHandler.Claim);
-            await InsertUser(rollen, "noot", BeheerGolfersPolicyHandler.Claim);
-            await InsertUser(rollen, "mies", BeheerAmbassadeursPolicyHandler.Claim);
+            var persoon = new Persoon
+            {
+                Voorletters = "F",
+                Voornaam = "Floris",
+                Achternaam = "Zwarteveen",
+                Adres = "Berkenlaan 12",
+                EmailAdres = "fzwarteveen@mail.com",
+                GeboorteDatum = new DateTime(2002, 1, 1),
+                Geslacht = GeslachtEnum.Man,
+                Land = "Nederland",
+                Mobiel = "06-12345678",
+                Plaats = "Beek",
+                Postcode = "7037 CA",
+                Telefoon = "onbekend",
+                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.CommissieLid] }
+            };
+            await InsertUser(persoon, rollen, "admin", AdministratorPolicyHandler.Claim);
+
+            persoon = new Persoon
+            {
+                Voorletters = "L P",
+                Voornaam = "Lars-Peter",
+                Achternaam = "Reumer",
+                Adres = "Laan 12",
+                EmailAdres = "lpreumer@mail.com",
+                GeboorteDatum = new DateTime(2002, 1, 1),
+                Geslacht = GeslachtEnum.Man,
+                Land = "Nederland",
+                Mobiel = "06-12345678",
+                Plaats = "Arnhem",
+                Postcode = "6100 DT",
+                Telefoon = "onbekend",
+                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.CommissieLid] }
+            };
+            await InsertUser(persoon, rollen, "secretaris", AdministratorPolicyHandler.Claim);
+
+            persoon = new Persoon
+            {
+                Voorletters = "G",
+                Voornaam = "Gerard",
+                Achternaam = "Hendriksen",
+                Adres = "Straat 32",
+                EmailAdres = "ghendriksen@bedrijf.com",
+                GeboorteDatum = new DateTime(2002, 1, 1),
+                Geslacht = GeslachtEnum.Man,
+                Land = "Nederland",
+                Mobiel = "06-12345678",
+                Plaats = "Zevenaar",
+                Postcode = "6900 AB",
+                Telefoon = "onbekend",
+                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Golfer], rollen[RolTypeEnum.CommissieLid] }
+            };
+            await InsertUser(persoon, rollen, "golfbeheer", BeheerGolfersPolicyHandler.Claim);
+
+            persoon = new Persoon
+            {
+                Voorletters = "W",
+                Voornaam = "Wilburt",
+                Achternaam = "Esselink",
+                Adres = "Straat 102",
+                EmailAdres = "wilburt@mail.com",
+                GeboorteDatum = new DateTime(2002, 1, 1),
+                Geslacht = GeslachtEnum.Man,
+                Land = "Nederland",
+                Mobiel = "06-12345678",
+                Plaats = "Bergh",
+                Postcode = "7000 XS",
+                Telefoon = "onbekend",
+                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Ambassadeur], rollen[RolTypeEnum.CommissieLid] }
+            };
+            await InsertUser(persoon, rollen, "ambassadeurbeheer", BeheerAmbassadeursPolicyHandler.Claim);
         }
     }
 
@@ -66,25 +133,8 @@ public class SeedUsersService : ISeedUsersService
         => this._userManager.Users.Count() > 0;
 
 
-    private async Task InsertUser(Dictionary<RolTypeEnum, Rol> rollen, string naam, Claim claim)
+    private async Task InsertUser(Persoon persoon, Dictionary<RolTypeEnum, Rol> rollen, string naam, Claim claim)
     {
-        var persoon = new Persoon
-        {
-            Voorletters = "F.",
-            Voornaam = "Floris",
-            Achternaam = naam,
-            Adres = "Berkenlaan 12",
-            EmailAdres = "fzwarteveen@mail.com",
-            GeboorteDatum = new DateTime(2002, 1, 1),
-            Geslacht = GeslachtEnum.Man,
-            Land = "Nederland",
-            Mobiel = "06-12345678",
-            Plaats = "Beek",
-            Postcode = "7037 CA",
-            Telefoon = "onbekend",
-            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.Vrijwilliger] }
-        };
-
         await _dbContext.AddAsync(persoon);
         await _dbContext.SaveChangesAsync();
 
@@ -94,7 +144,7 @@ public class SeedUsersService : ISeedUsersService
             Name = naam,
             //Roles = new string[] { "admin" },
             UserName = $"{naam}@bihz.nl",
-            Email = "fzwarteveen@gmail.com",
+            Email = $"{naam}@bihz.nl",
             AccessFailedCount = 0,
             EmailConfirmed = true,
             LockoutEnabled = false,

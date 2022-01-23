@@ -1,5 +1,4 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
-using BerghAdmin.Services.KentaaInterface;
 
 using Microsoft.Extensions.Options;
 
@@ -14,34 +13,92 @@ public class KentaaInterfaceService : IKentaaInterfaceService
     readonly KentaaSession _session;
     public KentaaInterfaceService(IOptions<KentaaConfiguration> settings, IHttpClientFactory factory)
     {
-        _session = new KentaaSession(settings.Value.KentaaUrl, settings.Value.ApiKey);
+        _session = new KentaaSession(settings.Value.KentaaHost, settings.Value.KentaaBasePath, settings.Value.ApiKey);
         _httpClient = _session.Connect(factory);
+    }
+
+    public async Task<IEnumerable<KentaaModel.Action>> GetActionsByQuery(KentaaFilter filter)
+    {
+        var actions = new List<KentaaModel.Action>();
+
+        var url = _session.Url("actions", filter);
+
+        var response = await GetKentaaResponse<Actions>(url);
+
+        while (response.ActionArray != null && response.ActionArray.Any())
+        {
+            actions.AddRange(response.ActionArray);
+
+            filter = filter.NextPage();
+            url = _session.Url("actions", filter);
+            response = await GetKentaaResponse<Actions>(url);
+        }
+
+        return actions;
     }
 
     public async Task<Donation> GetDonationById(int donationId)
     {
-        var url = $"{_session.Url}/donations/{donationId}?api_key={_session.ApiKey}";
+        var url = _session.Url($"donations/{donationId}");
         var donation = await GetKentaaResponse<DonationResponse>(url);
         return donation.data;
     }
 
     public async Task<IEnumerable<Donation>> GetDonationsByQuery(KentaaFilter filter)
     {
-        var kentaaIssues = new List<Donation>();
+        var donations = new List<Donation>();
 
-        var url = $"{_session.Url}/donations?{filter.Build()};api_key={_session.ApiKey}";
-        var donations = await GetKentaaResponse<Donations>(url);
+        var url = _session.Url("donations", filter);
+        var response = await GetKentaaResponse<Donations>(url);
 
-        while (donations.DonationArray.Any())
+        while (response.DonationArray != null && response.DonationArray.Any())
         {
-            kentaaIssues.AddRange(donations.DonationArray);
+            donations.AddRange(response.DonationArray);
 
             filter = filter.NextPage();
-            url = $"{_session.Url}/donations?{filter.Build()};api_key={_session.ApiKey}";
-            donations = await GetKentaaResponse<Donations>(url);
+            url = _session.Url("donations", filter);
+            response = await GetKentaaResponse<Donations>(url);
         }
 
-        return kentaaIssues;
+        return donations;
+    }
+
+    public async Task<IEnumerable<Project>> GetProjectsByQuery(KentaaFilter filter)
+    {
+        var projects = new List<Project>();
+
+        var url = _session.Url("projects", filter);
+        var response = await GetKentaaResponse<Projects>(url);
+
+        while (response.ProjectArray != null && response.ProjectArray.Any())
+        {
+            projects.AddRange(response.ProjectArray);
+
+            filter = filter.NextPage();
+            url = _session.Url("projects", filter);
+            response = await GetKentaaResponse<Projects>(url);
+        }
+
+        return projects;
+    }
+
+    public async Task<IEnumerable<User>> GetUsersByQuery(KentaaFilter filter)
+    {
+        var users = new List<User>();
+
+        var url = _session.Url("users", filter);
+        var response = await GetKentaaResponse<Users>(url);
+
+        while (response.UserArray != null && response.UserArray.Any())
+        {
+            users.AddRange(response.UserArray);
+
+            filter = filter.NextPage();
+            url = _session.Url("users", filter);
+            response = await GetKentaaResponse<Users>(url);
+        }
+
+        return users;
     }
 
     private async Task<T> GetKentaaResponse<T>(string url)
@@ -59,11 +116,21 @@ public class KentaaInterfaceService : IKentaaInterfaceService
             var json = await response.Content.ReadAsStringAsync();
             var o = JsonSerializer.Deserialize<T>(json, options);
             if (o == null)
-                throw new ApplicationException($"Could not deserialize JSON '{o}' into donation list");
+                throw new ApplicationException($"Could not deserialize JSON '{o}' into kentaa issue list");
 
             return o;
         }
     
         throw new ApplicationException($"Could not get {typeof(T).Name} donation from Kentaa; {url}");
+    }
+
+    private Uri BuildUri()
+    {
+        UriBuilder uriBuilder = new UriBuilder();
+        uriBuilder.Scheme = "https";
+        uriBuilder.Host = "cnn.com";
+        uriBuilder.Path = "americas";
+        
+        return uriBuilder.Uri;
     }
 }

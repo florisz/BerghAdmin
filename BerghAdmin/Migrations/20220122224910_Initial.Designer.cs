@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220119203536_Initial")]
+    [Migration("20220122224910_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,333 @@ namespace BerghAdmin.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel.Action", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AvatarUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Closed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Countable")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DonateUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Ended")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ExternalReference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("FundraiserPage")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Infix")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PreviousParticipations")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SegmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TargetAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("TargetAmountAchieved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("TeamCaptain")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TotalDonations")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Visible")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Action");
+                });
+
+            modelBuilder.Entity("BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel.Donation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("AccountBic")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccountIban")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccountName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ActionId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("Anonymous")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Company")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Countable")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeviceType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DonationTargetUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FrequencyType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Infix")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("NewsLetter")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PaymentDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PaymentStatusAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentTransactionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ReceivableAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("RegistrationFee")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("RegistrationFeeAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("TransactionCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Donation");
+                });
+
+            modelBuilder.Entity("BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Address2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AvatarUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Birthday")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HouseNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HouseNumberAddition")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Infix")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SiteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Zipcode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Gebruikers");
+                });
 
             modelBuilder.Entity("BerghAdmin.Data.Betaling", b =>
                 {
@@ -123,10 +450,8 @@ namespace BerghAdmin.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<decimal>("Bedrag")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("Datum")
-                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DonateurId")
                         .HasColumnType("int");
@@ -134,19 +459,11 @@ namespace BerghAdmin.Migrations
                     b.Property<int?>("FactuurId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("KentaaActionId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("KentaaDonatieId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("DonateurId");
 
                     b.HasIndex("FactuurId");
-
-                    b.HasIndex("KentaaDonatieId");
 
                     b.ToTable("Donaties");
                 });
@@ -210,106 +527,6 @@ namespace BerghAdmin.Migrations
                     b.HasIndex("FactuurTekstId");
 
                     b.ToTable("Facturen");
-                });
-
-            modelBuilder.Entity("BerghAdmin.Data.KentaaDonatie", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("AccountBic")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AccountIban")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AccountName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Anoniem")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("Bedrag")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("BetaalFactuurNummer")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BetaalId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BetaalMethode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BetaalOmschrijving")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("BetaalStatus")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("BetaalStatusOp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("BetaalTransactieId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Countable")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Currency")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DeviceType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DonateurBericht")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DonateurEmail")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DonateurNaam")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DonatieUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("FrequencyType")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("NettoBedrag")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<bool>("NieuwsbriefGewenst")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("RegistrationFee")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("RegistrationFeeAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("SiteId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotaalBedrag")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("TransactionKosten")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("KentaaDonaties");
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Rol", b =>
@@ -578,7 +795,7 @@ namespace BerghAdmin.Migrations
                     b.Property<int>("KentaaProjectId")
                         .HasColumnType("int");
 
-                    b.ToTable("FietsTocht", (string)null);
+                    b.ToTable("FietsTochten", (string)null);
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.GolfDag", b =>
@@ -591,7 +808,76 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("Omschrijving")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("GolfDag", (string)null);
+                    b.ToTable("GolfDagen", (string)null);
+                });
+
+            modelBuilder.Entity("BerghAdmin.Data.KentaaDonatie", b =>
+                {
+                    b.HasBaseType("BerghAdmin.Data.Donatie");
+
+                    b.Property<string>("AccountBic")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AccountIban")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BetaalId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BetaalOmschrijving")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("BetaalStatus")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("BetaalStatusOp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("BetaalTransactieId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatieDatum")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Currency")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("DonatieBedrag")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("KentaaActionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("KentaaDonationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("KentaaProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("NettoBedrag")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("RegistratieFee")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("RegistratieFeeBedrag")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotaalBedrag")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("TransactionKosten")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("WijzigDatum")
+                        .HasColumnType("datetime2");
+
+                    b.ToTable("KentaaDonaties", (string)null);
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Organisatie", b =>
@@ -628,6 +914,9 @@ namespace BerghAdmin.Migrations
                     b.Property<int>("Geslacht")
                         .HasColumnType("int");
 
+                    b.Property<int>("KentaaActionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Mobiel")
                         .HasColumnType("nvarchar(max)");
 
@@ -656,15 +945,9 @@ namespace BerghAdmin.Migrations
                         .WithMany()
                         .HasForeignKey("FactuurId");
 
-                    b.HasOne("BerghAdmin.Data.KentaaDonatie", "KentaaDonatie")
-                        .WithMany()
-                        .HasForeignKey("KentaaDonatieId");
-
                     b.Navigation("Donateur");
 
                     b.Navigation("Factuur");
-
-                    b.Navigation("KentaaDonatie");
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Factuur", b =>
@@ -807,6 +1090,15 @@ namespace BerghAdmin.Migrations
                     b.HasOne("BerghAdmin.Data.Evenement", null)
                         .WithOne()
                         .HasForeignKey("BerghAdmin.Data.GolfDag", "Id")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BerghAdmin.Data.KentaaDonatie", b =>
+                {
+                    b.HasOne("BerghAdmin.Data.Donatie", null)
+                        .WithOne()
+                        .HasForeignKey("BerghAdmin.Data.KentaaDonatie", "Id")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });

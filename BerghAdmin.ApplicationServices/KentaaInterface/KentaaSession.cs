@@ -1,22 +1,20 @@
 ﻿using System.Net.Http.Headers;
 
-namespace BerghAdmin.Services.KentaaInterface;
+namespace BerghAdmin.ApplicationServices.KentaaInterface;
 
 public class KentaaSession
 {
     private readonly string _apiKey;
-    private readonly string _jiraServerUrl;
+    private readonly string _kentaaHost;
+    private readonly string _kentaaBasePath;
     private HttpClient? _httpClient = null;
 
-    public KentaaSession(string jiraServerUrl, string apiKey)
+    public KentaaSession(string kentaaHost, string kentaaBasePath, string apiKey)
     {
         _apiKey = apiKey;
-        _jiraServerUrl = jiraServerUrl;
+        _kentaaHost = kentaaHost;
+        _kentaaBasePath = kentaaBasePath;
     }
-
-    public string Url => _jiraServerUrl;
-
-    public string ApiKey => _apiKey;
 
     public HttpClient Connect(IHttpClientFactory factory)
     {
@@ -27,5 +25,24 @@ public class KentaaSession
         _httpClient.DefaultRequestHeaders.Add("User-Agent", "BerghAdmin - Kentaa interface");
 
         return _httpClient;
+    }
+
+    public string Url(string subPath)
+    {
+        return Url(subPath, null);
+    }
+
+    public string Url(string subPath, KentaaFilter? filter)
+    {
+        var path = $"{_kentaaBasePath}/{subPath}";
+        var query = (filter == null)? 
+                        $"api_key={_apiKey}" :
+                        $"{filter.Build()};api_key={_apiKey}";
+        
+        UriBuilder builder = new("https", _kentaaHost);
+        builder.Path = path;
+        builder.Query = query;
+
+        return builder.ToString();
     }
 }

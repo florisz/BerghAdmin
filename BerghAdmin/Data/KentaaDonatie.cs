@@ -1,82 +1,110 @@
-﻿namespace BerghAdmin.Data;
+﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class KentaaDonatie
+namespace BerghAdmin.Data;
+
+public class KentaaDonatie : Donatie
 {
-    public int Id { get; set; }
+    public KentaaDonatie()
+    { }
 
-    public int SiteId { get; set; }
-    
-    public DateTime CreatedAt { get; set; }
-    
-    public DateTime UpdatedAt { get; set; }
-    
-    public string? DonateurNaam{ get; set; }
-    
-    public bool Anoniem { get; set; } = false;
-    
-    public string? DonateurEmail { get; set; }
-    
-    public string? DonateurBericht { get; set; }
-    
-    public bool NieuwsbriefGewenst { get; set; } = false;
-    
-    public DeviceTypeEnum DeviceType { get; set; }
-    
-    public FrequencyTypeEnum FrequencyType { get; set; }
-    
-    public CurrencyCodeEnum Currency { get; set; } = CurrencyCodeEnum.Euro;
-    
-    public decimal Bedrag { get; set; }
-
-    public decimal TransactionKosten { get; set; }
-
-    public bool RegistrationFee { get; set; } = false;
-
-    public decimal RegistrationFeeAmount { get; set; }
-
+    public KentaaDonatie(Donation donation)
+    {
+        Update(donation);
+    }
+    public int KentaaDonationId { get; set; }
+    public int? KentaaActionId { get; set; }
+    public int? KentaaProjectId { get; set; }
+    public DateTime CreatieDatum { get; set; }
+    public DateTime WijzigDatum { get; set; }
+    public decimal DonatieBedrag { get; set; }
+    public decimal? TransactionKosten { get; set; }
+    public bool RegistratieFee { get; set; } = false;
+    public decimal? RegistratieFeeBedrag { get; set; }
     public decimal TotaalBedrag { get; set; }
-    
     public decimal NettoBedrag { get; set; }
-    
-    public bool Countable { get; set; }
-    
-    public string? BetaalFactuurNummer { get; set; }
-    
-    public string? BetaalMethode { get; set; }
-    
+    public CurrencyCodeEnum Currency { get; set; } = CurrencyCodeEnum.Euro;
     public PaymentStatusEnum BetaalStatus { get; set; }
-    
-    public DateTime BetaalStatusOp { get; set; }
-    
+    public DateTime? BetaalStatusOp { get; set; }
     public string? BetaalTransactieId { get; set; }
-
     public string? BetaalId { get; set; }
-
     public string? BetaalOmschrijving { get; set; }
-
     public string? AccountIban { get; set; }
-    
     public string? AccountBic { get; set; }
 
-    public string? AccountName { get; set; }
+    public void Update(Donation donation)
+    {
+        KentaaDonationId = donation.Id;
+        KentaaActionId = donation.ActionId;
+        KentaaProjectId = donation.ProjectId;
+        CreatieDatum = donation.CreatedAt;
+        WijzigDatum = donation.UpdatedAt;
+        DonatieBedrag = donation.Amount;
+        TransactionKosten = donation.TransactionCost;
+        RegistratieFee = donation.RegistrationFee;
+        RegistratieFeeBedrag = donation.RegistrationFeeAmount;
+        TotaalBedrag = donation.TotalAmount;
+        NettoBedrag = donation.ReceivableAmount;
+        Currency = GetCurrency(donation.Currency);
+        BetaalStatus = GetBetaalStatus(donation.PaymentStatus);
+        BetaalStatusOp = donation.PaymentStatusAt;
+        BetaalTransactieId = donation.PaymentTransactionId;
+        BetaalId = donation.PaymentId;
+        BetaalOmschrijving = donation.PaymentDescription;
+        AccountIban = donation.AccountIban;
+        AccountBic = donation.AccountBic;
+    }
 
-    public string? DonatieUrl{ get; set; }
-}
+    private static CurrencyCodeEnum GetCurrency(string specifier)
+    {
+        if (specifier == null)
+        {
+            return CurrencyCodeEnum.Unknown;
+        }
+        switch (specifier)
+        {
+            case "EUR":
+                return CurrencyCodeEnum.Euro;
+            case "DKK":
+                return CurrencyCodeEnum.DeenseKroon;
+            case "GBP":
+                return CurrencyCodeEnum.BritsePond;
+            case "NOK":
+                return CurrencyCodeEnum.NoorseKroon;
+            case "SEK":
+                return CurrencyCodeEnum.ZweedseKroon;
+            case "USD":
+                return CurrencyCodeEnum.AmerikaanseDollar;
+        }
 
-public enum DeviceTypeEnum
-{
-    Desktop,
-    Tablet,
-    Phone,
-    Unknown
-}
+        return CurrencyCodeEnum.Euro;
+    }
+    private PaymentStatusEnum GetBetaalStatus(string paymentStatus)
+    {
+        if (paymentStatus == null)
+        {
+            return PaymentStatusEnum.Unknown;
+        }
+        switch (paymentStatus.ToLower())
+        {
+            case "canceled":
+                return PaymentStatusEnum.Canceled;
+            case "chargedback":
+                return PaymentStatusEnum.Chargedback;
+            case "paid":
+                return PaymentStatusEnum.Paid;
+            case "pledged":
+                return PaymentStatusEnum.Pledged;
+            case "refunded":
+                return PaymentStatusEnum.Refunded;
+            case "started":
+                return PaymentStatusEnum.Started;
+        }
 
-public enum FrequencyTypeEnum
-{
-    Oneoff,
-    Monthly,
-    Annually,
-    Unknown
+        return PaymentStatusEnum.Unknown;
+    }
+
+
 }
 
 public enum CurrencyCodeEnum
@@ -88,15 +116,18 @@ public enum CurrencyCodeEnum
     ZweedseKroon,       // SEK
     AmerikaanseDollar,  // USD
     Unknown
+
 }
 
 public enum PaymentStatusEnum
 {
-    Pledged, 
-    Refunded, 
-    Chargedback, 
-    Canceled, 
-    Paid, 
-    Started, 
+    Pledged,
+    Refunded,
+    Chargedback,
+    Canceled,
+    Paid,
+    Started,
     Unknown
 }
+
+

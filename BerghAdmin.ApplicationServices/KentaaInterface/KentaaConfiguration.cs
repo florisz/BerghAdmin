@@ -4,5 +4,6 @@
 public class KentaaConfiguration
 {
     public string ApiKey { get; set; }
-    public string KentaaUrl { get; set; }
+    public string KentaaHost { get; set; }
+    public string KentaaBasePath { get; set; }
 }
