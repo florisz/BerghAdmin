@@ -8,29 +8,11 @@ public class KentaaDonatie : Donatie
     public KentaaDonatie()
     { }
 
-    public KentaaDonatie(Donation kentaaDonatie)
+    public KentaaDonatie(Donation donation)
     {
-        KentaaDonationId = kentaaDonatie.Id;
-        KentaaActionId = kentaaDonatie.ActionId;
-        KentaaProjectId = kentaaDonatie.ProjectId;
-        CreatieDatum = kentaaDonatie.CreatedAt;
-        WijzigDatum = kentaaDonatie.UpdatedAt;
-        DonatieBedrag = kentaaDonatie.Amount;
-        TransactionKosten = kentaaDonatie.TransactionCost;
-        RegistratieFee = kentaaDonatie.RegistrationFee;
-        RegistratieFeeBedrag = kentaaDonatie.RegistrationFeeAmount;
-        TotaalBedrag = kentaaDonatie.TotalAmount;
-        NettoBedrag = kentaaDonatie.ReceivableAmount;
-        Currency = GetCurrency(kentaaDonatie.Currency);
-        BetaalStatus = GetBetaalStatus(kentaaDonatie.PaymentStatus);
-        BetaalStatusOp = kentaaDonatie.PaymentStatusAt;
-        BetaalTransactieId = kentaaDonatie.PaymentTransactionId;
-        BetaalId = kentaaDonatie.PaymentId;
-        BetaalOmschrijving = kentaaDonatie.PaymentDescription;
-        AccountIban = kentaaDonatie.AccountIban;
-        AccountBic = kentaaDonatie.AccountBic;
+        Update(donation);
     }
-    public int? KentaaDonationId { get; set; }
+    public int KentaaDonationId { get; set; }
     public int? KentaaActionId { get; set; }
     public int? KentaaProjectId { get; set; }
     public DateTime CreatieDatum { get; set; }
@@ -49,6 +31,29 @@ public class KentaaDonatie : Donatie
     public string? BetaalOmschrijving { get; set; }
     public string? AccountIban { get; set; }
     public string? AccountBic { get; set; }
+
+    public void Update(Donation donation)
+    {
+        KentaaDonationId = donation.Id;
+        KentaaActionId = donation.ActionId;
+        KentaaProjectId = donation.ProjectId;
+        CreatieDatum = donation.CreatedAt;
+        WijzigDatum = donation.UpdatedAt;
+        DonatieBedrag = donation.Amount;
+        TransactionKosten = donation.TransactionCost;
+        RegistratieFee = donation.RegistrationFee;
+        RegistratieFeeBedrag = donation.RegistrationFeeAmount;
+        TotaalBedrag = donation.TotalAmount;
+        NettoBedrag = donation.ReceivableAmount;
+        Currency = GetCurrency(donation.Currency);
+        BetaalStatus = GetBetaalStatus(donation.PaymentStatus);
+        BetaalStatusOp = donation.PaymentStatusAt;
+        BetaalTransactieId = donation.PaymentTransactionId;
+        BetaalId = donation.PaymentId;
+        BetaalOmschrijving = donation.PaymentDescription;
+        AccountIban = donation.AccountIban;
+        AccountBic = donation.AccountBic;
+    }
 
     private static CurrencyCodeEnum GetCurrency(string specifier)
     {

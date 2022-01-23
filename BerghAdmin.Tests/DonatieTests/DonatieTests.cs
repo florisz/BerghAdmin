@@ -73,7 +73,7 @@ namespace BerghAdmin.Tests.DonatieTests
                 return;
             }
 
-            var f = service.GetById(1);
+            var f = service.GetByName("Hanzetocht");
             var fietsTocht = f as FietsTocht;
             if (fietsTocht == null)
             {
@@ -94,13 +94,29 @@ namespace BerghAdmin.Tests.DonatieTests
                 if (donatieService != null)
                 {
                     var fietsTochtDonations = kentaaDonations.Where(kd => kd.ProjectId == fietsTocht.KentaaProjectId);
-                    foreach (var kentaaDonatie in fietsTochtDonations)
+
+                    // simulate that KentaaDonations read from Kentaa can be processed many times
+                    for (int i = 0; i < 2; i++)
                     {
-                        var donation = new KentaaDonatie(kentaaDonatie);
-                        var result = donatieService.Save(donation);
-                        Assert.AreEqual(ErrorCodeEnum.Ok, result);
+                        foreach (var kentaaDonatie in fietsTochtDonations)
+                        {
+                            var donation = donatieService.GetByKentaaId(kentaaDonatie.Id);
+                            if (donation != null)
+                            {
+                                donation.Update(kentaaDonatie);
+                            }
+                            else
+                            {
+                                donation = new KentaaDonatie(kentaaDonatie);
+                            }
+                            var result = donatieService.Save(donation);
+                            Assert.AreEqual(ErrorCodeEnum.Ok, result);
+                        }
                     }
+                    var donaties = donatieService.GetAll<KentaaDonatie>();
+                    Assert.IsTrue(donaties.Count() == fietsTochtDonations.Count());
                 }
+
             }
         }
 

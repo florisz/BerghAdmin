@@ -4,10 +4,12 @@ namespace BerghAdmin.Services.Donaties;
 
 public interface IDonatieService
 {
-    ErrorCodeEnum Save(Donatie donatie);
+    ErrorCodeEnum Save(KentaaDonatie donatie);
+    bool Exist(KentaaDonatie donatie);
     Donatie? GetById(int id);
-    Donatie? GetByName(string name);
-    IEnumerable<Donatie>? GetAll<T>();
+    KentaaDonatie? GetByKentaaId(int kentaaId);
+    IEnumerable<KentaaDonatie> GetAll<KentaaDonatie>();
+    IEnumerable<Donatie> GetAll();
     ErrorCodeEnum AddDonateur(Donatie donatie, Donateur persoon);
     ErrorCodeEnum AddFactuur(Donatie donatie, Factuur factuur);
 }
