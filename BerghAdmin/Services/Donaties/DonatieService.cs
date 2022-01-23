@@ -32,21 +32,13 @@ public class DonatieService : IDonatieService
 
     public IEnumerable<KentaaDonatie> GetAll<KentaaDonatie>()
     {
-        var donaties = _dbContext
-                        .KentaaDonaties;
-
-        if (donaties == null)
-        {
-            return Enumerable.Empty<KentaaDonatie>();
-        }
-
-        return (IEnumerable<KentaaDonatie>) donaties;
-    }
-
-    public Donatie? GetById(int id)
-    {
         throw new NotImplementedException();
     }
+
+    public KentaaDonatie? GetById(int id)
+       => _dbContext
+            .KentaaDonaties?
+            .SingleOrDefault(kd => kd.Id == id);
 
     public KentaaDonatie? GetByKentaaId(int kentaaId)
         => _dbContext
@@ -56,22 +48,34 @@ public class DonatieService : IDonatieService
 
     public ErrorCodeEnum Save(KentaaDonatie donatie)
     {
-        if (!Exist(donatie))
+        try
         {
-            _dbContext
-                .Donaties?
-                .Add(donatie);
-        }
-        else
-        {
-            _dbContext
-                .Donaties?
-                .Update(donatie);
-        }
+            if (donatie.Id == 0)
+            {
+                _dbContext
+                    .Donaties?
+                    .Add(donatie);
+            }
+            else
+            {
+                _dbContext
+                    .Donaties?
+                    .Update(donatie);
+            }
 
-        _dbContext.SaveChanges();
+            _dbContext.SaveChanges();
+        }
+        catch (Exception)
+        {
+            // log exception
+            return ErrorCodeEnum.Conflict;
+        }
 
         return ErrorCodeEnum.Ok;
     }
 
+    Donatie? IDonatieService.GetById(int id)
+    {
+        throw new NotImplementedException();
+    }
 }

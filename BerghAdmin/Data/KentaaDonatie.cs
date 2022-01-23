@@ -1,5 +1,4 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BerghAdmin.Data;
 

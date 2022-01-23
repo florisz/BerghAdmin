@@ -1,28 +1,53 @@
-﻿namespace BerghAdmin.Services.Donaties;
+﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+using BerghAdmin.DbContexts;
+
+namespace BerghAdmin.Services.Donaties;
 
 public class KentaaService : IKentaaService
 {
-    public void AddDonation(KentaaDonatie donation)
+    private readonly ApplicationDbContext _dbContext;
+    private readonly IDonatieService _donatieService;
+    public KentaaService(ApplicationDbContext context, IDonatieService donatieService)
     {
+        _dbContext = context;
+        _donatieService = donatieService;
     }
 
-    public IEnumerable<KentaaDonatie> GetDonaties()
+    public void ProcessKentaaAction(ApplicationServices.KentaaInterface.KentaaModel.Action kentaaAction)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<KentaaDonatie> GetDonaties(Donateur persoon)
+    public void ProcessKentaaProject(Project kentaaProject)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<KentaaDonatie> GetDonaties(Evenement evenement)
+    public void ProcessKentaaUser(ApplicationServices.KentaaInterface.KentaaModel.User kentaaUser)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<KentaaDonatie> GetDonationsFromDate(DateTime startDate)
+    public void ProcessKentaaDonation(Donation kentaaDonation)
     {
-        throw new NotImplementedException();
+        var donatie = _donatieService.GetByKentaaId(kentaaDonation.Id);
+
+        donatie = ProcessChanges(donatie, kentaaDonation);
+
+        _donatieService.Save(donatie);
+    }
+
+    private KentaaDonatie ProcessChanges(KentaaDonatie? donatie, Donation kentaaDonation)
+    {
+        if (donatie != null)
+        {
+            donatie.Update(kentaaDonation);
+        }
+        else
+        {
+            donatie = new KentaaDonatie(kentaaDonation);
+        }
+
+        return donatie;
     }
 }

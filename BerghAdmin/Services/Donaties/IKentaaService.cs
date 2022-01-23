@@ -1,13 +1,13 @@
 ﻿using BerghAdmin.General;
+using KM=BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 namespace BerghAdmin.Services.Donaties
 {
     public interface IKentaaService
     {
-        IEnumerable<KentaaDonatie> GetDonaties();
-        IEnumerable<KentaaDonatie> GetDonaties(Donateur persoon);
-        IEnumerable<KentaaDonatie> GetDonaties(Evenement evenement);
-        IEnumerable<KentaaDonatie> GetDonationsFromDate(DateTime startDate);
-        void AddDonation(KentaaDonatie donation);
+        void ProcessKentaaAction(KM.@Action kentaaAction);
+        void ProcessKentaaDonation(KM.Donation kentaaDonation);
+        void ProcessKentaaProject(KM.Project kentaaProject);
+        void ProcessKentaaUser(KM.User kentaaUser);
     }
 }

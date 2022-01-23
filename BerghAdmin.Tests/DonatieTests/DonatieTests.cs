@@ -100,20 +100,11 @@ namespace BerghAdmin.Tests.DonatieTests
                     {
                         foreach (var kentaaDonatie in fietsTochtDonations)
                         {
-                            var donation = donatieService.GetByKentaaId(kentaaDonatie.Id);
-                            if (donation != null)
-                            {
-                                donation.Update(kentaaDonatie);
-                            }
-                            else
-                            {
-                                donation = new KentaaDonatie(kentaaDonatie);
-                            }
                             var result = donatieService.Save(donation);
                             Assert.AreEqual(ErrorCodeEnum.Ok, result);
                         }
                     }
-                    var donaties = donatieService.GetAll<KentaaDonatie>();
+                    var donaties = donatieService.GetAll<KentaaAction>();
                     Assert.IsTrue(donaties.Count() == fietsTochtDonations.Count());
                 }
 
