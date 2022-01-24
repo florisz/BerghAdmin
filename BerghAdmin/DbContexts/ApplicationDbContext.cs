@@ -13,7 +13,6 @@ public class ApplicationDbContext : IdentityUserContext<Data.User, int>
     {
 
     }
-
     public DbSet<Persoon>? Personen { get; set; }
     public DbSet<ApplicationServices.KentaaInterface.KentaaModel.User>?  Gebruikers { get; set; }
     public DbSet<Rol>? Rollen { get; set; }
@@ -25,7 +24,10 @@ public class ApplicationDbContext : IdentityUserContext<Data.User, int>
     public DbSet<Organisatie>? Organisaties { get; set; }
     public DbSet<Donatie>? Donaties { get; set; }
     public DbSet<Evenement>? Evenementen{ get; set; }
-    public DbSet<KentaaDonatie>? KentaaDonaties{ get; set; }
+    public DbSet<KentaaAction>? KentaaActions { get; set; }
+    public DbSet<KentaaDonation>? KentaaDonations { get; set; }
+    public DbSet<KentaaProject>? KentaaProjects { get; set; }
+    public DbSet<KentaaUser>? KentaaUsers { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -58,26 +60,26 @@ public class ApplicationDbContext : IdentityUserContext<Data.User, int>
             .ToTable("GolfDagen");
 
         modelBuilder
-            .Entity<KentaaDonatie>()
+            .Entity<KentaaDonation>()
             .ToTable("KentaaDonaties");
         modelBuilder
             .Entity<Donatie>()
             .Property(p => p.Bedrag).HasPrecision(18, 2);
  
         modelBuilder
-            .Entity<KentaaDonatie>()
+            .Entity<KentaaDonation>()
             .Property(p => p.DonatieBedrag).HasPrecision(18, 2);
         modelBuilder
-            .Entity<KentaaDonatie>()
+            .Entity<KentaaDonation>()
             .Property(p => p.TransactionKosten).HasPrecision(18, 2);
         modelBuilder
-            .Entity<KentaaDonatie>()
+            .Entity<KentaaDonation>()
             .Property(p => p.RegistratieFeeBedrag).HasPrecision(18, 2);
         modelBuilder
-            .Entity<KentaaDonatie>()
+            .Entity<KentaaDonation>()
             .Property(p => p.TotaalBedrag).HasPrecision(18, 2);
         modelBuilder
-            .Entity<KentaaDonatie>()
+            .Entity<KentaaDonation>()
             .Property(p => p.NettoBedrag).HasPrecision(18, 2);
 
         modelBuilder

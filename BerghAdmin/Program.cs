@@ -1,4 +1,4 @@
-using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+using KM=BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BD = BerghAdmin.Data;
@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 using Syncfusion.Blazor;
+using BerghAdmin.Services.Kentaa;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,9 +23,18 @@ var app = builder.Build();
 UseServices();
 
 
-app.MapPost("/donaties",
+app.MapPost("/actions",
     [AllowAnonymous]
-(Donation kentaaDonatie, IKentaaService service) => HandleNewDonatie(kentaaDonatie, service));
+    (KM.Action kentaaAction, IKentaaActionService service) => HandleNewAction(kentaaAction, service));
+app.MapPost("/donations",
+    [AllowAnonymous]
+    (KM.Donation kentaaDonation, IKentaaDonationService service) => HandleNewDonatie(kentaaDonation, service));
+app.MapPost("/projects",
+    [AllowAnonymous]
+    (KM.Project kentaaProject, IKentaaProjectService service) => HandleNewProject(kentaaProject, service));
+app.MapPost("/users",
+    [AllowAnonymous]
+    (KM.User kentaaUser, IKentaaUserService service) => HandleNewUser(kentaaUser, service));
 
 var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
 seedDataService.SeedInitialData();
@@ -90,7 +100,7 @@ void RegisterServices()
     builder.Services.AddScoped<IEvenementService, EvenementService>();
     builder.Services.AddScoped<IDonatieService, DonatieService>();
     builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
-    builder.Services.AddScoped<IKentaaService, KentaaService>();
+    builder.Services.AddScoped<IKentaaDonationService, KentaaDonationService>();
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddSyncfusionBlazor();
     builder.Services.AddSignalR(e =>
@@ -132,8 +142,27 @@ void UseServices()
     });
 }
 
-IResult HandleNewDonatie(Donation kentaaDonatie, IKentaaService service)
+IResult HandleNewAction(KM.Action kentaaAction, IKentaaActionService service)
 {
-    service.AddDonation(new KentaaDonatie(kentaaDonatie));
-    return Results.Ok("Ik heb m toegevoegd");
+    service.AddKentaaAction(kentaaAction);
+    return Results.Ok("Ik heb n Action toegevoegd");
 }
+
+IResult HandleNewDonatie(KM.Donation kentaaDonation, IKentaaDonationService service)
+{
+    service.AddKentaaDonation(kentaaDonation);
+    return Results.Ok("Ik heb n Donation toegevoegd");
+}
+
+IResult HandleNewProject(KM.Project kentaaProject, IKentaaProjectService service)
+{
+    service.AddKentaaProject(kentaaProject);
+    return Results.Ok("Ik heb n Project toegevoegd");
+}
+
+IResult HandleNewUser(KM.User kentaaUser, IKentaaUserService service)
+{
+    service.AddKentaaUser(kentaaUser);
+    return Results.Ok("Ik heb n User toegevoegd");
+}
+

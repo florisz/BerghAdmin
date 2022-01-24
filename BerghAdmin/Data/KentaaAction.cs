@@ -1,5 +1,4 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BerghAdmin.Data;
 
@@ -14,10 +13,10 @@ public class KentaaAction
     }
     
     public int Id { get; set; }
-    public int KentaaActionId { get; set; }
-    public string? KentaaSlug { get; set; }
+    public int ActionId { get; set; }
     public int? SiteId { get; set; }
-    public int? KentaaProjectId { get; set; }
+    public int? ProjectId { get; set; }
+    public string? Slug { get; set; }
     public DateTime CreatieDatum { get; set; }
     public DateTime WijzigDatum { get; set; }
     public string? ExterneReferentie { get; set; }
@@ -26,9 +25,7 @@ public class KentaaAction
     public string? Achternaam { get; set; }
     public string? Titel { get; set; }
     public string? Omschrijving { get; set; }
-    [Column(TypeName = "decimal(18,2)")]
     public decimal DoelBedrag { get; set; }
-    [Column(TypeName = "decimal(18,2)")]
     public decimal TotaalBedrag { get; set; }
     public int AantalDonaties { get; set; }
     public bool DoelBedragBereikt { get; set; }
@@ -39,11 +36,11 @@ public class KentaaAction
 
     public void Update(ApplicationServices.KentaaInterface.KentaaModel.Action action)
     {
-        KentaaActionId = action.Id;
-        KentaaProjectId = action.ProjectId;
-        KentaaSlug = action.Slug;
+        ActionId = action.Id;
+        ProjectId = action.ProjectId;
+        Slug = action.Slug;
         SiteId = action.SiteId;
-        KentaaProjectId = action.ProjectId;
+        ProjectId = action.ProjectId;
         CreatieDatum = action.CreatedAt;
         WijzigDatum = action.UpdatedAt;
         ExterneReferentie = action.ExternalReference;

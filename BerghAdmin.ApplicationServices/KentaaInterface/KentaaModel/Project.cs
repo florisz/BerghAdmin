@@ -26,10 +26,10 @@ public class Project
     public int SegmentId { get; set; }  // Unique identifier for the segment associated with the project.OPTIONAL
 
     [JsonPropertyName("created_at")]
-    public string CreatedAt { get; set; }   // The time (ISO 8601 format) when the team was created.
+    public DateTime CreatedAt { get; set; }   // The time (ISO 8601 format) when the team was created.
 
     [JsonPropertyName("updated_at")]
-    public string UpdatedAt { get; set; }   // The time (ISO 8601 format) when the team was last updated.
+    public DateTime UpdatedAt { get; set; }   // The time (ISO 8601 format) when the team was last updated.
 
     [JsonPropertyName("external_reference")]
     public string ExternalReference { get; set; }   // External reference for the project.OPTIONAL
@@ -41,10 +41,10 @@ public class Project
     public string Description { get; set; }  // Description for the project.
 
     [JsonPropertyName("target_amount")]
-    public int TargetAmount { get; set; }   // The target amount for the project.
+    public decimal TargetAmount { get; set; }   // The target amount for the project.
 
     [JsonPropertyName("total_amount")]
-    public string TotalAmount { get; set; }     // The amount that was donated to the project (with decimals).
+    public decimal TotalAmount { get; set; }     // The amount that was donated to the project (with decimals).
 
     [JsonPropertyName("total_donations")]
     public int TotalDonations { get; set; }     // The number of donations for the project.
@@ -65,7 +65,7 @@ public class Project
     public bool Ended { get; set; }  // Indicates whether the project is ended or not.
 
     [JsonPropertyName("end_date")]
-    public string EndDate { get; set; }     // The countdown date (ISO 8601 format) for this project.OPTIONAL
+    public DateTime EndDate { get; set; }     // The countdown date (ISO 8601 format) for this project.OPTIONAL
 
     [JsonPropertyName("url")]
     public string Url { get; set; }  // The URL to the project.

@@ -2,18 +2,19 @@
 
 namespace BerghAdmin.Data;
 
-public class KentaaDonatie : Donatie
+public class KentaaDonation
 {
-    public KentaaDonatie()
+    public KentaaDonation()
     { }
 
-    public KentaaDonatie(Donation donation)
+    public KentaaDonation(Donation donation)
     {
         Update(donation);
     }
-    public int KentaaDonationId { get; set; }
-    public int? KentaaActionId { get; set; }
-    public int? KentaaProjectId { get; set; }
+    public int Id { get; set; }
+    public int DonationId { get; set; }
+    public int ActionId { get; set; }
+    public int ProjectId { get; set; }
     public DateTime CreatieDatum { get; set; }
     public DateTime WijzigDatum { get; set; }
     public decimal DonatieBedrag { get; set; }
@@ -33,9 +34,9 @@ public class KentaaDonatie : Donatie
 
     public void Update(Donation donation)
     {
-        KentaaDonationId = donation.Id;
-        KentaaActionId = donation.ActionId;
-        KentaaProjectId = donation.ProjectId;
+        DonationId = donation.Id;
+        ActionId = donation.ActionId;
+        ProjectId = donation.ProjectId;
         CreatieDatum = donation.CreatedAt;
         WijzigDatum = donation.UpdatedAt;
         DonatieBedrag = donation.Amount;
