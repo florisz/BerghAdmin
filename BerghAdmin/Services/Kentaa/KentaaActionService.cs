@@ -1,16 +1,19 @@
 ﻿using KM=BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
+using System.Text.Json;
 
 namespace BerghAdmin.Services.Kentaa;
 
 public class KentaaActionService : IKentaaActionService
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly ApplicationDbContext dbContext;
+    private readonly ILogger<KentaaActionService> logger;
 
-    public KentaaActionService(ApplicationDbContext context)
+    public KentaaActionService(ApplicationDbContext context, ILogger<KentaaActionService> logger)
     {
-        _dbContext = context;
+        this.dbContext = context;
+        this.logger = logger;
     }
 
     public void AddKentaaAction(KM.Action kentaaAction)
@@ -19,6 +22,7 @@ public class KentaaActionService : IKentaaActionService
 
         action = MapChanges(action, kentaaAction);
 
+        logger.LogInformation("About to save action {action}", JsonSerializer.Serialize(action));
         Save(action);
     }
 
@@ -26,16 +30,16 @@ public class KentaaActionService : IKentaaActionService
         => GetByKentaaId(action.ActionId) != null;
 
     public IEnumerable<KentaaAction>? GetAll()
-        => _dbContext
+        => dbContext
             .KentaaActions;
 
     public KentaaAction? GetById(int id)
-       => _dbContext
+       => dbContext
             .KentaaActions?
             .SingleOrDefault(kd => kd.Id == id);
 
     public KentaaAction? GetByKentaaId(int kentaaId)
-        => _dbContext
+        => dbContext
             .KentaaActions?
             .SingleOrDefault(ka => ka.ActionId == kentaaId);
 
@@ -45,18 +49,18 @@ public class KentaaActionService : IKentaaActionService
         {
             if (action.Id == 0)
             {
-                _dbContext
+                dbContext
                     .KentaaActions?
                     .Add(action);
             }
             else
             {
-                _dbContext
+                dbContext
                     .KentaaActions?
                     .Update(action);
             }
 
-            _dbContext.SaveChanges();
+            dbContext.SaveChanges();
         }
         catch (Exception)
         {
