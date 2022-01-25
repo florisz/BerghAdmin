@@ -1,6 +1,3 @@
-
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace BerghAdmin.Data;
 
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -14,6 +11,7 @@ public class Donatie
     public decimal Bedrag { get; set; }
     public Donateur? Donateur { get; set; }
     public Factuur? Factuur { get; set; }
+    public KentaaDonation? KentaaDonatie{ get; set; }
 }
 
 #pragma warning restore IDE0060 // Remove unused parameter
