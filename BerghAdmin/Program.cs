@@ -1,4 +1,4 @@
-using KM=BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
@@ -40,19 +40,18 @@ public class Program
         var app = builder.Build();
         UseServices(app);
 
-
-app.MapPost("/actions",
-    [AllowAnonymous]
-    (KM.Action kentaaAction, IKentaaActionService service) => HandleNewAction(kentaaAction, service));
-app.MapPost("/donations",
-    [AllowAnonymous]
-    (KM.Donation kentaaDonation, IKentaaDonationService service) => HandleNewDonatie(kentaaDonation, service));
-app.MapPost("/projects",
-    [AllowAnonymous]
-    (KM.Project kentaaProject, IKentaaProjectService service) => HandleNewProject(kentaaProject, service));
-app.MapPost("/users",
-    [AllowAnonymous]
-    (KM.User kentaaUser, IKentaaUserService service) => HandleNewUser(kentaaUser, service));
+        app.MapPost("/actions",
+            [AllowAnonymous]
+        (KM.Action kentaaAction, IKentaaActionService service) => HandleNewAction(kentaaAction, service));
+        app.MapPost("/donations",
+            [AllowAnonymous]
+        (KM.Donation kentaaDonation, IKentaaDonationService service) => HandleNewDonatie(kentaaDonation, service));
+        app.MapPost("/projects",
+            [AllowAnonymous]
+        (KM.Project kentaaProject, IKentaaProjectService service) => HandleNewProject(kentaaProject, service));
+        app.MapPost("/users",
+            [AllowAnonymous]
+        (KM.User kentaaUser, IKentaaUserService service) => HandleNewUser(kentaaUser, service));
 
         var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
         seedDataService.SeedInitialData();
@@ -101,34 +100,34 @@ app.MapPost("/users",
 
     }
 
-void RegisterServices()
-{
-    // Add services to the container.
-    builder.Services.AddRazorPages();
-    builder.Services.AddServerSideBlazor();
-    builder.Services.AddOptions();
-    builder.Services.AddHttpClient();
-    builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
-    builder.Services.AddScoped<IPersoonService, PersoonService>();
-    builder.Services.AddScoped<IRolService, RolService>();
-    builder.Services.AddTransient<ISeedDataService, SeedDataService>();
-    builder.Services.AddTransient<ISeedUsersService, SeedUsersService>();
-    builder.Services.AddScoped<IDocumentService, DocumentService>();
-    builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
-    builder.Services.AddScoped<IDataImporterService, DataImporterService>();
-    builder.Services.AddScoped<ISendMailService, SendMailService>();
-    builder.Services.AddScoped<IEvenementService, EvenementService>();
-    builder.Services.AddScoped<IDonatieService, DonatieService>();
-    builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
-    builder.Services.AddScoped<IKentaaDonationService, KentaaDonationService>();
-    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-    builder.Services.AddSyncfusionBlazor();
-    builder.Services.AddSignalR(e =>
+    static void RegisterServices(WebApplicationBuilder builder)
     {
-        e.MaximumReceiveMessageSize = 10240000;
-    });
-    builder.Services.AddDbContext<ApplicationDbContext>(
-        options => options.UseSqlServer(GetDatabaseConnectionString(), po => po.EnableRetryOnFailure()));
+        // Add services to the container.
+        builder.Services.AddRazorPages();
+        builder.Services.AddServerSideBlazor();
+        builder.Services.AddOptions();
+        builder.Services.AddHttpClient();
+        builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
+        builder.Services.AddScoped<IPersoonService, PersoonService>();
+        builder.Services.AddScoped<IRolService, RolService>();
+        builder.Services.AddTransient<ISeedDataService, SeedDataService>();
+        builder.Services.AddTransient<ISeedUsersService, SeedUsersService>();
+        builder.Services.AddScoped<IDocumentService, DocumentService>();
+        builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
+        builder.Services.AddScoped<IDataImporterService, DataImporterService>();
+        builder.Services.AddScoped<ISendMailService, SendMailService>();
+        builder.Services.AddScoped<IEvenementService, EvenementService>();
+        builder.Services.AddScoped<IDonatieService, DonatieService>();
+        builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
+        builder.Services.AddScoped<IKentaaDonationService, KentaaDonationService>();
+        builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+        builder.Services.AddSyncfusionBlazor();
+        builder.Services.AddSignalR(e =>
+        {
+            e.MaximumReceiveMessageSize = 10240000;
+        });
+        builder.Services.AddDbContext<ApplicationDbContext>(
+            options => options.UseSqlServer(GetDatabaseConnectionString(builder), po => po.EnableRetryOnFailure()));
 
     }
 
@@ -162,27 +161,27 @@ void RegisterServices()
         });
     }
 
-IResult HandleNewAction(KM.Action kentaaAction, IKentaaActionService service)
-{
-    service.AddKentaaAction(kentaaAction);
-    return Results.Ok("Ik heb n Action toegevoegd");
-}
+    static IResult HandleNewAction(KM.Action kentaaAction, IKentaaActionService service)
+    {
+        service.AddKentaaAction(kentaaAction);
+        return Results.Ok("Ik heb n Action toegevoegd");
+    }
 
-IResult HandleNewDonatie(KM.Donation kentaaDonation, IKentaaDonationService service)
-{
-    service.AddKentaaDonation(kentaaDonation);
-    return Results.Ok("Ik heb n Donation toegevoegd");
-}
+    static IResult HandleNewDonatie(KM.Donation kentaaDonation, IKentaaDonationService service)
+    {
+        service.AddKentaaDonation(kentaaDonation);
+        return Results.Ok("Ik heb n Donation toegevoegd");
+    }
 
-IResult HandleNewProject(KM.Project kentaaProject, IKentaaProjectService service)
-{
-    service.AddKentaaProject(kentaaProject);
-    return Results.Ok("Ik heb n Project toegevoegd");
-}
+    static IResult HandleNewProject(KM.Project kentaaProject, IKentaaProjectService service)
+    {
+        service.AddKentaaProject(kentaaProject);
+        return Results.Ok("Ik heb n Project toegevoegd");
+    }
 
-IResult HandleNewUser(KM.User kentaaUser, IKentaaUserService service)
-{
-    service.AddKentaaUser(kentaaUser);
-    return Results.Ok("Ik heb n User toegevoegd");
+    static IResult HandleNewUser(KM.User kentaaUser, IKentaaUserService service)
+    {
+        service.AddKentaaUser(kentaaUser);
+        return Results.Ok("Ik heb n User toegevoegd");
+    }
 }
-
