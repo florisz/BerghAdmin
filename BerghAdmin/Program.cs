@@ -1,7 +1,6 @@
 using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
-using BD = BerghAdmin.Data;
 using BerghAdmin.Services;
 using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
@@ -16,6 +15,8 @@ using Syncfusion.Blazor;
 
 using System.Text;
 
+using BD = BerghAdmin.Data;
+
 namespace BerghAdmin;
 
 public class Program
@@ -24,11 +25,13 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        //builder.Logging.ClearProviders();
-        //builder.Logging.Add
+        builder.Logging.ClearProviders();
+        builder.Logging.AddApplicationInsights();
 
-        // Redirect all Console output to the logger
-        Console.SetOut(new ConsoleLogger(new LoggerFactory().CreateLogger("aap")));
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Logging.AddConsole();
+        }
 
         RegisterAuthorization(builder.Services);
         RegisterServices(builder);
@@ -36,12 +39,8 @@ public class Program
         var app = builder.Build();
         UseServices(app);
 
-
-app.MapPost("/donaties",
-    [AllowAnonymous]
-(Donation kentaaDonatie, IKentaaService service) => HandleNewDonatie(kentaaDonatie, service));
         app.MapPost("/donaties",
-            (Donatie donatie, IKentaaService service) => HandleNewDonatie(donatie, service))
+            (Donation kentaaDonatie, IKentaaService service) => HandleNewDonatie(kentaaDonatie, service))
             .AllowAnonymous();
 
         var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
@@ -50,113 +49,113 @@ app.MapPost("/donaties",
         seedUsersService.SeedUsersData();
 
         app.Run();
+    }
 
-        static string GetDatabaseConnectionString(WebApplicationBuilder builder)
+    static string GetDatabaseConnectionString(WebApplicationBuilder builder)
+    {
+        var databaseConfiguration = builder.Configuration.GetSection("DatabaseConfiguration").Get<DatabaseConfiguration>();
+        if (databaseConfiguration == null)
         {
-            Console.WriteLine("Getting the ConnectionString from the configuration");
-
-            var databaseConfiguration = builder.Configuration.GetSection("DatabaseConfiguration").Get<DatabaseConfiguration>();
-            if (databaseConfiguration == null)
-            {
-                throw new ApplicationException("Secrets for Database access (connection string & password) can not be found in configuration");
-            }
-            return databaseConfiguration.ConnectionString ?? throw new ArgumentException("ConnectionString not specified");
+            throw new ApplicationException("Secrets for Database access (connection string & password) can not be found in configuration");
         }
+        return databaseConfiguration.ConnectionString ?? throw new ArgumentException("ConnectionString not specified");
+    }
 
-void RegisterAuthorization()
-{
-    builder.Services
-        .AddDefaultIdentity<BD.User>(options => {
-            options.SignIn.RequireConfirmedAccount = true;
-            options.Password.RequiredLength = 6;
-            options.Password.RequireDigit = false;
-            options.Password.RequireLowercase = false;
-            options.Password.RequireUppercase = false;
-            options.Password.RequireNonAlphanumeric = false;
-        })
-        .AddUserManager<UserManager<BD.User>>()
-        .AddSignInManager<SignInManager<BD.User>>()
-        .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
-            services.AddSingleton<IAuthorizationHandler, BeheerFietsersPolicyHandler>();
-            services.AddAuthorization(options =>
+    static void RegisterAuthorization(IServiceCollection services)
+    {
+        services
+            .AddDefaultIdentity<BD.User>(options =>
             {
-                options.AddPolicy("IsAdministrator", policy => policy.Requirements.Add(new IsAdministratorRequirement()));
-                options.AddPolicy("BeheerFietsers", policy => policy.Requirements.Add(new IsFietsersBeheerderRequirement()));
-                options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-            });
+                options.SignIn.RequireConfirmedAccount = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+            })
+            .AddUserManager<UserManager<BD.User>>()
+            .AddSignInManager<SignInManager<BD.User>>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
 
-        }
-
-        static void RegisterServices(WebApplicationBuilder builder)
+        services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
+        services.AddSingleton<IAuthorizationHandler, BeheerFietsersPolicyHandler>();
+        services.AddAuthorization(options =>
         {
-            // Add services to the container.
-            builder.Services.AddRazorPages();
-            builder.Services.AddServerSideBlazor();
+            options.AddPolicy("IsAdministrator", policy => policy.Requirements.Add(new IsAdministratorRequirement()));
+            options.AddPolicy("BeheerFietsers", policy => policy.Requirements.Add(new IsFietsersBeheerderRequirement()));
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+        });
 
-            builder.Services.AddOptions();
-            builder.Services.AddHttpClient();
-            builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
-            builder.Services.AddScoped<IPersoonService, PersoonService>();
-            builder.Services.AddScoped<IRolService, RolService>();
-            builder.Services.AddTransient<ISeedDataService, SeedDataService>();
-            builder.Services.AddScoped<IDocumentService, DocumentService>();
-            builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
-            builder.Services.AddScoped<IDataImporterService, DataImporterService>();
-            builder.Services.AddScoped<ISendMailService, SendMailService>();
-            builder.Services.AddScoped<IEvenementService, EvenementService>();
-            builder.Services.AddScoped<IDonatieService, DonatieService>();
-            builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
-            builder.Services.AddScoped<IKentaaService, KentaaService>();
-            builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-            builder.Services.AddSyncfusionBlazor();
-            builder.Services.AddSignalR(e =>
-            {
-                e.MaximumReceiveMessageSize = 10240000;
-            });
-            builder.Services.AddDbContext<ApplicationDbContext>(
-                options => options.UseSqlServer(GetDatabaseConnectionString(builder), po => po.EnableRetryOnFailure()));
+    }
 
-        }
+    static void RegisterServices(WebApplicationBuilder builder)
+    {
+        // Add services to the container.
+        builder.Services.AddRazorPages();
+        builder.Services.AddServerSideBlazor();
 
-        static void UseServices(WebApplication app)
+        builder.Services.AddOptions();
+        builder.Services.AddHttpClient();
+        builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
+        builder.Services.AddScoped<IPersoonService, PersoonService>();
+        builder.Services.AddScoped<IRolService, RolService>();
+        builder.Services.AddTransient<ISeedDataService, SeedDataService>();
+        builder.Services.AddTransient<ISeedUsersService, SeedUsersService>();
+        builder.Services.AddScoped<IDocumentService, DocumentService>();
+        builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
+        builder.Services.AddScoped<IDataImporterService, DataImporterService>();
+        builder.Services.AddScoped<ISendMailService, SendMailService>();
+        builder.Services.AddScoped<IEvenementService, EvenementService>();
+        builder.Services.AddScoped<IDonatieService, DonatieService>();
+        builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
+        builder.Services.AddScoped<IKentaaService, KentaaService>();
+        builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+        builder.Services.AddSyncfusionBlazor();
+        builder.Services.AddSignalR(e =>
         {
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseMigrationsEndPoint();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            e.MaximumReceiveMessageSize = 10240000;
+        });
+        builder.Services.AddDbContext<ApplicationDbContext>(
+            options => options.UseSqlServer(GetDatabaseConnectionString(builder), po => po.EnableRetryOnFailure()));
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+    }
 
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapBlazorHub();
-                endpoints.MapFallbackToPage("/_Host");
-            });
-        }
-
-        static IResult HandleNewDonatie(Donatie donatie, IKentaaService service)
+    static void UseServices(WebApplication app)
+    {
+        if (app.Environment.IsDevelopment())
         {
-            service.AddDonation(new KentaaDonatie());
-            return Results.Ok("Ik heb m toegevoegd");
+            app.UseDeveloperExceptionPage();
+            app.UseMigrationsEndPoint();
         }
+        else
+        {
+            app.UseExceptionHandler("/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapBlazorHub();
+            endpoints.MapFallbackToPage("/_Host");
+        });
+    }
+
+    static IResult HandleNewDonatie(Donation donatie, IKentaaService service)
+    {
+        service.AddDonation(new KentaaDonatie());
+        return Results.Ok("Ik heb m toegevoegd");
     }
 }
 
