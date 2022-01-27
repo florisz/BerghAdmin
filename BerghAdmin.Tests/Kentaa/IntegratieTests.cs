@@ -11,10 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
 
-namespace BerghAdmin.Tests.DonatieTests
+namespace BerghAdmin.Tests.Kentaa
 {
     [TestFixture]
-    public class KentaaIntegratieTests : DatabasedTests
+    public class IntegratieTests : DatabasedTests
     {
         protected override void RegisterServices(ServiceCollection services)
         {

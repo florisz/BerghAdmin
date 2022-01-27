@@ -11,7 +11,7 @@ namespace BerghAdmin.Tests.Kentaa;
 // Test only works with test site from Kentaa 
 // 
 [TestFixture]
-public class KentaaInterfaceTests : DatabasedTests
+public class InterfaceTests : DatabasedTests
 {
     protected override void RegisterServices(ServiceCollection services)
     {
