@@ -22,6 +22,14 @@ public class KentaaProjectService : IKentaaProjectService
         Save(project);
     }
 
+    public void AddKentaaProjects(IEnumerable<Project> kentaaProjects)
+    {
+        foreach (var kentaaProject in kentaaProjects)
+        {
+            AddKentaaProject(kentaaProject);
+        }
+    }
+
     public bool Exist(KentaaProject project)
         => GetByKentaaId(project.ProjectId) != null;
 

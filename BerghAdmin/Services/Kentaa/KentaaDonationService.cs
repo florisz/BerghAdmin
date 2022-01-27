@@ -23,6 +23,14 @@ public class KentaaDonationService : IKentaaDonationService
         Save(donatie);
     }
 
+    public void AddKentaaDonations(IEnumerable<Donation> kentaaDonations)
+    {
+        foreach (var kentaaDonation in kentaaDonations)
+        {
+            AddKentaaDonation(kentaaDonation);
+        }
+    }
+
     public bool Exist(KentaaDonation donatie)
         => GetByKentaaId(donatie.DonationId) != null;
 

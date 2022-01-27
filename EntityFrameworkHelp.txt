@@ -6,6 +6,7 @@ dotnet ef database update
 
 
 use BIHZ2021
+use BIHZ2021
 DROP TABLE __EFMigrationsHistory
 DROP TABLE AspNetUserClaims
 DROP TABLE AspNetUserLogins
@@ -18,7 +19,6 @@ DROP TABLE VerzondenMails
 DROP TABLE Betalingen
 DROP TABLE PersoonRol
 DROP TABLE EvenementPersoon
-DROP TABLE KentaaDonaties
 DROP TABLE Donaties
 DROP TABLE Donateur
 DROP TABLE Facturen
@@ -29,7 +29,13 @@ DROP TABLE Evenementen
 DROP TABLE Rollen
 DROP TABLE Action
 DROP TABLE Donation
+DROP TABLE KentaaActions
+DROP TABLE KentaaDonaties
+DROP TABLE KentaaProjects
+DROP TABLE KentaaUsers
+DROP TABLE Owner
 DROP TABLE Gebruikers
+
 
 /* clean to seed again */
 DELETE FROM Evenementen 

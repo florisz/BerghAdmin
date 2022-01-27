@@ -26,6 +26,14 @@ public class KentaaActionService : IKentaaActionService
         Save(action);
     }
 
+    public void AddKentaaActions(IEnumerable<KM.Action> kentaaActions)
+    {
+        foreach (var kentaaAction in kentaaActions)
+        {
+            AddKentaaAction(kentaaAction);
+        }
+    }
+
     public bool Exist(KentaaAction action)
         => GetByKentaaId(action.ActionId) != null;
 

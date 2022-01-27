@@ -2,5 +2,5 @@ namespace BerghAdmin.Data;
 
 public class FietsTocht : Evenement
 {
-    public int KentaaProjectId { get; set; } = 0; 
+    public KentaaProject? Project { get; set; }
 }

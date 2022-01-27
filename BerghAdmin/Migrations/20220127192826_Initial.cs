@@ -10,46 +10,6 @@ namespace BerghAdmin.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Action",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SiteId = table.Column<int>(type: "int", nullable: false),
-                    SegmentId = table.Column<int>(type: "int", nullable: false),
-                    ProjectId = table.Column<int>(type: "int", nullable: false),
-                    TeamId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ExternalReference = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TeamCaptain = table.Column<bool>(type: "bit", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Infix = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AvatarUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FundraiserPage = table.Column<bool>(type: "bit", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TargetAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    TotalDonations = table.Column<int>(type: "int", nullable: false),
-                    TargetAmountAchieved = table.Column<bool>(type: "bit", nullable: false),
-                    Visible = table.Column<bool>(type: "bit", nullable: false),
-                    Countable = table.Column<bool>(type: "bit", nullable: false),
-                    Closed = table.Column<bool>(type: "bit", nullable: false),
-                    Ended = table.Column<bool>(type: "bit", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PreviousParticipations = table.Column<int>(type: "int", nullable: false),
-                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DonateUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Action", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
                 {
@@ -134,7 +94,9 @@ namespace BerghAdmin.Migrations
                     Mobiel = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EmailAdres = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EmailAdresExtra = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    KentaaActionId = table.Column<int>(type: "int", nullable: true)
+                    KentaaActionId = table.Column<int>(type: "int", nullable: true),
+                    KentaaUserId = table.Column<int>(type: "int", nullable: true),
+                    KentaaProjectId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -236,6 +198,148 @@ namespace BerghAdmin.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Gebruikers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KentaaActions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ActionId = table.Column<int>(type: "int", nullable: false),
+                    SiteId = table.Column<int>(type: "int", nullable: true),
+                    ProjectId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatieDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WijzigDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExterneReferentie = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Voornaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Tussenvoegsels = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Achternaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EMail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Titel = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Omschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DoelBedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    AantalDonaties = table.Column<int>(type: "int", nullable: false),
+                    DoelBedragBereikt = table.Column<bool>(type: "bit", nullable: false),
+                    Beeindigd = table.Column<bool>(type: "bit", nullable: false),
+                    EindDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DoneerUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KentaaActions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KentaaDonaties",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DonationId = table.Column<int>(type: "int", nullable: false),
+                    ActionId = table.Column<int>(type: "int", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    CreatieDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WijzigDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DonatieBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TransactionKosten = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    RegistratieFee = table.Column<bool>(type: "bit", nullable: false),
+                    RegistratieFeeBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    NettoBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Currency = table.Column<int>(type: "int", nullable: false),
+                    BetaalStatus = table.Column<int>(type: "int", nullable: false),
+                    BetaalStatusOp = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    BetaalTransactieId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BetaalId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BetaalOmschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountIban = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountBic = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KentaaDonaties", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KentaaProjects",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    SiteId = table.Column<int>(type: "int", nullable: false),
+                    CreatieDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WijzigDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExterneReferentie = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Titel = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Omschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DoelBedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    AantalDonaties = table.Column<int>(type: "int", nullable: false),
+                    DoelBedragBereikt = table.Column<bool>(type: "bit", nullable: false),
+                    Zichtbaar = table.Column<bool>(type: "bit", nullable: false),
+                    Gesloten = table.Column<bool>(type: "bit", nullable: false),
+                    Beeindigd = table.Column<bool>(type: "bit", nullable: false),
+                    EindDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DonatieUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KentaaProjects", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KentaaUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    SiteId = table.Column<int>(type: "int", nullable: false),
+                    CreatieDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    WijzigDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Voornaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Tussenvoegsels = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Achternaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Adres = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Adres2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Straat = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HuisNummer = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HuisNummerToevoeging = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Postcode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Woonplaats = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Land = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Telefoon = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GeboorteDatum = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Geslacht = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KentaaUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Owner",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Infix = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EMail = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Owner", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -387,23 +491,6 @@ namespace BerghAdmin.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FietsTochten",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    KentaaProjectId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FietsTochten", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_FietsTochten_Evenementen_Id",
-                        column: x => x.Id,
-                        principalTable: "Evenementen",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "GolfDagen",
                 columns: table => new
                 {
@@ -419,6 +506,75 @@ namespace BerghAdmin.Migrations
                         column: x => x.Id,
                         principalTable: "Evenementen",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FietsTochten",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FietsTochten", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FietsTochten_Evenementen_Id",
+                        column: x => x.Id,
+                        principalTable: "Evenementen",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_FietsTochten_KentaaProjects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "KentaaProjects",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Action",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SiteId = table.Column<int>(type: "int", nullable: false),
+                    SegmentId = table.Column<int>(type: "int", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    TeamId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OwnerId = table.Column<int>(type: "int", nullable: false),
+                    ExternalReference = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TeamCaptain = table.Column<bool>(type: "bit", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Infix = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AvatarUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FundraiserPage = table.Column<bool>(type: "bit", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TargetAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalDonations = table.Column<int>(type: "int", nullable: false),
+                    TargetAmountAchieved = table.Column<bool>(type: "bit", nullable: false),
+                    Visible = table.Column<bool>(type: "bit", nullable: false),
+                    Countable = table.Column<bool>(type: "bit", nullable: false),
+                    Closed = table.Column<bool>(type: "bit", nullable: false),
+                    Ended = table.Column<bool>(type: "bit", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PreviousParticipations = table.Column<int>(type: "int", nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DonateUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Action", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Action_Owner_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Owner",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -453,7 +609,8 @@ namespace BerghAdmin.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Bedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     DonateurId = table.Column<int>(type: "int", nullable: true),
-                    FactuurId = table.Column<int>(type: "int", nullable: true)
+                    FactuurId = table.Column<int>(type: "int", nullable: true),
+                    KentaaDonatieId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -467,6 +624,11 @@ namespace BerghAdmin.Migrations
                         name: "FK_Donaties_Facturen_FactuurId",
                         column: x => x.FactuurId,
                         principalTable: "Facturen",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Donaties_KentaaDonaties_KentaaDonatieId",
+                        column: x => x.KentaaDonatieId,
+                        principalTable: "KentaaDonaties",
                         principalColumn: "Id");
                 });
 
@@ -542,40 +704,10 @@ namespace BerghAdmin.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "KentaaDonaties",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    KentaaDonationId = table.Column<int>(type: "int", nullable: true),
-                    KentaaActionId = table.Column<int>(type: "int", nullable: true),
-                    KentaaProjectId = table.Column<int>(type: "int", nullable: true),
-                    CreatieDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WijzigDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DonatieBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    TransactionKosten = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
-                    RegistratieFee = table.Column<bool>(type: "bit", nullable: false),
-                    RegistratieFeeBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
-                    TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    NettoBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Currency = table.Column<int>(type: "int", nullable: false),
-                    BetaalStatus = table.Column<int>(type: "int", nullable: false),
-                    BetaalStatusOp = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    BetaalTransactieId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BetaalId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BetaalOmschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AccountIban = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AccountBic = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_KentaaDonaties", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_KentaaDonaties_Donaties_Id",
-                        column: x => x.Id,
-                        principalTable: "Donaties",
-                        principalColumn: "Id");
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_Action_OwnerId",
+                table: "Action",
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -615,6 +747,11 @@ namespace BerghAdmin.Migrations
                 column: "FactuurId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Donaties_KentaaDonatieId",
+                table: "Donaties",
+                column: "KentaaDonatieId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EvenementPersoon_IsDeelnemerVanId",
                 table: "EvenementPersoon",
                 column: "IsDeelnemerVanId");
@@ -628,6 +765,11 @@ namespace BerghAdmin.Migrations
                 name: "IX_Facturen_FactuurTekstId",
                 table: "Facturen",
                 column: "FactuurTekstId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FietsTochten_ProjectId",
+                table: "FietsTochten",
+                column: "ProjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MailbccGeadresseerden_bccGeadresseerdenId1",
@@ -673,6 +815,9 @@ namespace BerghAdmin.Migrations
                 name: "Betalingen");
 
             migrationBuilder.DropTable(
+                name: "Donaties");
+
+            migrationBuilder.DropTable(
                 name: "Donation");
 
             migrationBuilder.DropTable(
@@ -688,7 +833,10 @@ namespace BerghAdmin.Migrations
                 name: "GolfDagen");
 
             migrationBuilder.DropTable(
-                name: "KentaaDonaties");
+                name: "KentaaActions");
+
+            migrationBuilder.DropTable(
+                name: "KentaaUsers");
 
             migrationBuilder.DropTable(
                 name: "MailbccGeadresseerden");
@@ -703,25 +851,31 @@ namespace BerghAdmin.Migrations
                 name: "PersoonRol");
 
             migrationBuilder.DropTable(
+                name: "Owner");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Facturen");
+
+            migrationBuilder.DropTable(
+                name: "KentaaDonaties");
+
+            migrationBuilder.DropTable(
+                name: "KentaaProjects");
 
             migrationBuilder.DropTable(
                 name: "Evenementen");
 
             migrationBuilder.DropTable(
-                name: "Donaties");
-
-            migrationBuilder.DropTable(
                 name: "VerzondenMails");
-
-            migrationBuilder.DropTable(
-                name: "Rollen");
 
             migrationBuilder.DropTable(
                 name: "Donateur");
 
             migrationBuilder.DropTable(
-                name: "Facturen");
+                name: "Rollen");
 
             migrationBuilder.DropTable(
                 name: "Documenten");

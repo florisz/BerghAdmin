@@ -3,7 +3,8 @@ namespace BerghAdmin.Services
     public interface IPersoonService
     {
         List<Persoon>? GetPersonen();
-        Persoon? GetPersoonById(int id);
+        Persoon? GetById(int id);
+        Persoon? GetByEmailAdres(string emailAdres);
         void SavePersoon(Persoon persoon);
         void DeletePersoon(int id);
     }

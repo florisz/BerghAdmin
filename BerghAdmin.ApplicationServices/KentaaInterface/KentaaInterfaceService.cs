@@ -37,8 +37,7 @@ public class KentaaInterfaceService : IKentaaInterfaceService
         {
             issues.AddRange(issueArray);
 
-            filter = filter.NextPage();
-            url = _session.Url(endpoint, filter);
+            url = _session.Url(endpoint, filter.NextPage());
             response = await GetKentaaResponse<TList>(url);
             issueArray = response?.GetIssues<T>();
         }

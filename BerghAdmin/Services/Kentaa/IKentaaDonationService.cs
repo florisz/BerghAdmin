@@ -6,6 +6,7 @@ namespace BerghAdmin.Services.Kentaa;
 public interface IKentaaDonationService
 {
     void AddKentaaDonation(Donation kentaaDonation);
+    void AddKentaaDonations(IEnumerable<Donation> kentaaDonations);
     bool Exist(KentaaDonation donatie);
     IEnumerable<KentaaDonation>? GetAll();
     KentaaDonation? GetById(int id);

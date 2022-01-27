@@ -22,6 +22,14 @@ public class KentaaUserService : IKentaaUserService
         Save(user);
     }
 
+    public void AddKentaaUsers(IEnumerable<KM.User> kentaaUsers)
+    {
+        foreach (var kentaaUser in kentaaUsers)
+        {
+            AddKentaaUser(kentaaUser);
+        }
+    }
+
     public bool Exist(KentaaUser user)
         => GetByKentaaId(user.Id) != null;
 

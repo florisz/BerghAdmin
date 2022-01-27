@@ -6,6 +6,7 @@ namespace BerghAdmin.Services.Kentaa;
 public interface IKentaaProjectService
 {
     void AddKentaaProject(KM.Project kentaaProject);
+    void AddKentaaProjects(IEnumerable<KM.Project> kentaaProjects);
     bool Exist(KentaaProject project);
     IEnumerable<KentaaProject>? GetAll();
     KentaaProject? GetById(int id);

@@ -8,9 +8,9 @@ public class KentaaProject
     { }
 
     public int Id { get; set; }                     // Unique internal id
-    public string? Slug { get; set; }         // Unique identifier for this project, used to create a nice project URL.
-    public int ProjectId { get; set; }        // Unique identifier for the site associated with the project.
-    public int SiteId { get; set; }           // Unique identifier for the site associated with the project.
+    public string? Slug { get; set; }               // Unique identifier for this project, used to create a nice project URL.
+    public int ProjectId { get; set; }              // Unique identifier for the site associated with the project.
+    public int SiteId { get; set; }                 // Unique identifier for the site associated with the project.
     public DateTime CreatieDatum { get; set; }      // The time (ISO 8601 format) when the team was created.
     public DateTime WijzigDatum { get; set; }       // The time (ISO 8601 format) when the team was last updated.
     public string? ExterneReferentie { get; set; }  // External reference for the project.OPTIONAL

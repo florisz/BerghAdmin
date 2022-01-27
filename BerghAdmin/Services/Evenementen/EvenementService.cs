@@ -81,7 +81,7 @@ public class EvenementService : IEvenementService
     {
         if (evenement == null) { throw new ApplicationException("parameter evenement can not be null"); }
 
-        var persoon = _persoonService.GetPersoonById(persoonId);
+        var persoon = _persoonService.GetById(persoonId);
         if (persoon == null)
         {
             return ErrorCodeEnum.NotFound;
@@ -111,7 +111,7 @@ public class EvenementService : IEvenementService
     {
         if (evenement == null) { throw new ApplicationException("parameter evenement can not be null"); }
 
-        var persoon = _persoonService.GetPersoonById(persoonId);
+        var persoon = _persoonService.GetById(persoonId);
         if (persoon == null)
         {
             return ErrorCodeEnum.NotFound;

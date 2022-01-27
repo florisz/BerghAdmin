@@ -24,6 +24,7 @@ public class KentaaAction
     public string? Voornaam { get; set; }
     public string? Tussenvoegsels { get; set; }
     public string? Achternaam { get; set; }
+    public string? EMail { get; set; }
     public string? Titel { get; set; }
     public string? Omschrijving { get; set; }
     public decimal DoelBedrag { get; set; }
@@ -42,6 +43,7 @@ public class KentaaAction
         Slug = action.Slug;
         SiteId = action.SiteId;
         UserId = action.Owner.Id;
+        EMail = action.Owner.EMail;
         CreatieDatum = action.CreatedAt;
         WijzigDatum = action.UpdatedAt;
         ExterneReferentie = action.ExternalReference;

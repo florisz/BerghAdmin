@@ -22,15 +22,17 @@ public class PersoonService : IPersoonService
         }
     }
 
-    public Persoon? GetPersoonById(int id)
-    {
-        var persoon = _dbContext
-                        .Personen?
-                        .Include(p => p.Rollen)
-                        .SingleOrDefault(x => x.Id == id);
-            
-        return persoon;
-    }
+    public Persoon? GetById(int id)
+        => _dbContext
+                .Personen?
+                .Include(p => p.Rollen)
+                .SingleOrDefault(x => x.Id == id);
+
+    public Persoon? GetByEmailAdres(string emailAdres)
+        => _dbContext
+                .Personen?
+                .Include(p => p.Rollen)
+                .SingleOrDefault(x => x.EmailAdres == emailAdres);
 
     public List<Persoon>? GetPersonen()
     {
