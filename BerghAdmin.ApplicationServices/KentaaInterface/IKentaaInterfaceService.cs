@@ -6,8 +6,5 @@ public interface IKentaaInterfaceService
 {
     Task<Donation> GetDonationById(int donationId);
 
-    Task<IEnumerable<KentaaModel.Donation>> GetDonationsByQuery(KentaaFilter filter);
-    Task<IEnumerable<KentaaModel.Action>> GetActionsByQuery(KentaaFilter filter);
-    Task<IEnumerable<KentaaModel.Project>> GetProjectsByQuery(KentaaFilter filter);
-    Task<IEnumerable<KentaaModel.User>> GetUsersByQuery(KentaaFilter filter);
+    Task<IEnumerable<T>> GetKentaaIssuesByQuery<TList, T>(KentaaFilter filter) where TList : Issues;
 }

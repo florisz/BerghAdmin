@@ -1,4 +1,5 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface;
+using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,7 +46,7 @@ public class InterfaceTests : DatabasedTests
             StartAt = 1,
             PageSize = 4
         };
-        var kentaaDonations = await service.GetDonationsByQuery(filter);
+        var kentaaDonations = await service.GetKentaaIssuesByQuery<KM.Donations, KM.Donation>(filter);
 
         Assert.IsTrue(kentaaDonations.Count() > 0);
     }
@@ -59,7 +60,7 @@ public class InterfaceTests : DatabasedTests
             StartAt = 1,
             PageSize = 25
         };
-        var kentaaDonations = await service.GetDonationsByQuery(filter);
+        var kentaaDonations = await service.GetKentaaIssuesByQuery<KM.Donations, KM.Donation>(filter);
 
         Assert.IsTrue(kentaaDonations.Count() > 0);
     }
@@ -73,7 +74,7 @@ public class InterfaceTests : DatabasedTests
             StartAt = 1,
             PageSize = 25
         };
-        var kentaaUsers = await service.GetUsersByQuery(filter);
+        var kentaaUsers = await service.GetKentaaIssuesByQuery<KM.Users, KM.User>(filter);
 
         Assert.IsTrue(kentaaUsers.Count() > 0);
     }
@@ -87,7 +88,7 @@ public class InterfaceTests : DatabasedTests
             StartAt = 1,
             PageSize = 25
         };
-        var kentaaActions = await service.GetActionsByQuery(filter);
+        var kentaaActions = await service.GetKentaaIssuesByQuery<KM.Actions, KM.Action>(filter);
 
         Assert.IsTrue(kentaaActions.Count() > 0);
     }
@@ -101,7 +102,7 @@ public class InterfaceTests : DatabasedTests
             StartAt = 1,
             PageSize = 25
         };
-        var kentaaProjects = await service.GetProjectsByQuery(filter);
+        var kentaaProjects = await service.GetKentaaIssuesByQuery<KM.Projects, KM.Project>(filter);
 
         Assert.IsTrue(kentaaProjects.Count() > 0);
     }
@@ -117,7 +118,7 @@ public class InterfaceTests : DatabasedTests
             CreatedAfter = new DateTime(2022, 1, 16),
             CreatedBefore = new DateTime(2022, 1, 17)
         };
-        var kentaaDonations = await service.GetDonationsByQuery(filter);
+        var kentaaDonations = await service.GetKentaaIssuesByQuery<KM.Donations, KM.Donation>(filter);
 
         Assert.IsTrue(kentaaDonations.Count() == 8);
     }
@@ -133,7 +134,7 @@ public class InterfaceTests : DatabasedTests
             CreatedAfter = new DateTime(2021, 12, 6),
             CreatedBefore = new DateTime(2022, 1, 17)
         };
-        var kentaaDonations = await service.GetDonationsByQuery(filter);
+        var kentaaDonations = await service.GetKentaaIssuesByQuery<KM.Donations, KM.Donation>(filter);
 
         Assert.IsTrue(kentaaDonations.Count() == 11);
     }

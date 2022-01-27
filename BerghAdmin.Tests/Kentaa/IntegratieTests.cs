@@ -1,4 +1,5 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface;
+using KM=BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using BerghAdmin.Data;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
@@ -59,13 +60,7 @@ namespace BerghAdmin.Tests.Kentaa
         [Test]
         public async Task ProcessKentaaDonations()
         {
-            var seedService = this.ServiceProvider?.GetService<ISeedDataService>();
-            if (seedService == null)
-            {
-                Assert.Fail();
-                return;
-            }
-            await seedService.SeedInitialData();
+            await InsertInitialData();
 
             var service = this.ServiceProvider?.GetRequiredService<IEvenementService>();
             if (service == null)
@@ -89,7 +84,7 @@ namespace BerghAdmin.Tests.Kentaa
                     StartAt = 1,
                     PageSize = 25
                 };
-                var kentaaDonations = await kentaaService.GetDonationsByQuery(filter);
+                var kentaaDonations = await kentaaService.GetKentaaIssuesByQuery<KM.Donations, KM.Donation>(filter);
                 
                 var donatieService = this.ServiceProvider?.GetRequiredService<IKentaaDonationService>();
                 if (donatieService != null)
@@ -114,18 +109,12 @@ namespace BerghAdmin.Tests.Kentaa
         [Test]
         public async Task ProcessKentaaActions()
         {
-            var seedService = this.ServiceProvider?.GetService<ISeedDataService>();
-            if (seedService == null)
-            {
-                Assert.Fail();
-                return;
-            }
-            await seedService.SeedInitialData();
+            await InsertInitialData();
 
             var kentaaInterfaceService = this.ServiceProvider?.GetRequiredService<IKentaaInterfaceService>();
             if (kentaaInterfaceService != null)
             {
-                var actions = await kentaaInterfaceService.GetActionsByQuery(new KentaaFilter());
+                var actions = await kentaaInterfaceService.GetKentaaIssuesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
 
                 var actionService = this.ServiceProvider?.GetRequiredService<IKentaaActionService>();
                 if (actionService != null)
@@ -144,48 +133,32 @@ namespace BerghAdmin.Tests.Kentaa
         [Test]
         public async Task ProcessKentaaProjects()
         {
-            var seedService = this.ServiceProvider?.GetService<ISeedDataService>();
-            if (seedService == null)
-            {
-                Assert.Fail();
-                return;
-            }
-            await seedService.SeedInitialData();
+            await InsertInitialData();
 
-            var kentaaInterfaceService = this.ServiceProvider?.GetRequiredService<IKentaaInterfaceService>();
-            if (kentaaInterfaceService != null)
-            {
-                var projects = await kentaaInterfaceService.GetProjectsByQuery(new KentaaFilter());
+            var kentaaProjects = await GetProjectsFromKentaaAsync();
 
-                var projectService = this.ServiceProvider?.GetRequiredService<IKentaaProjectService>();
-                if (projectService != null)
+            var projectService = this.ServiceProvider?.GetRequiredService<IKentaaProjectService>();
+            if (projectService != null)
+            {
+                foreach (var project in kentaaProjects)
                 {
-                    foreach (var project in projects)
-                    {
-                        projectService.AddKentaaProject(project);
-                    }
-                    var kentaaProjects = projectService.GetAll();
-                    Assert.IsTrue(projects.Count() == kentaaProjects.Count());
+                    projectService.AddKentaaProject(project);
                 }
 
+                var projects = projectService.GetAll();
+                Assert.IsTrue(kentaaProjects.Count() == kentaaProjects.Count());
             }
         }
 
         [Test]
         public async Task ProcessKentaaUsers()
         {
-            var seedService = this.ServiceProvider?.GetService<ISeedDataService>();
-            if (seedService == null)
-            {
-                Assert.Fail();
-                return;
-            }
-            await seedService.SeedInitialData();
+            await InsertInitialData();
 
             var kentaaInterfaceService = this.ServiceProvider?.GetRequiredService<IKentaaInterfaceService>();
             if (kentaaInterfaceService != null)
             {
-                var users = await kentaaInterfaceService.GetUsersByQuery(new KentaaFilter());
+                var users = await kentaaInterfaceService.GetKentaaIssuesByQuery<KM.Users, KM.User>(new KentaaFilter());
 
                 var userService = this.ServiceProvider?.GetRequiredService<IKentaaUserService>();
                 if (userService != null)
@@ -204,13 +177,7 @@ namespace BerghAdmin.Tests.Kentaa
         [Test]
         public async Task FullKentaaIntegrationTest()
         {
-            var seedService = this.ServiceProvider?.GetService<ISeedDataService>();
-            if (seedService == null)
-            {
-                Assert.Fail();
-                return;
-            }
-            await seedService.SeedInitialData();
+            await InsertInitialData();
 
             // step 1: read all users and link to Personen
 
@@ -223,5 +190,40 @@ namespace BerghAdmin.Tests.Kentaa
             // not ready yet
             Assert.Fail();
         }
+
+        private async Task InsertInitialData()
+        {
+            var seedService = this.ServiceProvider?.GetService<ISeedDataService>();
+            if (seedService == null)
+            {
+                Assert.Fail();
+                return;
+            }
+
+            await seedService.SeedInitialData();
+        }
+
+        private async Task<IEnumerable<KM.Project>> GetProjectsFromKentaaAsync()
+        {
+            var kentaaInterfaceService = this.ServiceProvider?.GetRequiredService<IKentaaInterfaceService>();
+            if (kentaaInterfaceService == null)
+            {
+                // for ease of use return an ampty list
+                return new List<KM.Project>();
+            }
+            return await kentaaInterfaceService.GetKentaaIssuesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
+        }
+
+        private async Task<IEnumerable<KM.User>> GetUsersFromKentaaAsync()
+        {
+            var kentaaInterfaceService = this.ServiceProvider?.GetRequiredService<IKentaaInterfaceService>();
+            if (kentaaInterfaceService == null)
+            {
+                // for ease of use return an ampty list
+                return new List<KM.User>();
+            }
+            return await kentaaInterfaceService.GetKentaaIssuesByQuery<KM.Users, KM.User>(new KentaaFilter());
+        }
+
     }
 }
