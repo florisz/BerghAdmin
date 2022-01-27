@@ -18,13 +18,13 @@ public class Donation
     public int Id { get; set; }
 
     [JsonPropertyName("site_id")]
-    public int SiteId { get; set; }
+    public int SiteId { get; set; }             // reference to Bergh in het Zadel
 
-    [JsonPropertyName("project_id")]
-    public int ProjectId { get; set; } = 0;
+    [JsonPropertyName("project_id")]            
+    public int ProjectId { get; set; } = 0;     // reference to Fietstocht
 
     [JsonPropertyName("action_id")]
-    public int ActionId { get; set; } = 0;
+    public int ActionId { get; set; } = 0;      // reference to the fietser's donation page
 
     [JsonPropertyName("created_at")]
     public DateTime CreatedAt { get; set; }

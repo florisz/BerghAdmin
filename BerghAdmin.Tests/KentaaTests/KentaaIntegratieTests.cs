@@ -1,13 +1,10 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface;
 using BerghAdmin.Data;
 using BerghAdmin.DbContexts;
-using BerghAdmin.General;
 using BerghAdmin.Services;
 using BerghAdmin.Services.Configuration;
-using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Kentaa;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +14,7 @@ using NUnit.Framework;
 namespace BerghAdmin.Tests.DonatieTests
 {
     [TestFixture]
-    public class DonatieTests : DatabasedTests
+    public class KentaaIntegratieTests : DatabasedTests
     {
         protected override void RegisterServices(ServiceCollection services)
         {
@@ -204,5 +201,27 @@ namespace BerghAdmin.Tests.DonatieTests
             }
         }
 
+        [Test]
+        public async Task FullKentaaIntegrationTest()
+        {
+            var seedService = this.ServiceProvider?.GetService<ISeedDataService>();
+            if (seedService == null)
+            {
+                Assert.Fail();
+                return;
+            }
+            await seedService.SeedInitialData();
+
+            // step 1: read all users and link to Personen
+
+            // step 2: read projects and link to Evenementen
+
+            // step 3: read all actions and link to Personen
+
+            // step 4: read all donations, create Donatie if needed and link to Personen
+
+            // not ready yet
+            Assert.Fail();
+        }
     }
 }

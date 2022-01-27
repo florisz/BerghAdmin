@@ -38,6 +38,9 @@ public class Action
     [JsonPropertyName("updated_at")]
     public DateTime UpdatedAt { get; set; }
 
+    [JsonPropertyName("owner")]
+    public Owner Owner{ get; set; }
+
     [JsonPropertyName("external_reference")]
     public string ExternalReference { get; set; }
 
@@ -105,4 +108,21 @@ public class Action
 
 }
 
+public class Owner
+{
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("first_name")]
+    public string FirstName { get; set; }
+
+    [JsonPropertyName("infix")]
+    public string Infix { get; set; }
+
+    [JsonPropertyName("last_name")]
+    public string LastName { get; set; }
+
+    [JsonPropertyName("email")]
+    public string EMail { get; set; }
+}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

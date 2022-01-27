@@ -16,6 +16,7 @@ public class KentaaAction
     public int ActionId { get; set; }
     public int? SiteId { get; set; }
     public int? ProjectId { get; set; }
+    public int? UserId { get; set; }
     public string? Slug { get; set; }
     public DateTime CreatieDatum { get; set; }
     public DateTime WijzigDatum { get; set; }
@@ -40,7 +41,7 @@ public class KentaaAction
         ProjectId = action.ProjectId;
         Slug = action.Slug;
         SiteId = action.SiteId;
-        ProjectId = action.ProjectId;
+        UserId = action.Owner.Id;
         CreatieDatum = action.CreatedAt;
         WijzigDatum = action.UpdatedAt;
         ExterneReferentie = action.ExternalReference;
