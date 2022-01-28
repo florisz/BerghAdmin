@@ -17,7 +17,7 @@ public class InterfaceTests : DatabasedTests
     protected override void RegisterServices(ServiceCollection services)
     {
         var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<Services.Configuration.MailJetConfiguration>()
+            .AddUserSecrets<KentaaConfiguration>()
             .Build();
 
         services.AddHttpClient()

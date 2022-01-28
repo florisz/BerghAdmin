@@ -7,7 +7,7 @@ namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 public class Donations : Issues
 {
-    public static string Endpoint => "donations";
+    public override string Endpoint => "donations";
 
     [JsonPropertyName("total_entries")]
     public int TotalEntries { get; set; }

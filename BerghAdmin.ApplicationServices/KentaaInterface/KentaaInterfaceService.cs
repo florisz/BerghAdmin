@@ -24,11 +24,11 @@ public class KentaaInterfaceService : IKentaaInterfaceService
         return donation.data;
     }
 
-    public async Task<IEnumerable<T>> GetKentaaIssuesByQuery<TList,T>(KentaaFilter filter) where TList : Issues 
+    public async Task<IEnumerable<T>> GetKentaaIssuesByQuery<TList,T>(KentaaFilter filter) where TList : Issues, new()
     {
         var issues = new List<T>();
 
-        var endpoint = GetEndpoint(typeof(TList));
+        var endpoint = new TList().Endpoint;
         var url = _session.Url(endpoint, filter);
         var response = await GetKentaaResponse<TList>(url);
         var issueArray = response?.GetIssues<T>();
@@ -37,18 +37,13 @@ public class KentaaInterfaceService : IKentaaInterfaceService
         {
             issues.AddRange(issueArray);
 
-            url = _session.Url(endpoint, filter.NextPage());
+            filter = filter.NextPage();
+            url = _session.Url(endpoint, filter);
             response = await GetKentaaResponse<TList>(url);
             issueArray = response?.GetIssues<T>();
         }
 
         return issues;
-    }
-
-    private string GetEndpoint(Type type)
-    {
-        // kan dat niet anders??!
-        return type.GetProperty("Endpoint").GetValue(null, null) as string;
     }
 
     private async Task<T> GetKentaaResponse<T>(string url)
