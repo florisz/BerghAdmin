@@ -7,11 +7,11 @@ namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 public class ProjectResponse
 {
     [JsonPropertyName("Action")]
-    public Project data { get; set; }
+    public Project Data { get; set; }
 
 }
 
-public class Project 
+public class Project:Issue 
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }  // Unique identifier for this project.

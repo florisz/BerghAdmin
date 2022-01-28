@@ -7,10 +7,10 @@ namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 public class UserResponse
 {
     [JsonPropertyName("User")]
-    public User data { get; set; }
+    public User Data { get; set; }
 }
 
-public class User 
+public class User:Issue 
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }  // Unique identifier for this user.

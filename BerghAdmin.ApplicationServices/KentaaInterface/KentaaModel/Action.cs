@@ -8,11 +8,11 @@ namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 public class ActionResponse
 {
     [JsonPropertyName("Action")]
-    public Action data { get; set; }
+    public Action Data { get; set; }
 
 }
 
-public class Action
+public class Action:Issue
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }

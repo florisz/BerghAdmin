@@ -1,11 +1,12 @@
 ﻿
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-public class Donations : Issues
+public class Donations : Issues<Donation>
 {
     public override string Endpoint => "donations";
 
@@ -24,9 +25,9 @@ public class Donations : Issues
     [JsonPropertyName("donations")]
     public Donation[] DonationArray { get; set; }
 
-    public override IEnumerable<Donation> GetIssues<Donation>()
+    public override IEnumerable<Donation> GetIssues()
     {
-        return (IEnumerable<Donation>)DonationArray.ToList();
+        return DonationArray;
     }
 }
 

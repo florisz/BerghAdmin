@@ -2,7 +2,6 @@
 
 using Microsoft.Extensions.Options;
 
-using System.Net.Http;
 using System.Text.Json;
 
 namespace BerghAdmin.ApplicationServices.KentaaInterface;
@@ -21,29 +20,28 @@ public class KentaaInterfaceService : IKentaaInterfaceService
     {
         var url = _session.Url($"donations/{donationId}");
         var donation = await GetKentaaResponse<DonationResponse>(url);
-        return donation.data;
+        return donation.Data;
     }
 
-    public async Task<IEnumerable<T>> GetKentaaIssuesByQuery<TList,T>(KentaaFilter filter) where TList : Issues, new()
+    public async IAsyncEnumerable<T> GetKentaaIssuesByQuery<TList, T>(KentaaFilter filter) 
+        where TList: Issues<T>, new()
+        where T: Issue
     {
-        var issues = new List<T>();
-
         var endpoint = new TList().Endpoint;
         var url = _session.Url(endpoint, filter);
-        var response = await GetKentaaResponse<TList>(url);
-        var issueArray = response?.GetIssues<T>();
+        var issues = (await GetKentaaResponse<TList>(url)).GetIssues();
 
-        while (issueArray != null && issueArray.Any())
+        while (issues.Any())
         {
-            issues.AddRange(issueArray);
+            foreach (var issue in issues)
+            {
+                yield return issue;
+            }
 
             filter = filter.NextPage();
             url = _session.Url(endpoint, filter);
-            response = await GetKentaaResponse<TList>(url);
-            issueArray = response?.GetIssues<T>();
+            issues = (await GetKentaaResponse<TList>(url)).GetIssues();
         }
-
-        return issues;
     }
 
     private async Task<T> GetKentaaResponse<T>(string url)

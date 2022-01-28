@@ -1,7 +1,7 @@
 using BerghAdmin.ApplicationServices.KentaaInterface;
-using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 using System;
 
@@ -20,8 +20,8 @@ public class FunctionApp
     [FunctionName("ReadDonations")]
     public async Task ReadDonations([TimerTrigger("0/10 * * * * *")] TimerInfo myTimer, ILogger log)
     {
-        var donaties = await service.GetKentaaIssuesByQuery<Donations, Donation>(new KentaaFilter());
-        foreach (var donatie in donaties)
+        var donaties = service.GetKentaaIssuesByQuery<KM.Donations,KM.Donation>(new KentaaFilter());
+        await foreach (var donatie in donaties)
         {
             await berghClient.PostAsJsonAsync("https://localhost:5001/donaties", donatie);
         }

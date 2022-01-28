@@ -8,11 +8,11 @@ namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 public class DonationResponse
 {
     [JsonPropertyName("donation")]
-    public Donation data { get; set; }
+    public Donation Data { get; set; }
 
 }
 
-public class Donation 
+public class Donation : Issue
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }
@@ -123,5 +123,6 @@ public class Donation
 
     [JsonPropertyName("target_url")]
     public string DonationTargetUrl { get; set; }
+
 }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

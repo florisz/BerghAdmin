@@ -5,7 +5,7 @@ namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-public class Users : Issues
+public class Users : Issues<User>
 {
     public override string Endpoint => "users";
 
@@ -24,9 +24,9 @@ public class Users : Issues
     [JsonPropertyName("users")]
     public User[] UserArray { get; set; }
 
-    public override IEnumerable<User> GetIssues<User>()
+    public override IEnumerable<User> GetIssues()
     {
-        return (IEnumerable<User>)UserArray.ToList();
+        return UserArray;
     }
 }
 

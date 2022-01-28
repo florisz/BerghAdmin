@@ -1,6 +1,5 @@
 namespace BerghAdmin.Data;
 
-#pragma warning disable IDE0060 // Remove unused parameter
 public class Donatie
 {
     public Donatie()
@@ -13,5 +12,3 @@ public class Donatie
     public Factuur? Factuur { get; set; }
     public KentaaDonation? KentaaDonatie{ get; set; }
 }
-
-#pragma warning restore IDE0060 // Remove unused parameter
