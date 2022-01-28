@@ -22,6 +22,12 @@ public class PersoonService : IPersoonService
         }
     }
 
+    public Persoon? GetByActionId(int actionId)
+        => _dbContext
+                .Personen?
+                .SingleOrDefault(p => p.KentaaAction != null &&
+                                      p.KentaaAction.Id == actionId);
+
     public Persoon? GetById(int id)
         => _dbContext
                 .Personen?
@@ -58,4 +64,5 @@ public class PersoonService : IPersoonService
         }
         _dbContext.SaveChanges();
     }
+
 }

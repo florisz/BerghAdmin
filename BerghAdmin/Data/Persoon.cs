@@ -31,9 +31,9 @@ public class Persoon : Donateur
     public ICollection<VerzondenMail> ccGeadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<VerzondenMail> bccGeadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<Evenement>? IsDeelnemerVan { get; set; }
-    public int KentaaActionId { get; set; } = 0;
-    public int KentaaUserId { get; set; } = 0;
-    public int KentaaProjectId { get; set; } = 0;
+    public KentaaAction? KentaaAction { get; set; }
+    public KentaaUser? KentaaUser { get; set; }
+    public KentaaProject? KentaaProject { get; set; }
 
     [NotMapped]
     public string GetRollenAsString

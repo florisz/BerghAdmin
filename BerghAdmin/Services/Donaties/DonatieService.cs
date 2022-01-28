@@ -22,9 +22,27 @@ public class DonatieService : IDonatieService
         throw new NotImplementedException();
     }
 
-    public ErrorCodeEnum AddKentaaDonatie(Donatie donatie, KentaaDonation kentaaDonatie)
+    public ErrorCodeEnum AddKentaaDonatie(KentaaDonation kentaaDonatie, Donateur persoon)
     {
-        throw new NotImplementedException();
+        if (kentaaDonatie.BetaalStatus != PaymentStatusEnum.Paid)
+        {
+            return ErrorCodeEnum.Forbidden;
+        }
+
+        var donatie = new Donatie()
+        {
+            Bedrag = kentaaDonatie.DonatieBedrag,
+            Donateur = persoon,
+            KentaaDonatie = kentaaDonatie
+        };
+
+
+        return ErrorCodeEnum.Ok;
+    }
+
+    public ErrorCodeEnum AddKentaaDonatie(KentaaDonation kentaaDonatie)
+    {
+        return AddKentaaDonatie(kentaaDonatie, null);
     }
 
     public IEnumerable<Donatie> GetAll()
@@ -35,5 +53,22 @@ public class DonatieService : IDonatieService
     public Donatie? GetById(int id)
     {
         throw new NotImplementedException();
+    }
+
+    public void Save(Donatie donatie)
+    {
+        if (donatie.Id == 0)
+        {
+            _dbContext
+                .Donaties?
+                .Add(donatie);
+        }
+        else
+        {
+            _dbContext
+                .Donaties?
+                .Update(donatie);
+        }
+        _dbContext.SaveChanges();
     }
 }

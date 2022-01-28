@@ -1,4 +1,5 @@
-﻿using BerghAdmin.DbContexts;
+﻿using BerghAdmin.Data;
+using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 
 namespace BerghAdmin.Services.Evenementen;
@@ -23,6 +24,13 @@ public class EvenementService : IEvenementService
         => _dbContext
             .Evenementen?
             .FirstOrDefault(e => e.Naam == name);
+
+    public Evenement? GetByProjectId(int projectId)
+    => _dbContext
+        .Evenementen?
+        .OfType<FietsTocht>()
+        .Where(ev => ev.Project != null)
+        .FirstOrDefault(e => e.Project.Id == projectId);
 
 
     public async Task<ErrorCodeEnum> Save(Evenement evenement)
@@ -119,4 +127,5 @@ public class EvenementService : IEvenementService
 
         return await DeleteDeelnemer(evenement, persoon);
     }
+
 }
