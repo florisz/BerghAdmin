@@ -1,10 +1,10 @@
-﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+﻿using KM=BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
-namespace BerghAdmin.Data;
+namespace BerghAdmin.Data.Kentaa;
 
-public class KentaaProject
+public class BihzProject
 {
-    public KentaaProject()
+    public BihzProject()
     { }
 
     public int Id { get; set; }                     // Unique internal id
@@ -27,31 +27,30 @@ public class KentaaProject
     public string? Url { get; set; }                // The URL to the project.
     public string? DonatieUrl { get; set; }	        // The URL to directly make a donation to the project.
 
-    public KentaaProject (Project project)
+    public BihzProject(KM.Project project)
     {
-        Update(project);
-    }
- 
-    public void Update(Project project)
-    {
-    	ProjectId = project.Id;
-        SiteId = project.SiteId;
-        Slug = project.Slug;
-    	CreatieDatum = project.CreatedAt;
-    	WijzigDatum = project.UpdatedAt;
-    	ExterneReferentie = project.ExternalReference;
-    	Titel = project.Title;
-    	Omschrijving = project.Description;
-    	DoelBedrag = project.TargetAmount;
-    	TotaalBedrag = project.TotalAmount;
-    	AantalDonaties = project.TotalDonations;
-    	DoelBedragBereikt = project.TargetAmountAchieved;
-    	Zichtbaar = project.Visible;
-    	Gesloten = project.Closed;
-    	Beeindigd = project.Ended;
-    	EindDatum = project.EndDate;
-    	Url = project.Url;
-    	DonatieUrl = project.DonateUrl;
+        Map(project);
     }
 
+    public void Map(KM.Project project)
+    {
+        ProjectId = project.Id;
+        SiteId = project.SiteId;
+        Slug = project.Slug;
+        CreatieDatum = project.CreatedAt;
+        WijzigDatum = project.UpdatedAt;
+        ExterneReferentie = project.ExternalReference;
+        Titel = project.Title;
+        Omschrijving = project.Description;
+        DoelBedrag = project.TargetAmount;
+        TotaalBedrag = project.TotalAmount;
+        AantalDonaties = project.TotalDonations;
+        DoelBedragBereikt = project.TargetAmountAchieved;
+        Zichtbaar = project.Visible;
+        Gesloten = project.Closed;
+        Beeindigd = project.Ended;
+        EindDatum = project.EndDate;
+        Url = project.Url;
+        DonatieUrl = project.DonateUrl;
+    }
 }

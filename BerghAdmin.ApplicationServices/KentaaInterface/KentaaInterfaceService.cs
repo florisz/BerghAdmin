@@ -23,9 +23,9 @@ public class KentaaInterfaceService : IKentaaInterfaceService
         return donation.Data;
     }
 
-    public async IAsyncEnumerable<T> GetKentaaIssuesByQuery<TList, T>(KentaaFilter filter) 
-        where TList: Issues<T>, new()
-        where T: Issue
+    public async IAsyncEnumerable<T> GetKentaaResourcesByQuery<TList, T>(KentaaFilter filter) 
+        where TList: Resources<T>, new()
+        where T: Resource
     {
         var endpoint = new TList().Endpoint;
         var url = _session.Url(endpoint, filter);

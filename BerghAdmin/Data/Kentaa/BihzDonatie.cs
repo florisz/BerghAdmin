@@ -1,15 +1,15 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
-namespace BerghAdmin.Data;
+namespace BerghAdmin.Data.Kentaa;
 
-public class KentaaDonation
+public class BihzDonatie
 {
-    public KentaaDonation()
+    public BihzDonatie()
     { }
 
-    public KentaaDonation(Donation donation)
+    public BihzDonatie(Donation donation)
     {
-        Update(donation);
+        Map(donation);
     }
     public int Id { get; set; }
     public int DonationId { get; set; }
@@ -32,7 +32,7 @@ public class KentaaDonation
     public string? AccountIban { get; set; }
     public string? AccountBic { get; set; }
 
-    public void Update(Donation donation)
+    public void Map(Donation donation)
     {
         DonationId = donation.Id;
         ActionId = donation.ActionId;

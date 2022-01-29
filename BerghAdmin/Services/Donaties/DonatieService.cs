@@ -1,4 +1,5 @@
-﻿using BerghAdmin.DbContexts;
+﻿using BerghAdmin.Data.Kentaa;
+using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 
 namespace BerghAdmin.Services.Donaties;
@@ -12,50 +13,50 @@ public class DonatieService : IDonatieService
         _dbContext = context;
     }
 
-    public ErrorCodeEnum AddDonateur(Donatie donatie, Donateur persoon)
+    public ErrorCodeEnum AddDonateur(DonatieBase donatie, Donateur persoon)
     {
         throw new NotImplementedException();
     }
 
-    public ErrorCodeEnum AddFactuur(Donatie donatie, Factuur factuur)
+    public ErrorCodeEnum AddFactuur(DonatieBase donatie, Factuur factuur)
     {
         throw new NotImplementedException();
     }
 
-    public ErrorCodeEnum AddKentaaDonatie(KentaaDonation kentaaDonatie, Donateur persoon)
+    public ErrorCodeEnum AddKentaaDonatie(BihzDonatie bihzDonatie, Donateur? persoon)
     {
-        if (kentaaDonatie.BetaalStatus != PaymentStatusEnum.Paid)
+        if (bihzDonatie.BetaalStatus != PaymentStatusEnum.Paid)
         {
             return ErrorCodeEnum.Forbidden;
         }
 
-        var donatie = new Donatie()
+        var donatie = new DonatieBase()
         {
-            Bedrag = kentaaDonatie.DonatieBedrag,
+            Bedrag = bihzDonatie.DonatieBedrag,
             Donateur = persoon,
-            KentaaDonatie = kentaaDonatie
+            KentaaDonatie = bihzDonatie
         };
 
 
         return ErrorCodeEnum.Ok;
     }
 
-    public ErrorCodeEnum AddKentaaDonatie(KentaaDonation kentaaDonatie)
+    public ErrorCodeEnum AddKentaaDonatie(BihzDonatie bihzDonatie)
     {
-        return AddKentaaDonatie(kentaaDonatie, null);
+        return AddKentaaDonatie(bihzDonatie, null);
     }
 
-    public IEnumerable<Donatie> GetAll()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Donatie? GetById(int id)
+    public IEnumerable<DonatieBase> GetAll()
     {
         throw new NotImplementedException();
     }
 
-    public void Save(Donatie donatie)
+    public DonatieBase? GetById(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Save(DonatieBase donatie)
     {
         if (donatie.Id == 0)
         {

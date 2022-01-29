@@ -1,16 +1,15 @@
-﻿using KM=BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
-namespace BerghAdmin.Data;
+namespace BerghAdmin.Data.Kentaa;
 
-public class KentaaUser
+public class BihzUser
 {
-    public KentaaUser()
+    public BihzUser()
     { }
 
-    public KentaaUser(KM.User user)
+    public BihzUser(KM.User user)
     {
-        Update(user);
+        Map(user);
     }
 
     public int Id { get; set; }  // Unique identifier .
@@ -34,7 +33,7 @@ public class KentaaUser
     public DateTime? GeboorteDatum { get; set; }	 // The birthday (ISO 8601 format) of the user.OPTIONAL
     public string? Geslacht { get; set; }	 // The gender of the user (male, female, neutral).OPTIONAL
 
-    public void Update(KM.User user)
+    public void Map(KM.User user)
     {
         UserId = user.Id;
         SiteId = user.SiteId;
@@ -52,7 +51,7 @@ public class KentaaUser
         Postcode = user.Zipcode;
         Woonplaats = user.City;
         Land = user.Country;
-        Telefoon = user.Phone; 
+        Telefoon = user.Phone;
         GeboorteDatum = user.Birthday;
         Geslacht = user.Gender;
     }

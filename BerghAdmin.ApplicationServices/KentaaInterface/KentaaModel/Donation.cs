@@ -12,7 +12,7 @@ public class DonationResponse
 
 }
 
-public class Donation : Issue
+public class Donation : Resource
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }

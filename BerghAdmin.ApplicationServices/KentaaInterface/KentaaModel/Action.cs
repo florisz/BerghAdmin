@@ -12,7 +12,7 @@ public class ActionResponse
 
 }
 
-public class Action:Issue
+public class Action:Resource
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }

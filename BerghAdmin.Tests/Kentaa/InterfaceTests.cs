@@ -46,7 +46,7 @@ public class InterfaceTests : DatabasedTests
             StartAt = 1,
             PageSize = 4
         };
-        var kentaaDonations = service.GetKentaaIssuesByQuery<KM.Donations, KM.Donation>(filter);
+        var kentaaDonations = service.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(filter);
 
         Assert.IsTrue(await kentaaDonations.AnyAsync());
     }
@@ -60,7 +60,7 @@ public class InterfaceTests : DatabasedTests
             StartAt = 1,
             PageSize = 25
         };
-        var kentaaDonations = service.GetKentaaIssuesByQuery<KM.Donations, KM.Donation>(filter);
+        var kentaaDonations = service.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(filter);
 
         Assert.IsTrue(await kentaaDonations.AnyAsync());
     }
@@ -74,7 +74,7 @@ public class InterfaceTests : DatabasedTests
             StartAt = 1,
             PageSize = 25
         };
-        var kentaaUsers = service.GetKentaaIssuesByQuery<KM.Users, KM.User>(filter);
+        var kentaaUsers = service.GetKentaaResourcesByQuery<KM.Users, KM.User>(filter);
 
         Assert.IsTrue(await kentaaUsers.AnyAsync());
     }
@@ -88,7 +88,7 @@ public class InterfaceTests : DatabasedTests
             StartAt = 1,
             PageSize = 25
         };
-        var kentaaActions = service.GetKentaaIssuesByQuery<KM.Actions, KM.Action>(filter);
+        var kentaaActions = service.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(filter);
 
         Assert.IsTrue(await kentaaActions.AnyAsync());
     }
@@ -102,7 +102,7 @@ public class InterfaceTests : DatabasedTests
             StartAt = 1,
             PageSize = 25
         };
-        var kentaaProjects = service.GetKentaaIssuesByQuery<KM.Projects, KM.Project>(filter);
+        var kentaaProjects = service.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(filter);
 
         Assert.IsTrue(await kentaaProjects.AnyAsync());
     }
@@ -118,7 +118,7 @@ public class InterfaceTests : DatabasedTests
             CreatedAfter = new DateTime(2022, 1, 16),
             CreatedBefore = new DateTime(2022, 1, 17)
         };
-        var kentaaDonations = service.GetKentaaIssuesByQuery<KM.Donations, KM.Donation>(filter);
+        var kentaaDonations = service.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(filter);
 
         Assert.IsTrue(await kentaaDonations.CountAsync() == 8);
     }
@@ -134,7 +134,7 @@ public class InterfaceTests : DatabasedTests
             CreatedAfter = new DateTime(2021, 12, 6),
             CreatedBefore = new DateTime(2022, 1, 17)
         };
-        var kentaaDonations = service.GetKentaaIssuesByQuery<KM.Donations, KM.Donation>(filter);
+        var kentaaDonations = service.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(filter);
 
         Assert.IsTrue(await kentaaDonations.CountAsync() == 11);
     }

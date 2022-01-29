@@ -1,15 +1,16 @@
-﻿using KM=BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+﻿using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using BerghAdmin.General;
+using BerghAdmin.Data.Kentaa;
 
 namespace BerghAdmin.Services.Kentaa;
 
 public interface IKentaaActionService
 {
-    void AddKentaaAction(KM.Action kentaaAction);
-    void AddKentaaActions(IEnumerable<KM.Action> kentaaActions);
-    bool Exist(KentaaAction action);
-    IEnumerable<KentaaAction>? GetAll();
-    KentaaAction? GetById(int id);
-    KentaaAction? GetByKentaaId(int kentaaId);
-    ErrorCodeEnum Save(KentaaAction donatie);
+    void AddKentaaAction(KM.Action action);
+    void AddKentaaActions(IEnumerable<KM.Action> actions);
+    bool Exist(BihzActie bihzActie);
+    IEnumerable<BihzActie>? GetAll();
+    BihzActie? GetById(int id);
+    BihzActie? GetByKentaaId(int kentaaId);
+    ErrorCodeEnum Save(BihzActie bihzActie);
 }

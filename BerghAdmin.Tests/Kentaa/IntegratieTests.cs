@@ -86,13 +86,13 @@ namespace BerghAdmin.Tests.Kentaa
                     PageSize = 25
                 };
                 //var kentaaDonations = await kentaaService.GetKentaaIssuesByQuery<KM.Donations, KM.Donation>(filter);
-                var kentaaDonations = kentaaService.GetKentaaIssuesByQuery<KM.Donations,KM.Donation>(filter);
+                var donations = kentaaService.GetKentaaResourcesByQuery<KM.Donations,KM.Donation>(filter);
                 
                 var donatieService = this.ServiceProvider?.GetRequiredService<IKentaaDonationService>();
                 var fietsTochtCnt = 0;
                 if (donatieService != null)
                 {
-                    await foreach (var kd in kentaaDonations)
+                    await foreach (var kd in donations)
                     {
                         if (kd.ProjectId == (fietsTocht.Project?.ProjectId ?? 0))
                         {
@@ -104,8 +104,8 @@ namespace BerghAdmin.Tests.Kentaa
                             fietsTochtCnt++;
                         }
                     }
-                    var donaties = donatieService.GetAll();
-                    Assert.IsTrue(donaties?.Count() == fietsTochtCnt);
+                    var bihzDonaties = donatieService.GetAll();
+                    Assert.IsTrue(bihzDonaties?.Count() == fietsTochtCnt);
                 }
 
             }
@@ -119,7 +119,7 @@ namespace BerghAdmin.Tests.Kentaa
             var kentaaInterfaceService = this.ServiceProvider?.GetRequiredService<IKentaaInterfaceService>();
             if (kentaaInterfaceService != null)
             {
-                var actions = kentaaInterfaceService.GetKentaaIssuesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
+                var actions = kentaaInterfaceService.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
 
                 var actionService = this.ServiceProvider?.GetRequiredService<IKentaaActionService>();
                 if (actionService != null)
@@ -128,10 +128,9 @@ namespace BerghAdmin.Tests.Kentaa
                     {
                         actionService.AddKentaaAction(action);
                     }
-                    var kentaaActions = actionService.GetAll();
-                    Assert.IsTrue(await actions.CountAsync() == kentaaActions?.Count());
+                    var bihzActies = actionService.GetAll();
+                    Assert.IsTrue(await actions.CountAsync() == bihzActies?.Count());
                 }
-
             }
         }
 
@@ -150,8 +149,8 @@ namespace BerghAdmin.Tests.Kentaa
                     projectService.AddKentaaProject(project);
                 }
 
-                var projects = projectService.GetAll();
-                Assert.IsTrue(kentaaProjects.Count() == projects?.Count());
+                var bihzProjects = projectService.GetAll();
+                Assert.IsTrue(kentaaProjects.Count() == bihzProjects?.Count());
             }
         }
 
@@ -163,7 +162,7 @@ namespace BerghAdmin.Tests.Kentaa
             var kentaaInterfaceService = this.ServiceProvider?.GetRequiredService<IKentaaInterfaceService>();
             if (kentaaInterfaceService != null)
             {
-                var users = kentaaInterfaceService.GetKentaaIssuesByQuery<KM.Users, KM.User>(new KentaaFilter());
+                var users = kentaaInterfaceService.GetKentaaResourcesByQuery<KM.Users, KM.User>(new KentaaFilter());
 
                 var userService = this.ServiceProvider?.GetRequiredService<IKentaaUserService>();
                 if (userService != null)
@@ -175,7 +174,6 @@ namespace BerghAdmin.Tests.Kentaa
                     var kentaaUsers = userService.GetAll();
                     Assert.IsTrue(await users.CountAsync() == kentaaUsers?.Count());
                 }
-
             }
         }
 
@@ -192,7 +190,7 @@ namespace BerghAdmin.Tests.Kentaa
                 return;
             }
 
-            var kentaaUsers = await kentaaInterfaceService.GetKentaaIssuesByQuery<KM.Users, KM.User>(new KentaaFilter()).ToListAsync();
+            var kentaaUsers = await kentaaInterfaceService.GetKentaaResourcesByQuery<KM.Users, KM.User>(new KentaaFilter()).ToListAsync();
             var userService = this.ServiceProvider?.GetRequiredService<IKentaaUserService>();
             if (userService == null)
             {
@@ -202,7 +200,7 @@ namespace BerghAdmin.Tests.Kentaa
             userService.AddKentaaUsers(kentaaUsers);
 
             // step 2: read projects and link to Evenementen
-            var kentaaProjects = kentaaInterfaceService.GetKentaaIssuesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
+            var kentaaProjects = kentaaInterfaceService.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
             var projectService = this.ServiceProvider?.GetRequiredService<IKentaaProjectService>();
             if (projectService == null)
             {
@@ -231,7 +229,7 @@ namespace BerghAdmin.Tests.Kentaa
             }
 
             // step 3: read all actions and link to Personen
-            var kentaaActions = await kentaaInterfaceService.GetKentaaIssuesByQuery<KM.Actions, KM.Action>(new KentaaFilter()).ToListAsync();
+            var kentaaActions = await kentaaInterfaceService.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter()).ToListAsync();
             var actionService = this.ServiceProvider?.GetRequiredService<IKentaaActionService>();
             if (actionService == null)
             {
@@ -254,13 +252,13 @@ namespace BerghAdmin.Tests.Kentaa
                 }
                 if (persoon != null)
                 {
-                    persoon.KentaaAction = action;
+                    persoon.DoneerActie = action;
                     persoonService.SavePersoon(persoon);
                 }
             }
 
-            // step 4: read all donations, create Donatie if needed and link to Personen
-            var kentaaDonations = kentaaInterfaceService.GetKentaaIssuesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
+            // step 4: read all donations, create DonatieBase if needed and link to Personen
+            var kentaaDonations = kentaaInterfaceService.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
             var donationService = this.ServiceProvider?.GetRequiredService<IKentaaDonationService>();
             if (donationService == null)
             {
@@ -319,7 +317,7 @@ namespace BerghAdmin.Tests.Kentaa
                 // for ease of use return an ampty list
                 return new List<KM.Project>();
             }
-            return await kentaaInterfaceService.GetKentaaIssuesByQuery<KM.Projects, KM.Project>(new KentaaFilter()).ToListAsync();
+            return await kentaaInterfaceService.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter()).ToListAsync();
         }
     }
 }

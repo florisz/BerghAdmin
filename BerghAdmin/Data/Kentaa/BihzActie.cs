@@ -1,17 +1,17 @@
-﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+﻿using KM=BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
-namespace BerghAdmin.Data;
+namespace BerghAdmin.Data.Kentaa;
 
-public class KentaaAction
+public class BihzActie
 {
-    public KentaaAction()
+    public BihzActie()
     { }
 
-    public KentaaAction(ApplicationServices.KentaaInterface.KentaaModel.Action action)
+    public BihzActie(KM.Action action)
     {
-        Update(action);
+        Map(action);
     }
-    
+
     public int Id { get; set; }
     public int ActionId { get; set; }
     public int? SiteId { get; set; }
@@ -36,7 +36,7 @@ public class KentaaAction
     public string? Url { get; set; }
     public string? DoneerUrl { get; set; }
 
-    public void Update(ApplicationServices.KentaaInterface.KentaaModel.Action action)
+    public void Map(KM.Action action)
     {
         ActionId = action.Id;
         ProjectId = action.ProjectId;

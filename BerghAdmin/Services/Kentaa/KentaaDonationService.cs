@@ -1,4 +1,5 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 using System.Linq;
@@ -14,55 +15,55 @@ public class KentaaDonationService : IKentaaDonationService
         _dbContext = context;
     }
 
-    public void AddKentaaDonation(Donation kentaaDonation)
+    public void AddKentaaDonation(Donation donation)
     {
-        var donatie = GetByKentaaId(kentaaDonation.Id);
+        var bihzDonatie = GetByKentaaId(donation.Id);
 
-        donatie = MapChanges(donatie, kentaaDonation);
+        bihzDonatie = MapChanges(bihzDonatie, donation);
 
-        Save(donatie);
+        Save(bihzDonatie);
     }
 
-    public void AddKentaaDonations(IEnumerable<Donation> kentaaDonations)
+    public void AddKentaaDonations(IEnumerable<Donation> donations)
     {
-        foreach (var kentaaDonation in kentaaDonations)
+        foreach (var donation in donations)
         {
-            AddKentaaDonation(kentaaDonation);
+            AddKentaaDonation(donation);
         }
     }
 
-    public bool Exist(KentaaDonation donatie)
-        => GetByKentaaId(donatie.DonationId) != null;
+    public bool Exist(BihzDonatie bihzDonatie)
+        => GetByKentaaId(bihzDonatie.DonationId) != null;
 
-    public IEnumerable<KentaaDonation>? GetAll() 
+    public IEnumerable<BihzDonatie>? GetAll() 
         => _dbContext
-            .KentaaDonations;
+            .BihzDonaties;
 
-    public KentaaDonation? GetById(int id)
+    public BihzDonatie? GetById(int id)
        => _dbContext
-            .KentaaDonations?
+            .BihzDonaties?
             .SingleOrDefault(kd => kd.Id == id);
 
-    public KentaaDonation? GetByKentaaId(int kentaaId)
+    public BihzDonatie? GetByKentaaId(int kentaaId)
         => _dbContext
-            .KentaaDonations?
+            .BihzDonaties?
             .SingleOrDefault(kd => kd.DonationId == kentaaId);
 
-    public ErrorCodeEnum Save(KentaaDonation donatie)
+    public ErrorCodeEnum Save(BihzDonatie bihzDonatie)
     {
         try
         {
-            if (donatie.Id == 0)
+            if (bihzDonatie.Id == 0)
             {
                 _dbContext
-                    .KentaaDonations?
-                    .Add(donatie);
+                    .BihzDonaties?
+                    .Add(bihzDonatie);
             }
             else
             {
                 _dbContext
-                    .KentaaDonations?
-                    .Update(donatie);
+                    .BihzDonaties?
+                    .Update(bihzDonatie);
             }
 
             _dbContext.SaveChanges();
@@ -76,17 +77,17 @@ public class KentaaDonationService : IKentaaDonationService
         return ErrorCodeEnum.Ok;
     }
 
-    private KentaaDonation MapChanges(KentaaDonation? donatie, Donation kentaaDonation)
+    private BihzDonatie MapChanges(BihzDonatie? bihzDonatie, Donation donation)
     {
-        if (donatie != null)
+        if (bihzDonatie != null)
         {
-            donatie.Update(kentaaDonation);
+            bihzDonatie.Map(donation);
         }
         else
         {
-            donatie = new KentaaDonation(kentaaDonation);
+            bihzDonatie = new BihzDonatie(donation);
         }
 
-        return donatie;
+        return bihzDonatie;
     }
 }

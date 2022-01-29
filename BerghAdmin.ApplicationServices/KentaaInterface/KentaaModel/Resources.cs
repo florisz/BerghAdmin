@@ -1,10 +1,10 @@
 ﻿namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
-public abstract class Issue
+public abstract class Resource
 {
 }
 
-public abstract class Issues<T> where T : Issue
+public abstract class Resources<T> where T : Resource
 {
     public abstract IEnumerable<T> GetIssues();
     public abstract string Endpoint { get; }

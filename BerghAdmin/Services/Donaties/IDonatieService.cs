@@ -1,13 +1,14 @@
-﻿using BerghAdmin.General;
+﻿using BerghAdmin.Data.Kentaa;
+using BerghAdmin.General;
 
 namespace BerghAdmin.Services.Donaties;
 
 public interface IDonatieService
 {
-    Donatie? GetById(int id);
-    IEnumerable<Donatie> GetAll();
-    ErrorCodeEnum AddFactuur(Donatie donatie, Factuur factuur);
-    ErrorCodeEnum AddKentaaDonatie(KentaaDonation kentaaDonatie, Donateur persoon);
-    ErrorCodeEnum AddKentaaDonatie(KentaaDonation kentaaDonatie);
-    void Save(Donatie donatie);
+    DonatieBase? GetById(int id);
+    IEnumerable<DonatieBase> GetAll();
+    ErrorCodeEnum AddFactuur(DonatieBase donatie, Factuur factuur);
+    ErrorCodeEnum AddKentaaDonatie(BihzDonatie bihzDonatie, Donateur persoon);
+    ErrorCodeEnum AddKentaaDonatie(BihzDonatie bihzDonatie);
+    void Save(DonatieBase donatie);
 }

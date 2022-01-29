@@ -1,7 +1,8 @@
-﻿using KM=BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+﻿using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 using System.Text.Json;
+using BerghAdmin.Data.Kentaa;
 
 namespace BerghAdmin.Services.Kentaa;
 
@@ -16,56 +17,56 @@ public class KentaaActionService : IKentaaActionService
         this.logger = logger;
     }
 
-    public void AddKentaaAction(KM.Action kentaaAction)
+    public void AddKentaaAction(KM.Action action)
     {
-        var action = GetByKentaaId(kentaaAction.Id);
+        var bihzActie = GetByKentaaId(action.Id);
 
-        action = MapChanges(action, kentaaAction);
+        bihzActie = MapChanges(bihzActie, action);
 
-        logger.LogInformation("About to save action {action}", JsonSerializer.Serialize(action));
-        Save(action);
+        logger.LogInformation("About to save bihzActie {action}", JsonSerializer.Serialize(bihzActie));
+        Save(bihzActie);
     }
 
-    public void AddKentaaActions(IEnumerable<KM.Action> kentaaActions)
+    public void AddKentaaActions(IEnumerable<KM.Action> actions)
     {
-        foreach (var kentaaAction in kentaaActions)
+        foreach (var action in actions)
         {
-            AddKentaaAction(kentaaAction);
+            AddKentaaAction(action);
         }
     }
 
-    public bool Exist(KentaaAction action)
-        => GetByKentaaId(action.ActionId) != null;
+    public bool Exist(BihzActie bihzActie)
+        => GetByKentaaId(bihzActie.ActionId) != null;
 
-    public IEnumerable<KentaaAction>? GetAll()
+    public IEnumerable<BihzActie>? GetAll()
         => dbContext
-            .KentaaActions;
+            .BihzActies;
 
-    public KentaaAction? GetById(int id)
+    public BihzActie? GetById(int id)
        => dbContext
-            .KentaaActions?
+            .BihzActies?
             .SingleOrDefault(kd => kd.Id == id);
 
-    public KentaaAction? GetByKentaaId(int kentaaId)
+    public BihzActie? GetByKentaaId(int kentaaId)
         => dbContext
-            .KentaaActions?
+            .BihzActies?
             .SingleOrDefault(ka => ka.ActionId == kentaaId);
 
-    public ErrorCodeEnum Save(KentaaAction action)
+    public ErrorCodeEnum Save(BihzActie bihzActie)
     {
         try
         {
-            if (action.Id == 0)
+            if (bihzActie.Id == 0)
             {
                 dbContext
-                    .KentaaActions?
-                    .Add(action);
+                    .BihzActies?
+                    .Add(bihzActie);
             }
             else
             {
                 dbContext
-                    .KentaaActions?
-                    .Update(action);
+                    .BihzActies?
+                    .Update(bihzActie);
             }
 
             dbContext.SaveChanges();
@@ -79,17 +80,17 @@ public class KentaaActionService : IKentaaActionService
         return ErrorCodeEnum.Ok;
     }
 
-    private static KentaaAction MapChanges(KentaaAction? action, KM.Action kentaaAction)
+    private static BihzActie MapChanges(BihzActie? bihzActie, KM.Action kentaaAction)
     {
-        if (action != null)
+        if (bihzActie != null)
         {
-            action.Update(kentaaAction);
+            bihzActie.Map(kentaaAction);
         }
         else
         {
-            action = new KentaaAction(kentaaAction);
+            bihzActie = new BihzActie(kentaaAction);
         }
 
-        return action;
+        return bihzActie;
     }
 }

@@ -1,4 +1,5 @@
-﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+﻿using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 
@@ -13,55 +14,55 @@ public class KentaaProjectService : IKentaaProjectService
         _dbContext = context;
     }
 
-    public void AddKentaaProject(Project kentaaProject)
+    public void AddKentaaProject(KM.Project project)
     {
-        var project = GetByKentaaId(kentaaProject.Id);
+        var bihzProject = GetByKentaaId(project.Id);
 
-        project = MapChanges(project, kentaaProject);
+        bihzProject = MapChanges(bihzProject, project);
 
-        Save(project);
+        Save(bihzProject);
     }
 
-    public void AddKentaaProjects(IEnumerable<Project> kentaaProjects)
+    public void AddKentaaProjects(IEnumerable<ApplicationServices.KentaaInterface.KentaaModel.Project> projects)
     {
-        foreach (var kentaaProject in kentaaProjects)
+        foreach (var project in projects)
         {
-            AddKentaaProject(kentaaProject);
+            AddKentaaProject(project);
         }
     }
 
-    public bool Exist(KentaaProject project)
-        => GetByKentaaId(project.ProjectId) != null;
+    public bool Exist(BihzProject bihzProject)
+        => GetByKentaaId(bihzProject.ProjectId) != null;
 
-    public IEnumerable<KentaaProject>? GetAll()
+    public IEnumerable<BihzProject>? GetAll()
         => _dbContext
-            .KentaaProjects;
+            .BihzProjects;
 
-    public KentaaProject? GetById(int id)
+    public BihzProject? GetById(int id)
        => _dbContext
-            .KentaaProjects?
+            .BihzProjects?
             .SingleOrDefault(kp => kp.Id == id);
 
-    public KentaaProject? GetByKentaaId(int kentaaId)
+    public BihzProject? GetByKentaaId(int kentaaId)
         => _dbContext
-            .KentaaProjects?
+            .BihzProjects?
             .SingleOrDefault(kp => kp.ProjectId == kentaaId);
 
-    public ErrorCodeEnum Save(KentaaProject project)
+    public ErrorCodeEnum Save(BihzProject bihzProject)
     {
         try
         {
-            if (project.Id == 0)
+            if (bihzProject.Id == 0)
             {
                 _dbContext
-                    .KentaaProjects?
-                    .Add(project);
+                    .BihzProjects?
+                    .Add(bihzProject);
             }
             else
             {
                 _dbContext
-                    .KentaaProjects?
-                    .Update(project);
+                    .BihzProjects?
+                    .Update(bihzProject);
             }
 
             _dbContext.SaveChanges();
@@ -75,17 +76,17 @@ public class KentaaProjectService : IKentaaProjectService
         return ErrorCodeEnum.Ok;
     }
 
-    private static KentaaProject MapChanges(KentaaProject? project, Project kentaaProject)
+    private static BihzProject MapChanges(BihzProject? bihzProject, KM.Project project)
     {
-        if (project != null)
+        if (bihzProject != null)
         {
-            project.Update(kentaaProject);
+            bihzProject.Map(project);
         }
         else
         {
-            project = new KentaaProject(kentaaProject);
+            bihzProject = new BihzProject(project);
         }
 
-        return project;
+        return bihzProject;
     }
 }

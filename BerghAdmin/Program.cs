@@ -42,16 +42,16 @@ public class Program
 
         app.MapPost("/actions",
             [AllowAnonymous]
-        (KM.Action kentaaAction, IKentaaActionService service) => HandleNewAction(kentaaAction, service));
+        (KM.Action action, IKentaaActionService service) => HandleNewAction(action, service));
         app.MapPost("/donations",
             [AllowAnonymous]
-        (KM.Donation kentaaDonation, IKentaaDonationService service) => HandleNewDonatie(kentaaDonation, service));
+        (KM.Donation donation, IKentaaDonationService service) => HandleNewDonatie(donation, service));
         app.MapPost("/projects",
             [AllowAnonymous]
-        (KM.Project kentaaProject, IKentaaProjectService service) => HandleNewProject(kentaaProject, service));
+        (KM.Project project, IKentaaProjectService service) => HandleNewProject(project, service));
         app.MapPost("/users",
             [AllowAnonymous]
-        (KM.User kentaaUser, IKentaaUserService service) => HandleNewUser(kentaaUser, service));
+        (KM.User user, IKentaaUserService service) => HandleNewUser(user, service));
 
         var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
         seedDataService.SeedInitialData();
@@ -161,27 +161,27 @@ public class Program
         });
     }
 
-    static IResult HandleNewAction(KM.Action kentaaAction, IKentaaActionService service)
+    static IResult HandleNewAction(KM.Action action, IKentaaActionService service)
     {
-        service.AddKentaaAction(kentaaAction);
+        service.AddKentaaAction(action);
         return Results.Ok("Ik heb n Action toegevoegd");
     }
 
-    static IResult HandleNewDonatie(KM.Donation kentaaDonation, IKentaaDonationService service)
+    static IResult HandleNewDonatie(KM.Donation donation, IKentaaDonationService service)
     {
-        service.AddKentaaDonation(kentaaDonation);
+        service.AddKentaaDonation(donation);
         return Results.Ok("Ik heb n Donation toegevoegd");
     }
 
-    static IResult HandleNewProject(KM.Project kentaaProject, IKentaaProjectService service)
+    static IResult HandleNewProject(KM.Project project, IKentaaProjectService service)
     {
-        service.AddKentaaProject(kentaaProject);
+        service.AddKentaaProject(project);
         return Results.Ok("Ik heb n Project toegevoegd");
     }
 
-    static IResult HandleNewUser(KM.User kentaaUser, IKentaaUserService service)
+    static IResult HandleNewUser(KM.User user, IKentaaUserService service)
     {
-        service.AddKentaaUser(kentaaUser);
+        service.AddKentaaUser(user);
         return Results.Ok("Ik heb n User toegevoegd");
     }
 }

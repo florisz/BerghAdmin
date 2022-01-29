@@ -5,9 +5,7 @@ namespace BerghAdmin.ApplicationServices.KentaaInterface;
 public interface IKentaaInterfaceService
 {
     Task<Donation> GetDonationById(int donationId);
-    IAsyncEnumerable<T> GetKentaaIssuesByQuery<TList, T>(KentaaFilter filter)
-        where TList : Issues<T>, new()
-        where T : Issue;
-
-    //IAsyncEnumerable<T> GetKentaaIssuesByQuery<T>(KentaaFilter filter) where T : Issue, new();
+    IAsyncEnumerable<T> GetKentaaResourcesByQuery<TList, T>(KentaaFilter filter)
+        where TList : Resources<T>, new()
+        where T : Resource;
 }

@@ -1,6 +1,8 @@
+using BerghAdmin.Data.Kentaa;
+
 namespace BerghAdmin.Data;
 
 public class FietsTocht : Evenement
 {
-    public KentaaProject? Project { get; set; }
+    public BihzProject? Project { get; set; }
 }

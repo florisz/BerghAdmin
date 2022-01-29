@@ -20,7 +20,7 @@ public class FunctionApp
     [FunctionName("ReadDonations")]
     public async Task ReadDonations([TimerTrigger("0/10 * * * * *")] TimerInfo myTimer, ILogger log)
     {
-        var donaties = service.GetKentaaIssuesByQuery<KM.Donations,KM.Donation>(new KentaaFilter());
+        var donaties = service.GetKentaaResourcesByQuery<KM.Donations,KM.Donation>(new KentaaFilter());
         await foreach (var donatie in donaties)
         {
             await berghClient.PostAsJsonAsync("https://localhost:5001/donaties", donatie);

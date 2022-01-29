@@ -475,7 +475,7 @@ namespace BerghAdmin.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Donateur");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.Donatie", b =>
+            modelBuilder.Entity("BerghAdmin.Data.DonatieBase", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1215,7 +1215,7 @@ namespace BerghAdmin.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.Donatie", b =>
+            modelBuilder.Entity("BerghAdmin.Data.DonatieBase", b =>
                 {
                     b.HasOne("BerghAdmin.Data.Donateur", "Donateur")
                         .WithMany()

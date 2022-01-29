@@ -1,6 +1,7 @@
-﻿using KM=BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+﻿using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
+using BerghAdmin.Data.Kentaa;
 
 namespace BerghAdmin.Services.Kentaa;
 
@@ -13,55 +14,55 @@ public class KentaaUserService : IKentaaUserService
         _dbContext = context;
     }
 
-    public void AddKentaaUser(KM.User kentaaUser)
+    public void AddKentaaUser(KM.User user)
     {
-        var user = GetByKentaaId(kentaaUser.Id);
+        var bihzUser = GetByKentaaId(user.Id);
 
-        user = MapChanges(user, kentaaUser);
+        bihzUser = MapChanges(bihzUser, user);
 
-        Save(user);
+        Save(bihzUser);
     }
 
-    public void AddKentaaUsers(IEnumerable<KM.User> kentaaUsers)
+    public void AddKentaaUsers(IEnumerable<KM.User> users)
     {
-        foreach (var kentaaUser in kentaaUsers)
+        foreach (var user in users)
         {
-            AddKentaaUser(kentaaUser);
+            AddKentaaUser(user);
         }
     }
 
-    public bool Exist(KentaaUser user)
-        => GetByKentaaId(user.Id) != null;
+    public bool Exist(BihzUser bihzUser)
+        => GetByKentaaId(bihzUser.Id) != null;
 
-    public IEnumerable<KentaaUser>? GetAll()
+    public IEnumerable<BihzUser>? GetAll()
         => _dbContext
-            .KentaaUsers;
+            .BihzUsers;
 
-    public KentaaUser? GetById(int id)
+    public BihzUser? GetById(int id)
        => _dbContext
-            .KentaaUsers?
+            .BihzUsers?
             .SingleOrDefault(kd => kd.Id == id);
 
-    public KentaaUser? GetByKentaaId(int kentaaId)
+    public BihzUser? GetByKentaaId(int kentaaId)
         => _dbContext
-            .KentaaUsers?
+            .BihzUsers?
             .SingleOrDefault(ka => ka.UserId == kentaaId);
 
-    public ErrorCodeEnum Save(KentaaUser user)
+    public ErrorCodeEnum Save(BihzUser bihzUser)
     {
         try
         {
-            if (user.Id == 0)
+            if (bihzUser.Id == 0)
             {
                 _dbContext
-                    .KentaaUsers?
-                    .Add(user);
+                    .BihzUsers?
+                    .Add(bihzUser);
             }
             else
             {
                 _dbContext
-                    .KentaaUsers?
-                    .Update(user);
+                    .BihzUsers?
+                    .Update(bihzUser);
             }
 
             _dbContext.SaveChanges();
@@ -75,17 +76,17 @@ public class KentaaUserService : IKentaaUserService
         return ErrorCodeEnum.Ok;
     }
 
-    private KentaaUser MapChanges(KentaaUser? user, KM.User kentaaUser)
+    private BihzUser MapChanges(BihzUser? bihzUser, KM.User user)
     {
-        if (user != null)
+        if (bihzUser != null)
         {
-            user.Update(kentaaUser);
+            bihzUser.Map(user);
         }
         else
         {
-            user = new KentaaUser(kentaaUser);
+            bihzUser = new BihzUser(user);
         }
 
-        return user;
+        return bihzUser;
     }
 }

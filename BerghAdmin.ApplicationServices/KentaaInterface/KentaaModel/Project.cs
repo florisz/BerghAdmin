@@ -11,7 +11,7 @@ public class ProjectResponse
 
 }
 
-public class Project:Issue 
+public class Project:Resource 
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }  // Unique identifier for this project.

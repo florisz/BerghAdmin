@@ -10,7 +10,7 @@ public class UserResponse
     public User Data { get; set; }
 }
 
-public class User:Issue 
+public class User:Resource 
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }  // Unique identifier for this user.
