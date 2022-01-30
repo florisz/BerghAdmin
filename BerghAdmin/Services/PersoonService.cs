@@ -25,8 +25,8 @@ public class PersoonService : IPersoonService
     public Persoon? GetByActionId(int actionId)
         => _dbContext
                 .Personen?
-                .SingleOrDefault(p => p.DoneerActie != null &&
-                                      p.DoneerActie.Id == actionId);
+                .SingleOrDefault(p => p.BihzActie != null &&
+                                      p.BihzActie.Id == actionId);
 
     public Persoon? GetById(int id)
         => _dbContext

@@ -1,10 +1,13 @@
+using BerghAdmin.Data.Kentaa;
+
 namespace BerghAdmin.Data;
 
 public abstract class Evenement
 {
     public int Id { get; set; }
-    public string? Naam { get; set; }
+    public string? Titel { get; set; }
     public DateTime GeplandeDatum { get; set; }
+    public BihzProject? BihzProject { get; set; }
     public HashSet<Persoon> Deelnemers { get; set;} = new();
 }
 

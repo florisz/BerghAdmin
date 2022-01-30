@@ -2,12 +2,12 @@
 using BerghAdmin.General;
 using BerghAdmin.Data.Kentaa;
 
-namespace BerghAdmin.Services.Kentaa;
+namespace BerghAdmin.Services.Bihz;
 
-public interface IKentaaProjectService
+public interface IBihzProjectService 
 {
-    void AddKentaaProject(Project project);
-    void AddKentaaProjects(IEnumerable<Project> projects);
+    void AddBihzProject(Project project);
+    void AddBihzProjects(IEnumerable<Project> projects);
     bool Exist(BihzProject bihzProject);
     IEnumerable<BihzProject>? GetAll();
     BihzProject? GetById(int id);

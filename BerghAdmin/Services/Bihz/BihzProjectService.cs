@@ -2,32 +2,40 @@
 using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
+using BerghAdmin.Services.Evenementen;
 
-namespace BerghAdmin.Services.Kentaa;
+namespace BerghAdmin.Services.Bihz;
 
-public class KentaaProjectService : IKentaaProjectService
+public class BihzProjectService : IBihzProjectService
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly IEvenementService _evenementService;
 
-    public KentaaProjectService(ApplicationDbContext context)
+    public BihzProjectService(ApplicationDbContext context, IEvenementService evenementService)
     {
         _dbContext = context;
+        _evenementService = evenementService;
     }
 
-    public void AddKentaaProject(KM.Project project)
+    public void AddBihzProject(KM.Project project)
     {
         var bihzProject = GetByKentaaId(project.Id);
 
         bihzProject = MapChanges(bihzProject, project);
 
+        if (bihzProject.EvenementId == null)
+        {
+            LinkProjectToEvenement(bihzProject);
+        }
+
         Save(bihzProject);
     }
 
-    public void AddKentaaProjects(IEnumerable<ApplicationServices.KentaaInterface.KentaaModel.Project> projects)
+    public void AddBihzProjects(IEnumerable<KM.Project> projects)
     {
         foreach (var project in projects)
         {
-            AddKentaaProject(project);
+            AddBihzProject(project);
         }
     }
 
@@ -89,4 +97,23 @@ public class KentaaProjectService : IKentaaProjectService
 
         return bihzProject;
     }
+
+    private void LinkProjectToEvenement(BihzProject bihzProject)
+    {
+        // link with kentaa user id does not exist yet; try email
+        var evenement = _evenementService.GetByTitel(bihzProject.Titel ?? "no-title");
+
+        if (evenement == null)
+        {
+            // TO BE DONE
+            // report to admin "kentaa project can not be mapped"
+        }
+        if (evenement != null)
+        {
+            evenement.BihzProject = bihzProject;
+            bihzProject.EvenementId = evenement.Id;
+            _evenementService.Save(evenement);
+        }
+    }
+
 }

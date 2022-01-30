@@ -8,7 +8,7 @@ public interface IDonatieService
     DonatieBase? GetById(int id);
     IEnumerable<DonatieBase> GetAll();
     ErrorCodeEnum AddFactuur(DonatieBase donatie, Factuur factuur);
-    ErrorCodeEnum AddKentaaDonatie(BihzDonatie bihzDonatie, Donateur persoon);
-    ErrorCodeEnum AddKentaaDonatie(BihzDonatie bihzDonatie);
+    ErrorCodeEnum AddBihzDonatie(BihzDonatie bihzDonatie, Donateur persoon);
+    ErrorCodeEnum AddBihzDonatie(BihzDonatie bihzDonatie);
     void Save(DonatieBase donatie);
 }

@@ -32,6 +32,7 @@ public class BihzUser
     public string? Telefoon { get; set; }	 // The phone number of the user.OPTIONAL
     public DateTime? GeboorteDatum { get; set; }	 // The birthday (ISO 8601 format) of the user.OPTIONAL
     public string? Geslacht { get; set; }	 // The gender of the user (male, female, neutral).OPTIONAL
+    public int? PersoonId { get; set; }     // id to reference the corresponding Persoon in the BerghAdmin context
 
     public void Map(KM.User user)
     {

@@ -311,7 +311,7 @@ public class SeedDataService : ISeedDataService
         {
             Id = 0,
             GeplandeDatum = new DateTime(2023, 5, 3),
-            Naam = "Hanzetocht 2023"
+            Titel = "Hanzetocht 2023"
         };
         await this._evenementService.Save(fietstocht);
     }

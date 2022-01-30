@@ -32,8 +32,8 @@ public class Persoon : Donateur
     public ICollection<VerzondenMail> ccGeadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<VerzondenMail> bccGeadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<Evenement>? IsDeelnemerVan { get; set; }
-    public BihzActie? DoneerActie { get; set; }
-    public Kentaa.BihzUser? User { get; set; }
+    public BihzActie? BihzActie { get; set; }
+    public BihzUser? BihzUser { get; set; }
     public BihzProject? Project { get; set; }
 
     [NotMapped]

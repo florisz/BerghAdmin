@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 using Syncfusion.Blazor;
-using BerghAdmin.Services.Kentaa;
+using BerghAdmin.Services.Bihz;
 
 using System.Text;
 
@@ -42,16 +42,16 @@ public class Program
 
         app.MapPost("/actions",
             [AllowAnonymous]
-        (KM.Action action, IKentaaActionService service) => HandleNewAction(action, service));
+        (KM.Action action, IBihzActieService service) => HandleNewAction(action, service));
         app.MapPost("/donations",
             [AllowAnonymous]
-        (KM.Donation donation, IKentaaDonationService service) => HandleNewDonatie(donation, service));
+        (KM.Donation donation, IBihzDonatieService service) => HandleNewDonatie(donation, service));
         app.MapPost("/projects",
             [AllowAnonymous]
-        (KM.Project project, IKentaaProjectService service) => HandleNewProject(project, service));
+        (KM.Project project, IBihzProjectService service) => HandleNewProject(project, service));
         app.MapPost("/users",
             [AllowAnonymous]
-        (KM.User user, IKentaaUserService service) => HandleNewUser(user, service));
+        (KM.User user, IBihzUserService service) => HandleNewUser(user, service));
 
         var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
         seedDataService.SeedInitialData();
@@ -118,8 +118,12 @@ public class Program
         builder.Services.AddScoped<ISendMailService, SendMailService>();
         builder.Services.AddScoped<IEvenementService, EvenementService>();
         builder.Services.AddScoped<IDonatieService, DonatieService>();
+        builder.Services.AddScoped<IBihzUserService, BihzUserService>();
+        builder.Services.AddScoped<IBihzActieService, BihzActieService>();
+        builder.Services.AddScoped<IBihzProjectService, BihzProjectService>();
+        builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
         builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
-        builder.Services.AddScoped<IKentaaDonationService, KentaaDonationService>();
+        builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
         builder.Services.AddSyncfusionBlazor();
         builder.Services.AddSignalR(e =>
@@ -161,27 +165,27 @@ public class Program
         });
     }
 
-    static IResult HandleNewAction(KM.Action action, IKentaaActionService service)
+    static IResult HandleNewAction(KM.Action action, IBihzActieService service)
     {
-        service.AddKentaaAction(action);
+        service.AddBihzAction(action);
         return Results.Ok("Ik heb n Action toegevoegd");
     }
 
-    static IResult HandleNewDonatie(KM.Donation donation, IKentaaDonationService service)
+    static IResult HandleNewDonatie(KM.Donation donation, IBihzDonatieService service)
     {
-        service.AddKentaaDonation(donation);
+        service.AddBihzDonatie(donation);
         return Results.Ok("Ik heb n Donation toegevoegd");
     }
 
-    static IResult HandleNewProject(KM.Project project, IKentaaProjectService service)
+    static IResult HandleNewProject(KM.Project project, IBihzProjectService service)
     {
-        service.AddKentaaProject(project);
+        service.AddBihzProject(project);
         return Results.Ok("Ik heb n Project toegevoegd");
     }
 
-    static IResult HandleNewUser(KM.User user, IKentaaUserService service)
+    static IResult HandleNewUser(KM.User user, IBihzUserService service)
     {
-        service.AddKentaaUser(user);
+        service.AddBihzUser(user);
         return Results.Ok("Ik heb n User toegevoegd");
     }
 }

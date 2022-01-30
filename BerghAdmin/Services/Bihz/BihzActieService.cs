@@ -4,34 +4,42 @@ using BerghAdmin.General;
 using System.Text.Json;
 using BerghAdmin.Data.Kentaa;
 
-namespace BerghAdmin.Services.Kentaa;
+namespace BerghAdmin.Services.Bihz;
 
-public class KentaaActionService : IKentaaActionService
+public class BihzActieService : IBihzActieService
 {
     private readonly ApplicationDbContext dbContext;
-    private readonly ILogger<KentaaActionService> logger;
+    private readonly ILogger<BihzActieService> logger;
+    private readonly IPersoonService _persoonService;
 
-    public KentaaActionService(ApplicationDbContext context, ILogger<KentaaActionService> logger)
+    public BihzActieService(ApplicationDbContext context, IPersoonService persoonService, ILogger<BihzActieService> logger)
     {
         this.dbContext = context;
+        this._persoonService = persoonService;
         this.logger = logger;
     }
 
-    public void AddKentaaAction(KM.Action action)
+    public void AddBihzAction(KM.Action action)
     {
         var bihzActie = GetByKentaaId(action.Id);
 
         bihzActie = MapChanges(bihzActie, action);
 
         logger.LogInformation("About to save bihzActie {action}", JsonSerializer.Serialize(bihzActie));
+
+        if (bihzActie.PersoonId == null)
+        {
+            LinkActieToPersoon(bihzActie);
+        }
+
         Save(bihzActie);
     }
 
-    public void AddKentaaActions(IEnumerable<KM.Action> actions)
+    public void AddBihzActions(IEnumerable<KM.Action> actions)
     {
         foreach (var action in actions)
         {
-            AddKentaaAction(action);
+            AddBihzAction(action);
         }
     }
 
@@ -92,5 +100,23 @@ public class KentaaActionService : IKentaaActionService
         }
 
         return bihzActie;
+    }
+
+    private void LinkActieToPersoon(BihzActie bihzActie)
+    {
+        // link with kentaa user id does not exist yet; try email
+        var persoon = _persoonService.GetByEmailAdres(bihzActie.Email ?? "no-email");
+
+        if (persoon == null)
+        {
+            // TO BE DONE
+            // report to admin "kentaa action can not be mapped"
+        }
+        if (persoon != null)
+        {
+            persoon.BihzActie = bihzActie;
+            bihzActie.PersoonId = persoon.Id;
+            _persoonService.SavePersoon(persoon);
+        }
     }
 }

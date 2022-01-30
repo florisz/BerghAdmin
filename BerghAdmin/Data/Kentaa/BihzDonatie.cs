@@ -31,6 +31,7 @@ public class BihzDonatie
     public string? BetaalOmschrijving { get; set; }
     public string? AccountIban { get; set; }
     public string? AccountBic { get; set; }
+    public int? PersoonId { get; set; }     // id to reference the corresponding Persoon in the BerghAdmin context
 
     public void Map(Donation donation)
     {

@@ -3,31 +3,38 @@ using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 using BerghAdmin.Data.Kentaa;
 
-namespace BerghAdmin.Services.Kentaa;
+namespace BerghAdmin.Services.Bihz;
 
-public class KentaaUserService : IKentaaUserService
+public class BihzUserService : IBihzUserService
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly IPersoonService _persoonService;
 
-    public KentaaUserService(ApplicationDbContext context)
+    public BihzUserService(ApplicationDbContext context, IPersoonService persoonService)
     {
         _dbContext = context;
+        _persoonService = persoonService;
     }
 
-    public void AddKentaaUser(KM.User user)
+    public void AddBihzUser(KM.User user)
     {
         var bihzUser = GetByKentaaId(user.Id);
 
         bihzUser = MapChanges(bihzUser, user);
 
+        if (bihzUser.PersoonId == null)
+        {
+            LinkUserToPersoon(bihzUser);
+        }
+
         Save(bihzUser);
     }
 
-    public void AddKentaaUsers(IEnumerable<KM.User> users)
+    public void AddBihzUsers(IEnumerable<KM.User> users)
     {
         foreach (var user in users)
         {
-            AddKentaaUser(user);
+            AddBihzUser(user);
         }
     }
 
@@ -89,4 +96,23 @@ public class KentaaUserService : IKentaaUserService
 
         return bihzUser;
     }
+
+    private void LinkUserToPersoon(BihzUser bihzUser)
+    {
+        // link with email address
+        var persoon = _persoonService.GetByEmailAdres(bihzUser.Email ?? "no-email");
+
+        if (persoon == null)
+        {
+            // TO BE DONE
+            // report to admin "kentaa user can not be mapped"
+        }
+        if (persoon != null)
+        {
+            persoon.BihzUser = bihzUser;
+            bihzUser.PersoonId = persoon.Id;
+            _persoonService.SavePersoon(persoon);
+        }
+    }
+
 }

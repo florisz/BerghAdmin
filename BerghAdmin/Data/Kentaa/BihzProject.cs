@@ -26,6 +26,7 @@ public class BihzProject
     public DateTime EindDatum { get; set; }         // The countdown date (ISO 8601 format) for this project.OPTIONAL
     public string? Url { get; set; }                // The URL to the project.
     public string? DonatieUrl { get; set; }	        // The URL to directly make a donation to the project.
+    public int? EvenementId { get; set; }           // id to reference the corresponding Evenment in the BerghAdmin context
 
     public BihzProject(KM.Project project)
     {

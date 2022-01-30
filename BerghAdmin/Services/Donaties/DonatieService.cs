@@ -23,7 +23,7 @@ public class DonatieService : IDonatieService
         throw new NotImplementedException();
     }
 
-    public ErrorCodeEnum AddKentaaDonatie(BihzDonatie bihzDonatie, Donateur? persoon)
+    public ErrorCodeEnum AddBihzDonatie(BihzDonatie bihzDonatie, Donateur? persoon)
     {
         if (bihzDonatie.BetaalStatus != PaymentStatusEnum.Paid)
         {
@@ -37,13 +37,14 @@ public class DonatieService : IDonatieService
             KentaaDonatie = bihzDonatie
         };
 
+        Save(donatie);
 
         return ErrorCodeEnum.Ok;
     }
 
-    public ErrorCodeEnum AddKentaaDonatie(BihzDonatie bihzDonatie)
+    public ErrorCodeEnum AddBihzDonatie(BihzDonatie bihzDonatie)
     {
-        return AddKentaaDonatie(bihzDonatie, null);
+        return AddBihzDonatie(bihzDonatie, null);
     }
 
     public IEnumerable<DonatieBase> GetAll()

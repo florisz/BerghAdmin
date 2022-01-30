@@ -24,7 +24,7 @@ public class BihzActie
     public string? Voornaam { get; set; }
     public string? Tussenvoegsels { get; set; }
     public string? Achternaam { get; set; }
-    public string? EMail { get; set; }
+    public string? Email { get; set; }
     public string? Titel { get; set; }
     public string? Omschrijving { get; set; }
     public decimal DoelBedrag { get; set; }
@@ -35,6 +35,7 @@ public class BihzActie
     public DateTime EindDatum { get; set; }
     public string? Url { get; set; }
     public string? DoneerUrl { get; set; }
+    public int? PersoonId { get; set; }     // id to reference the corresponding Persoon in the BerghAdmin context
 
     public void Map(KM.Action action)
     {
@@ -43,7 +44,7 @@ public class BihzActie
         Slug = action.Slug;
         SiteId = action.SiteId;
         UserId = action.Owner.Id;
-        EMail = action.Owner.EMail;
+        Email = action.Owner.EMail;
         CreatieDatum = action.CreatedAt;
         WijzigDatum = action.UpdatedAt;
         ExterneReferentie = action.ExternalReference;

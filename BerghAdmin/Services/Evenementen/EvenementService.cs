@@ -20,17 +20,17 @@ public class EvenementService : IEvenementService
             .Evenementen?
             .Find(id);
 
-    public Evenement? GetByName(string? name) 
+    public Evenement? GetByTitel(string? titel) 
         => _dbContext
             .Evenementen?
-            .FirstOrDefault(e => e.Naam == name);
+            .FirstOrDefault(e => e.Titel == titel);
 
     public Evenement? GetByProjectId(int projectId)
     => _dbContext
         .Evenementen?
         .OfType<FietsTocht>()
-        .Where(ev => ev.Project != null)
-        .FirstOrDefault(e => e.Project.Id == projectId);
+        .Where(ev => ev.BihzProject != null)
+        .FirstOrDefault(e => e.BihzProject.Id == projectId);
 
 
     public async Task<ErrorCodeEnum> Save(Evenement evenement)
@@ -42,7 +42,7 @@ public class EvenementService : IEvenementService
 
         if (evenement.Id == 0)
         {
-            if (GetByName(evenement.Naam) != null)
+            if (GetByTitel(evenement.Titel) != null)
             {
                 return ErrorCodeEnum.Conflict;
             }
