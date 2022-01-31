@@ -1,5 +1,7 @@
 using BerghAdmin.Authorization;
+using BerghAdmin.Data.Identity;
 using BerghAdmin.DbContexts;
+
 using Microsoft.AspNetCore.Identity;
 
 using System.Security.Claims;

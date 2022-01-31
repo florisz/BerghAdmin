@@ -1,13 +1,12 @@
-﻿using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+﻿using BerghAdmin.Data.Kentaa;
 using BerghAdmin.General;
-using BerghAdmin.Data.Kentaa;
 
 namespace BerghAdmin.Services.Bihz;
 
 public interface IBihzActieService
 {
-    void AddBihzAction(KM.Action action);
-    void AddBihzActions(IEnumerable<KM.Action> actions);
+    void Add(BihzActie action);
+    void Add(IEnumerable<BihzActie> actions);
     bool Exist(BihzActie bihzActie);
     IEnumerable<BihzActie>? GetAll();
     BihzActie? GetById(int id);

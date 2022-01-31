@@ -17,6 +17,8 @@ using BerghAdmin.Services.Bihz;
 using System.Text;
 
 using BD = BerghAdmin.Data;
+using BerghAdmin.Data.Identity;
+using BerghAdmin.Data.Kentaa;
 
 namespace BerghAdmin;
 
@@ -42,16 +44,16 @@ public class Program
 
         app.MapPost("/actions",
             [AllowAnonymous]
-        (KM.Action action, IBihzActieService service) => HandleNewAction(action, service));
+        (BihzActie action, IBihzActieService service) => HandleNewAction(action, service));
         app.MapPost("/donations",
             [AllowAnonymous]
-        (KM.Donation donation, IBihzDonatieService service) => HandleNewDonatie(donation, service));
+        (BihzDonatie donation, IBihzDonatieService service) => HandleNewDonatie(donation, service));
         app.MapPost("/projects",
             [AllowAnonymous]
-        (KM.Project project, IBihzProjectService service) => HandleNewProject(project, service));
+        (BihzProject project, IBihzProjectService service) => HandleNewProject(project, service));
         app.MapPost("/users",
             [AllowAnonymous]
-        (KM.User user, IBihzUserService service) => HandleNewUser(user, service));
+        (BihzUser user, IBihzUserService service) => HandleNewUser(user, service));
 
         var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
         seedDataService.SeedInitialData();
@@ -74,7 +76,7 @@ public class Program
     static void RegisterAuthorization(IServiceCollection services)
     {
         services
-            .AddDefaultIdentity<BD.User>(options =>
+            .AddDefaultIdentity<User>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
                 options.Password.RequiredLength = 6;
@@ -83,8 +85,8 @@ public class Program
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
             })
-            .AddUserManager<UserManager<BD.User>>()
-            .AddSignInManager<SignInManager<BD.User>>()
+            .AddUserManager<UserManager<User>>()
+            .AddSignInManager<SignInManager<User>>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
         services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
@@ -165,25 +167,25 @@ public class Program
         });
     }
 
-    static IResult HandleNewAction(KM.Action action, IBihzActieService service)
+    static IResult HandleNewAction(BihzActie action, IBihzActieService service)
     {
-        service.AddBihzAction(action);
+        service.Add(action);
         return Results.Ok("Ik heb n Action toegevoegd");
     }
 
-    static IResult HandleNewDonatie(KM.Donation donation, IBihzDonatieService service)
+    static IResult HandleNewDonatie(BihzDonatie donation, IBihzDonatieService service)
     {
         service.AddBihzDonatie(donation);
         return Results.Ok("Ik heb n Donation toegevoegd");
     }
 
-    static IResult HandleNewProject(KM.Project project, IBihzProjectService service)
+    static IResult HandleNewProject(BihzProject project, IBihzProjectService service)
     {
         service.AddBihzProject(project);
         return Results.Ok("Ik heb n Project toegevoegd");
     }
 
-    static IResult HandleNewUser(KM.User user, IBihzUserService service)
+    static IResult HandleNewUser(BihzUser user, IBihzUserService service)
     {
         service.AddBihzUser(user);
         return Results.Ok("Ik heb n User toegevoegd");

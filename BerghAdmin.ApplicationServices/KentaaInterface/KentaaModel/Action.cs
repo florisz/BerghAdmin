@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using BerghAdmin.Data.Kentaa;
+
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
@@ -9,6 +11,46 @@ public class ActionResponse
 {
     [JsonPropertyName("Action")]
     public Action Data { get; set; }
+
+    public BihzActie Map()
+    {
+        ActionId = @this.Id;
+        ProjectId = @this.ProjectId;
+        Slug = @this.Slug;
+        SiteId = @this.SiteId;
+        UserId = @this.Owner.Id;
+        Email = @this.Owner.EMail;
+        CreatieDatum = @this.CreatedAt;
+        WijzigDatum = @this.UpdatedAt;
+        ExterneReferentie = @this.ExternalReference;
+        Voornaam = @this.FirstName;
+        Tussenvoegsels = @this.Infix;
+        Achternaam = @this.LastName;
+        Titel = @this.Title;
+        Omschrijving = @this.Description;
+        DoelBedrag = @this.TargetAmount;
+        TotaalBedrag = @this.TotalAmount;
+        AantalDonaties = @this.TotalDonations;
+        DoelBedragBereikt = @this.TargetAmountAchieved;
+        Beeindigd = @this.Ended;
+        EindDatum = @this.EndDate;
+        Url = @this.Url;
+        DoneerUrl = @this.DonateUrl;
+    }
+
+    //private static BihzActie MapChanges(BihzActie? bihzActie, BihzActie kentaaAction)
+    //{
+    //    if (bihzActie != null)
+    //    {
+    //        bihzActie.Map(kentaaAction);
+    //    }
+    //    else
+    //    {
+    //        bihzActie = new BihzActie(kentaaAction);
+    //    }
+
+    //    return bihzActie;
+    //}
 
 }
 

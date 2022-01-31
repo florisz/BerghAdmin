@@ -1,8 +1,8 @@
-﻿using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+﻿using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
+
 using System.Text.Json;
-using BerghAdmin.Data.Kentaa;
 
 namespace BerghAdmin.Services.Bihz;
 
@@ -19,11 +19,11 @@ public class BihzActieService : IBihzActieService
         this.logger = logger;
     }
 
-    public void AddBihzAction(KM.Action action)
+    public void Add(BihzActie action)
     {
         var bihzActie = GetByKentaaId(action.Id);
 
-        bihzActie = MapChanges(bihzActie, action);
+        //bihzActie = MapChanges(bihzActie, action);
 
         logger.LogInformation("About to save bihzActie {action}", JsonSerializer.Serialize(bihzActie));
 
@@ -35,11 +35,11 @@ public class BihzActieService : IBihzActieService
         Save(bihzActie);
     }
 
-    public void AddBihzActions(IEnumerable<KM.Action> actions)
+    public void Add(IEnumerable<BihzActie> actions)
     {
         foreach (var action in actions)
         {
-            AddBihzAction(action);
+            Add(action);
         }
     }
 
@@ -88,19 +88,6 @@ public class BihzActieService : IBihzActieService
         return ErrorCodeEnum.Ok;
     }
 
-    private static BihzActie MapChanges(BihzActie? bihzActie, KM.Action kentaaAction)
-    {
-        if (bihzActie != null)
-        {
-            bihzActie.Map(kentaaAction);
-        }
-        else
-        {
-            bihzActie = new BihzActie(kentaaAction);
-        }
-
-        return bihzActie;
-    }
 
     private void LinkActieToPersoon(BihzActie bihzActie)
     {

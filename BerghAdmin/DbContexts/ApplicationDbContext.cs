@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using BerghAdmin.Data.Kentaa;
+using BerghAdmin.Data.Identity;
 
 namespace BerghAdmin.DbContexts;
 
-public class ApplicationDbContext : IdentityUserContext<Data.User, int>
+public class ApplicationDbContext : IdentityUserContext<User, int>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
