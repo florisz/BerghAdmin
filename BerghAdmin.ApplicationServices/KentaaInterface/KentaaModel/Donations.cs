@@ -25,7 +25,7 @@ public class Donations : Resources<Donation>
     [JsonPropertyName("donations")]
     public Donation[] DonationArray { get; set; }
 
-    public override IEnumerable<Donation> GetIssues()
+    public override IEnumerable<Donation> GetResources()
     {
         return DonationArray;
     }

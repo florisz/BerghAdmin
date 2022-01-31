@@ -7,10 +7,12 @@ namespace BerghAdmin.Services.Donaties;
 public class DonatieService : IDonatieService
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly ILogger<DonatieService> _logger;
 
-    public DonatieService(ApplicationDbContext context)
+    public DonatieService(ApplicationDbContext context, ILogger<DonatieService> logger)
     {
         _dbContext = context;
+        _logger = logger;
     }
 
     public ErrorCodeEnum AddDonateur(DonatieBase donatie, Donateur persoon)
@@ -23,8 +25,11 @@ public class DonatieService : IDonatieService
         throw new NotImplementedException();
     }
 
-    public ErrorCodeEnum AddBihzDonatie(BihzDonatie bihzDonatie, Donateur? persoon)
+    public ErrorCodeEnum ProcessBihzDonatie(BihzDonatie bihzDonatie, Donateur? persoon)
     {
+        _logger.LogDebug("entering ProcessBihzDonatie");
+
+        _logger.LogDebug($"betaalstatus={bihzDonatie.BetaalStatus}");
         if (bihzDonatie.BetaalStatus != PaymentStatusEnum.Paid)
         {
             return ErrorCodeEnum.Forbidden;
@@ -42,9 +47,9 @@ public class DonatieService : IDonatieService
         return ErrorCodeEnum.Ok;
     }
 
-    public ErrorCodeEnum AddBihzDonatie(BihzDonatie bihzDonatie)
+    public ErrorCodeEnum ProcessBihzDonatie(BihzDonatie bihzDonatie)
     {
-        return AddBihzDonatie(bihzDonatie, null);
+        return ProcessBihzDonatie(bihzDonatie, null);
     }
 
     public IEnumerable<DonatieBase> GetAll()
@@ -59,6 +64,8 @@ public class DonatieService : IDonatieService
 
     public void Save(DonatieBase donatie)
     {
+        _logger.LogDebug("entering Save");
+
         if (donatie.Id == 0)
         {
             _dbContext

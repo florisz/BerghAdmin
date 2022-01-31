@@ -217,7 +217,7 @@ namespace BerghAdmin.Tests.Kentaa
                 if (donation.ActionId == 0)
                 {
                     // niet gekoppeld aan een evenement
-                    donatieService.AddBihzDonatie(donation);
+                    donatieService.ProcessBihzDonatie(donation);
                     continue;
                 }
 
@@ -227,7 +227,7 @@ namespace BerghAdmin.Tests.Kentaa
                     var donaties = persoon.Donaties;
                     if (donaties?.FirstOrDefault(d => d.KentaaDonatie?.DonationId == donation.Id) == null)
                     {
-                        donatieService.AddBihzDonatie(donation, persoon);
+                        donatieService.ProcessBihzDonatie(donation, persoon);
                     }
                 }
             }

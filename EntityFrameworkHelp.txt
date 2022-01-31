@@ -6,36 +6,30 @@ dotnet ef database update
 
 
 use BIHZ2021
-use BIHZ2021
 DROP TABLE __EFMigrationsHistory
 DROP TABLE AspNetUserClaims
 DROP TABLE AspNetUserLogins
 DROP TABLE AspNetUserTokens
-DROP TABLE AspNetUsers
+DROP TABLE Betalingen
+DROP TABLE BihzActies
+DROP TABLE BihzUsers
+DROP TABLE Donaties
+DROP TABLE EvenementPersoon
+DROP TABLE FietsTochten
+DROP TABLE GolfDagen
 DROP TABLE MailGeadresseerden
 DROP TABLE MailccGeadresseerden
 DROP TABLE MailbccGeadresseerden
-DROP TABLE VerzondenMails
-DROP TABLE Betalingen
 DROP TABLE PersoonRol
-DROP TABLE EvenementPersoon
-DROP TABLE Donaties
-DROP TABLE Donateur
+DROP TABLE AspNetUsers
+DROP TABLE BihzDonaties
 DROP TABLE Facturen
-DROP TABLE Documenten
-DROP TABLE FietsTochten
-DROP TABLE GolfDagen
-DROP TABLE Evenementen
+DROP TABLE VerzondenMails
+DROP TABLE Donateur
 DROP TABLE Rollen
-DROP TABLE Action
-DROP TABLE Donation
-DROP TABLE KentaaActions
-DROP TABLE KentaaDonaties
-DROP TABLE KentaaProjects
-DROP TABLE KentaaUsers
-DROP TABLE Owner
-DROP TABLE Gebruikers
-
+DROP TABLE Documenten
+DROP TABLE BihzProjects
+DROP TABLE Evenementen
 
 /* clean to seed again */
 DELETE FROM Evenementen 

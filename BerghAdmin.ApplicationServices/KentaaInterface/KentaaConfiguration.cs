@@ -3,6 +3,7 @@
 
 public class KentaaConfiguration
 {
+    public const string Kentaa = "KentaaConfiguration";
     public string ApiKey { get; set; }
     public string KentaaHost { get; set; }
     public string KentaaBasePath { get; set; }

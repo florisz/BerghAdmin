@@ -13,21 +13,26 @@ public class BihzDonatieService : IBihzDonatieService
     private readonly IPersoonService _persoonService;
     private readonly IBihzActieService _bihzActieService;
     private readonly IDonatieService _donatieService;
+    private readonly ILogger<BihzDonatieService> _logger;
 
     public BihzDonatieService(ApplicationDbContext context, 
                                 IPersoonService persoonService, 
                                 IDonatieService donatieService,
-                                IBihzActieService bihzActieService)
+                                IBihzActieService bihzActieService,
+                                ILogger<BihzDonatieService> logger)
     {
         _dbContext = context;
         _persoonService = persoonService;
         _donatieService = donatieService;
         _bihzActieService = bihzActieService;
+        _logger = logger;
     }
 
 
     public void AddBihzDonatie(Donation donation)
     {
+        _logger.LogDebug("entering AddBihzDonatie");
+
         var bihzDonatie = GetByKentaaId(donation.Id);
 
         bihzDonatie = MapChanges(bihzDonatie, donation);
@@ -109,29 +114,31 @@ public class BihzDonatieService : IBihzDonatieService
 
     private void LinkDonatieToPersoon(BihzDonatie bihzDonatie)
     {
+        _logger.LogDebug("entering LinkDonatieToPersoon");
+
         // link via action
         var bihzAction = _bihzActieService.GetById(bihzDonatie.ActionId);
         if (bihzAction == null || bihzAction.PersoonId == null)
         {
+            _logger.LogError("Donatie can not be linked to persoon");
             // TO BE DONE
             // report admin that donatie can not be linked
             return;
         }
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
         var persoon = _persoonService.GetById((int)bihzAction.PersoonId);
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
         if (persoon == null)
         {
+            _logger.LogError($"Donatie can not be linked, persoon with id {bihzAction.PersoonId} not found");
             // TO BE DONE
             // report to admin "kentaa donation can not be mapped"
             return;
         }
+
         if (persoon != null)
         {
             bihzDonatie.PersoonId = persoon.Id;
-            _persoonService.SavePersoon(persoon);
-            _donatieService.AddBihzDonatie(bihzDonatie, persoon);
+            _donatieService.ProcessBihzDonatie(bihzDonatie, persoon);
         }
     }
 
