@@ -24,7 +24,7 @@ public class Projects : Resources<Project>
     [JsonPropertyName("projects")]
     public Project[] ProjectArray { get; set; }
 
-    public override IEnumerable<Project> GetIssues()
+    public override IEnumerable<Project> GetResources()
     {
         return ProjectArray;
     }

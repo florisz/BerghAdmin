@@ -24,7 +24,7 @@ public class Actions : Resources<Action>
     [JsonPropertyName("actions")]
     public Action[] ActionArray { get; set; }
 
-    public override IEnumerable<Action> GetIssues()
+    public override IEnumerable<Action> GetResources()
     {
         return ActionArray;
     }

@@ -110,25 +110,23 @@ public class BihzDonatie
 
 public enum CurrencyCodeEnum
 {
-    Euro,               // EUR
-    DeenseKroon,        // DKK
-    BritsePond,         // GBP
-    NoorseKroon,        // NOK
-    ZweedseKroon,       // SEK
-    AmerikaanseDollar,  // USD
-    Unknown
+    Euro = 1,               // EUR
+    DeenseKroon = 2,        // DKK
+    BritsePond = 3,         // GBP
+    NoorseKroon = 4,        // NOK
+    ZweedseKroon = 5,       // SEK
+    AmerikaanseDollar = 6,  // USD
+    Unknown = 7
 
 }
 
 public enum PaymentStatusEnum
 {
-    Pledged,
-    Refunded,
-    Chargedback,
-    Canceled,
-    Paid,
-    Started,
-    Unknown
+    Pledged = 1,
+    Refunded = 2,
+    Chargedback = 3,
+    Canceled = 4,
+    Paid = 5,
+    Started = 6,
+    Unknown = 7
 }
-
-

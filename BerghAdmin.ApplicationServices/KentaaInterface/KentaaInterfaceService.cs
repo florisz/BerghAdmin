@@ -20,6 +20,7 @@ public class KentaaInterfaceService : IKentaaInterfaceService
     {
         var url = _session.Url($"donations/{donationId}");
         var donation = await GetKentaaResponse<DonationResponse>(url);
+
         return donation.Data;
     }
 
@@ -29,18 +30,18 @@ public class KentaaInterfaceService : IKentaaInterfaceService
     {
         var endpoint = new TList().Endpoint;
         var url = _session.Url(endpoint, filter);
-        var issues = (await GetKentaaResponse<TList>(url)).GetIssues();
+        var resources = (await GetKentaaResponse<TList>(url)).GetResources();
 
-        while (issues.Any())
+        while (resources.Any())
         {
-            foreach (var issue in issues)
+            foreach (var resource in resources)
             {
-                yield return issue;
+                yield return resource;
             }
 
             filter = filter.NextPage();
             url = _session.Url(endpoint, filter);
-            issues = (await GetKentaaResponse<TList>(url)).GetIssues();
+            resources = (await GetKentaaResponse<TList>(url)).GetResources();
         }
     }
 
@@ -52,20 +53,24 @@ public class KentaaInterfaceService : IKentaaInterfaceService
             AllowTrailingCommas = true,
             NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
         };
-
-        var response = await _httpClient.GetAsync(url);
-        if (response.IsSuccessStatusCode)
+        try
         {
-            var json = await response.Content.ReadAsStringAsync();
-            var o = JsonSerializer.Deserialize<T>(json, options);
-            if (o == null)
-                throw new ApplicationException($"Could not deserialize JSON '{o}' into kentaa issue list");
+            var response = await _httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var o = JsonSerializer.Deserialize<T>(json, options);
+                if (o == null)
+                    throw new ApplicationException($"Could not deserialize JSON '{o}' into kentaa resource list");
 
-            return o;
+                return o;
+            }
         }
-    
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
         throw new ApplicationException($"Could not get {typeof(T).Name} donation from Kentaa; {url}");
     }
-
 
 }

@@ -24,7 +24,7 @@ public class Users : Resources<User>
     [JsonPropertyName("users")]
     public User[] UserArray { get; set; }
 
-    public override IEnumerable<User> GetIssues()
+    public override IEnumerable<User> GetResources()
     {
         return UserArray;
     }
