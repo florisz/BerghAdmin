@@ -131,15 +131,15 @@ namespace BerghAdmin.Tests.Kentaa
         {
             await InsertInitialData();
 
-            var kentaaProjects = await GetProjectsFromKentaaAsync();
+            var kentaaProjects = kentaaService!.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
 
-            foreach (var project in kentaaProjects)
+            await foreach (var project in kentaaProjects)
             {
                 bihzProjectService!.Add(project.Map());
             }
 
             var projects = bihzProjectService!.GetAll();
-            Assert.IsTrue(kentaaProjects.Count() == projects?.Count());
+            Assert.AreEqual(await kentaaProjects.CountAsync(), projects?.Count());
         }
 
         [Test]
@@ -245,17 +245,6 @@ namespace BerghAdmin.Tests.Kentaa
             }
 
             await seedService.SeedInitialData();
-        }
-
-        private async Task<IEnumerable<KM.Project>> GetProjectsFromKentaaAsync()
-        {
-            var kentaaInterfaceService = this.ServiceProvider?.GetRequiredService<IKentaaInterfaceService>();
-            if (kentaaInterfaceService == null)
-            {
-                // for ease of use return an ampty list
-                return new List<KM.Project>();
-            }
-            return await kentaaInterfaceService.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter()).ToListAsync();
         }
     }
 }

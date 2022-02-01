@@ -18,18 +18,18 @@ public class BihzProjectService : IBihzProjectService
         _evenementService = evenementService;
     }
 
-    public void Add(BihzProject project)
+    public void Add(BihzProject newProject)
     {
-        var bihzProject = GetByKentaaId(project.Id);
+        var currentProject = GetByKentaaId(newProject.Id);
 
-        //bihzProject = MapChanges(bihzProject, project);
+        currentProject = MapChanges(currentProject, newProject);
 
-        if (bihzProject.EvenementId == null)
+        if (currentProject.EvenementId == null)
         {
-            LinkProjectToEvenement(bihzProject);
+            LinkProjectToEvenement(currentProject);
         }
 
-        Save(bihzProject);
+        Save(currentProject);
     }
 
     public void Add(IEnumerable<BihzProject> projects)
@@ -115,6 +115,14 @@ public class BihzProjectService : IBihzProjectService
             bihzProject.EvenementId = evenement.Id;
             _evenementService.Save(evenement);
         }
+    }
+
+    private static BihzProject MapChanges(BihzProject? currentProject, BihzProject newProject)
+    {
+        if (currentProject == null)
+            return new BihzProject(newProject);
+
+        return currentProject.UpdateFrom(newProject);
     }
 
 }

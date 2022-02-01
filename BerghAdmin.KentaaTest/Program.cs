@@ -1,8 +1,7 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 
 namespace BerghAdmin.KentaaTest;
 
@@ -20,7 +19,7 @@ public class Program
         var serviceProvider = services.BuildServiceProvider();
         var configuration = GetConfiguration();
 
-        var test = new KentaaTest(configuration, serviceProvider);
+        var test = new KentaaTest(serviceProvider);
 
         await test.ReadKentaaAndSendToBerghdmin();
     }

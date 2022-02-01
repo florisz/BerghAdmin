@@ -22,7 +22,7 @@ public enum TemplateTypeEnum
 
 public class Document
 {
-    private List<string>? _mergeFields = null;
+    private readonly List<string>? _mergeFields = null;
 
     public int Id { get; set; }
     public string Name { get; set; }

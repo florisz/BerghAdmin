@@ -22,7 +22,7 @@ public class Donation : Resource
     [JsonPropertyName("site_id")]
     public int SiteId { get; set; }             // reference to Bergh in het Zadel
 
-    [JsonPropertyName("project_id")]            
+    [JsonPropertyName("project_id")]
     public int ProjectId { get; set; } = 0;     // reference to Fietstocht
 
     [JsonPropertyName("action_id")]
@@ -128,7 +128,56 @@ public class Donation : Resource
 
     public BihzDonatie Map()
     {
-        throw new NotImplementedException();
+        return new BihzDonatie
+        {
+            DonationId = this.Id,
+            ActionId = this.ActionId,
+            ProjectId = this.ProjectId,
+            CreatieDatum = this.CreatedAt,
+            WijzigDatum = this.UpdatedAt,
+            DonatieBedrag = this.Amount,
+            TransactionKosten = this.TransactionCost,
+            RegistratieFee = this.RegistrationFee,
+            RegistratieFeeBedrag = this.RegistrationFeeAmount,
+            TotaalBedrag = this.TotalAmount,
+            NettoBedrag = this.ReceivableAmount,
+            Currency = GetCurrency(this.Currency),
+            BetaalStatus = GetBetaalStatus(this.PaymentStatus),
+            BetaalStatusOp = this.PaymentStatusAt,
+            BetaalTransactieId = this.PaymentTransactionId,
+            BetaalId = this.PaymentId,
+            BetaalOmschrijving = this.PaymentDescription,
+            AccountIban = this.AccountIban,
+            AccountBic = this.AccountBic,
+        };
     }
+    private static CurrencyCodeEnum GetCurrency(string specifier)
+    {
+        return specifier switch
+        {
+            "EUR" => CurrencyCodeEnum.Euro,
+            "DKK" => CurrencyCodeEnum.DeenseKroon,
+            "GBP" => CurrencyCodeEnum.BritsePond,
+            "NOK" => CurrencyCodeEnum.NoorseKroon,
+            "SEK" => CurrencyCodeEnum.ZweedseKroon,
+            "USD" => CurrencyCodeEnum.AmerikaanseDollar,
+            _ => CurrencyCodeEnum.Unknown,
+        };
+    }
+
+    private static PaymentStatusEnum GetBetaalStatus(string paymentStatus)
+    {
+        return paymentStatus.ToLower() switch
+        {
+            "canceled" => PaymentStatusEnum.Canceled,
+            "chargedback" => PaymentStatusEnum.Chargedback,
+            "paid" => PaymentStatusEnum.Paid,
+            "pledged" => PaymentStatusEnum.Pledged,
+            "refunded" => PaymentStatusEnum.Refunded,
+            "started" => PaymentStatusEnum.Started,
+            _ => PaymentStatusEnum.Unknown,
+        };
+    }
+
 }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

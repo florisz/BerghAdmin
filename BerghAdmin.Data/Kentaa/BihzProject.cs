@@ -5,6 +5,11 @@ public class BihzProject
     public BihzProject()
     { }
 
+    public BihzProject(BihzProject newProject)
+    {
+        this.UpdateFrom(newProject);
+    }
+
     public int Id { get; set; }                     // Unique internal id
     public string? Slug { get; set; }               // Unique identifier for this project, used to create a nice project URL.
     public int ProjectId { get; set; }              // Unique identifier for the site associated with the project.
@@ -26,30 +31,29 @@ public class BihzProject
     public string? DonatieUrl { get; set; }	        // The URL to directly make a donation to the project.
     public int? EvenementId { get; set; }           // id to reference the corresponding Evenment in the BerghAdmin context
 
-    public BihzProject(BihzProject project)
+    public BihzProject UpdateFrom(BihzProject p)
     {
-        Map(project);
-    }
-
-    public void Map(BihzProject project)
-    {
-        ProjectId = project.Id;
-        SiteId = project.SiteId;
-        Slug = project.Slug;
-        //CreatieDatum = project.CreatedAt;
-        //WijzigDatum = project.UpdatedAt;
-        //ExterneReferentie = project.ExternalReference;
-        //Titel = project.Title;
-        //Omschrijving = project.Description;
-        //DoelBedrag = project.TargetAmount;
-        //TotaalBedrag = project.TotalAmount;
-        //AantalDonaties = project.TotalDonations;
-        //DoelBedragBereikt = project.TargetAmountAchieved;
-        //Zichtbaar = project.Visible;
-        //Gesloten = project.Closed;
-        //Beeindigd = project.Ended;
-        //EindDatum = project.EndDate;
-        Url = project.Url;
-        //DonatieUrl = project.DonateUrl;
+        return new BihzProject
+        {
+            Slug = p.Slug,
+            ProjectId = p.ProjectId,
+            SiteId = p.SiteId,
+            CreatieDatum = p.CreatieDatum,
+            WijzigDatum = p.WijzigDatum,
+            ExterneReferentie = p.ExterneReferentie,
+            Titel = p.Titel,
+            Omschrijving = p.Omschrijving,
+            DoelBedrag = p.DoelBedrag,
+            TotaalBedrag = p.TotaalBedrag,
+            AantalDonaties = p.AantalDonaties,
+            DoelBedragBereikt = p.DoelBedragBereikt,
+            Zichtbaar = p.Zichtbaar,
+            Gesloten = p.Gesloten,
+            Beeindigd = p.Beeindigd,
+            EindDatum = p.EindDatum,
+            Url = p.Url,
+            DonatieUrl = p.DonatieUrl,
+            EvenementId = p.EvenementId,
+        };
     }
 }

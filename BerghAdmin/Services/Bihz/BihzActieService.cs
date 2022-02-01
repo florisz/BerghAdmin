@@ -19,20 +19,28 @@ public class BihzActieService : IBihzActieService
         this.logger = logger;
     }
 
-    public void Add(BihzActie action)
+    public void Add(BihzActie actie)
     {
-        var bihzActie = GetByKentaaId(action.Id);
+        var currentActie = GetByKentaaId(actie.Id);
 
-        //bihzActie = MapChanges(bihzActie, action);
+        currentActie = MapChanges(currentActie, actie);
 
-        logger.LogInformation("About to save bihzActie {action}", JsonSerializer.Serialize(bihzActie));
+        logger.LogInformation("About to save bihzActie {action}", JsonSerializer.Serialize(currentActie));
 
-        if (bihzActie.PersoonId == null)
+        if (currentActie.PersoonId == null)
         {
-            LinkActieToPersoon(bihzActie);
+            LinkActieToPersoon(currentActie);
         }
 
-        Save(bihzActie);
+        Save(currentActie);
+    }
+
+    private static BihzActie MapChanges(BihzActie? currentActie, BihzActie newActie)
+    {
+        if (currentActie == null)
+            return new BihzActie(newActie);
+
+        return currentActie.UpdateFrom(newActie);
     }
 
     public void Add(IEnumerable<BihzActie> actions)

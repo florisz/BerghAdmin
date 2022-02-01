@@ -7,7 +7,7 @@ public class BihzUser
 
     public BihzUser(BihzUser user)
     {
-        Map(user);
+        this.UpdateFrom(user);
     }
 
     public int Id { get; set; }  // Unique identifier .
@@ -32,26 +32,29 @@ public class BihzUser
     public string? Geslacht { get; set; }	 // The gender of the user (male, female, neutral).OPTIONAL
     public int? PersoonId { get; set; }     // id to reference the corresponding Persoon in the BerghAdmin context
 
-    public void Map(BihzUser user)
+    public BihzUser UpdateFrom(BihzUser u)
     {
-        UserId = user.Id;
-        SiteId = user.SiteId;
-        //CreatieDatum = user.CreatedAt;
-        //WijzigDatum = user.UpdatedAt;
-        //Voornaam = user.FirstName;
-        //Tussenvoegsels = user.Infix;
-        //Achternaam = user.LastName;
-        //Email = user.Email;
-        //Adres = user.Address;
-        //Adres2 = user.Address2;
-        //Straat = user.Street;
-        //HuisNummer = user.HouseNumber;
-        //HuisNummerToevoeging = user.HouseNumberAddition;
-        //Postcode = user.Zipcode;
-        //Woonplaats = user.City;
-        //Land = user.Country;
-        //Telefoon = user.Phone;
-        //GeboorteDatum = user.Birthday;
-        //Geslacht = user.Gender;
+        UserId = u.UserId;
+        SiteId = u.SiteId;
+        CreatieDatum = u.CreatieDatum;
+        WijzigDatum = u.WijzigDatum;
+        Voornaam = u.Voornaam;
+        Tussenvoegsels = u.Tussenvoegsels;
+        Achternaam = u.Achternaam;
+        Email = u.Email;
+        Adres = u.Adres;
+        Adres2 = u.Adres2;
+        Straat = u.Straat;
+        HuisNummer = u.HuisNummer;
+        HuisNummerToevoeging = u.HuisNummerToevoeging;
+        Postcode = u.Postcode;
+        Woonplaats = u.Woonplaats;
+        Land = u.Land;
+        Telefoon = u.Telefoon;
+        GeboorteDatum = u.GeboorteDatum;
+        Geslacht = u.Geslacht;
+        PersoonId = u.PersoonId;
+
+        return this;
     }
 }

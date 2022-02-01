@@ -12,7 +12,7 @@ public class UserResponse
     public User Data { get; set; }
 }
 
-public class User:Resource 
+public class User : Resource
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }  // Unique identifier for this user.
@@ -79,7 +79,28 @@ public class User:Resource
 
     public BihzUser Map()
     {
-        throw new NotImplementedException();
+        return new BihzUser
+        {
+            UserId = this.Id,
+            SiteId = this.SiteId,
+            CreatieDatum = this.CreatedAt,
+            WijzigDatum = this.UpdatedAt,
+            Voornaam = this.FirstName,
+            Tussenvoegsels = this.Infix,
+            Achternaam = this.LastName,
+            Email = this.Email,
+            Adres = this.Address,
+            Adres2 = this.Address2,
+            Straat = this.Street,
+            HuisNummer = this.HouseNumber,
+            HuisNummerToevoeging = this.HouseNumberAddition,
+            Postcode = this.Zipcode,
+            Woonplaats = this.City,
+            Land = this.Country,
+            Telefoon = this.Phone,
+            GeboorteDatum = this.Birthday,
+            Geslacht = this.Gender,
+        };
     }
 }
 

@@ -19,16 +19,16 @@ public class BihzUserService : IBihzUserService
 
     public void Add(BihzUser user)
     {
-        var bihzUser = GetByKentaaId(user.Id);
+        var currentUser = GetByKentaaId(user.Id);
 
-        //bihzUser = MapChanges(bihzUser, user);
+        currentUser = MapChanges(currentUser, user);
 
-        if (bihzUser.PersoonId == null)
+        if (currentUser.PersoonId == null)
         {
-            LinkUserToPersoon(bihzUser);
+            LinkUserToPersoon(currentUser);
         }
 
-        Save(bihzUser);
+        Save(currentUser);
     }
 
     public void Add(IEnumerable<BihzUser> users)
@@ -114,6 +114,14 @@ public class BihzUserService : IBihzUserService
             bihzUser.PersoonId = persoon.Id;
             _persoonService.SavePersoon(persoon);
         }
+    }
+
+    private BihzUser MapChanges(BihzUser? currentUser, BihzUser user)
+    {
+        if (currentUser == null)
+            return new BihzUser(user);
+
+        return currentUser.UpdateFrom(user);
     }
 
 }

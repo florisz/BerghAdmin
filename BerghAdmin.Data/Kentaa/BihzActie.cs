@@ -3,11 +3,12 @@
 public class BihzActie
 {
     public BihzActie()
-    { }
-
-    public BihzActie(BihzActie action)
     {
-        Map(action);
+    }
+
+    public BihzActie(BihzActie newActie)
+    {
+        this.UpdateFrom(newActie);
     }
 
     public int Id { get; set; }
@@ -35,30 +36,33 @@ public class BihzActie
     public string? DoneerUrl { get; set; }
     public int? PersoonId { get; set; }     // id to reference the corresponding Persoon in the BerghAdmin context
 
-    public void Map(BihzActie action)
+    public BihzActie UpdateFrom(BihzActie a)
     {
-        ActionId = action.Id;
-        ProjectId = action.ProjectId;
-        Slug = action.Slug;
-        SiteId = action.SiteId;
-        //UserId = action.Owner.Id;
-        //Email = action.Owner.EMail;
-        //CreatieDatum = action.CreatedAt;
-        //WijzigDatum = action.UpdatedAt;
-        //ExterneReferentie = action.ExternalReference;
-        //Voornaam = action.FirstName;
-        //Tussenvoegsels = action.Infix;
-        //Achternaam = action.LastName;
-        //Titel = action.Title;
-        //Omschrijving = action.Description;
-        //DoelBedrag = action.TargetAmount;
-        //TotaalBedrag = action.TotalAmount;
-        //AantalDonaties = action.TotalDonations;
-        //DoelBedragBereikt = action.TargetAmountAchieved;
-        //Beeindigd = action.Ended;
-        //EindDatum = action.EndDate;
-        Url = action.Url;
-        //DoneerUrl = action.DonateUrl;
+        ActionId = a.ActionId;
+        SiteId = a.SiteId;
+        ProjectId = a.ProjectId;
+        UserId = a.UserId;
+        Slug = a.Slug;
+        CreatieDatum = a.CreatieDatum;
+        WijzigDatum = a.WijzigDatum;
+        ExterneReferentie = a.ExterneReferentie;
+        Voornaam = a.Voornaam;
+        Tussenvoegsels = a.Tussenvoegsels;
+        Achternaam = a.Achternaam;
+        Email = a.Email;
+        Titel = a.Titel;
+        Omschrijving = a.Omschrijving;
+        DoelBedrag = a.DoelBedrag;
+        TotaalBedrag = a.TotaalBedrag;
+        AantalDonaties = a.AantalDonaties;
+        DoelBedragBereikt = a.DoelBedragBereikt;
+        Beeindigd = a.Beeindigd;
+        EindDatum = a.EindDatum;
+        Url = a.Url;
+        DoneerUrl = a.DoneerUrl;
+        PersoonId = a.PersoonId;
+
+        return this;
     }
 }
 

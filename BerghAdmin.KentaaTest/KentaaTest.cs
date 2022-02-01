@@ -12,12 +12,10 @@ namespace BerghAdmin.KentaaTest;
 public class KentaaTest
 {
     ServiceProvider _serviceProvider;
-    IConfigurationRoot _configuration;
 
-    public KentaaTest(IConfigurationRoot configuration, ServiceProvider serviceProvider)
+    public KentaaTest(ServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-        _configuration = configuration;
     }
 
     public async Task ReadKentaaAndSendToBerghdmin()

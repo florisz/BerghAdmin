@@ -33,16 +33,24 @@ public class BihzDonatieService : IBihzDonatieService
     {
         _logger.LogDebug("entering AddBihzDonatie");
 
-        var bihzDonatie = GetByKentaaId(donatie.Id);
+        var currentDonatie = GetByKentaaId(donatie.Id);
 
-        //bihzDonatie = MapChanges(bihzDonatie, donation);
+        currentDonatie = MapChanges(currentDonatie, donatie);
 
-        if (bihzDonatie.PersoonId == null)
+        if (currentDonatie.PersoonId == null)
         {
-            LinkDonatieToPersoon(bihzDonatie);
+            LinkDonatieToPersoon(currentDonatie);
         }
 
-        Save(bihzDonatie);
+        Save(currentDonatie);
+    }
+
+    private static BihzDonatie MapChanges(BihzDonatie? currentDonatie, BihzDonatie donatie)
+    {
+        if (currentDonatie == null)
+            return new BihzDonatie(donatie);
+
+        return currentDonatie.UpdateFrom(donatie);
     }
 
     public void Add(IEnumerable<BihzDonatie> donaties)
@@ -96,20 +104,6 @@ public class BihzDonatieService : IBihzDonatieService
         }
 
         return ErrorCodeEnum.Ok;
-    }
-
-    private BihzDonatie MapChanges(BihzDonatie? bihzDonatie, Donation donation)
-    {
-        //if (bihzDonatie != null)
-        //{
-        //    bihzDonatie.Map(donation);
-        //}
-        //else
-        //{
-        //    bihzDonatie = new BihzDonatie(donation);
-        //}
-
-        return bihzDonatie;
     }
 
     private void LinkDonatieToPersoon(BihzDonatie bihzDonatie)

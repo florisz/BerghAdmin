@@ -77,7 +77,28 @@ public class Project:Resource
 
     public BihzProject Map()
     {
-        throw new NotImplementedException();
+        return new BihzProject
+        {
+            AantalDonaties = this.TotalDonations,
+            Beeindigd = this.Ended,
+            CreatieDatum = this.CreatedAt,
+            DoelBedrag = this.TargetAmount,
+            DoelBedragBereikt = this.TargetAmountAchieved,
+            DonatieUrl = this.DonateUrl,
+            EindDatum = this.EndDate,
+            //EvenementId = this.SegmentId, //TODO: which Id????
+            ExterneReferentie = this.ExternalReference,
+            Gesloten = this.Closed,
+            Omschrijving = this.Description,
+            ProjectId = this.Id,
+            SiteId = this.SiteId,
+            Slug = this.Slug,
+            Titel = this.Title,
+            TotaalBedrag = this.TotalAmount,
+            Url = this.Url,
+            WijzigDatum = this.UpdatedAt,
+            Zichtbaar = this.Visible
+        };
     }
 }
 
