@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using BerghAdmin.Data.Kentaa;
+
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
@@ -124,5 +126,9 @@ public class Donation : Resource
     [JsonPropertyName("target_url")]
     public string DonationTargetUrl { get; set; }
 
+    public BihzDonatie Map()
+    {
+        throw new NotImplementedException();
+    }
 }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

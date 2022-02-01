@@ -43,20 +43,17 @@
 		<PackageReference Include="Syncfusion.Blazor.Popups" Version="19.2.0.44" />
 		<PackageReference Include="Syncfusion.Blazor.RichTextEditor" Version="19.2.0.44" />
 		<PackageReference Include="Syncfusion.Blazor.Themes" Version="19.2.0.44" />
-		<PackageReference Include="Syncfusion.DocIO.Net.Core" Version="19.2.0.44" />
-		<PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="19.2.0.44" />
+		<!--<PackageReference Include="Syncfusion.DocIO.Net.Core" Version="19.2.0.44" />
+		<PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="19.2.0.44" />-->
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\BerghAdmin.ApplicationServices\BerghAdmin.ApplicationServices.csproj" />
+		<ProjectReference Include="..\BerghAdmin.Data\BerghAdmin.Data.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Data\" />
 	</ItemGroup>
 
 </Project>

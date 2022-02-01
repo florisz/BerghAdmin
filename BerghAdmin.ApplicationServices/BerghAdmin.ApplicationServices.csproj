@@ -12,10 +12,12 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
+		<PackageReference Include="Syncfusion.DocIO.Net.Core" Version="19.2.0.44" />
+		<PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="19.2.0.44" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\BerghAdmin.Business\BerghAdmin.Data.csproj" />
+	  <ProjectReference Include="..\BerghAdmin.Data\BerghAdmin.Data.csproj" />
 	</ItemGroup>
 
 </Project>

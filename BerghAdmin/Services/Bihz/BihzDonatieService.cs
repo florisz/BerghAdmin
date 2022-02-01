@@ -29,13 +29,13 @@ public class BihzDonatieService : IBihzDonatieService
     }
 
 
-    public void AddBihzDonatie(Donation donation)
+    public void Add(BihzDonatie donatie)
     {
         _logger.LogDebug("entering AddBihzDonatie");
 
-        var bihzDonatie = GetByKentaaId(donation.Id);
+        var bihzDonatie = GetByKentaaId(donatie.Id);
 
-        bihzDonatie = MapChanges(bihzDonatie, donation);
+        //bihzDonatie = MapChanges(bihzDonatie, donation);
 
         if (bihzDonatie.PersoonId == null)
         {
@@ -45,11 +45,11 @@ public class BihzDonatieService : IBihzDonatieService
         Save(bihzDonatie);
     }
 
-    public void AddBihzDonaties(IEnumerable<Donation> donations)
+    public void Add(IEnumerable<BihzDonatie> donaties)
     {
-        foreach (var donation in donations)
+        foreach (var donation in donaties)
         {
-            AddBihzDonatie(donation);
+            Add(donation);
         }
     }
 
@@ -100,14 +100,14 @@ public class BihzDonatieService : IBihzDonatieService
 
     private BihzDonatie MapChanges(BihzDonatie? bihzDonatie, Donation donation)
     {
-        if (bihzDonatie != null)
-        {
-            bihzDonatie.Map(donation);
-        }
-        else
-        {
-            bihzDonatie = new BihzDonatie(donation);
-        }
+        //if (bihzDonatie != null)
+        //{
+        //    bihzDonatie.Map(donation);
+        //}
+        //else
+        //{
+        //    bihzDonatie = new BihzDonatie(donation);
+        //}
 
         return bihzDonatie;
     }

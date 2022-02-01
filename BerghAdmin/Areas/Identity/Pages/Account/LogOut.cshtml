@@ -1,6 +1,7 @@
 @page
-@    using Microsoft.AspNetCore.Identity;
-    using BerghAdmin.Data.Identity
+@using Microsoft.AspNetCore.Identity;
+@using BerghAdmin.Authorization;
+
 @attribute [IgnoreAntiforgeryToken]
 @inject SignInManager<User> SignInManager
 @functions {

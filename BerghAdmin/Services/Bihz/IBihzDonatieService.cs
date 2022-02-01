@@ -1,13 +1,12 @@
-﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
-using BerghAdmin.Data.Kentaa;
+﻿using BerghAdmin.Data.Kentaa;
 using BerghAdmin.General;
 
 namespace BerghAdmin.Services.Bihz;
 
 public interface IBihzDonatieService
 {
-    void AddBihzDonatie(Donation donation);
-    void AddBihzDonaties(IEnumerable<Donation> donations);
+    void Add(BihzDonatie donation);
+    void Add(IEnumerable<BihzDonatie> donations);
     bool Exist(BihzDonatie bihzDonatie);
     IEnumerable<BihzDonatie>? GetAll();
     BihzDonatie? GetById(int id);             // internal id

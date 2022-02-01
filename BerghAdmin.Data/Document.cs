@@ -1,7 +1,5 @@
-using BerghAdmin.General;
-
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-namespace BerghAdmin.Data; 
+namespace BerghAdmin.Data;
 
 public enum ContentTypeEnum
 {
@@ -36,18 +34,18 @@ public class Document
          
     public List<string> GetMergeFields()
     {
-        if (_mergeFields == null)
-        {
-            if (this.ContentType != ContentTypeEnum.Word)
-            {
-                throw new ApplicationException($"Document with name {this.Name} is not a Word document.");
-            }
-            if (this.Content == null)
-            {
-                throw new ApplicationException($"Document with name {this.Name} has no content.");
-            }
-            _mergeFields = DocIOInterface.GetMergeFields(new MemoryStream(this.Content));
-        }
+        //if (_mergeFields == null)
+        //{
+        //    if (this.ContentType != ContentTypeEnum.Word)
+        //    {
+        //        throw new ApplicationException($"Document with name {this.Name} is not a Word document.");
+        //    }
+        //    if (this.Content == null)
+        //    {
+        //        throw new ApplicationException($"Document with name {this.Name} has no content.");
+        //    }
+        //    _mergeFields = DocIOInterface.GetMergeFields(new MemoryStream(this.Content));
+        //}
         return _mergeFields;
     }
 }

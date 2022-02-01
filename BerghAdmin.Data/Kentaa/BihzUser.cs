@@ -1,13 +1,11 @@
-﻿using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
-
-namespace BerghAdmin.Data.Kentaa;
+﻿namespace BerghAdmin.Data.Kentaa;
 
 public class BihzUser
 {
     public BihzUser()
     { }
 
-    public BihzUser(KM.User user)
+    public BihzUser(BihzUser user)
     {
         Map(user);
     }
@@ -34,26 +32,26 @@ public class BihzUser
     public string? Geslacht { get; set; }	 // The gender of the user (male, female, neutral).OPTIONAL
     public int? PersoonId { get; set; }     // id to reference the corresponding Persoon in the BerghAdmin context
 
-    public void Map(KM.User user)
+    public void Map(BihzUser user)
     {
         UserId = user.Id;
         SiteId = user.SiteId;
-        CreatieDatum = user.CreatedAt;
-        WijzigDatum = user.UpdatedAt;
-        Voornaam = user.FirstName;
-        Tussenvoegsels = user.Infix;
-        Achternaam = user.LastName;
-        Email = user.Email;
-        Adres = user.Address;
-        Adres2 = user.Address2;
-        Straat = user.Street;
-        HuisNummer = user.HouseNumber;
-        HuisNummerToevoeging = user.HouseNumberAddition;
-        Postcode = user.Zipcode;
-        Woonplaats = user.City;
-        Land = user.Country;
-        Telefoon = user.Phone;
-        GeboorteDatum = user.Birthday;
-        Geslacht = user.Gender;
+        //CreatieDatum = user.CreatedAt;
+        //WijzigDatum = user.UpdatedAt;
+        //Voornaam = user.FirstName;
+        //Tussenvoegsels = user.Infix;
+        //Achternaam = user.LastName;
+        //Email = user.Email;
+        //Adres = user.Address;
+        //Adres2 = user.Address2;
+        //Straat = user.Street;
+        //HuisNummer = user.HouseNumber;
+        //HuisNummerToevoeging = user.HouseNumberAddition;
+        //Postcode = user.Zipcode;
+        //Woonplaats = user.City;
+        //Land = user.Country;
+        //Telefoon = user.Phone;
+        //GeboorteDatum = user.Birthday;
+        //Geslacht = user.Gender;
     }
 }

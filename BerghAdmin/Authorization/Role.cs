@@ -1,6 +1,7 @@
+
 using Microsoft.AspNetCore.Identity;
 
-namespace BerghAdmin.Data.Identity;
+namespace BerghAdmin.Authorization;
 
 public class Role : IdentityRole<int>
 {

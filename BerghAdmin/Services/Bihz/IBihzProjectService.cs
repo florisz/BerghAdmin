@@ -6,8 +6,8 @@ namespace BerghAdmin.Services.Bihz;
 
 public interface IBihzProjectService 
 {
-    void AddBihzProject(Project project);
-    void AddBihzProjects(IEnumerable<Project> projects);
+    void Add(BihzProject project);
+    void Add(IEnumerable<BihzProject> projects);
     bool Exist(BihzProject bihzProject);
     IEnumerable<BihzProject>? GetAll();
     BihzProject? GetById(int id);

@@ -12,31 +12,6 @@ public class ActionResponse
     [JsonPropertyName("Action")]
     public Action Data { get; set; }
 
-    public BihzActie Map()
-    {
-        ActionId = @this.Id;
-        ProjectId = @this.ProjectId;
-        Slug = @this.Slug;
-        SiteId = @this.SiteId;
-        UserId = @this.Owner.Id;
-        Email = @this.Owner.EMail;
-        CreatieDatum = @this.CreatedAt;
-        WijzigDatum = @this.UpdatedAt;
-        ExterneReferentie = @this.ExternalReference;
-        Voornaam = @this.FirstName;
-        Tussenvoegsels = @this.Infix;
-        Achternaam = @this.LastName;
-        Titel = @this.Title;
-        Omschrijving = @this.Description;
-        DoelBedrag = @this.TargetAmount;
-        TotaalBedrag = @this.TotalAmount;
-        AantalDonaties = @this.TotalDonations;
-        DoelBedragBereikt = @this.TargetAmountAchieved;
-        Beeindigd = @this.Ended;
-        EindDatum = @this.EndDate;
-        Url = @this.Url;
-        DoneerUrl = @this.DonateUrl;
-    }
 
     //private static BihzActie MapChanges(BihzActie? bihzActie, BihzActie kentaaAction)
     //{
@@ -54,7 +29,7 @@ public class ActionResponse
 
 }
 
-public class Action:Resource
+public class Action : Resource
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }
@@ -81,7 +56,7 @@ public class Action:Resource
     public DateTime UpdatedAt { get; set; }
 
     [JsonPropertyName("owner")]
-    public Owner Owner{ get; set; }
+    public Owner Owner { get; set; }
 
     [JsonPropertyName("external_reference")]
     public string ExternalReference { get; set; }
@@ -147,6 +122,35 @@ public class Action:Resource
 
     [JsonPropertyName("donate_url")]
     public string DonateUrl { get; set; }
+
+    public BihzActie Map()
+    {
+        return new BihzActie
+        {
+            ActionId = this.Id,
+            ProjectId = this.ProjectId,
+            Slug = this.Slug,
+            SiteId = this.SiteId,
+            UserId = this.Owner.Id,
+            Email = this.Owner.EMail,
+            CreatieDatum = this.CreatedAt,
+            WijzigDatum = this.UpdatedAt,
+            ExterneReferentie = this.ExternalReference,
+            Voornaam = this.FirstName,
+            Tussenvoegsels = this.Infix,
+            Achternaam = this.LastName,
+            Titel = this.Title,
+            Omschrijving = this.Description,
+            DoelBedrag = this.TargetAmount,
+            TotaalBedrag = this.TotalAmount,
+            AantalDonaties = this.TotalDonations,
+            DoelBedragBereikt = this.TargetAmountAchieved,
+            Beeindigd = this.Ended,
+            EindDatum = this.EndDate,
+            Url = this.Url,
+            DoneerUrl = this.DonateUrl,
+        };
+    }
 
 }
 

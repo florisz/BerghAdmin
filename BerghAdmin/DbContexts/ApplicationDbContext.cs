@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using BerghAdmin.Data.Kentaa;
-using BerghAdmin.Data.Identity;
+using BerghAdmin.Authorization;
 
 namespace BerghAdmin.DbContexts;
 

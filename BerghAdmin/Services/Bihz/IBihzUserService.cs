@@ -1,13 +1,12 @@
-﻿using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+﻿using BerghAdmin.Data.Kentaa;
 using BerghAdmin.General;
-using BerghAdmin.Data.Kentaa;
 
 namespace BerghAdmin.Services.Bihz;
 
 public interface IBihzUserService
 {
-    void AddBihzUser(KM.User user);
-    void AddBihzUsers(IEnumerable<KM.User> users);
+    void Add(BihzUser user);
+    void Add(IEnumerable<BihzUser> users);
     bool Exist(BihzUser bihzUser);
     IEnumerable<BihzUser>? GetAll();
     BihzUser? GetById(int id);

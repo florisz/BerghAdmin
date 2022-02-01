@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using BerghAdmin.Data.Kentaa;
+
+using System.Text.Json.Serialization;
 
 namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
@@ -73,7 +75,12 @@ public class User:Resource
     public string Gender { get; set; }	 // The gender of the user (male, female, neutral).OPTIONAL
 
     [JsonPropertyName("locale")]
-    public string Locale { get; set; }	 // The locale when the user was created (nl, en, de, fr, etc).
+    public string Locale { get; set; }   // The locale when the user was created (nl, en, de, fr, etc).
+
+    public BihzUser Map()
+    {
+        throw new NotImplementedException();
+    }
 }
 
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

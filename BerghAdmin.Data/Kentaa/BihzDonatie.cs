@@ -1,13 +1,11 @@
-﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
-
-namespace BerghAdmin.Data.Kentaa;
+﻿namespace BerghAdmin.Data.Kentaa;
 
 public class BihzDonatie
 {
     public BihzDonatie()
     { }
 
-    public BihzDonatie(Donation donation)
+    public BihzDonatie(BihzDonatie donation)
     {
         Map(donation);
     }
@@ -33,25 +31,25 @@ public class BihzDonatie
     public string? AccountBic { get; set; }
     public int? PersoonId { get; set; }     // id to reference the corresponding Persoon in the BerghAdmin context
 
-    public void Map(Donation donation)
+    public void Map(BihzDonatie donation)
     {
         DonationId = donation.Id;
         ActionId = donation.ActionId;
         ProjectId = donation.ProjectId;
-        CreatieDatum = donation.CreatedAt;
-        WijzigDatum = donation.UpdatedAt;
-        DonatieBedrag = donation.Amount;
-        TransactionKosten = donation.TransactionCost;
-        RegistratieFee = donation.RegistrationFee;
-        RegistratieFeeBedrag = donation.RegistrationFeeAmount;
-        TotaalBedrag = donation.TotalAmount;
-        NettoBedrag = donation.ReceivableAmount;
-        Currency = GetCurrency(donation.Currency);
-        BetaalStatus = GetBetaalStatus(donation.PaymentStatus);
-        BetaalStatusOp = donation.PaymentStatusAt;
-        BetaalTransactieId = donation.PaymentTransactionId;
-        BetaalId = donation.PaymentId;
-        BetaalOmschrijving = donation.PaymentDescription;
+        //CreatieDatum = donation.CreatedAt;
+        //WijzigDatum = donation.UpdatedAt;
+        //DonatieBedrag = donation.Amount;
+        //TransactionKosten = donation.TransactionCost;
+        //RegistratieFee = donation.RegistrationFee;
+        //RegistratieFeeBedrag = donation.RegistrationFeeAmount;
+        //TotaalBedrag = donation.TotalAmount;
+        //NettoBedrag = donation.ReceivableAmount;
+        //Currency = GetCurrency(donation.Currency);
+        //BetaalStatus = GetBetaalStatus(donation.PaymentStatus);
+        //BetaalStatusOp = donation.PaymentStatusAt;
+        //BetaalTransactieId = donation.PaymentTransactionId;
+        //BetaalId = donation.PaymentId;
+        //BetaalOmschrijving = donation.PaymentDescription;
         AccountIban = donation.AccountIban;
         AccountBic = donation.AccountBic;
     }

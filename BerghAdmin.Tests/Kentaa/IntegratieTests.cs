@@ -120,7 +120,7 @@ namespace BerghAdmin.Tests.Kentaa
             var actions = kentaaService!.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
             await foreach (var action in actions)
             {
-                bihzActionService!.AddBihzAction(action);
+                bihzActionService!.Add(action.Map());
             }
             var kentaaActions = bihzActionService!.GetAll();
             Assert.IsTrue(await actions.CountAsync() == kentaaActions?.Count());
@@ -135,7 +135,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             foreach (var project in kentaaProjects)
             {
-                bihzProjectService!.AddBihzProject(project);
+                bihzProjectService!.Add(project.Map());
             }
 
             var projects = bihzProjectService!.GetAll();
@@ -151,7 +151,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             await foreach (var user in users)
             {
-                bihzUserService!.AddBihzUser(user);
+                bihzUserService!.Add(user.Map());
             }
             var kentaaUsers = bihzUserService!.GetAll();
             Assert.IsTrue(await users.CountAsync() == kentaaUsers?.Count());
@@ -164,11 +164,11 @@ namespace BerghAdmin.Tests.Kentaa
 
             // step 1: read all users and link to Personen
             var kentaaUsers = await kentaaService!.GetKentaaResourcesByQuery<KM.Users, KM.User>(new KentaaFilter()).ToListAsync();
-            bihzUserService!.AddBihzUsers(kentaaUsers);
+            bihzUserService!.Add(kentaaUsers.Select(ku => ku.Map()));
 
             // step 2: read projects and link to Evenementen
             var kentaaProjects = kentaaService.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
-            bihzProjectService!.AddBihzProjects(await kentaaProjects.ToListAsync());
+            bihzProjectService!.Add(await kentaaProjects.Select(kp => kp.Map()).ToListAsync());
 
             var fietsTochtNaam = "Hanzetocht 2023";
             if (evenementService!.GetByTitel(fietsTochtNaam) is not FietsTocht fietsTocht)
@@ -179,7 +179,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             // step 3: read all actions and link to Personen
             var kentaaActions = await kentaaService.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter()).ToListAsync();
-            bihzActionService!.AddBihzActions(kentaaActions);
+            bihzActionService!.Add(kentaaActions.Select(ka => ka.Map()));
 
             var persoonService = this.ServiceProvider?.GetRequiredService<IPersoonService>();
             if (persoonService == null)
@@ -204,7 +204,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             // step 4: read all donations, create Donatie if needed and link to Personen
             var kentaaDonations = kentaaService.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
-            bihzDonatieService!.AddBihzDonaties(await kentaaDonations.ToListAsync());
+            bihzDonatieService!.Add(await kentaaDonations.Select(kd => kd.Map()).ToListAsync());
 
             var donatieService = this.ServiceProvider?.GetRequiredService<IDonatieService>();
             if (donatieService == null)

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BerghAdmin.Data.Identity;
+namespace BerghAdmin.Authorization;
 public class User : IdentityUser<int>
 {
     // reference to the persoon who is currently logged in as user

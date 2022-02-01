@@ -1,7 +1,8 @@
-﻿using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+﻿using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
-using BerghAdmin.Data.Kentaa;
+
+using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 namespace BerghAdmin.Services.Bihz;
 
@@ -16,11 +17,11 @@ public class BihzUserService : IBihzUserService
         _persoonService = persoonService;
     }
 
-    public void AddBihzUser(KM.User user)
+    public void Add(BihzUser user)
     {
         var bihzUser = GetByKentaaId(user.Id);
 
-        bihzUser = MapChanges(bihzUser, user);
+        //bihzUser = MapChanges(bihzUser, user);
 
         if (bihzUser.PersoonId == null)
         {
@@ -30,11 +31,11 @@ public class BihzUserService : IBihzUserService
         Save(bihzUser);
     }
 
-    public void AddBihzUsers(IEnumerable<KM.User> users)
+    public void Add(IEnumerable<BihzUser> users)
     {
         foreach (var user in users)
         {
-            AddBihzUser(user);
+            Add(user);
         }
     }
 
@@ -83,19 +84,19 @@ public class BihzUserService : IBihzUserService
         return ErrorCodeEnum.Ok;
     }
 
-    private BihzUser MapChanges(BihzUser? bihzUser, KM.User user)
-    {
-        if (bihzUser != null)
-        {
-            bihzUser.Map(user);
-        }
-        else
-        {
-            bihzUser = new BihzUser(user);
-        }
+    //private BihzUser MapChanges(BihzUser? bihzUser, KM.User user)
+    //{
+    //    if (bihzUser != null)
+    //    {
+    //        bihzUser.Map(user);
+    //    }
+    //    else
+    //    {
+    //        bihzUser = new BihzUser(user);
+    //    }
 
-        return bihzUser;
-    }
+    //    return bihzUser;
+    //}
 
     private void LinkUserToPersoon(BihzUser bihzUser)
     {

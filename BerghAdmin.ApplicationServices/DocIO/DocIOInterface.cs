@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
-using Syncfusion.DocIO.DLS;
 using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
 
-namespace BerghAdmin.General
+namespace BerghAdmin.ApplicationServices.DocIO
 {
     public static class DocIOInterface
     {

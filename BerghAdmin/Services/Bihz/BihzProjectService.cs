@@ -1,8 +1,9 @@
-﻿using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
-using BerghAdmin.Data.Kentaa;
+﻿using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 using BerghAdmin.Services.Evenementen;
+
+using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 namespace BerghAdmin.Services.Bihz;
 
@@ -17,11 +18,11 @@ public class BihzProjectService : IBihzProjectService
         _evenementService = evenementService;
     }
 
-    public void AddBihzProject(KM.Project project)
+    public void Add(BihzProject project)
     {
         var bihzProject = GetByKentaaId(project.Id);
 
-        bihzProject = MapChanges(bihzProject, project);
+        //bihzProject = MapChanges(bihzProject, project);
 
         if (bihzProject.EvenementId == null)
         {
@@ -31,11 +32,11 @@ public class BihzProjectService : IBihzProjectService
         Save(bihzProject);
     }
 
-    public void AddBihzProjects(IEnumerable<KM.Project> projects)
+    public void Add(IEnumerable<BihzProject> projects)
     {
         foreach (var project in projects)
         {
-            AddBihzProject(project);
+            Add(project);
         }
     }
 
@@ -84,19 +85,19 @@ public class BihzProjectService : IBihzProjectService
         return ErrorCodeEnum.Ok;
     }
 
-    private static BihzProject MapChanges(BihzProject? bihzProject, KM.Project project)
-    {
-        if (bihzProject != null)
-        {
-            bihzProject.Map(project);
-        }
-        else
-        {
-            bihzProject = new BihzProject(project);
-        }
+    //private static BihzProject MapChanges(BihzProject? bihzProject, KM.Project project)
+    //{
+    //    if (bihzProject != null)
+    //    {
+    //        bihzProject.Map(project);
+    //    }
+    //    else
+    //    {
+    //        bihzProject = new BihzProject(project);
+    //    }
 
-        return bihzProject;
-    }
+    //    return bihzProject;
+    //}
 
     private void LinkProjectToEvenement(BihzProject bihzProject)
     {

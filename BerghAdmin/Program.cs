@@ -1,7 +1,8 @@
-using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using BerghAdmin.Authorization;
+using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
+using BerghAdmin.Services.Bihz;
 using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
@@ -12,14 +13,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 using Syncfusion.Blazor;
-using BerghAdmin.Services.Bihz;
-
-using System.Text;
-
-using BD = BerghAdmin.Data;
-using BerghAdmin.Data.Identity;
-using BerghAdmin.Data.Kentaa;
-
 namespace BerghAdmin;
 
 public class Program
@@ -175,19 +168,19 @@ public class Program
 
     static IResult HandleNewDonatie(BihzDonatie donation, IBihzDonatieService service)
     {
-        service.AddBihzDonatie(donation);
+        service.Add(donation);
         return Results.Ok("Ik heb n Donation toegevoegd");
     }
 
     static IResult HandleNewProject(BihzProject project, IBihzProjectService service)
     {
-        service.AddBihzProject(project);
+        service.Add(project);
         return Results.Ok("Ik heb n Project toegevoegd");
     }
 
     static IResult HandleNewUser(BihzUser user, IBihzUserService service)
     {
-        service.AddBihzUser(user);
+        service.Add(user);
         return Results.Ok("Ik heb n User toegevoegd");
     }
 }

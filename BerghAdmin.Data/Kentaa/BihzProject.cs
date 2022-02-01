@@ -1,6 +1,4 @@
-﻿using KM=BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
-
-namespace BerghAdmin.Data.Kentaa;
+﻿namespace BerghAdmin.Data.Kentaa;
 
 public class BihzProject
 {
@@ -28,30 +26,30 @@ public class BihzProject
     public string? DonatieUrl { get; set; }	        // The URL to directly make a donation to the project.
     public int? EvenementId { get; set; }           // id to reference the corresponding Evenment in the BerghAdmin context
 
-    public BihzProject(KM.Project project)
+    public BihzProject(BihzProject project)
     {
         Map(project);
     }
 
-    public void Map(KM.Project project)
+    public void Map(BihzProject project)
     {
         ProjectId = project.Id;
         SiteId = project.SiteId;
         Slug = project.Slug;
-        CreatieDatum = project.CreatedAt;
-        WijzigDatum = project.UpdatedAt;
-        ExterneReferentie = project.ExternalReference;
-        Titel = project.Title;
-        Omschrijving = project.Description;
-        DoelBedrag = project.TargetAmount;
-        TotaalBedrag = project.TotalAmount;
-        AantalDonaties = project.TotalDonations;
-        DoelBedragBereikt = project.TargetAmountAchieved;
-        Zichtbaar = project.Visible;
-        Gesloten = project.Closed;
-        Beeindigd = project.Ended;
-        EindDatum = project.EndDate;
+        //CreatieDatum = project.CreatedAt;
+        //WijzigDatum = project.UpdatedAt;
+        //ExterneReferentie = project.ExternalReference;
+        //Titel = project.Title;
+        //Omschrijving = project.Description;
+        //DoelBedrag = project.TargetAmount;
+        //TotaalBedrag = project.TotalAmount;
+        //AantalDonaties = project.TotalDonations;
+        //DoelBedragBereikt = project.TargetAmountAchieved;
+        //Zichtbaar = project.Visible;
+        //Gesloten = project.Closed;
+        //Beeindigd = project.Ended;
+        //EindDatum = project.EndDate;
         Url = project.Url;
-        DonatieUrl = project.DonateUrl;
+        //DonatieUrl = project.DonateUrl;
     }
 }
