@@ -24,7 +24,7 @@ namespace BerghAdmin.Tests.Kentaa
         private IBihzActieService? bihzActionService;
         private IBihzProjectService? bihzProjectService;
         private IBihzUserService? bihzUserService;
-
+        private IPersoonService? persoonService;
         protected override void RegisterServices(ServiceCollection services)
         {
             var kentaaConfiguration = new ConfigurationBuilder()
@@ -83,6 +83,13 @@ namespace BerghAdmin.Tests.Kentaa
                 return;
             }
 
+            persoonService = this.ServiceProvider?.GetRequiredService<IPersoonService>();
+            if (persoonService == null)
+            {
+                Assert.Fail("Can not instantiate Kentaa Interface service");
+                return;
+            }
+
             bihzDonatieService = this.ServiceProvider?.GetRequiredService<IBihzDonatieService>();
             if (bihzDonatieService == null)
             {
@@ -122,8 +129,8 @@ namespace BerghAdmin.Tests.Kentaa
             {
                 bihzActionService!.AddBihzAction(action);
             }
-            var kentaaActions = bihzActionService!.GetAll();
-            Assert.IsTrue(await actions.CountAsync() == kentaaActions?.Count());
+            var bihzActions = bihzActionService!.GetAll();
+            Assert.IsTrue(await actions.CountAsync() == bihzActions?.Count());
         }
 
         [Test]
@@ -138,8 +145,8 @@ namespace BerghAdmin.Tests.Kentaa
                 bihzProjectService!.AddBihzProject(project);
             }
 
-            var projects = bihzProjectService!.GetAll();
-            Assert.IsTrue(kentaaProjects.Count() == projects?.Count());
+            var bihzProjects = bihzProjectService!.GetAll();
+            Assert.IsTrue(kentaaProjects.Count() == bihzProjects?.Count());
         }
 
         [Test]
@@ -153,8 +160,23 @@ namespace BerghAdmin.Tests.Kentaa
             {
                 bihzUserService!.AddBihzUser(user);
             }
-            var kentaaUsers = bihzUserService!.GetAll();
-            Assert.IsTrue(await users.CountAsync() == kentaaUsers?.Count());
+            var bihzUsers = bihzUserService!.GetAll();
+            Assert.IsTrue(await users.CountAsync() == bihzUsers?.Count());
+        }
+
+        [Test]
+        public async Task ProcessKentaaDonations()
+        {
+            await InsertInitialData();
+
+            var donations = kentaaService!.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
+
+            await foreach (var donation in donations)
+            {
+                bihzDonatieService!.AddBihzDonatie(donation);
+            }
+            var bihzDonaties = bihzDonatieService!.GetAll();
+            Assert.IsTrue(await donations.CountAsync() == bihzDonaties?.Count());
         }
 
         [Test]
@@ -181,25 +203,18 @@ namespace BerghAdmin.Tests.Kentaa
             var kentaaActions = await kentaaService.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter()).ToListAsync();
             bihzActionService!.AddBihzActions(kentaaActions);
 
-            var persoonService = this.ServiceProvider?.GetRequiredService<IPersoonService>();
-            if (persoonService == null)
-            {
-                Assert.Fail("persoon service is null");
-                return;
-            }
-
             foreach (var action in bihzActionService.GetAll() ?? throw new ArgumentException("no actions"))
             {
                 var persoon = persoonService.GetByActionId(action.Id);
-                if (persoon == null)
-                {
-                    persoon = persoonService.GetByEmailAdres(action.Email ?? "no-email");
-                }
-                if (persoon != null)
-                {
-                    persoon.BihzActie = action;
-                    persoonService.SavePersoon(persoon);
-                }
+                //if (persoon == null)
+                //{
+                //    persoon = persoonService.GetByEmailAdres(action.Email ?? "no-email");
+                //}
+                //if (persoon != null)
+                //{
+                //    persoon.BihzActie = action;
+                //    persoonService.SavePersoon(persoon);
+                //}
             }
 
             // step 4: read all donations, create Donatie if needed and link to Personen

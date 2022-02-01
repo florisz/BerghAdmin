@@ -117,14 +117,20 @@ public class BihzDonatieService : IBihzDonatieService
         _logger.LogDebug("entering LinkDonatieToPersoon");
 
         // link via action
-        var bihzAction = _bihzActieService.GetById(bihzDonatie.ActionId);
-        if (bihzAction == null || bihzAction.PersoonId == null)
+        var bihzAction = _bihzActieService.GetByKentaaId(bihzDonatie.ActionId);
+        if (bihzAction == null)
         {
-            _logger.LogError("Donatie can not be linked to persoon");
+            _logger.LogError("Donatie not linked to an action; can not link it to a person");
             // TO BE DONE
             // report admin that donatie can not be linked
             return;
         }
+        if (bihzAction!.PersoonId == null)
+        {
+            _logger.LogError("Action not linked to persoon, can not link this incoming donatie");
+            return;
+        }
+
         var persoon = _persoonService.GetById((int)bihzAction.PersoonId);
 
         if (persoon == null)
@@ -135,11 +141,8 @@ public class BihzDonatieService : IBihzDonatieService
             return;
         }
 
-        if (persoon != null)
-        {
-            bihzDonatie.PersoonId = persoon.Id;
-            _donatieService.ProcessBihzDonatie(bihzDonatie, persoon);
-        }
+        bihzDonatie.PersoonId = persoon.Id;
+        _donatieService.ProcessBihzDonatie(bihzDonatie, persoon);
     }
 
 }
