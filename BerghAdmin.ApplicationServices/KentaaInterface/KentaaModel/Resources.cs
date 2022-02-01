@@ -1,6 +1,6 @@
 ﻿namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
-public abstract class Resource
+public interface Resource
 {
 }
 

@@ -55,7 +55,7 @@ public class KentaaTest
         var actions = service.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
         await foreach (var action in actions)
         {
-            Console.WriteLine($"Post Action {action.Title} {action.Description}");
+            Console.WriteLine($"Post Action {action.title} {action.description}");
             var content = GetContent(action);
             await httpClient.PostAsync("https://localhost:44344/actions", content);
         }

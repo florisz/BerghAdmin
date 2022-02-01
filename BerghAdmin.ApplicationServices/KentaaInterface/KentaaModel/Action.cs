@@ -1,174 +1,83 @@
 ﻿using BerghAdmin.Data.Kentaa;
 
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
-
 namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable IDE1006 // Naming Styles
 
 public class ActionResponse
 {
-    [JsonPropertyName("Action")]
-    public Action Data { get; set; }
-
-
-    //private static BihzActie MapChanges(BihzActie? bihzActie, BihzActie kentaaAction)
-    //{
-    //    if (bihzActie != null)
-    //    {
-    //        bihzActie.Map(kentaaAction);
-    //    }
-    //    else
-    //    {
-    //        bihzActie = new BihzActie(kentaaAction);
-    //    }
-
-    //    return bihzActie;
-    //}
-
+    public Action Action { get; set; }
 }
 
-public class Action : Resource
-{
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
-
-    [JsonPropertyName("slug")]
-    public string Slug { get; set; }
-
-    [JsonPropertyName("site_id")]
-    public int SiteId { get; set; }
-
-    [JsonPropertyName("segment_id")]
-    public int SegmentId { get; set; }
-
-    [JsonPropertyName("project_id")]
-    public int ProjectId { get; set; }
-
-    [JsonPropertyName("team_id")]
-    public int TeamId { get; set; }
-
-    [JsonPropertyName("created_at")]
-    public DateTime CreatedAt { get; set; }
-
-    [JsonPropertyName("updated_at")]
-    public DateTime UpdatedAt { get; set; }
-
-    [JsonPropertyName("owner")]
-    public Owner Owner { get; set; }
-
-    [JsonPropertyName("external_reference")]
-    public string ExternalReference { get; set; }
-
-    [JsonPropertyName("team_captain")]
-    public bool TeamCaptain { get; set; }
-
-    [JsonPropertyName("first_name")]
-    public string FirstName { get; set; }
-
-    [JsonPropertyName("infix")]
-    public string Infix { get; set; }
-
-    [JsonPropertyName("last_name")]
-    public string LastName { get; set; }
-
-    [JsonPropertyName("avatar_url")]
-    public string AvatarUrl { get; set; }
-
-    [JsonPropertyName("fundraiser_page")]
-    public bool FundraiserPage { get; set; }
-
-    [JsonPropertyName("title")]
-    public string Title { get; set; }
-
-    [JsonPropertyName("description")]
-    public string Description { get; set; }
-
-    [Column(TypeName = "decimal(18,2)")]
-    [JsonPropertyName("target_amount")]
-    public decimal TargetAmount { get; set; }
-
-    [Column(TypeName = "decimal(18,2)")]
-    [JsonPropertyName("total_amount")]
-    public decimal TotalAmount { get; set; }
-
-    [JsonPropertyName("total_donations")]
-    public int TotalDonations { get; set; }
-
-    [JsonPropertyName("target_amount_achieved")]
-    public bool TargetAmountAchieved { get; set; }
-
-    [JsonPropertyName("visible")]
-    public bool Visible { get; set; }
-
-    [JsonPropertyName("countable")]
-    public bool Countable { get; set; }
-
-    [JsonPropertyName("closed")]
-    public bool Closed { get; set; }
-
-    [JsonPropertyName("ended")]
-    public bool Ended { get; set; }
-
-    [JsonPropertyName("end_date")]
-    public DateTime EndDate { get; set; }
-
-    [JsonPropertyName("previous_participations")]
-    public int PreviousParticipations { get; set; }
-
-    [JsonPropertyName("url")]
-    public string Url { get; set; }
-
-    [JsonPropertyName("donate_url")]
-    public string DonateUrl { get; set; }
+public record Action(int id,
+    string slug,
+    int site_id,
+    int segment_id,
+    int project_id,
+    int team_id,
+    DateTime created_at,
+    DateTime updated_at,
+    Owner owner,
+    string external_reference,
+    bool team_captain,
+    string first_name,
+    string infix,
+    string last_name,
+    string avatar_url,
+    bool fundraiser_page,
+    string title,
+    string description,
+    decimal target_amount,
+    decimal total_amount,
+    int total_donations,
+    bool target_amount_achieved,
+    bool visible,
+    bool countable,
+    bool closed,
+    bool ended,
+    DateTime end_date,
+    int previous_participations,
+    string url,
+    string donate_url) : Resource
+{ 
 
     public BihzActie Map()
     {
         return new BihzActie
         {
-            ActionId = this.Id,
-            ProjectId = this.ProjectId,
-            Slug = this.Slug,
-            SiteId = this.SiteId,
-            UserId = this.Owner.Id,
-            Email = this.Owner.EMail,
-            CreatieDatum = this.CreatedAt,
-            WijzigDatum = this.UpdatedAt,
-            ExterneReferentie = this.ExternalReference,
-            Voornaam = this.FirstName,
-            Tussenvoegsels = this.Infix,
-            Achternaam = this.LastName,
-            Titel = this.Title,
-            Omschrijving = this.Description,
-            DoelBedrag = this.TargetAmount,
-            TotaalBedrag = this.TotalAmount,
-            AantalDonaties = this.TotalDonations,
-            DoelBedragBereikt = this.TargetAmountAchieved,
-            Beeindigd = this.Ended,
-            EindDatum = this.EndDate,
-            Url = this.Url,
-            DoneerUrl = this.DonateUrl,
+            ActionId = this.id,
+            ProjectId = this.project_id,
+            Slug = this.slug,
+            SiteId = this.site_id,
+            UserId = this.owner.id,
+            Email = this.owner.email,
+            CreatieDatum = this.created_at,
+            WijzigDatum = this.updated_at,
+            ExterneReferentie = this.external_reference,
+            Voornaam = this.first_name,
+            Tussenvoegsels = this.infix,
+            Achternaam = this.last_name,
+            Titel = this.title,
+            Omschrijving = this.description,
+            DoelBedrag = this.target_amount,
+            TotaalBedrag = this.total_amount,
+            AantalDonaties = this.total_donations,
+            DoelBedragBereikt = this.target_amount_achieved,
+            Beeindigd = this.ended,
+            EindDatum = this.end_date,
+            Url = this.url,
+            DoneerUrl = this.donate_url,
         };
     }
 
 }
 
-public class Owner
+public record Owner
 {
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
-
-    [JsonPropertyName("first_name")]
-    public string FirstName { get; set; }
-
-    [JsonPropertyName("infix")]
-    public string Infix { get; set; }
-
-    [JsonPropertyName("last_name")]
-    public string LastName { get; set; }
-
-    [JsonPropertyName("email")]
-    public string EMail { get; set; }
+    public int id { get; set; }
+    public string first_name { get; set; }
+    public string infix { get; set; }
+    public string last_name { get; set; }
+    public string email { get; set; }
 }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
