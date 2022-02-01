@@ -1,3 +1,5 @@
+using BerghAdmin.ApplicationServices.DocIO;
+
 using Syncfusion.DocIO;
 using Syncfusion.DocIO.DLS;
 
@@ -65,5 +67,19 @@ namespace BerghAdmin.Services
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<string> GetMergeFieldsFor(Document document)
+        {
+            if (document.ContentType != ContentTypeEnum.Word)
+            {
+                throw new ApplicationException($"Document with name {document.Name} is not a Word document.");
+            }
+            if (document.Content == null)
+            {
+                throw new ApplicationException($"Document with name {document.Name} has no content.");
+            }
+            return DocIOInterface.GetMergeFields(new MemoryStream(document.Content));
+        }
+
     }
 }

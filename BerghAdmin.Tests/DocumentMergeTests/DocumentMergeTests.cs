@@ -66,7 +66,7 @@ namespace BerghAdmin.DocumentMergeTests
             var template = service.GetMergeTemplateById(2);
             Assert.NotNull(template);
             Assert.AreEqual(template!.Name, "TestTemplate2");
-            var mergeFields = template!.GetMergeFields();
+            var mergeFields = service.GetMergeFieldsFor(template).ToArray();
             Assert.Contains("Bedrijfsnaam", mergeFields);
             Assert.Contains("NaamAanhef", mergeFields);
             Assert.Contains("StraatEnNummer", mergeFields);
