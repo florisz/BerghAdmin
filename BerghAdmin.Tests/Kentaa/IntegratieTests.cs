@@ -173,7 +173,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             await foreach (var donation in donations)
             {
-                bihzDonatieService!.AddBihzDonatie(donation);
+                bihzDonatieService!.Add(donation.Map());
             }
             var bihzDonaties = bihzDonatieService!.GetAll();
             Assert.IsTrue(await donations.CountAsync() == bihzDonaties?.Count());
