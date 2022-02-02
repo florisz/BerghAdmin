@@ -63,6 +63,9 @@ public class EvenementService : IEvenementService
             .Evenementen?
             .OfType<T>();
 
+    public IEnumerable<FietsTocht>? GetAllFietsTochten()
+        => GetAll<FietsTocht>();
+
     public async Task<ErrorCodeEnum> AddDeelnemer(Evenement evenement, Persoon persoon)
     {
         if (evenement == null) { throw new ApplicationException("parameter evenement can not be null"); }

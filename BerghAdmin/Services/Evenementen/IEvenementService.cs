@@ -9,6 +9,7 @@ public interface IEvenementService
     Evenement? GetByTitel(string titel);
     Evenement? GetByProjectId(int projectId);
     IEnumerable<T>? GetAll<T>();
+    IEnumerable<FietsTocht>? GetAllFietsTochten();
     Task<ErrorCodeEnum> AddDeelnemer(Evenement evenement, Persoon persoon);
     Task<ErrorCodeEnum> AddDeelnemer(Evenement evenement, int persoonId);
     Task<ErrorCodeEnum> DeleteDeelnemer(Evenement evenement, Persoon persoon);

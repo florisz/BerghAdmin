@@ -90,10 +90,10 @@ public class SeedUsersService : ISeedUsersService
             persoon = new Persoon
             {
                 Voorletters = "W",
-                Voornaam = "Wilburt",
+                Voornaam = "Wilbert",
                 Achternaam = "Esselink",
                 Adres = "Straat 102",
-                EmailAdres = "wilburt@mail.com",
+                EmailAdres = "wilbert@mail.com",
                 GeboorteDatum = new DateTime(2002, 1, 1),
                 Geslacht = GeslachtEnum.Man,
                 Land = "Nederland",
