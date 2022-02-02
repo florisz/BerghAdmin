@@ -7,7 +7,7 @@ public class BihzProject
 
     public BihzProject(BihzProject newProject)
     {
-        this.UpdateFrom(newProject);
+        UpdateFrom(newProject);
     }
 
     public int Id { get; set; }                     // Unique internal id
@@ -31,7 +31,7 @@ public class BihzProject
     public string? DonatieUrl { get; set; }	        // The URL to directly make a donation to the project.
     public int? EvenementId { get; set; }           // id to reference the corresponding Evenment in the BerghAdmin context
 
-    public BihzProject UpdateFrom(BihzProject p)
+    public static BihzProject UpdateFrom(BihzProject p)
     {
         return new BihzProject
         {

@@ -2,13 +2,9 @@
 
 namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 #pragma warning disable IDE1006 // Naming Styles
 
-public class ActionResponse
-{
-    public Action Action { get; set; }
-}
+public record ActionResponse(Action Action);
 
 public record Action(int id,
     string slug,
@@ -39,7 +35,7 @@ public record Action(int id,
     DateTime end_date,
     int previous_participations,
     string url,
-    string donate_url) : Resource
+    string donate_url) : IResource
 { 
 
     public BihzActie Map()
@@ -73,11 +69,4 @@ public record Action(int id,
 
 }
 
-public record Owner
-{
-    public int id { get; set; }
-    public string first_name { get; set; }
-    public string infix { get; set; }
-    public string last_name { get; set; }
-    public string email { get; set; }
-}
+public record Owner(int id, string first_name, string infix, string last_name, string email);

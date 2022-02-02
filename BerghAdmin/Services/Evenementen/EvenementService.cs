@@ -30,7 +30,7 @@ public class EvenementService : IEvenementService
         .Evenementen?
         .OfType<FietsTocht>()
         .Where(ev => ev.BihzProject != null)
-        .FirstOrDefault(e => e.BihzProject.Id == projectId);
+        .FirstOrDefault(e => e.BihzProject!.Id == projectId);
 
 
     public async Task<ErrorCodeEnum> Save(Evenement evenement)

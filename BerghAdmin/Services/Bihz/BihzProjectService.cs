@@ -122,7 +122,7 @@ public class BihzProjectService : IBihzProjectService
         if (currentProject == null)
             return new BihzProject(newProject);
 
-        return currentProject.UpdateFrom(newProject);
+        return BihzProject.UpdateFrom(newProject);
     }
 
 }

@@ -14,7 +14,7 @@ public class DonationResponse
 
 }
 
-public class Donation : Resource
+public class Donation : IResource
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }

@@ -56,7 +56,7 @@ namespace BerghAdmin.Tests.Kentaa
 
         }
 
-        string GetDatabaseConnectionString(IConfigurationRoot configuration)
+        static string GetDatabaseConnectionString(IConfigurationRoot configuration)
         {
             var databaseConfiguration = configuration.GetSection("DatabaseConfiguration").Get<DatabaseConfiguration>();
             if (databaseConfiguration == null)
@@ -205,7 +205,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             foreach (var action in bihzActionService.GetAll() ?? throw new ArgumentException("no actions"))
             {
-                var persoon = persoonService.GetByActionId(action.Id);
+                var persoon = persoonService!.GetByActionId(action.Id);
                 //if (persoon == null)
                 //{
                 //    persoon = persoonService.GetByEmailAdres(action.Email ?? "no-email");
@@ -236,7 +236,7 @@ namespace BerghAdmin.Tests.Kentaa
                     continue;
                 }
 
-                var persoon = persoonService.GetByActionId(donation.ActionId);
+                var persoon = persoonService!.GetByActionId(donation.ActionId);
                 if (persoon != null)
                 {
                     var donaties = persoon.Donaties;

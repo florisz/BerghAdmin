@@ -1,4 +1,5 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 using Microsoft.Extensions.Options;
 
@@ -10,6 +11,13 @@ public class KentaaInterfaceService : IKentaaInterfaceService
 {
     readonly HttpClient _httpClient;
     readonly KentaaSession _session;
+    readonly Dictionary<Type, string> endpoints = new(){
+        { typeof(KM.Actions), "actions"},
+        { typeof(KM.Projects), "projects"},
+        { typeof(KM.Donations), "donations"},
+        { typeof(KM.Users), "users"},
+    };
+
     public KentaaInterfaceService(IOptions<KentaaConfiguration> settings, IHttpClientFactory factory)
     {
         _session = new KentaaSession(settings.Value.KentaaHost, settings.Value.KentaaBasePath, settings.Value.ApiKey);
@@ -25,10 +33,10 @@ public class KentaaInterfaceService : IKentaaInterfaceService
     }
 
     public async IAsyncEnumerable<T> GetKentaaResourcesByQuery<TList, T>(KentaaFilter filter) 
-        where TList: Resources<T>, new()
-        where T: Resource
+        where TList: IResources<T>
+        where T: IResource
     {
-        var endpoint = new TList().Endpoint;
+        var endpoint = endpoints[typeof(TList)];
         var url = _session.Url(endpoint, filter);
         var resources = (await GetKentaaResponse<TList>(url)).GetResources();
 

@@ -1,17 +1,18 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface;
-using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Configuration;
+
+using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 namespace BerghAdmin.KentaaTest;
 
 public class KentaaTest
 {
-    ServiceProvider _serviceProvider;
+    readonly ServiceProvider _serviceProvider;
 
     public KentaaTest(ServiceProvider serviceProvider)
     {
@@ -30,25 +31,24 @@ public class KentaaTest
 
         var httpClientFactory = _serviceProvider.GetService<IHttpClientFactory>();
         var kentaaInterfaceService = new KentaaInterfaceService(options, httpClientFactory);
-        using (var httpClient = httpClientFactory.CreateClient())
-        {
-            await ReadAndPostAllResources(kentaaInterfaceService, httpClient);
-        }
+        using var httpClient = httpClientFactory.CreateClient();
+        
+        await ReadAndPostAllResources(kentaaInterfaceService, httpClient);
     }
 
-    public async Task ReadAndPostAllResources(IKentaaInterfaceService service, HttpClient httpClient)
+    public static async Task ReadAndPostAllResources(IKentaaInterfaceService service, HttpClient httpClient)
     {
         var users = service.GetKentaaResourcesByQuery<KM.Users, KM.User>(new KentaaFilter());
         await foreach (var user in users)
         {
-            Console.WriteLine($"Post user {user.FirstName} {user.LastName} ({user.Email})");
+            Console.WriteLine($"Post user {user.first_name} {user.last_name} ({user.email})");
             var content = GetContent(user);
             await httpClient.PostAsync("https://localhost:44344/users", content);
         }
         var projects = service.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
         await foreach (var project in projects)
         {
-            Console.WriteLine($"Post Project {project.Title} {project.Description}");
+            Console.WriteLine($"Post Project {project.title} {project.description}");
             var content = GetContent(project);
             await httpClient.PostAsync("https://localhost:44344/projects", content);
         }
@@ -68,5 +68,6 @@ public class KentaaTest
         }
     }
 
-    private StringContent GetContent(object payload) => new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+    private static StringContent GetContent(object payload) 
+        => new(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
 }
