@@ -310,6 +310,20 @@ public class SeedDataService : ISeedDataService
         var fietstocht = new FietsTocht()
         {
             Id = 0,
+            GeplandeDatum = new DateTime(2015, 5, 9),
+            Titel = "Klaver Vier Tocht 2015"
+        };
+        await this._evenementService.Save(fietstocht);
+        fietstocht = new FietsTocht()
+        {
+            Id = 0,
+            GeplandeDatum = new DateTime(2019, 5, 24),
+            Titel = "Bergh-Leipzig-Bergh 2019"
+        };
+        await this._evenementService.Save(fietstocht);
+        fietstocht = new FietsTocht()
+        {
+            Id = 0,
             GeplandeDatum = new DateTime(2023, 5, 3),
             Titel = "Hanzetocht 2023"
         };

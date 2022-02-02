@@ -94,7 +94,6 @@
     public List<FietsTocht> fietsTochtList = new();
     public List<double> SelectedRowIndexes { get; set; } = new();
     public double[] SelectedTochten { get; set; } = Array.Empty<double>();
-    public string SelectedValue = string.Empty;        
     SfGrid<FietsTocht> FietsTochtenGrid = new();
 
     protected override void OnInitialized()
@@ -108,12 +107,6 @@
     {
         SelectedRowIndexes = await this.FietsTochtenGrid.GetSelectedRowIndexes();
         SelectedTochten = SelectedRowIndexes.ToArray();
-        SelectedValue = "";
-        foreach (var data in SelectedTochten)
-        {
-            SelectedValue = SelectedValue + " " + data;
-        }
-        StateHasChanged();
     }
 
     public void ActionCompletedHandler(ActionEventArgs<FietsTocht> args)
