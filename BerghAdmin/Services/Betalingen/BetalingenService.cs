@@ -1,6 +1,5 @@
-﻿namespace BerghAdmin.Services.Betalingen
+﻿namespace BerghAdmin.Services.Betalingen;
+
+public class BetalingenService : IBetalingenService
 {
-    public class BetalingenService
-    {
-    }
 }

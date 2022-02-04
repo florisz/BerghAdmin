@@ -2,6 +2,7 @@ using BerghAdmin.Authorization;
 using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
+using BerghAdmin.Services.Betalingen;
 using BerghAdmin.Services.Bihz;
 using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
@@ -103,6 +104,8 @@ public class Program
         builder.Services.AddOptions();
         builder.Services.AddHttpClient();
         builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
+        builder.Services.AddScoped<IBetalingenService, BetalingenService>();
+        builder.Services.AddScoped<IBetalingenImporterService, BetalingenImporterService>();
         builder.Services.AddScoped<IPersoonService, PersoonService>();
         builder.Services.AddScoped<IRolService, RolService>();
         builder.Services.AddTransient<ISeedDataService, SeedDataService>();
