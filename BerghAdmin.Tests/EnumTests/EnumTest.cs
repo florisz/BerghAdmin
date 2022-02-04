@@ -7,7 +7,7 @@ using System;
 namespace BerghAdmin.Tests.EnumTests
 {
     [TestFixture]
-    public class MailMergeTests
+    public class EnumTests
     {
         [Test]
         public void TestTextIsEmpty()

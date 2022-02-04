@@ -1,6 +1,7 @@
 ﻿using BerghAdmin.Data;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
+using Microsoft.EntityFrameworkCore;
 
 namespace BerghAdmin.Services.Evenementen;
 
@@ -61,6 +62,7 @@ public class EvenementService : IEvenementService
     public IEnumerable<T>? GetAll<T>()
         => _dbContext
             .Evenementen?
+            .Include(e => e.Deelnemers)
             .OfType<T>();
 
     public IEnumerable<FietsTocht>? GetAllFietsTochten()

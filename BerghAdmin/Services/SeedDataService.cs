@@ -14,17 +14,20 @@ public class SeedDataService : ISeedDataService
     private readonly ApplicationDbContext _dbContext;
     private readonly IRolService _rolService;
     private readonly IEvenementService _evenementService;
+    private readonly IPersoonService _persoonService;
 
     public SeedDataService(
         ApplicationDbContext dbContext,
         IRolService rolService,
         IEvenementService evenementService,
+        IPersoonService persoonService,
         IOptions<SeedSettings> settings)
     {
         this._settings = settings.Value;
         this._dbContext = dbContext;
         this._rolService = rolService;
         this._evenementService = evenementService;
+        this._persoonService = persoonService;
     }
 
     public async Task SeedInitialData()
@@ -38,7 +41,7 @@ public class SeedDataService : ISeedDataService
 
         await InsertTestPersonen(rollen);
         await InsertEvenementen();
-        //await InsertDocumenten();
+        await InsertDocumenten();
     }
 
     private bool DatabaseHasData()
@@ -327,6 +330,15 @@ public class SeedDataService : ISeedDataService
             GeplandeDatum = new DateTime(2023, 5, 3),
             Titel = "Hanzetocht 2023"
         };
+
+        var persoon = this._persoonService.GetByEmailAdres("appie@aapnootmies.com");
+        fietstocht.Deelnemers.Add(persoon);
+        persoon = this._persoonService.GetByEmailAdres("bert@aapnootmies.com");
+        fietstocht.Deelnemers.Add(persoon);
+        persoon = this._persoonService.GetByEmailAdres("chappie@aapnootmies.com");
+        fietstocht.Deelnemers.Add(persoon);
+
+
         await this._evenementService.Save(fietstocht);
     }
 

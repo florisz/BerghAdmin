@@ -17,12 +17,7 @@
 @*
     The grid showing all fietstochten
 *@
-<SfGrid @ref="@FietsTochtenGrid" 
-        DataSource="@fietsTochtList" 
-        AllowPaging="true" 
-        AllowResizing="true" 
-        AllowSelection="true" 
-        ShowColumnMenu="true" 
+<SfGrid DataSource="@FietsTochtList" SelectedRowIndex=0
         ContextMenuItems="@(new List<ContextMenuItemModel>() { 
                                 new ContextMenuItemModel { Text = "Toevoegen Renner", Target = ".e-content", Id = "add-renner" },
                                 new ContextMenuItemModel { Text = "Verwijderen renner", Target = ".e-content", Id = "delete-renner" },
@@ -35,15 +30,26 @@
         Mode="EditMode.Dialog" 
         AllowEditOnDblClick="true">
     </GridEditSettings>
-    <GridEvents RowSelected="GetSelectedRecords" TValue="FietsTocht" />
-    <GridEvents ContextMenuItemClicked="OnContextMenuClick" TValue="FietsTocht" />
-
+    <GridEvents RowSelected="SelectFietsTocht" TValue="FietsTocht" />
+@*    <GridEvents ContextMenuItemClicked="OnContextMenuClick" TValue="FietsTocht" />
+*@
     <GridColumns>
-        <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
         <GridColumn Field=@nameof(FietsTocht.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true"></GridColumn>
         <GridColumn Field=@nameof(FietsTocht.Titel) HeaderText="Titel" TextAlign="TextAlign.Left"  Width="110"></GridColumn>
         <GridColumn Field=@nameof(FietsTocht.GeplandeDatum) HeaderText="Datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
-        <GridColumn HeaderText="# deelnemers" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
+        <GridColumn Field=@nameof(FietsTocht.AantalDeelnemers) HeaderText="# deelnemers" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+<br />
+<div class='e-statustext'>Deelnemers aan fietstocht: <b>@SelectedFietsTocht.Titel</b></div>
+<SfGrid DataSource="@DeelnemerList">
+    <GridColumns>
+        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left"  Width="110"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.GetRollenAsString) HeaderText="Rollen" TextAlign="TextAlign.Left"  Width="200"></GridColumn>
     </GridColumns>
 </SfGrid>
 
@@ -52,9 +58,53 @@
 
 @code
 {
+    // Everything to handle persons
+    public IEnumerable<FietsTocht> FietsTochtList;
+    public IEnumerable<Persoon> DeelnemerList { get; set; }
+    public FietsTocht SelectedFietsTocht { get; set; } = new();
+
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         await jsRuntime.InvokeAsync<object>("SetSideMenu", "fietser");
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        RefreshList();
+    }
+
+    public void SelectFietsTocht(RowSelectEventArgs<FietsTocht> args)
+    {
+        SelectedFietsTocht = args.Data;
+        DeelnemerList = SelectedFietsTocht.Deelnemers;
+    }
+
+    public void ActionCompletedHandler(ActionEventArgs<FietsTocht> args)
+    {
+        // Here you can customize your code
+    }
+
+    public Task RefreshList()
+    {
+        FietsTochtList = GetFietsTochten();
+        var fietsTocht = FietsTochtList.ElementAt(0);
+        if (fietsTocht != null)
+        {
+            SelectedFietsTocht = fietsTocht;
+            DeelnemerList = fietsTocht.Deelnemers;
+        }       
+        return Task.CompletedTask;
+    }
+
+    private IEnumerable<FietsTocht> GetFietsTochten()
+    {
+        var fietsTochten = evenementService
+                    .GetAllFietsTochten()
+                    .OrderByDescending(ft => ft.GeplandeDatum)
+                    .ToList<FietsTocht>();
+
+        return fietsTochten;
     }
 
     // Everything to handle the email dialog
@@ -87,48 +137,6 @@
             ShowSendMailDialog();
             return;
         }
-
-    }
-
-    // Everything to handle persons
-    public List<FietsTocht> fietsTochtList = new();
-    public List<double> SelectedRowIndexes { get; set; } = new();
-    public double[] SelectedTochten { get; set; } = Array.Empty<double>();
-    SfGrid<FietsTocht> FietsTochtenGrid = new();
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        RefreshList();
-    }
-
-
-    public async Task GetSelectedRecords(RowSelectEventArgs<FietsTocht> args)
-    {
-        SelectedRowIndexes = await this.FietsTochtenGrid.GetSelectedRowIndexes();
-        SelectedTochten = SelectedRowIndexes.ToArray();
-    }
-
-    public void ActionCompletedHandler(ActionEventArgs<FietsTocht> args)
-    {
-        // Here you can customize your code
-    }
-
-    public Task RefreshList()
-    {
-        fietsTochtList = GetFietsTochten();
-        return Task.CompletedTask;
-    }
-
-    private List<FietsTocht> GetFietsTochten()
-    {
-        var fietsTochten = new List<FietsTocht>();
-
-        fietsTochten = evenementService
-                    .GetAllFietsTochten()
-                    .ToList<FietsTocht>();
-
-        return fietsTochten;
     }
 
 }
