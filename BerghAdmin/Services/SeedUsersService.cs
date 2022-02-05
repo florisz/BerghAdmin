@@ -39,7 +39,7 @@ public class SeedUsersService : ISeedUsersService
                 Voornaam = "Floris",
                 Achternaam = "Zwarteveen",
                 Adres = "Berkenlaan 12",
-                EmailAdres = "fzwarteveen@mail.com",
+                EmailAdres = "fzwarteveen@gmail.com",
                 GeboorteDatum = new DateTime(2002, 1, 1),
                 Geslacht = GeslachtEnum.Man,
                 Land = "Nederland",

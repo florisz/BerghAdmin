@@ -25,6 +25,7 @@ namespace BerghAdmin.Tests.Kentaa
         private IBihzProjectService? bihzProjectService;
         private IBihzUserService? bihzUserService;
         private IPersoonService? persoonService;
+        private IDonatieService? donatieService;
         protected override void RegisterServices(ServiceCollection services)
         {
             var kentaaConfiguration = new ConfigurationBuilder()
@@ -90,10 +91,17 @@ namespace BerghAdmin.Tests.Kentaa
                 return;
             }
 
+            donatieService = this.ServiceProvider?.GetRequiredService<IDonatieService>();
+            if (donatieService == null)
+            {
+                Assert.Fail("Can not instantiate donatie service");
+                return;
+            }
+
             bihzDonatieService = this.ServiceProvider?.GetRequiredService<IBihzDonatieService>();
             if (bihzDonatieService == null)
             {
-                Assert.Fail("Can not instantiate donatie service");
+                Assert.Fail("Can not instantiate bihz donatie service");
                 return;
             }
 
@@ -147,6 +155,9 @@ namespace BerghAdmin.Tests.Kentaa
 
             var projects = bihzProjectService!.GetAll();
             Assert.AreEqual(await kentaaProjects.CountAsync(), projects?.Count());
+            var aProject = projects.FirstOrDefault(p => p.Titel == "Hanzetocht 2023");
+            Assert.IsNotNull(aProject);
+            Assert.IsTrue(aProject.Gesloten == false);
         }
 
         [Test]
@@ -203,49 +214,26 @@ namespace BerghAdmin.Tests.Kentaa
             var kentaaActions = await kentaaService.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter()).ToListAsync();
             bihzActionService!.Add(kentaaActions.Select(ka => ka.Map()));
 
-            foreach (var action in bihzActionService.GetAll() ?? throw new ArgumentException("no actions"))
+            string[] emailAdresses = { "appie@aapnootmies.com", "bert@aapnootmies.com", "chappie@aapnootmies.com" };
+            foreach (var emailAdress in emailAdresses)
             {
-                var persoon = persoonService!.GetByActionId(action.Id);
-                //if (persoon == null)
-                //{
-                //    persoon = persoonService.GetByEmailAdres(action.Email ?? "no-email");
-                //}
-                //if (persoon != null)
-                //{
-                //    persoon.BihzActie = action;
-                //    persoonService.SavePersoon(persoon);
-                //}
+                var persoon = persoonService!.GetByEmailAdres(emailAdress);
+
+                // check if the link to action is set for the three configured test persons
+                Assert.IsNotNull(persoon, $"Persoon met email adres: -{emailAdress}- is niet bekend");
+                Assert.IsTrue(persoon?.BihzActie != null);
             }
 
             // step 4: read all donations, create Donatie if needed and link to Personen
             var kentaaDonations = kentaaService.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
             bihzDonatieService!.Add(await kentaaDonations.Select(kd => kd.Map()).ToListAsync());
 
-            var donatieService = this.ServiceProvider?.GetRequiredService<IDonatieService>();
-            if (donatieService == null)
-            {
-                Assert.Fail("donatie service is null");
-                return;
-            }
-            foreach (var donation in bihzDonatieService.GetAll() ?? throw new ArgumentException("no donations"))
-            {
-                if (donation.ActionId == 0)
-                {
-                    // niet gekoppeld aan een evenement
-                    donatieService.ProcessBihzDonatie(donation);
-                    continue;
-                }
-
-                var persoon = persoonService!.GetByActionId(donation.ActionId);
-                if (persoon != null)
-                {
-                    var donaties = persoon.Donaties;
-                    if (donaties?.FirstOrDefault(d => d.KentaaDonatie?.DonationId == donation.Id) == null)
-                    {
-                        donatieService.ProcessBihzDonatie(donation, persoon);
-                    }
-                }
-            }
+            // check if persoon chappie has donaties
+            var chappie = persoonService!.GetByEmailAdres("chappie@aapnootmies.com");
+            Assert.IsNotNull(chappie, "Persoon met email adres: -chappie@aapnootmies.com- is niet bekend");
+            Assert.IsTrue(chappie?.BihzActie != null, "Persoon heeft geen gelinkte Action in Kentaa");
+            Assert.True(chappie?.Donaties != null, "Geen Donaties voor test persoon Chappie");
+            Assert.True(chappie.Donaties.Sum(d => d.Bedrag) >= 75, "Chappie moet minimaal 75 euro opgehaald hebben");
 
             Assert.Pass();
         }

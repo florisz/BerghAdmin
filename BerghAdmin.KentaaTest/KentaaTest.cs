@@ -42,28 +42,28 @@ public class KentaaTest
         await foreach (var user in users)
         {
             Console.WriteLine($"Post user {user.first_name} {user.last_name} ({user.email})");
-            var content = GetContent(user);
+            var content = GetContent(user.Map());
             await httpClient.PostAsync("https://localhost:44344/users", content);
         }
         var projects = service.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
         await foreach (var project in projects)
         {
             Console.WriteLine($"Post Project {project.title} {project.description}");
-            var content = GetContent(project);
+            var content = GetContent(project.Map());
             await httpClient.PostAsync("https://localhost:44344/projects", content);
         }
         var actions = service.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
         await foreach (var action in actions)
         {
             Console.WriteLine($"Post Action {action.title} {action.description}");
-            var content = GetContent(action);
+            var content = GetContent(action.Map());
             await httpClient.PostAsync("https://localhost:44344/actions", content);
         }
         var donations = service.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
         await foreach (var donation in donations)
         {
             Console.WriteLine($"Post Donation; amount={donation.Amount}; receivable={donation.ReceivableAmount}");
-            var content = GetContent(donation);
+            var content = GetContent(donation.Map());
             await httpClient.PostAsync("https://localhost:44344/donations", content);
         }
     }

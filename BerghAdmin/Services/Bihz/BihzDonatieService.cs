@@ -33,7 +33,7 @@ public class BihzDonatieService : IBihzDonatieService
     {
         _logger.LogDebug("entering AddBihzDonatie");
 
-        var currentDonatie = GetByKentaaId(donatie.Id);
+        var currentDonatie = GetByKentaaId(donatie.DonationId);
 
         currentDonatie = MapChanges(currentDonatie, donatie);
 
@@ -55,14 +55,14 @@ public class BihzDonatieService : IBihzDonatieService
 
     public void Add(IEnumerable<BihzDonatie> donaties)
     {
-        foreach (var donation in donaties)
+        foreach (var donatie in donaties)
         {
-            Add(donation);
+            Add(donatie);
         }
     }
 
-    public bool Exist(BihzDonatie bihzDonatie)
-        => GetByKentaaId(bihzDonatie.DonationId) != null;
+    public bool Exist(BihzDonatie donatie)
+        => GetByKentaaId(donatie.DonationId) != null;
 
     public IEnumerable<BihzDonatie>? GetAll() 
         => _dbContext
@@ -78,21 +78,21 @@ public class BihzDonatieService : IBihzDonatieService
             .BihzDonaties?
             .SingleOrDefault(kd => kd.DonationId == kentaaId);
 
-    public ErrorCodeEnum Save(BihzDonatie bihzDonatie)
+    public ErrorCodeEnum Save(BihzDonatie donatie)
     {
         try
         {
-            if (bihzDonatie.Id == 0)
+            if (donatie.Id == 0)
             {
                 _dbContext
                     .BihzDonaties?
-                    .Add(bihzDonatie);
+                    .Add(donatie);
             }
             else
             {
                 _dbContext
                     .BihzDonaties?
-                    .Update(bihzDonatie);
+                    .Update(donatie);
             }
 
             _dbContext.SaveChanges();
@@ -106,12 +106,12 @@ public class BihzDonatieService : IBihzDonatieService
         return ErrorCodeEnum.Ok;
     }
 
-    private void LinkDonatieToPersoon(BihzDonatie bihzDonatie)
+    private void LinkDonatieToPersoon(BihzDonatie donatie)
     {
         _logger.LogDebug("entering LinkDonatieToPersoon");
 
         // link via action
-        var bihzAction = _bihzActieService.GetByKentaaId(bihzDonatie.ActionId);
+        var bihzAction = _bihzActieService.GetByKentaaId(donatie.ActionId);
         if (bihzAction == null)
         {
             _logger.LogError("Donatie not linked to an action; can not link it to a person");
@@ -135,8 +135,8 @@ public class BihzDonatieService : IBihzDonatieService
             return;
         }
 
-        bihzDonatie.PersoonId = persoon.Id;
-        _donatieService.ProcessBihzDonatie(bihzDonatie, persoon);
+        donatie.PersoonId = persoon.Id;
+        _donatieService.ProcessBihzDonatie(donatie, persoon);
     }
 
 }

@@ -7,7 +7,7 @@ public class BihzProject
 
     public BihzProject(BihzProject newProject)
     {
-        UpdateFrom(newProject);
+        this.UpdateFrom(newProject);
     }
 
     public int Id { get; set; }                     // Unique internal id
@@ -31,29 +31,28 @@ public class BihzProject
     public string? DonatieUrl { get; set; }	        // The URL to directly make a donation to the project.
     public int? EvenementId { get; set; }           // id to reference the corresponding Evenment in the BerghAdmin context
 
-    public static BihzProject UpdateFrom(BihzProject p)
+    public BihzProject UpdateFrom(BihzProject p)
     {
-        return new BihzProject
-        {
-            Slug = p.Slug,
-            ProjectId = p.ProjectId,
-            SiteId = p.SiteId,
-            CreatieDatum = p.CreatieDatum,
-            WijzigDatum = p.WijzigDatum,
-            ExterneReferentie = p.ExterneReferentie,
-            Titel = p.Titel,
-            Omschrijving = p.Omschrijving,
-            DoelBedrag = p.DoelBedrag,
-            TotaalBedrag = p.TotaalBedrag,
-            AantalDonaties = p.AantalDonaties,
-            DoelBedragBereikt = p.DoelBedragBereikt,
-            Zichtbaar = p.Zichtbaar,
-            Gesloten = p.Gesloten,
-            Beeindigd = p.Beeindigd,
-            EindDatum = p.EindDatum,
-            Url = p.Url,
-            DonatieUrl = p.DonatieUrl,
-            EvenementId = p.EvenementId,
-        };
+        Slug = p.Slug;
+        ProjectId = p.ProjectId;
+        SiteId = p.SiteId;
+        CreatieDatum = p.CreatieDatum;
+        WijzigDatum = p.WijzigDatum;
+        ExterneReferentie = p.ExterneReferentie;
+        Titel = p.Titel;
+        Omschrijving = p.Omschrijving;
+        DoelBedrag = p.DoelBedrag;
+        TotaalBedrag = p.TotaalBedrag;
+        AantalDonaties = p.AantalDonaties;
+        DoelBedragBereikt = p.DoelBedragBereikt;
+        Zichtbaar = p.Zichtbaar;
+        Gesloten = p.Gesloten;
+        Beeindigd = p.Beeindigd;
+        EindDatum = p.EindDatum;
+        Url = p.Url;
+        DonatieUrl = p.DonatieUrl;
+        EvenementId = p.EvenementId;
+
+        return this;
     }
 }

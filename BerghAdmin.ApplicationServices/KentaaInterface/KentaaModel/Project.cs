@@ -4,7 +4,7 @@ namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 #pragma warning disable IDE1006 // Naming Styles
 
-public record ProjectResponse(Project Action);
+public record ProjectResponse(Project Project);
 
 public record Project
 (
