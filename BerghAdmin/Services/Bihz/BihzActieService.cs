@@ -21,7 +21,7 @@ public class BihzActieService : IBihzActieService
 
     public void Add(BihzActie actie)
     {
-        var currentActie = GetByKentaaId(actie.Id);
+        var currentActie = GetByKentaaId(actie.ActionId);
 
         currentActie = MapChanges(currentActie, actie);
 

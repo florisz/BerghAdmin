@@ -3,8 +3,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
-using System;
-
 namespace BerghAdmin.KentaaFunction;
 public class FunctionApp
 {

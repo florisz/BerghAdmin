@@ -18,11 +18,11 @@ public class BihzProjectService : IBihzProjectService
         _evenementService = evenementService;
     }
 
-    public void Add(BihzProject newProject)
+    public void Add(BihzProject project)
     {
-        var currentProject = GetByKentaaId(newProject.Id);
+        var currentProject = GetByKentaaId(project.ProjectId);
 
-        currentProject = MapChanges(currentProject, newProject);
+        currentProject = MapChanges(currentProject, project);
 
         if (currentProject.EvenementId == null)
         {
@@ -122,7 +122,7 @@ public class BihzProjectService : IBihzProjectService
         if (currentProject == null)
             return new BihzProject(newProject);
 
-        return BihzProject.UpdateFrom(newProject);
+        return currentProject.UpdateFrom(newProject);
     }
 
 }

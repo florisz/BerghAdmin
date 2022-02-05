@@ -19,7 +19,7 @@ public class BihzUserService : IBihzUserService
 
     public void Add(BihzUser user)
     {
-        var currentUser = GetByKentaaId(user.Id);
+        var currentUser = GetByKentaaId(user.UserId);
 
         currentUser = MapChanges(currentUser, user);
 
