@@ -1,6 +1,6 @@
 ﻿namespace BerghAdmin.Data.Kentaa;
 
-public class BihzUser
+public class BihzUser:IBihzResource
 {
     public BihzUser()
     { }

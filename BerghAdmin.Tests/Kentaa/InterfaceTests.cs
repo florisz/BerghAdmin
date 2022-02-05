@@ -33,8 +33,8 @@ public class InterfaceTests : DatabasedTests
         var kentaaDonation = await service.GetDonationById(2587623);
     
         Assert.IsNotNull(kentaaDonation);
-        Assert.AreEqual("Floris", kentaaDonation.FirstName);
-        Assert.AreEqual("Zwarteveen", kentaaDonation.LastName);   
+        Assert.AreEqual("Floris", kentaaDonation.first_name);
+        Assert.AreEqual("Zwarteveen", kentaaDonation.last_name);   
     }
 
     [Test]

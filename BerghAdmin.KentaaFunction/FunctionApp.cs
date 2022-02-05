@@ -8,52 +8,40 @@ using System;
 namespace BerghAdmin.KentaaFunction;
 public class FunctionApp
 {
-    private readonly IKentaaInterfaceService service;
-    private readonly HttpClient berghClient;
+    private readonly IKentaaInterfaceService kentaaService;
+    private readonly BerghAdminService berghService;
 
-    public FunctionApp(IHttpClientFactory httpClientFactory, IKentaaInterfaceService service)
+    public FunctionApp(IKentaaInterfaceService kentaaService, BerghAdminService berghService)
     {
-        this.service = service;
-        this.berghClient = httpClientFactory.CreateClient();
+        this.kentaaService = kentaaService;
+        this.berghService = berghService;
     }
 
     [FunctionName(nameof(ReadDonations))]
     public async Task ReadDonations([TimerTrigger("* * 2 * * *", RunOnStartup = true)] TimerInfo myTimer, ILogger log)
     {
-        var donaties = service.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
-        await foreach (var donatie in donaties)
-        {
-            await berghClient.PostAsJsonAsync("https://localhost:5001/donaties", donatie);
-        }
+        var donaties = kentaaService.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
+        await berghService.Send(donaties);
     }
 
     [FunctionName(nameof(ReadProjects))]
     public async Task ReadProjects([TimerTrigger("* * 2 * * *", RunOnStartup = true)] TimerInfo myTimer, ILogger log)
     {
-        var resources = service.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
-        await foreach (var resource in resources)
-        {
-            await berghClient.PostAsJsonAsync("https://localhost:5001/projects", resource);
-        }
+        var resources = kentaaService.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
+        await berghService.Send(resources);
     }
 
     [FunctionName(nameof(ReadActions))]
     public async Task ReadActions([TimerTrigger("* * 2 * * *", RunOnStartup = true)] TimerInfo myTimer, ILogger log)
     {
-        var resources = service.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
-        await foreach (var resource in resources)
-        {
-            await berghClient.PostAsJsonAsync("https://localhost:5001/actions", resource);
-        }
+        var resources = kentaaService.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
+        await berghService.Send(resources);
     }
 
     [FunctionName(nameof(ReadUsers))]
     public async Task ReadUsers([TimerTrigger("* * 2 * * *", RunOnStartup = true)] TimerInfo myTimer, ILogger log)
     {
-        var resources = service.GetKentaaResourcesByQuery<KM.Users, KM.User>(new KentaaFilter());
-        await foreach (var resource in resources)
-        {
-            await berghClient.PostAsJsonAsync("https://localhost:5001/user", resource);
-        }
+        var resources = kentaaService.GetKentaaResourcesByQuery<KM.Users, KM.User>(new KentaaFilter());
+        await berghService.Send(resources);
     }
 }

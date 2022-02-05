@@ -29,7 +29,7 @@ public class KentaaInterfaceService : IKentaaInterfaceService
         var url = _session.Url($"donations/{donationId}");
         var donation = await GetKentaaResponse<DonationResponse>(url);
 
-        return donation.Data;
+        return donation.donation;
     }
 
     public async IAsyncEnumerable<T> GetKentaaResourcesByQuery<TList, T>(KentaaFilter filter) 

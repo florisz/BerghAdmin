@@ -38,7 +38,7 @@ public record Action(int id,
     string donate_url) : IResource
 { 
 
-    public BihzActie Map()
+    public IBihzResource Map()
     {
         return new BihzActie
         {

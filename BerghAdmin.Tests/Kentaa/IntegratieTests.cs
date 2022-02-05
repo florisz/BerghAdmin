@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using NUnit.Framework;
 using BerghAdmin.Services.Donaties;
+using BerghAdmin.Data.Kentaa;
 
 namespace BerghAdmin.Tests.Kentaa
 {
@@ -25,6 +26,8 @@ namespace BerghAdmin.Tests.Kentaa
         private IBihzProjectService? bihzProjectService;
         private IBihzUserService? bihzUserService;
         private IPersoonService? persoonService;
+        private BerghAdminService? berghAdminService;
+
         protected override void RegisterServices(ServiceCollection services)
         {
             var kentaaConfiguration = new ConfigurationBuilder()
@@ -48,6 +51,7 @@ namespace BerghAdmin.Tests.Kentaa
                 .AddScoped<IDonatieService, DonatieService>()
                 .AddHttpClient()
                 .AddScoped<IKentaaInterfaceService, KentaaInterfaceService>()
+                .AddScoped<BerghAdminService>()
                 .Configure<KentaaConfiguration>(kentaaConfiguration.GetSection("KentaaConfiguration"))
             ;
 
@@ -117,6 +121,9 @@ namespace BerghAdmin.Tests.Kentaa
                 Assert.Fail("Can not instantiate user service");
                 return;
             }
+
+            berghAdminService = this.ServiceProvider?.GetRequiredService<BerghAdminService>();
+
         }
 
         [Test]
@@ -127,7 +134,8 @@ namespace BerghAdmin.Tests.Kentaa
             var actions = kentaaService!.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
             await foreach (var action in actions)
             {
-                bihzActionService!.Add(action.Map());
+                var bihzAction = (BihzActie)berghAdminService!.Map(action);
+                bihzActionService!.Add(bihzAction);
             }
             var bihzActions = bihzActionService!.GetAll();
             Assert.IsTrue(await actions.CountAsync() == bihzActions?.Count());
@@ -142,7 +150,8 @@ namespace BerghAdmin.Tests.Kentaa
 
             await foreach (var project in kentaaProjects)
             {
-                bihzProjectService!.Add(project.Map());
+                var bihzProject = (BihzProject)berghAdminService!.Map(project);
+                bihzProjectService!.Add(bihzProject);
             }
 
             var projects = bihzProjectService!.GetAll();
@@ -158,7 +167,8 @@ namespace BerghAdmin.Tests.Kentaa
 
             await foreach (var user in users)
             {
-                bihzUserService!.Add(user.Map());
+                var bihzUser = (BihzUser)berghAdminService!.Map(user);
+                bihzUserService!.Add(bihzUser);
             }
             var bihzUsers = bihzUserService!.GetAll();
             Assert.IsTrue(await users.CountAsync() == bihzUsers?.Count());
@@ -173,7 +183,8 @@ namespace BerghAdmin.Tests.Kentaa
 
             await foreach (var donation in donations)
             {
-                bihzDonatieService!.Add(donation.Map());
+                var bihzDonatie = (BihzDonatie)berghAdminService!.Map(donation);
+                bihzDonatieService!.Add(bihzDonatie);
             }
             var bihzDonaties = bihzDonatieService!.GetAll();
             Assert.IsTrue(await donations.CountAsync() == bihzDonaties?.Count());
@@ -186,11 +197,11 @@ namespace BerghAdmin.Tests.Kentaa
 
             // step 1: read all users and link to Personen
             var kentaaUsers = await kentaaService!.GetKentaaResourcesByQuery<KM.Users, KM.User>(new KentaaFilter()).ToListAsync();
-            bihzUserService!.Add(kentaaUsers.Select(ku => ku.Map()));
+            bihzUserService!.Add(kentaaUsers.Select(ku => (BihzUser)berghAdminService!.Map(ku)));
 
             // step 2: read projects and link to Evenementen
-            var kentaaProjects = kentaaService.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
-            bihzProjectService!.Add(await kentaaProjects.Select(kp => kp.Map()).ToListAsync());
+            var kentaaProjects = await kentaaService.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter()).ToListAsync();
+            bihzProjectService!.Add(kentaaProjects.Select(kp => (BihzProject)berghAdminService!.Map(kp)));
 
             var fietsTochtNaam = "Hanzetocht 2023";
             if (evenementService!.GetByTitel(fietsTochtNaam) is not FietsTocht fietsTocht)
@@ -201,7 +212,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             // step 3: read all actions and link to Personen
             var kentaaActions = await kentaaService.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter()).ToListAsync();
-            bihzActionService!.Add(kentaaActions.Select(ka => ka.Map()));
+            bihzActionService!.Add(kentaaActions.Select(ka => (BihzActie)berghAdminService!.Map(ka)));
 
             foreach (var action in bihzActionService.GetAll() ?? throw new ArgumentException("no actions"))
             {
@@ -218,8 +229,8 @@ namespace BerghAdmin.Tests.Kentaa
             }
 
             // step 4: read all donations, create Donatie if needed and link to Personen
-            var kentaaDonations = kentaaService.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
-            bihzDonatieService!.Add(await kentaaDonations.Select(kd => kd.Map()).ToListAsync());
+            var kentaaDonations = await kentaaService.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter()).ToListAsync();
+            bihzDonatieService!.Add(kentaaDonations.Select(kd => (BihzDonatie)berghAdminService!.Map(kd)));
 
             var donatieService = this.ServiceProvider?.GetRequiredService<IDonatieService>();
             if (donatieService == null)

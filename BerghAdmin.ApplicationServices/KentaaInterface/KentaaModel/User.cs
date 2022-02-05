@@ -30,7 +30,7 @@ public record User
     string locale // The locale when the user was created (nl, en, de, fr, etc).
 ) : IResource
 {
-    public BihzUser Map()
+    public IBihzResource Map()
     {
         return new BihzUser
         {
