@@ -36,14 +36,18 @@ public class DonatieService : IDonatieService
             return ErrorCodeEnum.Forbidden;
         }
 
-        var donatie = new DonatieBase()
+        // check if donatie already exists
+        if (GetByKentaaId(bihzDonatie.Id) == null)
         {
-            Bedrag = bihzDonatie.DonatieBedrag,
-            Donateur = donateur,
-            KentaaDonatie = bihzDonatie
-        };
+            var donatie = new DonatieBase()
+            {
+                Bedrag = bihzDonatie.DonatieBedrag,
+                Donateur = donateur,
+                KentaaDonatie = bihzDonatie
+            };
+            Save(donatie);
+        }
 
-        Save(donatie);
 
         return ErrorCodeEnum.Ok;
     }
@@ -63,13 +67,20 @@ public class DonatieService : IDonatieService
             .Donaties?
             .Include(d => d.Donateur)
             .Where(d => d.Donateur == donateur);
-    
+
 
     public DonatieBase? GetById(int id)
-    {
-        throw new NotImplementedException();
-    }
+        => _dbContext
+            .Donaties?
+            .FirstOrDefault(d => d.Id == id);
 
+    public DonatieBase? GetByKentaaId(int kentaaDonatieId)
+        => _dbContext
+            .Donaties?
+            .Where(d => d.KentaaDonatie != null)
+            .FirstOrDefault(d => d.KentaaDonatie.Id == kentaaDonatieId);
+
+    
     public void Save(DonatieBase donatie)
     {
         _logger.LogDebug("entering Save");
@@ -88,4 +99,6 @@ public class DonatieService : IDonatieService
         }
         _dbContext.SaveChanges();
     }
+
+
 }

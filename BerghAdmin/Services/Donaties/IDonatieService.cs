@@ -6,6 +6,7 @@ namespace BerghAdmin.Services.Donaties;
 public interface IDonatieService
 {
     DonatieBase? GetById(int id);
+    DonatieBase? GetByKentaaId(int kentaaDonatieId);
     IEnumerable<DonatieBase>? GetAll();
     IEnumerable<DonatieBase>? GetAll(Donateur donateur);
     ErrorCodeEnum AddFactuur(DonatieBase donatie, Factuur factuur);
