@@ -45,6 +45,7 @@ public class PersoonService : IPersoonService
         return _dbContext
                 .Personen?
                 .Include(p => p.Rollen)
+                .Include(p => p.Donaties)
                 .ToList();
     }
 
@@ -52,7 +53,6 @@ public class PersoonService : IPersoonService
     {
         return _dbContext
                 .Personen?
-                .Include(p => p.Rollen)
                 .Where(p => p.Rollen.Any(r => r.Id == RolTypeEnum.Fietser))
                 .ToList();
     }

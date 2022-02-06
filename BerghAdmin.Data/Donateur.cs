@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BerghAdmin.Data
 {
@@ -11,5 +12,15 @@ namespace BerghAdmin.Data
         public string? Plaats  { get; set; }
         public string? Land  { get; set; }
         public IEnumerable<DonatieBase> Donaties { get; set; }
+        [NotMapped]
+        public decimal? GetDonatieBedrag
+        {
+            get
+            { 
+                var bedrag = Donaties?.Sum(d => d.Bedrag);
+                
+                return bedrag ?? 0;
+            }
+        }
     }
 }
