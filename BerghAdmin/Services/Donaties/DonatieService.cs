@@ -42,6 +42,7 @@ public class DonatieService : IDonatieService
             var donatie = new DonatieBase()
             {
                 Bedrag = bihzDonatie.DonatieBedrag,
+                DatumTijd = bihzDonatie.CreatieDatum,
                 Donateur = donateur,
                 KentaaDonatie = bihzDonatie
             };

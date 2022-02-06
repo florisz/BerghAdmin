@@ -43,7 +43,7 @@ namespace BerghAdmin.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Bedrag = table.Column<float>(type: "real", nullable: true),
+                    Bedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DatumTijd = table.Column<DateTime>(type: "datetime2", nullable: true),
                     BetalingType = table.Column<int>(type: "int", nullable: false)
                 },
@@ -434,6 +434,7 @@ namespace BerghAdmin.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    DatumTijd = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Bedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     DonateurId = table.Column<int>(type: "int", nullable: true),
                     FactuurId = table.Column<int>(type: "int", nullable: true),

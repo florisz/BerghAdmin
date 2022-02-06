@@ -53,6 +53,7 @@
 </SfGrid>
 
 <SelectFietserDialog @ref="selectFietserDialog"></SelectFietserDialog>
+<ShowDonatiesDialog @ref="showDonatiesDialog"></ShowDonatiesDialog>
 
 @code
 {
@@ -61,6 +62,14 @@
     public IEnumerable<Persoon> DeelnemerList { get; set; }
     public FietsTocht SelectedFietsTocht { get; set; } = new();
     SfGrid<Persoon> DeelnemersGrid = new();
+
+    // Everything to handle the sow donaties dialog
+    ShowDonatiesDialog showDonatiesDialog = new();
+    private void ShowDonatiesDialog(Persoon persoon)
+    {
+        showDonatiesDialog.Persoon = persoon;
+        showDonatiesDialog.DialogOpen();
+    }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -141,6 +150,10 @@
         }
         if (args.Item.Id == "toon-donaties")
         {
+            var persoon = args.RowInfo.RowData as Persoon;
+            if (persoon == null)
+                return;
+            ShowDonatiesDialog(persoon);
             return;
         }
     }

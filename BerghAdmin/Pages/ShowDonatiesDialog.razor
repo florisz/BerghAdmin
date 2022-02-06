@@ -1,0 +1,58 @@
+@page "/show-donaties-dialog"
+
+@using BerghAdmin.Services.Donaties
+@using Syncfusion.Blazor.Popups
+@using BerghAdmin.Services
+
+@inject IDonatieService DonatieService
+
+<div id="ShowDonatiesDialogTarget">
+    <SfDialog Target="#ShowDonatiesDialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+        <DialogEvents OnOverlayClick="@OnOverlayclick" Opened="@DialogOpen">
+        </DialogEvents>
+        <DialogTemplates>
+            <Header>Donaties voor: @NaamPersoon</Header>
+            <Content>
+                <SfGrid DataSource="@DonatieList">
+                    <GridColumns>
+                        <GridColumn Field=@nameof(DonatieBase.Id) HeaderText="Id" TextAlign="TextAlign.Left"  Width="60"></GridColumn>
+                        <GridColumn Field=@nameof(DonatieBase.DatumTijd) HeaderText="Datum/Tijd" Format="dd/MM/yyyy hh:mm:ss" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
+                        <GridColumn Field=@nameof(DonatieBase.Bedrag) HeaderText="Bedrag" TextAlign="TextAlign.Left"  Width="170"></GridColumn>
+                    </GridColumns>
+                </SfGrid>
+            </Content>
+        </DialogTemplates>
+        <DialogButtons>
+            <DialogButton Content="Close" IsPrimary="false" OnClick="@DialogClose" />
+        </DialogButtons>
+    </SfDialog>
+
+</div>
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+    public Persoon Persoon { get; set; } = null;
+    private string NaamPersoon;
+    public IEnumerable<DonatieBase> DonatieList { get; set; }
+
+    public void DialogOpen()
+    {
+        IsVisible = true;
+        NaamPersoon = Persoon.VolledigeNaam;
+        DonatieList = Persoon.Donaties;
+        this.StateHasChanged();
+    }
+
+    private void OnOverlayclick(MouseEventArgs arg)
+    {
+        this.IsVisible = false;
+    }
+
+    private void DialogClose()
+    {
+        IsVisible = false;
+        this.StateHasChanged();
+    }
+} 
+
