@@ -1,4 +1,5 @@
 using BerghAdmin.ApplicationServices.KentaaInterface;
+using BerghAdmin.KentaaFunction.Services;
 
 using Microsoft.Azure.WebJobs;
 
