@@ -1,5 +1,4 @@
 ﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
-using BerghAdmin.Data.Kentaa;
 
 using Microsoft.Extensions.Options;
 
@@ -18,16 +17,35 @@ public class BerghAdminService
         this.settings = settings.Value;
     }
 
-    public async Task Send(IAsyncEnumerable<IResource> resources)
+    public async Task Send<T>(IAsyncEnumerable<Donation> donations)
     {
-        await foreach (var resource in resources)
+        await foreach (var donation in donations)
         {
-            await berghClient.PostAsJsonAsync($"{settings.Host}/{resource.GetType().Name}", resource.Map());
+            await berghClient.PostAsJsonAsync($"{settings.Host}/donations", donation.Map());
         }
     }
 
-    public IBihzResource Map(IResource resource)
+    public async Task Send<T>(IAsyncEnumerable<KentaaModel.Action> actions)
     {
-        return resource.Map();
+        await foreach (var action in actions)
+        {
+            await berghClient.PostAsJsonAsync($"{settings.Host}/actions", action.Map());
+        }
+    }
+
+    public async Task Send<T>(IAsyncEnumerable<Project> projects)
+    {
+        await foreach (var project in projects)
+        {
+            await berghClient.PostAsJsonAsync($"{settings.Host}/projects", project.Map());
+        }
+    }
+
+    public async Task Send<T>(IAsyncEnumerable<User> users)
+    {
+        await foreach (var user in users)
+        {
+            await berghClient.PostAsJsonAsync($"{settings.Host}/users", user.Map());
+        }
     }
 }

@@ -1,10 +1,7 @@
-﻿using BerghAdmin.Data.Kentaa;
-
-namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
+﻿namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 public interface IResource
 {
-    IBihzResource Map();
 }
 
 public interface IResources<IResource>

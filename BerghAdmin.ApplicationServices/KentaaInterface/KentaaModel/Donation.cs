@@ -1,11 +1,7 @@
 ﻿using BerghAdmin.Data.Kentaa;
 
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
-
 namespace BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 #pragma warning disable IDE1006 // Naming Styles
 
 public record DonationResponse(Donation donation);
@@ -49,7 +45,7 @@ public record Donation
     string currency = "EUR"
 ) : IResource
 {
-    public IBihzResource Map()
+    public BihzDonatie Map()
     {
         return new BihzDonatie
         {

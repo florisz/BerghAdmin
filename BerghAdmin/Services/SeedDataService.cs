@@ -1,10 +1,7 @@
-using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services.Evenementen;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 
-using System.Security.Claims;
+using Microsoft.Extensions.Options;
 
 namespace BerghAdmin.Services;
 
@@ -332,12 +329,16 @@ public class SeedDataService : ISeedDataService
         };
 
         var persoon = this._persoonService.GetByEmailAdres("appie@aapnootmies.com");
-        fietstocht.Deelnemers.Add(persoon);
-        persoon = this._persoonService.GetByEmailAdres("bert@aapnootmies.com");
-        fietstocht.Deelnemers.Add(persoon);
-        persoon = this._persoonService.GetByEmailAdres("chappie@aapnootmies.com");
-        fietstocht.Deelnemers.Add(persoon);
+        if (persoon != null)
+            fietstocht.Deelnemers.Add(persoon);
 
+        persoon = this._persoonService.GetByEmailAdres("bert@aapnootmies.com");
+        if (persoon != null)
+            fietstocht.Deelnemers.Add(persoon);
+        
+        persoon = this._persoonService.GetByEmailAdres("chappie@aapnootmies.com");
+        if (persoon != null)
+            fietstocht.Deelnemers.Add(persoon);
 
         await this._evenementService.Save(fietstocht);
     }

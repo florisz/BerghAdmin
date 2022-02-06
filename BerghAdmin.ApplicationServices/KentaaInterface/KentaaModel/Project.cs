@@ -30,7 +30,7 @@ public record Project
     string donate_url   // The URL to directly make a donation to the project.
 ):IResource
 {
-    public IBihzResource Map()
+    public BihzProject Map()
     {
         return new BihzProject
         {

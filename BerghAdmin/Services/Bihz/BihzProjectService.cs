@@ -43,9 +43,9 @@ public class BihzProjectService : IBihzProjectService
     public bool Exist(BihzProject bihzProject)
         => GetByKentaaId(bihzProject.ProjectId) != null;
 
-    public IEnumerable<BihzProject>? GetAll()
+    public IEnumerable<BihzProject> GetAll()
         => _dbContext
-            .BihzProjects;
+            .BihzProjects ?? Enumerable.Empty<BihzProject>();
 
     public BihzProject? GetById(int id)
        => _dbContext

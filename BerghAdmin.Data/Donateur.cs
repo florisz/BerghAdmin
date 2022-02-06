@@ -10,6 +10,6 @@ namespace BerghAdmin.Data
         public string? Postcode  { get; set; }
         public string? Plaats  { get; set; }
         public string? Land  { get; set; }
-        public IEnumerable<DonatieBase>? Donaties { get; set; }
+        public IEnumerable<DonatieBase> Donaties { get; set; }
     }
 }

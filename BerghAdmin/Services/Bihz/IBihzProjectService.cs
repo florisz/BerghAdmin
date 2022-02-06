@@ -9,7 +9,7 @@ public interface IBihzProjectService
     void Add(BihzProject project);
     void Add(IEnumerable<BihzProject> projects);
     bool Exist(BihzProject bihzProject);
-    IEnumerable<BihzProject>? GetAll();
+    IEnumerable<BihzProject> GetAll();
     BihzProject? GetById(int id);
     BihzProject? GetByKentaaId(int kentaaId);
     ErrorCodeEnum Save(BihzProject bihzProject);

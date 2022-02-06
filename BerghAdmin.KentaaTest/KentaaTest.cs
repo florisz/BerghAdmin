@@ -62,7 +62,7 @@ public class KentaaTest
         var donations = service.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
         await foreach (var donation in donations)
         {
-            Console.WriteLine($"Post Donation; amount={donation.Amount}; receivable={donation.ReceivableAmount}");
+            Console.WriteLine($"Post Donation; amount={donation.amount}; receivable={donation.receivable_amount}");
             var content = GetContent(donation.Map());
             await httpClient.PostAsync("https://localhost:44344/donations", content);
         }

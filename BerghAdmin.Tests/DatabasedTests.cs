@@ -13,7 +13,7 @@ namespace BerghAdmin.Tests
 {
     public abstract class DatabasedTests
     {
-        protected ServiceProvider? ServiceProvider;
+        private ServiceProvider? ServiceProvider;
         protected ApplicationDbContext? ApplicationDbContext;
         protected abstract void RegisterServices(ServiceCollection services);
 
@@ -42,13 +42,14 @@ namespace BerghAdmin.Tests
         }
 
         // Helper function to avoid warnings in unit tests
-        internal T GetRequiredService<T>()
+        internal T GetRequiredService<T>() where T:notnull
         {
-#pragma warning disable CS8604 // Possible null reference argument.
-#pragma warning disable CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
-            T? serviceInstance = ServiceProvider.GetRequiredService<T>();
-#pragma warning restore CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
-#pragma warning restore CS8604 // Possible null reference argument.
+            if (ServiceProvider == null)
+                throw new ArgumentNullException(nameof(ServiceProvider), "Test SetUp should run first");
+
+            var serviceInstance = ServiceProvider!.GetRequiredService<T>();
+            if (serviceInstance == null)
+                throw new ArgumentNullException(nameof(serviceInstance), $"Process not configured properly; cannot instantiate {typeof(T).Name}");
 
             return serviceInstance;
         }
