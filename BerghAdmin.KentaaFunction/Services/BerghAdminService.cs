@@ -1,10 +1,9 @@
-﻿using BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
-
+﻿using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 using Microsoft.Extensions.Options;
 
 using System.Net.Http.Json;
 
-namespace BerghAdmin.ApplicationServices.KentaaInterface;
+namespace BerghAdmin.KentaaFunction.Services;
 
 public class BerghAdminService
 {
@@ -13,11 +12,11 @@ public class BerghAdminService
 
     public BerghAdminService(HttpClient httpClient, IOptions<BerghAdminConfiguration> settings)
     {
-        this.berghClient = httpClient;
+        berghClient = httpClient;
         this.settings = settings.Value;
     }
 
-    public async Task Send<T>(IAsyncEnumerable<User> users)
+    public async Task Send<T>(IAsyncEnumerable<KM.User> users)
     {
         await foreach (var user in users)
         {
@@ -25,7 +24,7 @@ public class BerghAdminService
         }
     }
 
-    public async Task Send<T>(IAsyncEnumerable<Project> projects)
+    public async Task Send<T>(IAsyncEnumerable<KM.Project> projects)
     {
         await foreach (var project in projects)
         {
@@ -33,14 +32,14 @@ public class BerghAdminService
         }
     }
 
-    public async Task Send<T>(IAsyncEnumerable<KentaaModel.Action> actions)
+    public async Task Send<T>(IAsyncEnumerable<KM.Action> actions)
     {
         await foreach (var action in actions)
         {
             await berghClient.PostAsJsonAsync(new Uri(settings.Host, "actions"), action.Map());
         }
     }
-    public async Task Send<T>(IAsyncEnumerable<Donation> donations)
+    public async Task Send<T>(IAsyncEnumerable<KM.Donation> donations)
     {
         await foreach (var donation in donations)
         {
