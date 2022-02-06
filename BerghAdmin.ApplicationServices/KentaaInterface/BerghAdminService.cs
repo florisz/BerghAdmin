@@ -17,19 +17,11 @@ public class BerghAdminService
         this.settings = settings.Value;
     }
 
-    public async Task Send<T>(IAsyncEnumerable<Donation> donations)
+    public async Task Send<T>(IAsyncEnumerable<User> users)
     {
-        await foreach (var donation in donations)
+        await foreach (var user in users)
         {
-            await berghClient.PostAsJsonAsync($"{settings.Host}/donations", donation.Map());
-        }
-    }
-
-    public async Task Send<T>(IAsyncEnumerable<KentaaModel.Action> actions)
-    {
-        await foreach (var action in actions)
-        {
-            await berghClient.PostAsJsonAsync($"{settings.Host}/actions", action.Map());
+            await berghClient.PostAsJsonAsync(new Uri(settings.Host, "users"), user.Map());
         }
     }
 
@@ -37,15 +29,22 @@ public class BerghAdminService
     {
         await foreach (var project in projects)
         {
-            await berghClient.PostAsJsonAsync($"{settings.Host}/projects", project.Map());
+            await berghClient.PostAsJsonAsync(new Uri(settings.Host, "projects"), project.Map());
         }
     }
 
-    public async Task Send<T>(IAsyncEnumerable<User> users)
+    public async Task Send<T>(IAsyncEnumerable<KentaaModel.Action> actions)
     {
-        await foreach (var user in users)
+        await foreach (var action in actions)
         {
-            await berghClient.PostAsJsonAsync($"{settings.Host}/users", user.Map());
+            await berghClient.PostAsJsonAsync(new Uri(settings.Host, "actions"), action.Map());
+        }
+    }
+    public async Task Send<T>(IAsyncEnumerable<Donation> donations)
+    {
+        await foreach (var donation in donations)
+        {
+            await berghClient.PostAsJsonAsync(new Uri(settings.Host, "donations"), donation.Map());
         }
     }
 }
