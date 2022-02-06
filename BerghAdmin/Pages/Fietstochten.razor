@@ -76,7 +76,9 @@
     public void SelectFietsTocht(RowSelectEventArgs<FietsTocht> args)
     {
         SelectedFietsTocht = args.Data;
-        DeelnemerList = SelectedFietsTocht.Deelnemers;
+        DeelnemerList = SelectedFietsTocht
+                            .Deelnemers
+                            .OrderBy(d => d.VolledigeNaam);
     }
 
     public void ActionCompletedHandler(ActionEventArgs<FietsTocht> args)
@@ -87,12 +89,16 @@
     public Task RefreshList()
     {
         FietsTochtList = GetFietsTochten();
-        var fietsTocht = FietsTochtList.ElementAt(0);
-        if (fietsTocht != null)
+        if (SelectedFietsTocht == null)
         {
-            SelectedFietsTocht = fietsTocht;
-            DeelnemerList = fietsTocht.Deelnemers;
-        }       
+            SelectedFietsTocht = FietsTochtList.ElementAt(0);
+        }
+        if (SelectedFietsTocht != null)
+        {
+            DeelnemerList = SelectedFietsTocht
+                            .Deelnemers
+                            .OrderBy(d => d.VolledigeNaam);        }   
+        
         return Task.CompletedTask;
     }
 
