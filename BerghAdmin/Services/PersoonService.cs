@@ -48,6 +48,15 @@ public class PersoonService : IPersoonService
                 .ToList();
     }
 
+    public List<Persoon>? GetFietsers()
+    {
+        return _dbContext
+                .Personen?
+                .Include(p => p.Rollen)
+                .Where(p => p.Rollen.Any(r => r.Id == RolTypeEnum.Fietser))
+                .ToList();
+    }
+
     public void SavePersoon(Persoon persoon)
     {
         if (persoon.Id == 0) 

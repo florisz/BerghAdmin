@@ -1,6 +1,7 @@
 ﻿using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
+using Microsoft.EntityFrameworkCore;
 
 namespace BerghAdmin.Services.Donaties;
 
@@ -15,7 +16,7 @@ public class DonatieService : IDonatieService
         _logger = logger;
     }
 
-    public ErrorCodeEnum AddDonateur(DonatieBase donatie, Donateur persoon)
+    public ErrorCodeEnum AddDonateur(DonatieBase donatie, Donateur donateur)
     {
         throw new NotImplementedException();
     }
@@ -25,7 +26,7 @@ public class DonatieService : IDonatieService
         throw new NotImplementedException();
     }
 
-    public ErrorCodeEnum ProcessBihzDonatie(BihzDonatie bihzDonatie, Donateur? persoon)
+    public ErrorCodeEnum ProcessBihzDonatie(BihzDonatie bihzDonatie, Donateur? donateur)
     {
         _logger.LogDebug("entering ProcessBihzDonatie");
 
@@ -38,7 +39,7 @@ public class DonatieService : IDonatieService
         var donatie = new DonatieBase()
         {
             Bedrag = bihzDonatie.DonatieBedrag,
-            Donateur = persoon,
+            Donateur = donateur,
             KentaaDonatie = bihzDonatie
         };
 
@@ -52,10 +53,17 @@ public class DonatieService : IDonatieService
         return ProcessBihzDonatie(bihzDonatie, null);
     }
 
-    public IEnumerable<DonatieBase> GetAll()
+    public IEnumerable<DonatieBase>? GetAll()
     {
         throw new NotImplementedException();
     }
+
+    public IEnumerable<DonatieBase>? GetAll(Donateur donateur)
+        => _dbContext
+            .Donaties?
+            .Include(d => d.Donateur)
+            .Where(d => d.Donateur == donateur);
+    
 
     public DonatieBase? GetById(int id)
     {

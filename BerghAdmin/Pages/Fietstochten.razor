@@ -17,12 +17,7 @@
 @*
     The grid showing all fietstochten
 *@
-<SfGrid DataSource="@FietsTochtList" SelectedRowIndex=0
-        ContextMenuItems="@(new List<ContextMenuItemModel>() { 
-                                new ContextMenuItemModel { Text = "Toevoegen Renner", Target = ".e-content", Id = "add-renner" },
-                                new ContextMenuItemModel { Text = "Verwijderen renner", Target = ".e-content", Id = "delete-renner" },
-                                new ContextMenuItemModel { Text = "Stuur email", Target = ".e-content", Id = "send-email" },
-                            })">
+<SfGrid DataSource="@FietsTochtList" SelectedRowIndex=0>
     <GridEditSettings 
         AllowAdding="true" 
         AllowDeleting="true" 
@@ -31,8 +26,6 @@
         AllowEditOnDblClick="true">
     </GridEditSettings>
     <GridEvents RowSelected="SelectFietsTocht" TValue="FietsTocht" />
-@*    <GridEvents ContextMenuItemClicked="OnContextMenuClick" TValue="FietsTocht" />
-*@
     <GridColumns>
         <GridColumn Field=@nameof(FietsTocht.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true"></GridColumn>
         <GridColumn Field=@nameof(FietsTocht.Titel) HeaderText="Titel" TextAlign="TextAlign.Left"  Width="110"></GridColumn>
@@ -43,7 +36,13 @@
 
 <br />
 <div class='e-statustext'>Deelnemers aan fietstocht: <b>@SelectedFietsTocht.Titel</b></div>
-<SfGrid DataSource="@DeelnemerList">
+<SfGrid @ref="@DeelnemersGrid" DataSource="@DeelnemerList"
+    ContextMenuItems="@(new List<ContextMenuItemModel>() { 
+                            new ContextMenuItemModel { Text = "Toevoegen Fietser", Target = ".e-content", Id = "add-fietser" },
+                            new ContextMenuItemModel { Text = "Verwijderen Fietser", Target = ".e-content", Id = "delete-fietser" },
+                            new ContextMenuItemModel { Text = "Toon Donaties", Target = ".e-content", Id = "toon-donaties" },
+                        })">
+    <GridEvents ContextMenuItemClicked="OnContextMenuClick" TValue="Persoon" />
     <GridColumns>
         <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left"  Width="110"></GridColumn>
         <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
@@ -53,8 +52,7 @@
     </GridColumns>
 </SfGrid>
 
-<SendMailDialog @ref="sendMailDialog"></SendMailDialog>
-<EditPersoonDialog @ref="editPersoonDialog"></EditPersoonDialog>
+<SelectFietserDialog @ref="selectFietserDialog"></SelectFietserDialog>
 
 @code
 {
@@ -62,6 +60,7 @@
     public IEnumerable<FietsTocht> FietsTochtList;
     public IEnumerable<Persoon> DeelnemerList { get; set; }
     public FietsTocht SelectedFietsTocht { get; set; } = new();
+    SfGrid<Persoon> DeelnemersGrid = new();
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -108,33 +107,34 @@
     }
 
     // Everything to handle the email dialog
-    SendMailDialog sendMailDialog = new();
-    private void ShowSendMailDialog()
-    {
-        sendMailDialog.DialogOpen();
-    }
+    SelectFietserDialog selectFietserDialog = new();
 
     // Everything to handle the edit persoon dialog
     EditPersoonDialog editPersoonDialog = new();
 
     // Everything to handle the context menu
     // Triggers when the item is selected
-    public void OnContextMenuClick(ContextMenuClickEventArgs<FietsTocht> args)
+    public async Task OnContextMenuClick(ContextMenuClickEventArgs<Persoon> args)
     {
-        if (args.Item.Id == "add-renner")
+        if (args.Item.Id == "add-fietser")
         {
+            selectFietserDialog.ShowDialog(SelectedFietsTocht, DeelnemersGrid);
             return;
         }
-        if (args.Item.Id == "delete-renner")
+        if (args.Item.Id == "delete-fietser")
         {
+            var persoon = args.RowInfo.RowData as Persoon;
+            if (persoon == null)
+                return;
+
+            await evenementService.DeleteDeelnemer(SelectedFietsTocht, persoon);
+            await RefreshList();
+            DeelnemersGrid.Refresh();
+
             return;
         }
-        if (args.Item.Id == "send-email")
+        if (args.Item.Id == "toon-donaties")
         {
-            // TODO:
-            // get a list of all persons to send email to
-            // pass it to next funtion
-            ShowSendMailDialog();
             return;
         }
     }

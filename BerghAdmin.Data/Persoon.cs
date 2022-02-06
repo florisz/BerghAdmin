@@ -43,10 +43,15 @@ public class Persoon : Donateur
     [NotMapped]
     public string VolledigeNaam
         => string.Join(" ", new string?[] { 
-            Voornaam, 
-            string.IsNullOrEmpty(Voorletters)? "" : $"({Voorletters})", 
-            Tussenvoegsel, 
-            Achternaam } 
+                                Voornaam, 
+                                string.IsNullOrEmpty(Voorletters)? "" : $"({Voorletters})", 
+                                Tussenvoegsel, 
+                                Achternaam } 
         );
+    
+    // TO BE DONE relatie leggen!
+    [NotMapped]
+    public string BedragGedoneeerd
+        => "0";
 }
 

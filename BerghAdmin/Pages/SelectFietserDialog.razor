@@ -1,0 +1,122 @@
+﻿@page "/select-fietsers-dialog"
+
+@using BerghAdmin.Services.Evenementen
+@using Syncfusion.Blazor.Popups
+@using System.Collections.Generic
+@using System.Linq
+
+@using BerghAdmin.Services
+@using BerghAdmin.Data
+
+@inject IPersoonService _persoonService
+@inject IEvenementService _evenementService
+@inject IRolService _rolService
+
+<div id="SelectFietserDialogTarget">
+
+    <SfDialog Target="#SelectFietserDialogTarget" Width="700px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+        <DialogEvents OnOverlayClick="@OnOverlayclick" />
+        <DialogTemplates>
+            <Header>Selecteer één of meer fietsers</Header>
+            <Content>
+                 <SfMultiSelect TValue="int[]" TItem="Persoon" Placeholder="Selecteer fietsers" DataSource="@Fietsers" @bind-Value="@SelectedFietserIds" AllowFiltering="true">
+                    <MultiSelectFieldSettings Text="VolledigeNaam" Value="Id"></MultiSelectFieldSettings>
+                </SfMultiSelect>
+                <table class="table-buttons">
+                    <tr>
+                        <td class="table-cell-button">
+                            <SfButton IsPrimary="true" @onclick="onToevoegenClick">Toevoegen</SfButton>
+                        </td>
+                        <td class="table-cell-button">
+                            <SfButton @onclick="onAfbrekenClick">Afbreken</SfButton>
+                        </td>
+                    </tr>
+                </table>
+            </Content>
+        </DialogTemplates>
+    </SfDialog>
+
+</div>
+
+@code {
+
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+    SfGrid<Persoon> _originatingGrid = null;
+    FietsTocht _currentFietsTocht = null;
+    List<Persoon> Fietsers = new List<Persoon>();
+    public int[] SelectedFietserIds { get; set; }
+
+    public void ShowDialog(FietsTocht fietsTocht, SfGrid<Persoon> grid)
+    {
+        _currentFietsTocht = fietsTocht;
+        _originatingGrid = grid;
+
+        // haal alle fietsers op en
+        // verwijder alle fietsers uit de lijst die al deelnemer zijn
+        Fietsers = _persoonService.GetFietsers();
+        foreach (var fietser in _currentFietsTocht.Deelnemers)
+        {
+            Fietsers.Remove(fietser);
+        }
+
+        IsVisible = true;
+
+        this.StateHasChanged();
+    }
+
+    private async Task onToevoegenClick(MouseEventArgs args)
+    {
+        if (SelectedFietserIds == null)
+            return;
+
+        foreach (var fietserId in SelectedFietserIds)
+        {
+            await _evenementService.AddDeelnemer(_currentFietsTocht, fietserId);
+        }
+        _originatingGrid.Refresh();
+        DialogClose();
+    }
+
+    private void onAfbrekenClick(MouseEventArgs args)
+    {
+        DialogClose();
+    }
+
+    private void OnOverlayclick(MouseEventArgs arg)
+    {
+        this.IsVisible = false;
+    }
+
+    private void DialogClose()
+    {
+        IsVisible = false;
+        this.StateHasChanged();
+    }
+
+} 
+
+<style>
+    .table-buttons {
+      padding: 20px;
+      margin: 20px;
+      border-radius: 5px;
+      border: solid #ddd;
+    }
+
+    .table-cell-button {
+      padding: 10px;
+    }
+
+    .col-form-label {
+        padding-top: 1px;
+        padding-bottom: 1px;
+        color: #8d7f7f;
+    }
+    .e-listbox-wrapper:not(.e-list-template) .e-list-item, .e-listbox-wrapper .e-list-nrt, .e-listbox-wrapper .e-selectall-parent, .e-listbox-container:not(.e-list-template) .e-list-item, .e-listbox-container .e-list-nrt, .e-listbox-container .e-selectall-parent {
+        height: 25px;
+        line-height: 1.5;
+        padding: 1px 16px 1px 16px;
+        position: relative;
+    }
+</style>
