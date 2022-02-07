@@ -45,7 +45,27 @@ namespace BerghAdmin.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Bedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DatumTijd = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    BetalingType = table.Column<int>(type: "int", nullable: false)
+                    BetalingType = table.Column<int>(type: "int", nullable: false),
+                    Munt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Volgnummer = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Tegenrekening = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NaamTegenpartij = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NaamUiteindelijkePartij = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NaamInitierendePartij = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BICTegenpartij = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BatchID = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactieReferentie = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MachtigingsKenmerk = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IncassantID = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BetalingsKenmerk = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Omschrijving1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Omschrijving2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Omschrijving3 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RedenRetour = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OorspronkelijkBedrag = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OorspronkelijkMunt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Koers = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

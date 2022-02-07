@@ -5,8 +5,17 @@ namespace BerghAdmin.Services.Betalingen;
 
 public class BetalingenImporterService : IBetalingenImporterService
 {
-    public void ImportData(Stream csvData)
+    private IBetalingenService _betalingenService;
+
+    public BetalingenImporterService(IBetalingenService betalingenService)
     {
+        _betalingenService = betalingenService;
+    }
+
+    public List<Betaling> ImportData(Stream csvData)
+    {
+        var betalingen = new List<Betaling>();
+
         try
         {
             // Create an instance of StreamReader to read from a file.
@@ -14,25 +23,48 @@ public class BetalingenImporterService : IBetalingenImporterService
             using StreamReader reader = new(csvData);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
             var records = csv.GetRecords<RaboBetalingSpecificatie>().ToList<RaboBetalingSpecificatie>();
+
             foreach (var record in records)
             {
-                var betaling = new Betaling()
-                {
-                    Bedrag = ConvertToDecimalType(record.Bedrag),
-                    BetalingType = BetalingTypeEnum.Bank,
-                    DatumTijd = ConvertToDateType(record.Datum),
-                    Id = 0
-                };
-
-
-                //_betalingService.AddBetaling(betaling);
+                betalingen.Add(ConvertToBetaling(record));
             }
         }
         catch (Exception)
         {
             // Let the user know what went wrong.
         }
+
+        return betalingen;
     }
+
+    private static Betaling ConvertToBetaling(RaboBetalingSpecificatie betalingSpecificatie)
+        => new()
+        {
+            Id = 0,
+            Bedrag = ConvertToDecimalType(betalingSpecificatie.Bedrag),
+            BetalingType = BetalingTypeEnum.Bank,
+            DatumTijd = ConvertToDateType(betalingSpecificatie.Datum),
+            Munt = betalingSpecificatie.Munt,
+            Volgnummer = betalingSpecificatie.Volgnr,
+            Tegenrekening = betalingSpecificatie.TegenrekeningIBANBBAN,
+            NaamTegenpartij = betalingSpecificatie.NaamTegenpartij,
+            NaamUiteindelijkePartij = betalingSpecificatie.NaamUiteindelijkePartij,
+            NaamInitierendePartij = betalingSpecificatie.NaamInitierendePartij,
+            BICTegenpartij = betalingSpecificatie.BICTegenpartij,
+            Code = betalingSpecificatie.Code,
+            BatchID = betalingSpecificatie.BatchID,
+            TransactieReferentie = betalingSpecificatie.Transactiereferentie,
+            MachtigingsKenmerk = betalingSpecificatie.Machtigingskenmerk,
+            IncassantID = betalingSpecificatie.IncassantID,
+            BetalingsKenmerk = betalingSpecificatie.Betalingskenmerk,
+            Omschrijving1 = betalingSpecificatie.Omschrijving1,
+            Omschrijving2 = betalingSpecificatie.Omschrijving2,
+            Omschrijving3 = betalingSpecificatie.Omschrijving3,
+            RedenRetour = betalingSpecificatie.RedenRetour,
+            OorspronkelijkBedrag = betalingSpecificatie.OorsprBedrag,
+            OorspronkelijkMunt = betalingSpecificatie.OorsprMunt,
+            Koers = betalingSpecificatie.Koers
+        };
 
     private static DateTime? ConvertToDateType(string dateString)
     {
@@ -45,13 +77,13 @@ public class BetalingenImporterService : IBetalingenImporterService
     private static Decimal ConvertToDecimalType(string decimalString)
     {
         var formatProvider = CultureInfo.CreateSpecificCulture("nl-NL").NumberFormat;
-        if (Decimal.TryParse(decimalString, 
+        if (Decimal.TryParse(decimalString,
                              NumberStyles.Any,
-                             formatProvider, 
+                             formatProvider,
                              out var amount))
             return amount;
 
         // TO BE DONE
-        return (decimal) 0;
+        return (decimal)0;
     }
 }

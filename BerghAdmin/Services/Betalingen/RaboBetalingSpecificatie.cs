@@ -1,4 +1,5 @@
 ﻿namespace BerghAdmin.Services.Betalingen;
+
 using CsvHelper.Configuration.Attributes;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -6,55 +7,79 @@ public class RaboBetalingSpecificatie
 {
 	[Name("IBAN/BBAN")]
 	public string IBANBBAN { get; set; }
-	[Name("Munt")]
+
+	[Name("Munt")]
 	public string Munt { get; set; }
-	[Name("BIC")]
+
+	[Name("BIC")]
 	public string BIC { get; set; }
-	[Name("Volgnr")]
+
+	[Name("Volgnr")]
 	public string Volgnr { get; set; }
-	[Name("Datum")]
+
+	[Name("Datum")]
 	public string Datum { get; set; }
-	[Name("Rentedatum")]
+
+	[Name("Rentedatum")]
 	public string Rentedatum { get; set; }
-	[Name("Bedrag")]
+
+	[Name("Bedrag")]
 	public string Bedrag { get; set; }
-	[Name("Saldo na trn")]
+
+	[Name("Saldo na trn")]
 	public string SaldoTarn { get; set; }
-	[Name("Tegenrekening IBAN/BBAN")]
+
+	[Name("Tegenrekening IBAN/BBAN")]
 	public string TegenrekeningIBANBBAN { get; set; }
-	[Name("Naam tegenpartij")]
+
+	[Name("Naam tegenpartij")]
 	public string NaamTegenpartij { get; set; }
-	[Name("Naam uiteindelijke partij")]
+
+	[Name("Naam uiteindelijke partij")]
 	public string NaamUiteindelijkePartij { get; set; }
-	[Name("Naam initiërende partij")]
+
+	[Name("Naam initiërende partij")]
 	public string NaamInitierendePartij { get; set; }
-	[Name("BIC tegenpartij")]
+
+	[Name("BIC tegenpartij")]
 	public string BICTegenpartij { get; set; }
-	[Name("Code")]
+
+	[Name("Code")]
 	public string Code { get; set; }
-	[Name("Batch ID")]
+
+	[Name("Batch ID")]
 	public string BatchID { get; set; }
-	[Name("Transactiereferentie")]
+
+	[Name("Transactiereferentie")]
 	public string Transactiereferentie { get; set; }
-	[Name("Machtigingskenmerk")]
+
+	[Name("Machtigingskenmerk")]
 	public string Machtigingskenmerk { get; set; }
 	
 	[Name("Incassant ID")]
 	public string IncassantID { get; set; }
-	[Name("Betalingskenmerk")]
+
+	[Name("Betalingskenmerk")]
 	public string Betalingskenmerk { get; set; }
-	[Name("Omschrijving-1")]
+
+	[Name("Omschrijving-1")]
 	public string Omschrijving1 { get; set; }
-	[Name("Omschrijving-2")]
+
+	[Name("Omschrijving-2")]
 	public string Omschrijving2 { get; set; }
-	[Name("Omschrijving-3")]
+
+	[Name("Omschrijving-3")]
 	public string Omschrijving3 { get; set; }
-	[Name("Reden retour")]
+
+	[Name("Reden retour")]
 	public string RedenRetour   { get; set; }
-	[Name("Oorspr bedrag")]
+
+	[Name("Oorspr bedrag")]
 	public string OorsprBedrag { get; set; }
-	[Name("Oorspr munt")]
+
+	[Name("Oorspr munt")]
 	public string OorsprMunt { get; set; }
-	[Name("Koers")]
+
+	[Name("Koers")]
 	public string Koers { get; set; }
 }
