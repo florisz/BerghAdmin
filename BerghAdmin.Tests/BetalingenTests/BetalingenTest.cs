@@ -77,7 +77,7 @@ namespace BerghAdmin.Tests.BetalingenTests
         {
             using (FileStream fs = File.OpenRead("BetalingenTests/TestRaboBetalingenBestand.csv"))
             {
-                var betalingen = _betalingenImporterService!.ImportData(fs);
+                var betalingen = _betalingenImporterService!.ImportBetalingen(fs);
 
                 foreach(var betaling in betalingen)
                 {

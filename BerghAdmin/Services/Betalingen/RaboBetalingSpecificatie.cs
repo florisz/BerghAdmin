@@ -38,7 +38,7 @@ public class RaboBetalingSpecificatie
 	[Name("Naam uiteindelijke partij")]
 	public string NaamUiteindelijkePartij { get; set; }
 
-	[Name("Naam initiërende partij")]
+	[Name("Naam initierende partij")]
 	public string NaamInitierendePartij { get; set; }
 
 	[Name("BIC tegenpartij")]

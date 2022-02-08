@@ -2,5 +2,5 @@
 
 public interface IBetalingenImporterService
 {
-    List<Betaling> ImportData(Stream csvData);
+    List<Betaling> ImportBetalingen(Stream csvData);
 }

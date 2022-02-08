@@ -12,7 +12,7 @@ public class BetalingenImporterService : IBetalingenImporterService
         _betalingenService = betalingenService;
     }
 
-    public List<Betaling> ImportData(Stream csvData)
+    public List<Betaling> ImportBetalingen(Stream csvData)
     {
         var betalingen = new List<Betaling>();
 
