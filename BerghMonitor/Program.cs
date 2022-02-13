@@ -2,6 +2,7 @@ using System.Net;
 
 await Check("BerghAdmin", "https://localhost:5001/health");
 await Check("Kentaa API", "https://api.kentaa.nl/v1/actions?api_key=12345", HttpStatusCode.Unauthorized);
+await Check("Kentaa Interface Function", "http://localhost:7071/api/health");
 
 
 async Task Check(string name, string endpoint, HttpStatusCode validStatusCode = HttpStatusCode.OK)
@@ -21,7 +22,7 @@ async Task Check(string name, string endpoint, HttpStatusCode validStatusCode = 
     }
     catch (HttpRequestException ex)
     {
-        WriteFailure("name: " + ex.Message);
+        WriteFailure($"{name}: {ex.Message}");
     }
 }
 

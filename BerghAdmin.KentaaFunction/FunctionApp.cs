@@ -1,7 +1,10 @@
 using BerghAdmin.ApplicationServices.KentaaInterface;
 using BerghAdmin.KentaaFunction.Services;
 
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 
 using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
@@ -43,5 +46,11 @@ public class FunctionApp
     {
         var donaties = kentaaService.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
         await berghService.Send<KM.Donation>(donaties);
+    }
+
+    [FunctionName(nameof(Health))]
+    public IActionResult Health([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
+    {
+        return new OkResult();
     }
 }
