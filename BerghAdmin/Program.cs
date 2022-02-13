@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 using Syncfusion.Blazor;
 namespace BerghAdmin;
@@ -140,7 +141,8 @@ public class Program
         builder.Services.AddDbContext<ApplicationDbContext>(
             options => options.UseSqlServer(GetDatabaseConnectionString(builder), po => po.EnableRetryOnFailure()));
 
-        builder.Services.AddHealthChecks();
+        builder.Services.AddHealthChecks()
+            .AddSqlServer(builder.Configuration["DatabaseConfiguration:ConnectionString"]);
     }
 
     static void UseServices(WebApplication app)
