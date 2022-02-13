@@ -9,14 +9,10 @@ using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 
-using HealthChecks.UI.Client;
-
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Syncfusion.Blazor;
 namespace BerghAdmin;
 
@@ -40,11 +36,7 @@ public class Program
         var app = builder.Build();
         UseServices(app);
 
-        app.MapHealthChecks("/health", new HealthCheckOptions
-            {
-                Predicate = _ => true,
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            })
+        app.MapHealthChecks("/health")
             .AllowAnonymous();
         app.MapPost("/actions",
             (BihzActie action, IBihzActieService service) => HandleNewAction(action, service))
@@ -132,7 +124,6 @@ public class Program
         builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
         builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
         builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
-        builder.Services.AddDatabaseDeveloperPageExceptionFilter();
         builder.Services.AddSyncfusionBlazor();
         builder.Services.AddSignalR(e =>
         {
@@ -142,7 +133,7 @@ public class Program
             options => options.UseSqlServer(GetDatabaseConnectionString(builder), po => po.EnableRetryOnFailure()));
 
         builder.Services.AddHealthChecks()
-            .AddSqlServer(builder.Configuration["DatabaseConfiguration:ConnectionString"]);
+            .AddDbContextCheck<ApplicationDbContext>();
     }
 
     static void UseServices(WebApplication app)
@@ -150,7 +141,6 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            app.UseMigrationsEndPoint();
         }
         else
         {
