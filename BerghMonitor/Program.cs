@@ -1,15 +1,42 @@
-var builder = WebApplication.CreateBuilder(args);
-builder.Services
-    .AddHealthChecksUI()
-    .AddInMemoryStorage();
+using System.Net;
 
-var app = builder.Build();
-app
-    .UseRouting()
-    .UseEndpoints(config =>
+await Check("BerghAdmin", "https://localhost:5001/health");
+await Check("Kentaa API", "https://api.kentaa.nl/v1/actions?api_key=12345", HttpStatusCode.Unauthorized);
+
+
+async Task Check(string name, string endpoint, HttpStatusCode validStatusCode = HttpStatusCode.OK)
+{
+    var client = new HttpClient();
+    try
     {
-        config.MapHealthChecksUI();
-    });
+        var response = await client.GetAsync(endpoint);
+        if (response.StatusCode == validStatusCode)
+        {
+            WriteSuccess(name);
+        }
+        else
+        {
+            WriteFailure(name);
+        }
+    }
+    catch (HttpRequestException ex)
+    {
+        WriteFailure("name: " + ex.Message);
+    }
+}
 
-app.UseHttpsRedirection();
-app.Run();
+void WriteSuccess(string message)
+{
+    var color = Console.ForegroundColor;
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine(message);
+    Console.ForegroundColor = color;
+}
+
+void WriteFailure(string message)
+{
+    var color = Console.ForegroundColor;
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine(message);
+    Console.ForegroundColor = color;
+}
