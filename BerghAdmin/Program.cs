@@ -9,7 +9,10 @@ using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 
+using HealthChecks.UI.Client;
+
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,18 +39,24 @@ public class Program
         var app = builder.Build();
         UseServices(app);
 
+        app.MapHealthChecks("/health", new HealthCheckOptions
+            {
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            })
+            .AllowAnonymous();
         app.MapPost("/actions",
-            [AllowAnonymous]
-        (BihzActie action, IBihzActieService service) => HandleNewAction(action, service));
+            (BihzActie action, IBihzActieService service) => HandleNewAction(action, service))
+            .AllowAnonymous();
         app.MapPost("/donations",
-            [AllowAnonymous]
-        (BihzDonatie donation, IBihzDonatieService service) => HandleNewDonatie(donation, service));
+            (BihzDonatie donation, IBihzDonatieService service) => HandleNewDonatie(donation, service))
+            .AllowAnonymous();
         app.MapPost("/projects",
-            [AllowAnonymous]
-        (BihzProject project, IBihzProjectService service) => HandleNewProject(project, service));
+            (BihzProject project, IBihzProjectService service) => HandleNewProject(project, service))
+            .AllowAnonymous();
         app.MapPost("/users",
-            [AllowAnonymous]
-        (BihzUser user, IBihzUserService service) => HandleNewUser(user, service));
+            (BihzUser user, IBihzUserService service) => HandleNewUser(user, service))
+            .AllowAnonymous();
 
         var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
         seedDataService.SeedInitialData();
@@ -131,6 +140,7 @@ public class Program
         builder.Services.AddDbContext<ApplicationDbContext>(
             options => options.UseSqlServer(GetDatabaseConnectionString(builder), po => po.EnableRetryOnFailure()));
 
+        builder.Services.AddHealthChecks();
     }
 
     static void UseServices(WebApplication app)
