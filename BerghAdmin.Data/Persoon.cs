@@ -12,11 +12,13 @@ public enum GeslachtEnum
 
 public class Persoon : Donateur
 {
-    public Persoon()
+    public Persoon() : base()
     {
         Geslacht = GeslachtEnum.Onbekend;
         Rollen = new HashSet<Rol>();
+        EmailAdres = "";
     }
+
     public GeslachtEnum Geslacht { get; set; }
     public string? Voorletters { get; set; }
     public string? Voornaam { get; set; }
@@ -25,7 +27,7 @@ public class Persoon : Donateur
     public DateTime? GeboorteDatum { get; set; }
     public string? Telefoon  { get; set; }
     public string? Mobiel  { get; set; }
-    public string? EmailAdres  { get; set; } 
+    public string EmailAdres  { get; set; } 
     public string? EmailAdresExtra  { get; set; } 
     public HashSet<Rol> Rollen { get; set; } = new();
     public ICollection<VerzondenMail> Geadresseerden { get; set; } = new List<VerzondenMail>();
@@ -35,6 +37,7 @@ public class Persoon : Donateur
     public BihzActie? BihzActie { get; set; }
     public BihzUser? BihzUser { get; set; }
     public BihzProject? Project { get; set; }
+    public bool IsReserve { get; set; } = false;
 
     [NotMapped]
     public string GetRollenAsString
@@ -49,9 +52,5 @@ public class Persoon : Donateur
                                 Achternaam } 
         );
     
-    // TO BE DONE relatie leggen!
-    [NotMapped]
-    public string BedragGedoneeerd
-        => "0";
 }
 

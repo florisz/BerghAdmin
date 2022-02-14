@@ -111,8 +111,14 @@
                         <tr>
                             <td>
                                 <div class="form-group col-md-12">
-                                    <label class="col-form-label">IsVerwijderd:</label>
+                                    <label class="col-form-label">Is Verwijderd:</label>
                                     <SfCheckBox TChecked="bool" @bind-Checked="@_currentPersoon.IsVerwijderd" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Is Reserve:</label>
+                                    <SfCheckBox TChecked="bool" @bind-Checked="@_currentPersoon.IsReserve" />
                                 </div>
                             </td>
                         </tr>
@@ -145,18 +151,18 @@
     public bool IsVisible { get; set; } = false;
 
     public Persoon _currentPersoon { get; set; } = new Persoon();
-    private List<Rol> _rollenList  = null;
+    private List<Rol> _rollenList  = new List<Rol>();
     private SfGrid<Persoon> _originatingGrid = null;
     private bool _isNewPersoon;
 
-    SfListBox<int[],RolData> rollenListBox;
-    public int[] selectedRollen;
+    SfListBox<int[],RolData>? rollenListBox;
+    public int[]? selectedRollen;
 
-    public string headerText;
+    public string? headerText;
     public class GeslachtFields
     {
         public GeslachtEnum GeslachtValue { get; set; }
-        public string GeslachtText { get; set; }
+        public string GeslachtText { get; set; } = "";
     }
     public List<GeslachtFields> geslachtValues = new List<GeslachtFields>()
     {
@@ -167,7 +173,7 @@
 
     public class RolData
     {
-        public string Text { get; set; }
+        public string Text { get; set; } = "";
         public int Id { get; set; }
     }
 
@@ -231,7 +237,7 @@
     /// 
     /// </summary>
     /// <returns>void</returns>
-    private void SetRollen(int[] selectedRollen, Persoon person, List<Rol> rollenList)
+    private void SetRollen(int[]? selectedRollen, Persoon person, List<Rol> rollenList)
     {
         // only delete rollen for an existing person
         if (person.Id != 0)
@@ -244,7 +250,7 @@
         }
 
         // add the selected rollen
-        foreach(var rolId in selectedRollen)
+        foreach(var rolId in selectedRollen ?? Enumerable.Empty<int>())
         {
             var isEnumParsed = Enum.TryParse(rolId.ToString(), true, out RolTypeEnum selectedRolId);
             if (!isEnumParsed)

@@ -354,7 +354,8 @@ namespace BerghAdmin.Migrations
                     Mobiel = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EmailAdres = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EmailAdresExtra = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProjectId = table.Column<int>(type: "int", nullable: true)
+                    ProjectId = table.Column<int>(type: "int", nullable: true),
+                    IsReserve = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>
                 {

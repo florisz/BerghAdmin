@@ -13,7 +13,7 @@
 
 <h3>Applicatie Management</h3>
 
-<PersonenComponent RolContext="@rolContext" />
+<PersonenComponent RolContext="@rolContext" ToonAlles="true" />
 <br/>
 
 
@@ -31,7 +31,7 @@
 
 @code
 {
-    public RolTypeEnum[] rolContext = new RolTypeEnum[] { RolTypeEnum.Alle };
+    public RolTypeEnum[] rolContext = new RolTypeEnum[] { };
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {

@@ -1,4 +1,5 @@
 ﻿@using System.Linq;
+@using Microsoft.AspNetCore.Components
 @using Syncfusion.Blazor.Buttons
 
 @using BerghAdmin.Data
@@ -13,45 +14,65 @@
 
 <table>
     <tr>
-        <td width="20%">Overzicht van:&nbsp</td>
-        <td width="90%">
-            <SfMultiSelect 
-                    TValue="RolTypeEnum[]" 
-                    TItem="Rol"
-                    ClosePopupOnSelect="false" 
-                    @bind-Value="@RolContext" 
-                    Placeholder="e.g Ambassadeur, Fietser, Golfer"  
-                    Mode="VisualMode.Box" 
-                    DataSource="@rollenList"
-                    Width="700px"
-                    ShowDropDownIcon="true" 
-                    ModelType="typeof(Rol)" >
-                <MultiSelectFieldSettings Value="Id" Text="Beschrijving"></MultiSelectFieldSettings>
-                <MultiSelectTemplates TItem="Rol">
-                    <ItemTemplate>
-                        @{
-                            var contextValue = (context as Rol);
-                            bool isChecked = RolContext != null ? RolContext.Contains(contextValue.Id) : false;
+        <td>
+            <div class="form-group col-md-6">
+                <label class="col-form-label">Overzicht van:</label>
+                <SfMultiSelect 
+                        TValue="RolTypeEnum[]" 
+                        TItem="Rol"
+                        ClosePopupOnSelect="false" 
+                        @bind-Value="@RolContext" 
+                        Placeholder="e.g Ambassadeur, Fietser, Golfer"  
+                        Mode="VisualMode.Box" 
+                        DataSource="@rollenList"
+                        Width="700px"
+                        ShowDropDownIcon="true" 
+                        ModelType="typeof(Rol)" >
+                    <MultiSelectFieldSettings Value="Id" Text="Beschrijving"></MultiSelectFieldSettings>
+                    <MultiSelectTemplates TItem="Rol">
+                        <ItemTemplate>
+                            @{
+                                var contextValue = (context as Rol);
+                                bool isChecked = RolContext != null ? RolContext.Contains(contextValue.Id) : false;
 
-                            <span>
-                                <SfCheckBox TChecked="bool" @bind-checked="@isChecked"></SfCheckBox>
-                                @contextValue.Beschrijving
-                            </span>
-                        }
-                    </ItemTemplate>
-                </MultiSelectTemplates>
-                <MultiSelectEvents 
-                    TItem="Rol" 
-                    TValue="RolTypeEnum[]" 
-                    OnValueSelect="@OnValueSelectHandler"
-                    ValueRemoved="@ValueRemovedHandler"
-                    Cleared="@ClearedHandler">
-                </MultiSelectEvents>
-            </SfMultiSelect>
+                                <span>
+                                    <SfCheckBox TChecked="bool" @bind-checked="@isChecked"></SfCheckBox>
+                                    @contextValue.Beschrijving
+                                </span>
+                            }
+                        </ItemTemplate>
+                    </MultiSelectTemplates>
+                    <MultiSelectEvents 
+                        TItem="Rol" 
+                        TValue="RolTypeEnum[]" 
+                        OnValueSelect="@OnValueSelectHandler"
+                        ValueRemoved="@ValueRemovedHandler"
+                        Cleared="@ClearedHandler">
+                    </MultiSelectEvents>
+                </SfMultiSelect>
+            </div>
         </td>
     </tr>
+<AuthorizeView Policy="IsAdministrator">
+    <tr>
+        <td>
+            <div class="form-group col-md-12">
+                <label class="col-form-label">Toon alle rollen</label>
+                <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group col-md-12">
+                <label class="col-form-label">Inclusief Verwijderd</label>
+                <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
+            </div>
+        </td>
+    </tr>
+</AuthorizeView>
 </table>
-
+<br />
 @*
     The grid showing all persons
 *@
@@ -80,12 +101,47 @@
 
     <GridColumns>
         <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left"  Width="110"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true" Visible="false" />
+        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left"  Width="110">
+            <Template>
+                @{
+                    var persoon = (context as Persoon);
+                    <div>
+                        @if (persoon.IsReserve)
+                        {
+                            <span class="reservediv reserve">@persoon.VolledigeNaam</span>
+                        }
+                        @if (!persoon.IsReserve)
+                        {
+                            <span class="reservediv no-reserve">@persoon.VolledigeNaam</span>
+                        }
+                    </div>                        
+                }
+            </Template>
+        </GridColumn>
         <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
         <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
         <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
         <GridColumn Field=@nameof(Persoon.GetRollenAsString) HeaderText="Rollen" TextAlign="TextAlign.Left"  Width="200"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.IsVerwijderd) HeaderText="Status" FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })" Width="150">
+            <Template>
+                @{
+                    var persoon = (context as Persoon);
+                    if (! persoon.IsVerwijderd)
+                    {
+                        <div class="statustemp e-activecolor">
+                            <span class="statustxt e-activecolor">Actief</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="statustemp e-inactivecolor">
+                            <span class="statustxt e-inactivecolor">Inactief</span>
+                        </div>
+                    }
+                }
+            </Template>
+        </GridColumn>
     </GridColumns>
 </SfGrid>
 
@@ -95,6 +151,10 @@
 @code{
     [Parameter]
     public RolTypeEnum[] RolContext { get; set; } = Array.Empty<RolTypeEnum>();
+    [Parameter]
+    public bool ToonAlles { get; set; } = false;
+
+    private bool ToonVerwijderd { get; set; }  = false;
 
     // Everything to handle the email dialog
     SendMailDialog sendMailDialog = new();
@@ -178,11 +238,22 @@
     public void ActionCompletedHandler(ActionEventArgs<Persoon> args)
     {
         // Here you can customize your code
-    }    
+    }
+
+    private void onToonAllesChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        RefreshList();
+    }
+
+    private void onToonVerwijderdChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        RefreshList();
+    }
+
     public Task RefreshList()
     {
         // refresh with value from multiselect dropdown box
-        if (selectedRollen == null || selectedRollen.Count<RolTypeEnum>() == 0)
+        if (!ToonAlles && (selectedRollen == null || selectedRollen.Count<RolTypeEnum>() == 0))
         {
             personenList = new List<Persoon>();
         }
@@ -197,12 +268,22 @@
     {
         var personen = new List<Persoon>();
 
-        if (rolTypes.Contains(RolTypeEnum.Alle))
+        if (ToonAlles)
         {
-            // special case, also show persons with no role
-            personen = persoonService
-                        .GetPersonen()
-                        .ToList<Persoon>();
+            // also show persons with no role
+            if (ToonVerwijderd)
+            {
+                personen = persoonService
+                            .GetPersonen()!
+                            .ToList<Persoon>();
+            }
+            else
+            {
+                personen = persoonService
+                            .GetPersonen()!
+                            .Where(p => !p.IsVerwijderd)
+                            .ToList<Persoon>();
+            }
         }
         else
         {
@@ -212,11 +293,12 @@
                                 .ToList<Rol>();
 
             personen = persoonService
-                        .GetPersonen()
+                        .GetPersonen()!
                         .Where(p => !p.IsVerwijderd)
-                        .Where(p => p.Rollen.FirstOrDefault(r => rolTypes.Contains(r.Id) ) != null)
+                        .Where(p => p.Rollen.FirstOrDefault(r => rolTypes.Contains(r.Id)) != null)
                         .ToList<Persoon>();
         }
+
         return personen;
     }
 
@@ -232,4 +314,37 @@
     }
 
 }
+<style>
+    .statustemp {
+        position: relative;
+        height: 19px;
+        border-radius: 5px;
+        text-align: center;
+    }
+    .statustemp.e-inactivecolor {
+        background-color: #ffd7cc;
+        width: 64px;
+    }
+    td.e-rowcell .statustxt.e-inactivecolor {
+        color: #e60000;
+        position: relative;
+        top: 0px;
+    }
+    .statustemp.e-activecolor {
+        background-color: #ccffcc;
+        width: 57px;
+    }
+    td.e-rowcell .statustxt.e-activecolor {
+        color: #00cc00;
+        position: relative;
+        top: 0px;
+    }
 
+    td.e-rowcell .reservediv.reserve {
+        color: #900C3F;
+    }
+    td.e-rowcell .reservediv.no-reserve {
+        color: #166344;
+    }
+
+</style>

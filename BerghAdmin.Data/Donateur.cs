@@ -5,6 +5,11 @@ namespace BerghAdmin.Data
 {
     public abstract class Donateur
     {
+        public Donateur()
+        {
+            Donaties = new List<DonatieBase>();
+        }
+
         public int Id { get; set; }
         public bool IsVerwijderd { get; set; } = false;
         public string? Adres { get; set; }
@@ -12,15 +17,9 @@ namespace BerghAdmin.Data
         public string? Plaats  { get; set; }
         public string? Land  { get; set; }
         public IEnumerable<DonatieBase> Donaties { get; set; }
+
         [NotMapped]
         public decimal? GetDonatieBedrag
-        {
-            get
-            { 
-                var bedrag = Donaties?.Sum(d => d.Bedrag);
-                
-                return bedrag ?? 0;
-            }
-        }
+            => Donaties.Sum(d => d.Bedrag);
     }
 }

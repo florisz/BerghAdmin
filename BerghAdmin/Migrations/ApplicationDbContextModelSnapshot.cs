@@ -905,6 +905,7 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmailAdres")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EmailAdresExtra")
@@ -915,6 +916,9 @@ namespace BerghAdmin.Migrations
 
                     b.Property<int>("Geslacht")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsReserve")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Mobiel")
                         .HasColumnType("nvarchar(max)");
