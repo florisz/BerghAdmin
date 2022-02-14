@@ -12,14 +12,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220213134305_Initial")]
+    [Migration("20220214201647_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -115,6 +115,7 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Bedrag")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("BetalingType")
@@ -388,6 +389,7 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("DoelBedrag")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("DoelBedragBereikt")
@@ -424,6 +426,7 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotaalBedrag")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Tussenvoegsels")
@@ -442,6 +445,9 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ActionId")
+                        .IsUnique();
 
                     b.HasIndex("PersoonId")
                         .IsUnique()
@@ -525,6 +531,9 @@ namespace BerghAdmin.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DonationId")
+                        .IsUnique();
+
                     b.ToTable("BihzDonaties", (string)null);
                 });
 
@@ -546,6 +555,7 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("DoelBedrag")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("DoelBedragBereikt")
@@ -582,6 +592,7 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotaalBedrag")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Url")
@@ -598,6 +609,9 @@ namespace BerghAdmin.Migrations
                     b.HasIndex("EvenementId")
                         .IsUnique()
                         .HasFilter("[EvenementId] IS NOT NULL");
+
+                    b.HasIndex("ProjectId")
+                        .IsUnique();
 
                     b.ToTable("BihzProjects");
                 });
@@ -675,6 +689,9 @@ namespace BerghAdmin.Migrations
                     b.HasIndex("PersoonId")
                         .IsUnique()
                         .HasFilter("[PersoonId] IS NOT NULL");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("BihzUsers");
                 });
@@ -908,7 +925,7 @@ namespace BerghAdmin.Migrations
 
                     b.Property<string>("EmailAdres")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("EmailAdresExtra")
                         .HasColumnType("nvarchar(max)");
@@ -941,6 +958,10 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("IsVerwijderd", "EmailAdres")
+                        .IsUnique()
+                        .HasFilter("[EmailAdres] IS NOT NULL");
 
                     b.HasDiscriminator().HasValue("Persoon");
                 });

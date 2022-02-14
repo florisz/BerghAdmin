@@ -2,12 +2,13 @@ namespace BerghAdmin.Data;
 
 public class Betaling
 {
-    public int Id { get; set; }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+	public int Id { get; set; }
     public decimal Bedrag { get; set; }
     public DateTime? DatumTijd { get; set; }
     public BetalingTypeEnum BetalingType { get; set; }
-	public string Munt { get; set; }
-	public string Volgnummer { get; set; }
+    public string Munt { get; set; }
+    public string Volgnummer { get; set; }
     public string Tegenrekening { get; set; }
 	public string NaamTegenpartij { get; set; }
 	public string NaamUiteindelijkePartij { get; set; }
@@ -26,4 +27,5 @@ public class Betaling
 	public string OorspronkelijkBedrag { get; set; }
 	public string OorspronkelijkMunt { get; set; }
 	public string Koers { get; set; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 }

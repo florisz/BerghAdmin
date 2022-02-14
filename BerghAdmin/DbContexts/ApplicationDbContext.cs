@@ -29,23 +29,28 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Persoon
         modelBuilder
             .Entity<Persoon>()
             .HasMany(p => p.Geadresseerden)
             .WithMany(m => m.Geadresseerden)
             .UsingEntity(j => j.ToTable("MailGeadresseerden"));
-            
         modelBuilder
             .Entity<Persoon>()
             .HasMany(p => p.ccGeadresseerden)
             .WithMany(m => m.ccGeadresseerden)
             .UsingEntity(j => j.ToTable("MailccGeadresseerden"));
-            
         modelBuilder
             .Entity<Persoon>()
             .HasMany(p => p.bccGeadresseerden)
             .WithMany(m => m.bccGeadresseerden)
             .UsingEntity(j => j.ToTable("MailbccGeadresseerden"));
+        modelBuilder
+            .Entity<Persoon>()
+            .HasIndex(p => new { p.IsVerwijderd, p.EmailAdres })
+            .IsUnique();
+        // Persoon
 
         modelBuilder
             .Entity<FietsTocht>()
@@ -56,12 +61,22 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .ToTable("GolfDagen");
 
         modelBuilder
-            .Entity<BihzDonatie>()
-            .ToTable("BihzDonaties");
-        modelBuilder
             .Entity<DonatieBase>()
             .Property(p => p.Bedrag).HasPrecision(18, 2);
- 
+
+        modelBuilder
+            .Entity<Betaling>()
+            .Property(p => p.Bedrag).HasPrecision(18, 2);
+
+        modelBuilder
+            .Entity<BihzUser>()
+            .HasIndex(u => u.UserId)
+            .IsUnique();
+
+        // BihzDonatie
+        modelBuilder
+            .Entity<BihzDonatie>()
+            .ToTable("BihzDonaties");
         modelBuilder
             .Entity<BihzDonatie>()
             .Property(p => p.DonatieBedrag).HasPrecision(18, 2);
@@ -77,8 +92,37 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
         modelBuilder
             .Entity<BihzDonatie>()
             .Property(p => p.NettoBedrag).HasPrecision(18, 2);
+        modelBuilder
+            .Entity<BihzDonatie>()
+            .HasIndex(d => d.DonationId)
+            .IsUnique();
+        // BihzDonatie
 
+        // BihzActie
+        modelBuilder
+            .Entity<BihzActie>()
+            .Property(p => p.DoelBedrag).HasPrecision(18, 2);
+        modelBuilder
+            .Entity<BihzActie>()
+            .Property(p => p.TotaalBedrag).HasPrecision(18, 2);
+        modelBuilder
+            .Entity<BihzActie>()
+            .HasIndex(a => a.ActionId)
+            .IsUnique();
+        // BihzActie
 
+        // BihzProject
+        modelBuilder
+            .Entity<BihzProject>()
+            .Property(p => p.DoelBedrag).HasPrecision(18, 2);
+        modelBuilder
+            .Entity<BihzProject>()
+            .Property(p => p.TotaalBedrag).HasPrecision(18, 2);
+        modelBuilder
+            .Entity<BihzProject>()
+            .HasIndex(p => p.ProjectId)
+            .IsUnique();
+        // BihzProject
     }
 
 }

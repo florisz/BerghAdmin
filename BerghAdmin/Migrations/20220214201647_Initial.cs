@@ -43,7 +43,7 @@ namespace BerghAdmin.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Bedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Bedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     DatumTijd = table.Column<DateTime>(type: "datetime2", nullable: true),
                     BetalingType = table.Column<int>(type: "int", nullable: false),
                     Munt = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -274,8 +274,8 @@ namespace BerghAdmin.Migrations
                     ExterneReferentie = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Titel = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Omschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DoelBedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DoelBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     AantalDonaties = table.Column<int>(type: "int", nullable: false),
                     DoelBedragBereikt = table.Column<bool>(type: "bit", nullable: false),
                     Zichtbaar = table.Column<bool>(type: "bit", nullable: false),
@@ -352,7 +352,7 @@ namespace BerghAdmin.Migrations
                     GeboorteDatum = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Telefoon = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Mobiel = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmailAdres = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmailAdres = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     EmailAdresExtra = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProjectId = table.Column<int>(type: "int", nullable: true),
                     IsReserve = table.Column<bool>(type: "bit", nullable: true)
@@ -392,8 +392,8 @@ namespace BerghAdmin.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Titel = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Omschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DoelBedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DoelBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     AantalDonaties = table.Column<int>(type: "int", nullable: false),
                     DoelBedragBereikt = table.Column<bool>(type: "bit", nullable: false),
                     Beeindigd = table.Column<bool>(type: "bit", nullable: false),
@@ -624,11 +624,23 @@ namespace BerghAdmin.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BihzActies_ActionId",
+                table: "BihzActies",
+                column: "ActionId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BihzActies_PersoonId",
                 table: "BihzActies",
                 column: "PersoonId",
                 unique: true,
                 filter: "[PersoonId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BihzDonaties_DonationId",
+                table: "BihzDonaties",
+                column: "DonationId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_BihzProjects_EvenementId",
@@ -638,6 +650,12 @@ namespace BerghAdmin.Migrations
                 filter: "[EvenementId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BihzProjects_ProjectId",
+                table: "BihzProjects",
+                column: "ProjectId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BihzUsers_PersoonId",
                 table: "BihzUsers",
                 column: "PersoonId",
@@ -645,9 +663,22 @@ namespace BerghAdmin.Migrations
                 filter: "[PersoonId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BihzUsers_UserId",
+                table: "BihzUsers",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Donateur_ContactPersoonId",
                 table: "Donateur",
                 column: "ContactPersoonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Donateur_IsVerwijderd_EmailAdres",
+                table: "Donateur",
+                columns: new[] { "IsVerwijderd", "EmailAdres" },
+                unique: true,
+                filter: "[EmailAdres] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Donateur_ProjectId",

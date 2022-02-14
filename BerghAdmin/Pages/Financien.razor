@@ -43,7 +43,7 @@ fn3 [Authorize(Policy = "IsAdministrator")]
 
 @code
 {
-    public IEnumerable<Betaling> BetalingenList;
+    public IEnumerable<Betaling> BetalingenList = new List<Betaling>();
     SfGrid<Betaling> BetalingenGrid = new();
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -59,12 +59,16 @@ fn3 [Authorize(Policy = "IsAdministrator")]
 
     private IEnumerable<Betaling> GetBetalingen()
     {
-        var betalingen = betalingenService
-                    .GetAll()
+        var betalingen = betalingenService.GetAll();
+
+        if (betalingen == null)
+        {
+            return new List<Betaling>();
+        }
+
+        return betalingen            
                     .OrderByDescending(b => b.Volgnummer)
                     .ToList<Betaling>();
-
-        return betalingen;
     }
 
     private bool IsVisible { get; set; } = false;

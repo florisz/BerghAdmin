@@ -152,7 +152,7 @@
 
     public Persoon _currentPersoon { get; set; } = new Persoon();
     private List<Rol> _rollenList  = new List<Rol>();
-    private SfGrid<Persoon> _originatingGrid = null;
+    private SfGrid<Persoon> _originatingGrid;
     private bool _isNewPersoon;
 
     SfListBox<int[],RolData>? rollenListBox;

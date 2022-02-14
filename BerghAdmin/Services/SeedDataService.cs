@@ -153,6 +153,7 @@ public class SeedDataService : ISeedDataService
                 Plaats = "Nieuw Dijk",
                 Postcode = "4321 AB",
                 Telefoon = "onbekend",
+                IsVerwijderd = true,
                 Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.CommissieLid], rollen[RolTypeEnum.VriendVan], rollen[RolTypeEnum.MailingAbonnee] }
             },
             new Persoon
@@ -169,6 +170,7 @@ public class SeedDataService : ISeedDataService
                 Plaats = "Beek",
                 Postcode = "4321 AB",
                 Telefoon = "onbekend",
+                IsReserve = true,
                 Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.CommissieLid], rollen[RolTypeEnum.VriendVan], rollen[RolTypeEnum.MailingAbonnee] }
             },
             new Persoon
