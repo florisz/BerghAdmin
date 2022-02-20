@@ -51,6 +51,7 @@ public class FunctionApp
     [FunctionName(nameof(Health))]
     public IActionResult Health([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
     {
-        return new OkResult();
+        var json = @"{""status"":""Healthy"",""totalDuration"":""00:00:00.0018900""}";
+        return new OkObjectResult(json);
     }
 }

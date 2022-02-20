@@ -1,10 +1,6 @@
-using System;
-using System.Threading.Tasks;
+namespace BerghAdmin.Services;
 
-namespace BerghAdmin.Services
+public interface ISendMailService
 {
-    public interface ISendMailService
-    {
-        Task SendMail(string mailBody);
-    }
+    Task SendMail(string mailBody);
 }
