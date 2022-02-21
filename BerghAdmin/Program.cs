@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Syncfusion.Blazor;
+
 namespace BerghAdmin;
 
 public class Program
@@ -140,6 +141,9 @@ public class Program
     {
         if (app.Environment.IsDevelopment())
         {
+            // recommended to deactivate HTTPS redirection middleware in development
+            // see https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-6.0
+            app.UseHttpsRedirection();
             app.UseDeveloperExceptionPage();
         }
         else

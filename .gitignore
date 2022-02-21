@@ -345,4 +345,4 @@ DBDownload*.xlsx
 
 # Secrets stuff
 SetSecrets.sh
-secrets.json
+secrets*.json
