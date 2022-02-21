@@ -9,10 +9,14 @@ using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 
+using HealthChecks.UI.Client;
+
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Syncfusion.Blazor;
 
 namespace BerghAdmin;
@@ -37,8 +41,11 @@ public class Program
         var app = builder.Build();
         UseServices(app);
 
-        app.MapHealthChecks("/health")
-            .AllowAnonymous();
+        app.MapHealthChecks("/health", new HealthCheckOptions
+        {
+            Predicate = _ => true,
+            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        }).AllowAnonymous();
         app.MapPost("/actions",
             (BihzActie action, IBihzActieService service) => HandleNewAction(action, service))
             .AllowAnonymous();
