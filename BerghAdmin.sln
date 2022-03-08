@@ -29,7 +29,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BerghAdmin.Data", "BerghAdm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BerghMonitor", "BerghMonitor\BerghMonitor.csproj", "{CF1D3551-A1C3-42F5-8FD3-CFD21EB24910}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BerghMonitor.Web", "BerghMonitor.Web\BerghMonitor.Web.csproj", "{3CEBEF4F-8E63-4ECA-9234-91633D82E918}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BerghMonitor.Web", "BerghMonitor.Web\BerghMonitor.Web.csproj", "{3CEBEF4F-8E63-4ECA-9234-91633D82E918}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{55C35791-8575-4710-8B90-6C72A0C6873F}"
+	ProjectSection(SolutionItems) = preProject
+		Doc\BerghAdminTOC.pdf = Doc\BerghAdminTOC.pdf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

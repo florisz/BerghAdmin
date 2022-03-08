@@ -16,8 +16,9 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-
+using Serilog;
 using Syncfusion.Blazor;
+using System.Text;
 
 namespace BerghAdmin;
 
@@ -26,14 +27,24 @@ public class Program
 
     public static void Main(string[] args)
     {
+        Log.Logger = new LoggerConfiguration()
+                        .CreateLogger();
+
         var builder = WebApplication.CreateBuilder(args);
-        builder.Logging.ClearProviders();
-        builder.Logging.AddApplicationInsights();
+
+        //builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
+        //       loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
+        builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
+               .WriteTo.Console());
+
+        //builder.Logging.ClearProviders();
+        //builder.Logging.AddApplicationInsights();
 
         if (builder.Environment.IsDevelopment())
         {
             builder.Logging.AddConsole();
         }
+        Log.Warning("Hi there");
 
         RegisterAuthorization(builder.Services);
         RegisterServices(builder);

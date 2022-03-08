@@ -346,3 +346,4 @@ DBDownload*.xlsx
 # Secrets stuff
 SetSecrets.sh
 secrets*.json
+RunBihzRelease.ps1

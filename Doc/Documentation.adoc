@@ -1,0 +1,56 @@
+== Introduction
+
+== Domain overview
+Business background
+
+picture with:
+
+* webapp
+* azure function
+* Kentaa
+* Mailjet
+* Rabobank
+
+Main use cases
+
+* secretariaat
+* golfers
+* ambassadeurs
+* financien
+
+== Analysis
+
+Functionalities
+
+* central donateurs mgmt
+* fietstochten
+* connection Kentaa
+* golfdagen
+* facturen (ambassadeurs)
+* email sending
+* history
+
+==  Design
+The high level class model for the application:
+
+[[BerghAdminClassModel, BerghAdmin class model]]
+.High level class model BerghAdmin 
+image::BerghAdminClassModel.png[]
+
+Kentaa is a separate organization which is handling gifts and
+collecting money from a large group of donateurs. Mainly for the money
+earned by cyclists but also other 'projects' are handled with the aid
+of this service. Kentaa stores its information in the following structure:
+
+[[KentaaDataModel, Kentaa data model]]
+.Data model Kentaa 
+image::KentaaDataModel.png[]
+
+==  Infrastructure
+
+* Digital Ocean
+* SQL Server MijnServer
+* Azure function
+* Mailjet
+* Syncfusion
+* CSV package

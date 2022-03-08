@@ -1,0 +1,25 @@
+// asciidoc settings for EN (English)
+// ==================================
+:toc-title: table of contents
+
+:imagesdir: ./images
+
+= BerghAdmin - Documentation
+// toc-title definition MUST follow document title without blank line!
+:toc:
+
+[.text-right]
+image:Logo-BIHZ.jpg[Logo-BIHZ.jpg, 140, 140]
+[.text-left]
+
+Generated on: {localdatetime}
+
+// horizontal line
+***
+
+// numbering from here on
+:numbered:
+
+<<<<
+include::Documentation.adoc[]
+
