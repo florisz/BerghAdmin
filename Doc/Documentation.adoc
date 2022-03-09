@@ -54,3 +54,15 @@ image::KentaaDataModel.png[]
 * Mailjet
 * Syncfusion
 * CSV package
+
+==
+Linux installation
+
+* Nginx:
+https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-in-ubuntu-16-04
+* Host ASP.NET Core on Linux with Nginx
+https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-6.0
+* Host and deploy Blazor Server
+https://docs.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/server?view=aspnetcore-6.0#linux-with-nginx
+* ASP.NET Core SignalR hosting and scaling
+https://docs.microsoft.com/en-us/aspnet/core/signalr/scale?view=aspnetcore-6.0#linux-with-nginx

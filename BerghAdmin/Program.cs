@@ -13,6 +13,7 @@ using HealthChecks.UI.Client;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -160,8 +161,6 @@ public class Program
         if (app.Environment.IsDevelopment())
         {
             // recommended to deactivate HTTPS redirection middleware in development
-            // see https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-6.0
-            app.UseHttpsRedirection();
             app.UseDeveloperExceptionPage();
         }
         else
@@ -170,6 +169,13 @@ public class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
+
+        // make redirect URIs and other security policies work in production, see:
+        // see https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-6.0
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+        });
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
