@@ -15,7 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		EntityFrameworkHelp.txt = EntityFrameworkHelp.txt
 		BerghAdmin\General\GlobalUsings.cs = BerghAdmin\General\GlobalUsings.cs
 		RegExpressions.txt = RegExpressions.txt
-		SecretsCommands.txt = SecretsCommands.txt
 		SetSecrets.ps1 = SetSecrets.ps1
 	EndProjectSection
 EndProject

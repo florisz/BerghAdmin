@@ -445,10 +445,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toctitle">table of contents</div>
 <ul class="sectlevel1">
 <li><a href="#_introduction">1. Introduction</a></li>
-<li><a href="#_domain_overview">2. Domain overview</a></li>
-<li><a href="#_analysis">3. Analysis</a></li>
-<li><a href="#_design">4. Design</a></li>
-<li><a href="#_infrastructure">5. Infrastructure</a></li>
+<li><a href="#_readme">2. README</a></li>
+<li><a href="#_domain_overview">3. Domain overview</a></li>
+<li><a href="#_analysis">4. Analysis</a></li>
+<li><a href="#_design">5. Design</a></li>
+<li><a href="#_infrastructure">6. Infrastructure</a></li>
 </ul>
 </div>
 </div>
@@ -459,7 +460,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><span class="image"><img src="./images/Logo-BIHZ.jpg" alt="Logo-BIHZ.jpg" width="140" height="140"></span></p>
 </div>
 <div class="paragraph text-left">
-<p>Generated on: 2022-03-08 10:30:15 +0100</p>
+<p>Generated on: 2022-03-11 10:01:47 +0100</p>
 </div>
 <hr>
 <div style="page-break-after: always;"></div>
@@ -472,32 +473,90 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="_domain_overview">2. Domain overview</h2>
+<h2 id="_readme">2. README</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Business background</p>
-</div>
-<div class="paragraph">
-<p>picture with:</p>
-</div>
 <div class="ulist">
 <ul>
 <li>
-<p>webapp</p>
+<p>get the code at <a href="https://github.com/florisz/BerghAdmin/settings/access" class="bare">https://github.com/florisz/BerghAdmin/settings/access</a></p>
 </li>
 <li>
-<p>azure function</p>
+<p>SQL Server</p>
+<div class="ulist">
+<ul>
+<li>
+<p>install a SQL server on your local (or antoher accessible) machine</p>
 </li>
 <li>
-<p>Kentaa</p>
+<p>create a database with name 'BIHZ2021' with a user/password with read/write permissions
+(can actually be any name but this one is most convenient)</p>
 </li>
 <li>
-<p>Mailjet</p>
-</li>
-<li>
-<p>Rabobank</p>
+<p>install latest entity framework client tools; see <a href="https://docs.microsoft.com/en-us/ef/core/cli/dotnet" class="bare">https://docs.microsoft.com/en-us/ef/core/cli/dotnet</a><br>
+just calling 'dotnet tool install --global dotnet-ef' will do the job</p>
 </li>
 </ul>
+</div>
+</li>
+<li>
+<p>Secrets</p>
+<div class="ulist">
+<ul>
+<li>
+<p>get secrets file from another developer (is not in the repo)</p>
+</li>
+<li>
+<p>store secrets file in solution directory (keep calm, git will not synchronize it to other repos)</p>
+</li>
+<li>
+<p>load secrets into your private secret store with ./SetSecrets.ps1</p>
+</li>
+<li>
+<p>change the "DatabaseConfiguration:ConnectionString" with your own specific value
+(use the values you&#8217;ve chosen above and one of the commands below)</p>
+</li>
+<li>
+<p>run 'dotnet ef database update' from the command line (this should create an empty database)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Source code</p>
+<div class="ulist">
+<ul>
+<li>
+<p>start Visual studio and load the solution file</p>
+</li>
+<li>
+<p>Open the 'Test Explorer' window and run all unit tests (this should give you a safe feeling)</p>
+</li>
+<li>
+<p>debug/run the default project (should be BerghAdmin)</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Help with setting secrets in local store:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-powershell" data-lang="powershell">dotnet user-secrets clear --project ./BerghAdmin
+dotnet user-secrets list --project ./BerghAdmin
+dotnet user-secrets remove "sectie:setting" --project ./BerghAdmin
+dotnet user-secrets add "sectie:setting" --project ./BerghAdmin</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_domain_overview">3. Domain overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Business background</p>
 </div>
 <div class="paragraph">
 <p>Main use cases</p>
@@ -521,7 +580,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="_analysis">3. Analysis</h2>
+<h2 id="_analysis">4. Analysis</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Functionalities</p>
@@ -554,7 +613,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="_design">4. Design</h2>
+<h2 id="_design">5. Design</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The high level class model for the application:</p>
@@ -580,12 +639,21 @@ of this service. Kentaa stores its information in the following structure:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_infrastructure">5. Infrastructure</h2>
+<h2 id="_infrastructure">6. Infrastructure</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>picture with:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p>Digital Ocean</p>
+<p>webapp @Digital Ocean</p>
+</li>
+<li>
+<p>Kentaa</p>
+</li>
+<li>
+<p>Rabobank (CSV downloads)</p>
 </li>
 <li>
 <p>SQL Server MijnServer</p>
@@ -599,8 +667,32 @@ of this service. Kentaa stores its information in the following structure:</p>
 <li>
 <p>Syncfusion</p>
 </li>
+</ul>
+</div>
+<div class="paragraph">
+<p>==
+Linux installation</p>
+</div>
+<div class="paragraph">
+<p>future?</p>
+</div>
+<div class="ulist">
+<ul>
 <li>
-<p>CSV package</p>
+<p>Nginx:
+<a href="https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-in-ubuntu-16-04" class="bare">https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-in-ubuntu-16-04</a></p>
+</li>
+<li>
+<p>Host ASP.NET Core on Linux with Nginx
+<a href="https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-6.0" class="bare">https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-6.0</a></p>
+</li>
+<li>
+<p>Host and deploy Blazor Server
+<a href="https://docs.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/server?view=aspnetcore-6.0#linux-with-nginx" class="bare">https://docs.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/server?view=aspnetcore-6.0#linux-with-nginx</a></p>
+</li>
+<li>
+<p>ASP.NET Core SignalR hosting and scaling
+<a href="https://docs.microsoft.com/en-us/aspnet/core/signalr/scale?view=aspnetcore-6.0#linux-with-nginx" class="bare">https://docs.microsoft.com/en-us/aspnet/core/signalr/scale?view=aspnetcore-6.0#linux-with-nginx</a></p>
 </li>
 </ul>
 </div>

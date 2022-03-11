@@ -1,15 +1,36 @@
 == Introduction
 
+== README
+* get the code at https://github.com/florisz/BerghAdmin/settings/access
+* SQL Server
+** install a SQL server on your local (or antoher accessible) machine
+** create a database with name 'BIHZ2021' with a user/password with read/write permissions 
+(can actually be any name but this one is most convenient)
+** install latest entity framework client tools; see https://docs.microsoft.com/en-us/ef/core/cli/dotnet +
+just calling 'dotnet tool install --global dotnet-ef' will do the job
+* Secrets
+** get secrets file from another developer (is not in the repo)
+** store secrets file in solution directory (keep calm, git will not synchronize it to other repos)
+** load secrets into your private secret store with ./SetSecrets.ps1
+** change the "DatabaseConfiguration:ConnectionString" with your own specific value 
+(use the values you've chosen above and one of the commands below)
+** run 'dotnet ef database update' from the command line (this should create an empty database)
+* Source code
+** start Visual studio and load the solution file
+** Open the 'Test Explorer' window and run all unit tests (this should give you a safe feeling)
+** debug/run the default project (should be BerghAdmin)
+
+Help with setting secrets in local store:
+[source, powershell]
+----
+dotnet user-secrets clear --project ./BerghAdmin
+dotnet user-secrets list --project ./BerghAdmin
+dotnet user-secrets remove "sectie:setting" --project ./BerghAdmin
+dotnet user-secrets add "sectie:setting" --project ./BerghAdmin
+----
+
 == Domain overview
 Business background
-
-picture with:
-
-* webapp
-* azure function
-* Kentaa
-* Mailjet
-* Rabobank
 
 Main use cases
 
@@ -47,16 +68,20 @@ of this service. Kentaa stores its information in the following structure:
 image::KentaaDataModel.png[]
 
 ==  Infrastructure
+picture with:
 
-* Digital Ocean
+* webapp @Digital Ocean
+* Kentaa
+* Rabobank (CSV downloads)
 * SQL Server MijnServer
 * Azure function
 * Mailjet
 * Syncfusion
-* CSV package
 
 ==
 Linux installation
+
+future?
 
 * Nginx:
 https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-in-ubuntu-16-04
