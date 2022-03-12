@@ -18,7 +18,7 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
     public DbSet<Betaling>? Betalingen { get; set; }
     public DbSet<VerzondenMail>? VerzondenMails { get; set; }
     public DbSet<Organisatie>? Organisaties { get; set; }
-    public DbSet<DonatieBase>? Donaties { get; set; }
+    public DbSet<Donatie>? Donaties { get; set; }
     public DbSet<Evenement>? Evenementen{ get; set; }
     public DbSet<BihzActie>? BihzActies { get; set; }
     public DbSet<BihzDonatie>? BihzDonaties { get; set; }
@@ -61,7 +61,7 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .ToTable("GolfDagen");
 
         modelBuilder
-            .Entity<DonatieBase>()
+            .Entity<Donatie>()
             .Property(p => p.Bedrag).HasPrecision(18, 2);
 
         modelBuilder

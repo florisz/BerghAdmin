@@ -446,9 +446,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#_introduction">1. Introduction</a></li>
 <li><a href="#_readme">2. README</a></li>
-<li><a href="#_domain_overview">3. Domain overview</a></li>
+<li><a href="#_domain_overview">3. Domain overview</a>
+<ul class="sectlevel2">
+<li><a href="#_business_background">3.1. Business background</a></li>
+<li><a href="#_context">3.2. Context</a></li>
+</ul>
+</li>
 <li><a href="#_analysis">4. Analysis</a></li>
-<li><a href="#_design">5. Design</a></li>
+<li><a href="#_design">5. Design</a>
+<ul class="sectlevel2">
+<li><a href="#_structure">5.1. Structure</a></li>
+<li><a href="#_scenarios">5.2. Scenario&#8217;s</a></li>
+</ul>
+</li>
 <li><a href="#_infrastructure">6. Infrastructure</a></li>
 </ul>
 </div>
@@ -460,7 +470,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><span class="image"><img src="./images/Logo-BIHZ.jpg" alt="Logo-BIHZ.jpg" width="140" height="140"></span></p>
 </div>
 <div class="paragraph text-left">
-<p>Generated on: 2022-03-11 10:01:47 +0100</p>
+<p>Generated on: 2022-03-12 11:41:49 +0100</p>
 </div>
 <hr>
 <div style="page-break-after: always;"></div>
@@ -555,27 +565,66 @@ dotnet user-secrets add "sectie:setting" --project ./BerghAdmin</code></pre>
 <div class="sect1">
 <h2 id="_domain_overview">3. Domain overview</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_business_background">3.1. Business background</h3>
 <div class="paragraph">
-<p>Business background</p>
+<p>BerghAdmin will be used by the backoffice people of the charity
+organization Bergh in het Zadel (BIHZ). With the aid of many donors BIHZ
+collects money to fight cancer or as the slogan says: "to buy time for cancer
+patients".</p>
 </div>
 <div class="paragraph">
-<p>Main use cases</p>
+<p>BIHZ is currently active in:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>secretariaat</p>
+<p>maintaining a group of Ambassadors which donate every year</p>
 </li>
 <li>
-<p>golfers</p>
+<p>organizing a cycle tour every four year to raise money</p>
 </li>
 <li>
-<p>ambassadeurs</p>
-</li>
-<li>
-<p>financien</p>
+<p>organizing multiple golfevents every year also to raise money</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Next to this money is raised to ad-hoc events and people and organizations donate money
+occasionaly.</p>
+</div>
+<div class="paragraph">
+<p>To accomodate this (automated) support is needed for all administrative roles. In the
+next paragraph the most common tasks are mentioned.
+The BerghAdmin application is meant to deliver this support to all volunteers in
+administrative roles. Focused at freeing up their time for other more fun stuff, achieving
+one central consistent administration and conform to legislation (financially and AVG proof).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_context">3.2. Context</h3>
+<div class="paragraph">
+<p>Functionally the domain for BerghAdmin is:</p>
+</div>
+<div id="UseCaseModel" class="imageblock">
+<div class="content">
+<img src="./images/UseCaseModel.png" alt="UseCaseModel">
+</div>
+<div class="title">Figure 1. Context diagram BerghAdmin</div>
+</div>
+<div class="paragraph">
+<p>For each of the four subdomains (Ambassadeurs, Fietstochten, Golfdagen and Fiancien) specific
+support is needed to manage the subdomain. However there is generic support in:
+creating/sending emails, creating/sending invoices and the (central) administration of
+all people connected to the BIHZ-organization.</p>
+</div>
+<div class="paragraph">
+<p>For the handling (administration, payment and invoicing) of mainly small gifts BIHZ relies on the
+Kentaa service offering. With Kentaa, donors can define their own donate page thru which
+money is raised for BIHZ. On regular intervals (a Timer) the BerghAdmin system will read
+the Kenta information and link it to the appropriate persons in the administration. This will
+enable a smooth financial management of all incoming gifts.</p>
+</div>
 </div>
 </div>
 </div>
@@ -615,6 +664,8 @@ dotnet user-secrets add "sectie:setting" --project ./BerghAdmin</code></pre>
 <div class="sect1">
 <h2 id="_design">5. Design</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_structure">5.1. Structure</h3>
 <div class="paragraph">
 <p>The high level class model for the application:</p>
 </div>
@@ -622,7 +673,7 @@ dotnet user-secrets add "sectie:setting" --project ./BerghAdmin</code></pre>
 <div class="content">
 <img src="./images/BerghAdminClassModel.png" alt="BerghAdminClassModel">
 </div>
-<div class="title">Figure 1. High level class model BerghAdmin</div>
+<div class="title">Figure 2. High level class model BerghAdmin</div>
 </div>
 <div class="paragraph">
 <p>Kentaa is a separate organization which is handling gifts and
@@ -634,7 +685,66 @@ of this service. Kentaa stores its information in the following structure:</p>
 <div class="content">
 <img src="./images/KentaaDataModel.png" alt="KentaaDataModel">
 </div>
-<div class="title">Figure 2. Data model Kentaa</div>
+<div class="title">Figure 3. Data model Kentaa</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_scenarios">5.2. Scenario&#8217;s</h3>
+<div class="sidebarblock">
+<div class="content">
+Look at the Integration test 'FullKentaaIntegrationTest' in the BerghAdmin.Tests project for an
+overview of the described mechanism and dependencies.
+</div>
+</div>
+<div class="paragraph">
+<p>Design of the scenario how to read in the Kenta information. As can be seen from the class
+model Kentaa stores its information in 5 seperate entities (classes).  The Site class in
+Kentaa corresponds to BIHZ and is therefore irrelevant to BerghAdmin. The following table
+shows the correspondence between the Kentaa and the BerghAdmin classes:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Kentaa class</th>
+<th class="tableblock halign-left valign-top">Bihz class</th>
+<th class="tableblock halign-left valign-top">Data is linked to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BihzUser</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Persoon, based on email address stored in BihzUser</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Project</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BihzProject</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Evenement, based on title stored in BihzProject</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Action</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BihzAction</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Persoon, based on email address stored in BihzAction</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Donation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BihzDonatie</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Step 1: link to Persoon via the ActionId in the BihzDonatie<br>
+Step2: add/update the Donatie via the BihzDonatie.Id</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The Kentaa class is regularly retrieved from the Kentaa API by an Azure funtion and mapped to the
+Bihz class. The content of the Bihz class is sent to one of the 4 corresponding endpoints of the
+BerghAdmin web application. When received the incoming is processed as described in the table
+above.</p>
+</div>
 </div>
 </div>
 </div>

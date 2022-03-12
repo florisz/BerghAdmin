@@ -16,12 +16,12 @@ public class DonatieService : IDonatieService
         _logger = logger;
     }
 
-    public ErrorCodeEnum AddDonateur(DonatieBase donatie, Donateur donateur)
+    public ErrorCodeEnum AddDonateur(Donatie donatie, Donateur donateur)
     {
         throw new NotImplementedException();
     }
 
-    public ErrorCodeEnum AddFactuur(DonatieBase donatie, Factuur factuur)
+    public ErrorCodeEnum AddFactuur(Donatie donatie, Factuur factuur)
     {
         throw new NotImplementedException();
     }
@@ -37,17 +37,17 @@ public class DonatieService : IDonatieService
         }
 
         // check if donatie already exists
-        if (GetByKentaaId(bihzDonatie.Id) == null)
+        var donatie = GetByKentaaId(bihzDonatie.Id);
+        if (donatie == null)
         {
-            var donatie = new DonatieBase()
-            {
-                Bedrag = bihzDonatie.DonatieBedrag,
-                DatumTijd = bihzDonatie.CreatieDatum,
-                Donateur = donateur,
-                KentaaDonatie = bihzDonatie
-            };
-            Save(donatie);
+            donatie = new Donatie();
         }
+        donatie.Bedrag = bihzDonatie.DonatieBedrag;
+        donatie.DatumTijd = bihzDonatie.CreatieDatum;
+        donatie.Donateur = donateur;
+        donatie.KentaaDonatie = bihzDonatie;
+
+        Save(donatie);
 
 
         return ErrorCodeEnum.Ok;
@@ -58,31 +58,31 @@ public class DonatieService : IDonatieService
         return ProcessBihzDonatie(bihzDonatie, null);
     }
 
-    public IEnumerable<DonatieBase>? GetAll()
+    public IEnumerable<Donatie>? GetAll()
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<DonatieBase>? GetAll(Donateur donateur)
+    public IEnumerable<Donatie>? GetAll(Donateur donateur)
         => _dbContext
             .Donaties?
             .Include(d => d.Donateur)
             .Where(d => d.Donateur == donateur);
 
 
-    public DonatieBase? GetById(int id)
+    public Donatie? GetById(int id)
         => _dbContext
             .Donaties?
             .FirstOrDefault(d => d.Id == id);
 
-    public DonatieBase? GetByKentaaId(int kentaaDonatieId)
+    public Donatie? GetByKentaaId(int kentaaDonatieId)
         => _dbContext
             .Donaties?
             .Where(d => d.KentaaDonatie != null)
             .FirstOrDefault(d => d.KentaaDonatie.Id == kentaaDonatieId);
 
     
-    public void Save(DonatieBase donatie)
+    public void Save(Donatie donatie)
     {
         _logger.LogDebug("entering Save");
 

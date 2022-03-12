@@ -84,20 +84,6 @@ public class BihzUserService : IBihzUserService
         return ErrorCodeEnum.Ok;
     }
 
-    //private BihzUser MapChanges(BihzUser? bihzUser, KM.User user)
-    //{
-    //    if (bihzUser != null)
-    //    {
-    //        bihzUser.Map(user);
-    //    }
-    //    else
-    //    {
-    //        bihzUser = new BihzUser(user);
-    //    }
-
-    //    return bihzUser;
-    //}
-
     private void LinkUserToPersoon(BihzUser bihzUser)
     {
         // link with email address

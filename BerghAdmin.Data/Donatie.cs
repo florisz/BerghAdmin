@@ -2,9 +2,9 @@ using BerghAdmin.Data.Kentaa;
 
 namespace BerghAdmin.Data;
 
-public class DonatieBase
+public class Donatie
 {
-    public DonatieBase()
+    public Donatie()
     {
     }
 

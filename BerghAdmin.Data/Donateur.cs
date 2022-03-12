@@ -7,7 +7,7 @@ namespace BerghAdmin.Data
     {
         public Donateur()
         {
-            Donaties = new List<DonatieBase>();
+            Donaties = new List<Donatie>();
         }
 
         public int Id { get; set; }
@@ -16,7 +16,7 @@ namespace BerghAdmin.Data
         public string? Postcode  { get; set; }
         public string? Plaats  { get; set; }
         public string? Land  { get; set; }
-        public IEnumerable<DonatieBase> Donaties { get; set; }
+        public IEnumerable<Donatie> Donaties { get; set; }
 
         [NotMapped]
         public decimal? GetDonatieBedrag

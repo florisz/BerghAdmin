@@ -85,23 +85,9 @@ public class BihzProjectService : IBihzProjectService
         return ErrorCodeEnum.Ok;
     }
 
-    //private static BihzProject MapChanges(BihzProject? bihzProject, KM.Project project)
-    //{
-    //    if (bihzProject != null)
-    //    {
-    //        bihzProject.Map(project);
-    //    }
-    //    else
-    //    {
-    //        bihzProject = new BihzProject(project);
-    //    }
-
-    //    return bihzProject;
-    //}
-
     private void LinkProjectToEvenement(BihzProject bihzProject)
     {
-        // link with kentaa user id does not exist yet; try email
+        // make sure the bihz titel is set correctly in each evenement
         var evenement = _evenementService.GetByTitel(bihzProject.Titel ?? "no-title");
 
         if (evenement == null)

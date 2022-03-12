@@ -5,12 +5,12 @@ namespace BerghAdmin.Services.Donaties;
 
 public interface IDonatieService
 {
-    DonatieBase? GetById(int id);
-    DonatieBase? GetByKentaaId(int kentaaDonatieId);
-    IEnumerable<DonatieBase>? GetAll();
-    IEnumerable<DonatieBase>? GetAll(Donateur donateur);
-    ErrorCodeEnum AddFactuur(DonatieBase donatie, Factuur factuur);
+    Donatie? GetById(int id);
+    Donatie? GetByKentaaId(int kentaaDonatieId);
+    IEnumerable<Donatie>? GetAll();
+    IEnumerable<Donatie>? GetAll(Donateur donateur);
+    ErrorCodeEnum AddFactuur(Donatie donatie, Factuur factuur);
     ErrorCodeEnum ProcessBihzDonatie(BihzDonatie bihzDonatie, Donateur donateur);
     ErrorCodeEnum ProcessBihzDonatie(BihzDonatie bihzDonatie);
-    void Save(DonatieBase donatie);
+    void Save(Donatie donatie);
 }

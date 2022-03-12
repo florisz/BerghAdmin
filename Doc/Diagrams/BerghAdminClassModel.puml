@@ -22,7 +22,7 @@ Class Organisatie {
 Persoon -right- Organisatie : > is verbonden aan
 
 Persoon -down- Rol
-Rol -left- RolType : is één van >
+Rol -left- RolType : is 1 van >
 
 Class VerzondenMail {
 }
@@ -49,7 +49,7 @@ enum FactuurType {
   Pdf
   Kentaa
 }
-Factuur -right- FactuurType : is één van >
+Factuur -right- FactuurType : is 1 van >
 
 class Betaling {
   
@@ -60,7 +60,7 @@ enum BetalingType {
   Kentaa
   Bank
 }
-Betaling -right- BetalingType : is één van >
+Betaling -right- BetalingType : is 1 van >
 
 Donatie -- Factuur : > kan resulteren in
 Factuur -- Betaling : < is gelinkt aan
@@ -72,7 +72,6 @@ class Template {
 
 }
 Document <|-right- Template
-Document .. Template : > kan gebaseerd zijn op 
 
 Factuur ..> Document : > bevat tekst
 VerzondenMail ..> Document : > bevat tekst

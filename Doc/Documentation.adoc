@@ -30,14 +30,46 @@ dotnet user-secrets add "sectie:setting" --project ./BerghAdmin
 ----
 
 == Domain overview
-Business background
 
-Main use cases
+=== Business background
 
-* secretariaat
-* golfers
-* ambassadeurs
-* financien
+BerghAdmin will be used by the backoffice people of the charity
+organization Bergh in het Zadel (BIHZ). With the aid of many donors BIHZ
+collects money to fight cancer or as the slogan says: "to buy time for cancer
+patients".
+
+BIHZ is currently active in: 
+
+* maintaining a group of Ambassadors which donate every year
+* organizing a cycle tour every four year to raise money
+* organizing multiple golfevents every year also to raise money
+
+Next to this money is raised to ad-hoc events and people and organizations donate money
+occasionaly.
+
+To accomodate this (automated) support is needed for all administrative roles. In the 
+next paragraph the most common tasks are mentioned.
+The BerghAdmin application is meant to deliver this support to all volunteers in 
+administrative roles. Focused at freeing up their time for other more fun stuff, achieving
+one central consistent administration and conform to legislation (financially and AVG proof).
+
+=== Context
+Functionally the domain for BerghAdmin is:
+
+[[UseCaseModel, Use case model]]
+.Context diagram BerghAdmin 
+image::UseCaseModel.png[]
+
+For each of the four subdomains (Ambassadeurs, Fietstochten, Golfdagen and Fiancien) specific
+support is needed to manage the subdomain. However there is generic support in: 
+creating/sending emails, creating/sending invoices and the (central) administration of
+all people connected to the BIHZ-organization.
+
+For the handling (administration, payment and invoicing) of mainly small gifts BIHZ relies on the
+Kentaa service offering. With Kentaa, donors can define their own donate page thru which 
+money is raised for BIHZ. On regular intervals (a Timer) the BerghAdmin system will read
+the Kenta information and link it to the appropriate persons in the administration. This will
+enable a smooth financial management of all incoming gifts.
 
 == Analysis
 
@@ -52,6 +84,7 @@ Functionalities
 * history
 
 ==  Design
+=== Structure
 The high level class model for the application:
 
 [[BerghAdminClassModel, BerghAdmin class model]]
@@ -66,6 +99,34 @@ of this service. Kentaa stores its information in the following structure:
 [[KentaaDataModel, Kentaa data model]]
 .Data model Kentaa 
 image::KentaaDataModel.png[]
+
+=== Scenario's
+
+[sidebar]
+Look at the Integration test 'FullKentaaIntegrationTest' in the BerghAdmin.Tests project for an 
+overview of the described mechanism and dependencies.
+
+Design of the scenario how to read in the Kenta information. As can be seen from the class
+model Kentaa stores its information in 5 seperate entities (classes).  The Site class in
+Kentaa corresponds to BIHZ and is therefore irrelevant to BerghAdmin. The following table
+shows the correspondence between the Kentaa and the BerghAdmin classes:
+
+[cols="1,1,2"]
+|===
+| Kentaa class | Bihz class | Data is linked to
+
+| User | BihzUser | Persoon, based on email address stored in BihzUser
+| Project | BihzProject | Evenement, based on title stored in BihzProject
+| Action | BihzAction | Persoon, based on email address stored in BihzAction
+| Donation | BihzDonatie | Step 1: link to Persoon via the ActionId in the BihzDonatie +
+Step2: add/update the Donatie via the BihzDonatie.Id
+|===
+
+
+The Kentaa class is regularly retrieved from the Kentaa API by an Azure funtion and mapped to the
+Bihz class. The content of the Bihz class is sent to one of the 4 corresponding endpoints of the  
+BerghAdmin web application. When received the incoming is processed as described in the table
+above.
 
 ==  Infrastructure
 picture with:
