@@ -19,15 +19,15 @@
                 <label class="col-form-label">Overzicht van:</label>
                 <SfMultiSelect 
                         TValue="RolTypeEnum[]" 
-                        TItem="Rol"
-                        ClosePopupOnSelect="false" 
-                        @bind-Value="@RolContext" 
-                        Placeholder="e.g Ambassadeur, Fietser, Golfer"  
-                        Mode="VisualMode.Box" 
-                        DataSource="@rollenList"
-                        Width="700px"
-                        ShowDropDownIcon="true" 
-                        ModelType="typeof(Rol)" >
+                               TItem="Rol"
+                               ClosePopupOnSelect="false"
+                               @bind-Value="@RolContext"
+                               Placeholder="e.g Ambassadeur, Fietser, Golfer"
+                               Mode="VisualMode.Box"
+                               DataSource="@rollenList"
+                               Width="700px"
+                               ShowDropDownIcon="true"
+                               ModelType="typeof(Rol)" >
                     <MultiSelectFieldSettings Value="Id" Text="Beschrijving"></MultiSelectFieldSettings>
                     <MultiSelectTemplates TItem="Rol">
                         <ItemTemplate>
@@ -44,55 +44,56 @@
                     </MultiSelectTemplates>
                     <MultiSelectEvents 
                         TItem="Rol" 
-                        TValue="RolTypeEnum[]" 
-                        OnValueSelect="@OnValueSelectHandler"
-                        ValueRemoved="@ValueRemovedHandler"
-                        Cleared="@ClearedHandler">
+                                       TValue="RolTypeEnum[]"
+                                       OnValueSelect="@OnValueSelectHandler"
+                                       ValueRemoved="@ValueRemovedHandler"
+                                       Cleared="@ClearedHandler">
                     </MultiSelectEvents>
                 </SfMultiSelect>
             </div>
         </td>
     </tr>
-<AuthorizeView Policy="IsAdministrator">
-    <tr>
-        <td>
-            <div class="form-group col-md-12">
-                <label class="col-form-label">Toon alle rollen</label>
-                <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div class="form-group col-md-12">
-                <label class="col-form-label">Inclusief Verwijderd</label>
-                <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
-            </div>
-        </td>
-    </tr>
-</AuthorizeView>
+    <AuthorizeView Policy="IsAdministrator">
+        <tr>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Toon alle rollen</label>
+                    <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Inclusief Verwijderd</label>
+                    <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
+                </div>
+            </td>
+        </tr>
+    </AuthorizeView>
 </table>
 <br />
 @*
     The grid showing all persons
 *@
-<SfGrid @ref="@PersonenGrid" 
-        DataSource="@personenList" 
-        AllowPaging="true" 
-        AllowResizing="true" 
-        AllowSelection="true" 
-        ShowColumnMenu="true" 
-        ContextMenuItems="@(new List<ContextMenuItemModel>() { 
+<SfGrid @ref="@PersonenGrid"
+        DataSource="@personenList"
+        AllowPaging="true"
+        AllowResizing="true"
+        AllowSelection="true"
+        ShowColumnMenu="true"
+        ContextMenuItems="@(new List<ContextMenuItemModel>() {
                                 new ContextMenuItemModel { Text = "Wijzig persoon", Target = ".e-content", Id = "edit-persoon" },
                                 new ContextMenuItemModel { Text = "Toevoegen persoon", Target = ".e-content", Id = "add-persoon" },
                                 new ContextMenuItemModel { Text = "Stuur email", Target = ".e-content", Id = "send-email" },
+                                new ContextMenuItemModel { Text = "Kopieer emailadres(sen)", Target = ".e-content", Id = "copy-emailaddresses" },
                             })">
     <GridEditSettings 
         AllowAdding="true" 
-        AllowDeleting="true" 
-        AllowEditing="true" 
-        Mode="EditMode.Dialog" 
-        AllowEditOnDblClick="true">
+                      AllowDeleting="true"
+                      AllowEditing="true"
+                      Mode="EditMode.Dialog"
+                      AllowEditOnDblClick="true">
     </GridEditSettings>
     <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple" PersistSelection="true"></GridSelectionSettings>
     <GridEvents RowSelected="GetSelectedRecords" TValue="Persoon" />
@@ -102,7 +103,7 @@
     <GridColumns>
         <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
         <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true" Visible="false" />
-        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left"  Width="110">
+        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left" Width="110">
             <Template>
                 @{
                     var persoon = (context as Persoon);
@@ -115,14 +116,14 @@
                         {
                             <span class="reservediv no-reserve">@persoon.VolledigeNaam</span>
                         }
-                    </div>                        
+                    </div>
                 }
             </Template>
         </GridColumn>
-        <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.GetRollenAsString) HeaderText="Rollen" TextAlign="TextAlign.Left"  Width="200"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left" Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left" Width="120"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.GetRollenAsString) HeaderText="Rollen" TextAlign="TextAlign.Left" Width="200"></GridColumn>
         <GridColumn Field=@nameof(Persoon.IsVerwijderd) HeaderText="Status" FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })" Width="150">
             <Template>
                 @{
@@ -148,13 +149,14 @@
 <SendMailDialog @ref="sendMailDialog"></SendMailDialog>
 <EditPersoonDialog @ref="editPersoonDialog"></EditPersoonDialog>
 
-@code{
+
+@code {
     [Parameter]
     public RolTypeEnum[] RolContext { get; set; } = Array.Empty<RolTypeEnum>();
     [Parameter]
     public bool ToonAlles { get; set; } = false;
 
-    private bool ToonVerwijderd { get; set; }  = false;
+    private bool ToonVerwijderd { get; set; } = false;
 
     // Everything to handle the email dialog
     SendMailDialog sendMailDialog = new();
@@ -163,12 +165,24 @@
         sendMailDialog.DialogOpen();
     }
 
+    private async Task CopySelectedEmailAddressesAsync()
+    {
+        var emailAddressesList = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var selectedPersonen = await this.PersonenGrid.GetSelectedRecordsAsync();
+        foreach (var persoon in selectedPersonen.Where(p => !string.IsNullOrWhiteSpace(p.EmailAdres)))
+        {
+            emailAddressesList.Add(persoon.EmailAdres);
+        }
+        string emailAddresses = string.Join(";", emailAddressesList);
+        await jsRuntime.InvokeVoidAsync("clipboardApi.copyTextToClipboard", emailAddresses, $"{emailAddressesList.Count} emailaddressen naar klembord gekopieerd.");
+    }
+
     // Everything to handle the edit persoon dialog
     EditPersoonDialog editPersoonDialog = new();
 
     // Everything to handle the context menu
     // Triggers when the item is selected
-    public void OnContextMenuClick(ContextMenuClickEventArgs<Persoon> args)
+    public async Task OnContextMenuClick(ContextMenuClickEventArgs<Persoon> args)
     {
         if (args.Item.Id == "edit-persoon" || args.Item.Id == "add-persoon")
         {
@@ -185,7 +199,11 @@
             ShowSendMailDialog();
             return;
         }
-
+        if (args.Item.Id == "copy-emailaddresses")
+        {
+            await CopySelectedEmailAddressesAsync();
+            return;
+        }
     }
 
     // Everything to handle persons
@@ -195,7 +213,7 @@
     SfGrid<Persoon> PersonenGrid = new();
     public List<double> SelectedRowIndexes { get; set; } = new();
     public double[] TotalValue { get; set; } = Array.Empty<double>();
-    public string SelectedValue = string.Empty;        
+    public string SelectedValue = string.Empty;
 
     protected override void OnInitialized()
     {
@@ -205,17 +223,17 @@
         RefreshList();
     }
 
-    private void ValueRemovedHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args) 
-    { 
+    private void ValueRemovedHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args)
+    {
         selectedRollen.Remove(args.ItemData.Id);
         RefreshList();
-    } 
+    }
 
-    private void OnValueSelectHandler(Syncfusion.Blazor.DropDowns.SelectEventArgs<Rol> args) 
-    { 
+    private void OnValueSelectHandler(Syncfusion.Blazor.DropDowns.SelectEventArgs<Rol> args)
+    {
         selectedRollen.Add(args.ItemData.Id);
         RefreshList();
-    } 
+    }
 
     private void ClearedHandler(MouseEventArgs args)
     {
@@ -304,7 +322,7 @@
 
     private List<Rol> GetRollen()
     {
-        // TODO 
+        // TODO
         // Get list of all rollen based on enum
         var rollenList = rolService
                         .GetRollen()
@@ -321,9 +339,9 @@
         border-radius: 5px;
         text-align: center;
     }
-    .statustemp.e-inactivecolor {
-        background-color: #ffd7cc;
-        width: 64px;
+        .statustemp.e-inactivecolor {
+            background-color: #ffd7cc;
+            width: 64px;
     }
     td.e-rowcell .statustxt.e-inactivecolor {
         color: #e60000;

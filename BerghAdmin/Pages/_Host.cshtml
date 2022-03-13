@@ -52,5 +52,17 @@
             }
         }
     </script>
+    <script>
+        window.clipboardApi = {
+            copyTextToClipboard: function(text, message) {
+                navigator.clipboard.writeText(text).then(function () {
+                    alert(message);
+                })
+                .catch(function (error) {
+                    alert(error);
+                });
+            }
+        };
+    </script>
 </body>
 </html>
