@@ -1,3 +1,4 @@
+using BerghAdmin.ApplicationServices.Mail;
 using BerghAdmin.Authorization;
 using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
@@ -10,7 +11,7 @@ using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 
 using HealthChecks.UI.Client;
-
+using Mailjet.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -142,7 +143,6 @@ public class Program
         builder.Services.AddScoped<IBihzActieService, BihzActieService>();
         builder.Services.AddScoped<IBihzProjectService, BihzProjectService>();
         builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
-        builder.Services.Configure<MailJetConfiguration>(builder.Configuration.GetSection("MailJetConfiguration"));
         builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
         builder.Services.AddSyncfusionBlazor();
         builder.Services.AddSignalR(e =>
@@ -154,6 +154,17 @@ public class Program
 
         builder.Services.AddHealthChecks()
             .AddDbContextCheck<ApplicationDbContext>();
+
+        // Configure Mailjet client.
+        builder.Services.AddHttpClient<IMailjetClient, MailjetClient>(client =>
+        {
+            //set BaseAddress, MediaType, UserAgent
+            client.SetDefaultSettings();
+
+            string apiKey = builder.Configuration.GetValue<string>("MailJetConfiguration:ApiKey");
+            string apiSecret = builder.Configuration.GetValue<string>("MailJetConfiguration:ApiSecret");
+            client.UseBasicAuthentication(apiKey, apiSecret);
+        });
     }
 
     static void UseServices(WebApplication app)
