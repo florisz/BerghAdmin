@@ -1,7 +1,6 @@
 @page "/send-email-dialog"
 
 @using Syncfusion.Blazor.Popups
-@using BerghAdmin.Services
 @using Syncfusion.Blazor.RichTextEditor
 
 @inject ISendMailService SendMailService
@@ -66,7 +65,6 @@
     };
     SfRichTextEditor rteObject;
     private string rteValue= @"<p>Type email text here</p>";
-    private string Content;
 
     public void DialogOpen()
     {
@@ -82,10 +80,19 @@
 
     private async Task SendEMail()
     {
-        this.Content = await this.rteObject.GetXhtmlAsync();
-        await SendMailService.SendMail(this.Content);
-        IsVisible = false;
-        this.StateHasChanged();
+        string htmlContent = await this.rteObject.GetXhtmlAsync();
+        // Manually composed message for now
+        MailMessage message = new()
+        {
+            From = new MailAddress("test@berghinhetzadel.nl", "Test"),
+            To = new() { new MailAddress("reinald.baart@gmail.com", "Reinald Baart") },
+            Subject = $"Test mail {DateTime.Now.ToString("dd-MM-yyyy HH:mm")}",
+            TextBody = "Test mail from Mailjet!",
+            HtmlBody = htmlContent
+        };
+        await SendMailService.SendMail(message);
+
+        DialogClose();
     }
 
     private void DialogClose()
