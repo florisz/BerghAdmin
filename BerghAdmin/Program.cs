@@ -30,22 +30,15 @@ public class Program
     public static void Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
-                        .CreateLogger();
+            .WriteTo.Console()
+            .CreateBootstrapLogger();
 
         var builder = WebApplication.CreateBuilder(args);
+        builder.Host.UseSerilog((hc, lc) => lc
+            .WriteTo.Console()
+            .ReadFrom.Configuration(hc.Configuration)
+        );
 
-        //builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
-        //       loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
-        builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
-               .WriteTo.Console());
-
-        //builder.Logging.ClearProviders();
-        //builder.Logging.AddApplicationInsights();
-
-        if (builder.Environment.IsDevelopment())
-        {
-            builder.Logging.AddConsole();
-        }
         Log.Warning("Hi there");
 
         RegisterAuthorization(builder.Services);
@@ -82,12 +75,12 @@ public class Program
 
     static string GetDatabaseConnectionString(WebApplicationBuilder builder)
     {
-        var databaseConfiguration = builder.Configuration.GetSection("DatabaseConfiguration").Get<DatabaseConfiguration>();
-        if (databaseConfiguration == null)
+        var cs = builder.Configuration.GetConnectionString("DefaultConnection");
+        if (cs == null)
         {
             throw new ApplicationException("Secrets for Database access (connection string & password) can not be found in configuration");
         }
-        return databaseConfiguration.ConnectionString ?? throw new ArgumentException("ConnectionString not specified");
+        return cs;
     }
 
     static void RegisterAuthorization(IServiceCollection services)
@@ -187,6 +180,8 @@ public class Program
         {
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
         });
+
+        app.UseSerilogRequestLogging();
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
