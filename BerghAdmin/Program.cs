@@ -39,7 +39,9 @@ public class Program
             .ReadFrom.Configuration(hc.Configuration)
         );
 
-        Log.Warning("Hi there");
+        Log.Information("Info: Hi there");
+        Log.Warning("Warning: Hi there");
+        Log.Debug("Debug: Hi there");
 
         RegisterAuthorization(builder.Services);
         RegisterServices(builder);
