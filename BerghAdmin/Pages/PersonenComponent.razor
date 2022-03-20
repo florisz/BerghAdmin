@@ -160,12 +160,20 @@
 
     // Everything to handle the email dialog
     SendMailDialog sendMailDialog = new();
-    private void ShowSendMailDialog()
+    private async Task ShowSendMailDialog()
     {
+        string emailAddresses = await GetSelectedEmailAddresses();
+        sendMailDialog.toAddresses = emailAddresses;
         sendMailDialog.DialogOpen();
     }
 
     private async Task CopySelectedEmailAddressesAsync()
+    {
+        string emailAddresses = await GetSelectedEmailAddresses();
+        await jsRuntime.InvokeVoidAsync("clipboardApi.copyTextToClipboard", emailAddresses, $"Emailaddressen naar klembord gekopieerd.");
+    }
+
+    private async Task<string> GetSelectedEmailAddresses()
     {
         var emailAddressesList = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var selectedPersonen = await this.PersonenGrid.GetSelectedRecordsAsync();
@@ -174,7 +182,7 @@
             emailAddressesList.Add(persoon.EmailAdres);
         }
         string emailAddresses = string.Join(";", emailAddressesList);
-        await jsRuntime.InvokeVoidAsync("clipboardApi.copyTextToClipboard", emailAddresses, $"{emailAddressesList.Count} emailaddressen naar klembord gekopieerd.");
+        return emailAddresses;
     }
 
     // Everything to handle the edit persoon dialog
