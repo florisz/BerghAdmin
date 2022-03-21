@@ -1,10 +1,13 @@
 using BerghAdmin.ApplicationServices.KentaaInterface;
 using BerghAdmin.KentaaFunction.Services;
 
+using HealthChecks.UI.Core;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
@@ -51,7 +54,12 @@ public class FunctionApp
     [FunctionName(nameof(Health))]
     public IActionResult Health([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequest req)
     {
-        var json = @"{""status"":""Healthy"",""totalDuration"":""00:00:00.0018900""}";
-        return new OkObjectResult(json);
+        var now = DateTime.Now;
+        return new OkObjectResult(
+            new UIHealthReport(null, DateTime.Now.Subtract(now))
+            {
+                Status = UIHealthStatus.Healthy,
+            }
+        );
     }
 }
