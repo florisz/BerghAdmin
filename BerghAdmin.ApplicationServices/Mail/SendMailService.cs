@@ -33,8 +33,8 @@ public class SendMailService : ISendMailService
             .Property(Send.Messages, mailjetMessages);
 
         var response = await _mailjetClient.PostAsync(request);
-        bool success = response.IsSuccessStatusCode;
         string data = response.GetData().ToString(Formatting.Indented);
+        bool success = response.IsSuccessStatusCode;
         if (success)
         {
             _logger.LogInformation("Mail was successfully sent.\nTotal: {total}, Count: {count}\nData:\n{data}",

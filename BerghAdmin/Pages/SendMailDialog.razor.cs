@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
+using Syncfusion.Blazor.Inputs;
 using Syncfusion.Blazor.RichTextEditor;
 
 namespace BerghAdmin.Pages
@@ -10,7 +13,9 @@ namespace BerghAdmin.Pages
         public bool IsVisible { get; set; } = false;
 
         [Inject]
-        private ISendMailService _sendMailService { get; set; } = default!;
+        private ISendMailService SendMailService { get; set; } = default!;
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = default!;
 
         private List<ToolbarItemModel> Tools = new List<ToolbarItemModel>()
         {
@@ -47,48 +52,77 @@ namespace BerghAdmin.Pages
             new ToolbarItemModel() { Command = ToolbarCommand.Redo }
         };
 
-        private MailMessage mailMessage = new();
-        private SfRichTextEditor mailBody;
-        //TODO: Create API call to set addresses
-        //TODO: Use string lists instead of string
-        //TODO: Validation
-        public string? toAddresses;
-        private string? ccAddresses;
-        private string? bccAddresses;
 
-        public void DialogOpen()
+        private MailMessage _message = new();
+        public MailMessage Message
+        {
+            get => _message;
+            set
+            {
+                _message = value;
+                _fromAddress = _message.From == null ? "" : _message.From.Address;
+                _toAddresses = _message.To == null ? "" : string.Join(';', _message.To.Select(x => x.Address));
+                _ccAddresses = _message.Cc == null ? "" : string.Join(';', _message.Cc.Select(x => x.Address));
+                _bccAddresses = _message.Bcc == null ? "" : string.Join(';', _message.Bcc.Select(x => x.Address));
+            }
+        }
+
+        private SfRichTextEditor _mailBody = new();
+        private SfTextBox _subjectInput = new();
+
+        //TODO: Validation
+
+        private string _fromAddress = "";
+        private string? _toAddresses = "";
+        private string? _ccAddresses = "";
+        private string? _bccAddresses = "";
+
+        public async Task DialogOpen()
         {
             IsVisible = true;
-            mailBody.RefreshUIAsync();
+            await _mailBody.RefreshUIAsync();
             StateHasChanged();
         }
 
-        private void OnOverlayclick(MouseEventArgs arg)
+        private void Opened(Syncfusion.Blazor.Popups.OpenEventArgs args)
         {
-            IsVisible = false;
+            args.PreventFocus = true;
+            _subjectInput.FocusIn();
         }
 
         private async Task SendEMail()
         {
-            string htmlContent = await mailBody.GetXhtmlAsync();
-            string textContent = await mailBody.GetTextAsync();
-            mailMessage.From = new MailAddress("test@berghinhetzadel.nl", "Test");
-            if (!string.IsNullOrWhiteSpace(toAddresses))
+            string htmlContent = await _mailBody.GetXhtmlAsync();
+            string textContent = await _mailBody.GetTextAsync();
+            Message.From = new MailAddress(_fromAddress, null);
+            if (!string.IsNullOrWhiteSpace(_toAddresses))
             {
-                mailMessage.To = new() { new MailAddress(toAddresses, null) };
+                List<MailAddress> toAddresses = _toAddresses
+                    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Select(a => new MailAddress(a, null))
+                    .ToList();
+                Message.To = toAddresses;
             }
-            if (!string.IsNullOrWhiteSpace(ccAddresses))
+            if (!string.IsNullOrWhiteSpace(_ccAddresses))
             {
-                mailMessage.Cc = new() { new MailAddress(ccAddresses, null) };
+                List<MailAddress> ccAddresses = _ccAddresses
+                    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Select(a => new MailAddress(a, null))
+                    .ToList();
+                Message.Cc = ccAddresses;
             }
-            if (!string.IsNullOrWhiteSpace(bccAddresses))
+            if (!string.IsNullOrWhiteSpace(_bccAddresses))
             {
-                mailMessage.Bcc = new() { new MailAddress(bccAddresses, null) };
+                List<MailAddress> bccAddresses = _bccAddresses
+                    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Select(a => new MailAddress(a, null))
+                    .ToList();
+                Message.Bcc = bccAddresses;
             }
-            mailMessage.TextBody = textContent;
-            mailMessage.HtmlBody = htmlContent;
+            Message.TextBody = textContent;
+            Message.HtmlBody = htmlContent;
 
-            await _sendMailService.SendMail(mailMessage);
+            await SendMailService.SendMail(Message);
 
             DialogClose();
         }
@@ -97,6 +131,11 @@ namespace BerghAdmin.Pages
         {
             IsVisible = false;
             StateHasChanged();
+        }
+
+        private void OnOverlayclick(MouseEventArgs arg)
+        {
+            DialogClose();
         }
     }
 }

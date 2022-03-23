@@ -145,7 +145,7 @@ public class SeedUsersService : ISeedUsersService
             Name = naam,
             //Roles = new string[] { "admin" },
             UserName = $"{naam}@bihz.nl",
-            Email = $"{naam}@bihz.nl",
+            Email = $"{naam}@berghinhetzadel.nl",
             AccessFailedCount = 0,
             EmailConfirmed = true,
             LockoutEnabled = false,
