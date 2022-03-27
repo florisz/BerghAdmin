@@ -1,0 +1,19 @@
+$rg = "bergh-uat"
+$location = "westeurope"
+az group create `
+    --name $rg `
+    --location $location
+
+az appservice plan create `
+    --resource-group $rg `
+    --name bergh-uat-plan `
+    --location $location `
+    --sku F1 `
+    --is-linux
+
+az webapp create `
+    --name berghadmin-uat `
+    --resource-group $rg `
+    --plan bergh-uat-plan `
+    --runtime '"dotnetcore|6.0"' 
+

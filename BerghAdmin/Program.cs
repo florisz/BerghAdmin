@@ -48,14 +48,27 @@ public class Program
 
         var app = builder.Build();
         UseServices(app);
+        CreateEndpoints(app);
 
+
+        var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
+        seedDataService.SeedInitialData();
+        var seedUsersService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedUsersService>();
+        seedUsersService.SeedUsersData();
+
+        app.Run();
+    }
+
+    private static void CreateEndpoints(WebApplication app)
+    {
         app.MapHealthChecks("/health", new HealthCheckOptions
         {
             Predicate = _ => true,
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         }).AllowAnonymous();
         app.MapPost("/actions",
-            (BihzActie action, IBihzActieService service) => HandleNewAction(action, service))
+            [Authorize(Policy = "ApiGebruiker")]
+            (BihzActie action, IBihzActieService service, HttpRequest req) => HandleNewAction(action, service, req))
             .AllowAnonymous();
         app.MapPost("/donations",
             (BihzDonatie donation, IBihzDonatieService service) => HandleNewDonatie(donation, service))
@@ -66,13 +79,6 @@ public class Program
         app.MapPost("/users",
             (BihzUser user, IBihzUserService service) => HandleNewUser(user, service))
             .AllowAnonymous();
-
-        var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
-        seedDataService.SeedInitialData();
-        var seedUsersService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedUsersService>();
-        seedUsersService.SeedUsersData();
-
-        app.Run();
     }
 
     static string GetDatabaseConnectionString(WebApplicationBuilder builder)
@@ -101,12 +107,19 @@ public class Program
             .AddSignInManager<SignInManager<User>>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
+        services.AddAuthentication("BasicAuthentication").AddScheme<ApiKeyOptions, ApiKeyAuthentication>("ApiKey", null);
         services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
         services.AddSingleton<IAuthorizationHandler, BeheerFietsersPolicyHandler>();
+        services.AddSingleton<IAuthorizationHandler, ApiGebruikerPolicyHandler>();
         services.AddAuthorization(options =>
         {
             options.AddPolicy("IsAdministrator", policy => policy.Requirements.Add(new IsAdministratorRequirement()));
             options.AddPolicy("BeheerFietsers", policy => policy.Requirements.Add(new IsFietsersBeheerderRequirement()));
+            options.AddPolicy("ApiGebruiker", policy =>
+            {
+                policy.AuthenticationSchemes.Add("ApiKey");
+                policy.Requirements.Add(new IsApiGebruikerRequirement());
+            });
             options.FallbackPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
@@ -201,9 +214,8 @@ public class Program
         });
     }
 
-    static IResult HandleNewAction(BihzActie action, IBihzActieService service)
+    static IResult HandleNewAction(BihzActie action, IBihzActieService service, HttpRequest req)
     {
-        service.Add(action);
         return Results.Ok("Ik heb n Action toegevoegd");
     }
 
