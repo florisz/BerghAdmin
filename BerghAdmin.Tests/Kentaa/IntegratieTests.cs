@@ -6,7 +6,7 @@ using BerghAdmin.Services.Bihz;
 using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
-
+using BerghAdmin.Services.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,7 +46,7 @@ namespace BerghAdmin.Tests.Kentaa
                 .AddScoped<IRolService, RolService>()
                 .AddScoped<IPersoonService, PersoonService>()
                 .Configure<SeedSettings>(databaseConfiguration.GetSection("Seeding"))
-                .AddScoped<ISeedDataService, SeedDataService>()
+                .AddScoped<ISeedDataService, DebugSeedDataService>()
                 .AddScoped<IEvenementService, EvenementService>()
                 .AddScoped<IDonatieService, DonatieService>()
                 .AddHttpClient()
