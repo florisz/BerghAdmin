@@ -29,64 +29,19 @@ public class DebugSeedDataService : ISeedDataService
 
     public async Task SeedInitialData()
     {
-        if (DatabaseHasData())
+        if (SeedHelper.DatabaseHasData(_rolService))
         {
             return;
         }
 
-        var rollen = await InsertRollen();
+        var rollen = await SeedHelper.InsertRollen(_dbContext);
 
         await InsertTestPersonen(rollen);
         await InsertEvenementen();
         await InsertDocumenten();
     }
 
-    private bool DatabaseHasData()
-        => this._rolService
-            .GetRollen()
-            .Any();
 
-    private async Task<Dictionary<RolTypeEnum, Rol>> InsertRollen()
-    {
-        var rolAmbassadeur = new Rol { Id = RolTypeEnum.Ambassadeur, Beschrijving = "Ambassadeur", MeervoudBeschrijving = "Ambassadeurs" };
-        await _dbContext.AddAsync(rolAmbassadeur);
-
-        var rolBegeleider = new Rol { Id = RolTypeEnum.Begeleider, Beschrijving = "Begeleider", MeervoudBeschrijving = "Begeleiders" };
-        await _dbContext.AddAsync(rolBegeleider);
-
-        var rolCommissieLid = new Rol { Id = RolTypeEnum.CommissieLid, Beschrijving = "Commissielid", MeervoudBeschrijving = "Commissieleden" };
-        await _dbContext.AddAsync(rolCommissieLid);
-
-        var rolGolfer = new Rol { Id = RolTypeEnum.Golfer, Beschrijving = "Golfer", MeervoudBeschrijving = "Golfers" };
-        await _dbContext.AddAsync(rolGolfer);
-
-        var rolMailingAbonnee = new Rol { Id = RolTypeEnum.MailingAbonnee, Beschrijving = "Mailing abonnee", MeervoudBeschrijving = "Mailing Abonnees" };
-        await _dbContext.AddAsync(rolMailingAbonnee);
-
-        var rolFietser = new Rol { Id = RolTypeEnum.Fietser, Beschrijving = "Fietser", MeervoudBeschrijving = "Fieters" };
-        await _dbContext.AddAsync(rolFietser);
-
-        var rolVriendVan = new Rol { Id = RolTypeEnum.VriendVan, Beschrijving = "Vriend van", MeervoudBeschrijving = "Vrienden van" };
-        await _dbContext.AddAsync(rolVriendVan);
-
-        var rolVrijwilliger = new Rol { Id = RolTypeEnum.Vrijwilliger, Beschrijving = "Vrijwilliger", MeervoudBeschrijving = "Vrijwilligers" };
-        await _dbContext.AddAsync(rolVrijwilliger);
-
-        await _dbContext.SaveChangesAsync();
-
-        var rollen = new Dictionary<RolTypeEnum, Rol>
-            {
-                { RolTypeEnum.Ambassadeur, rolAmbassadeur },
-                { RolTypeEnum.Begeleider, rolBegeleider },
-                { RolTypeEnum.CommissieLid, rolCommissieLid},
-                { RolTypeEnum.Golfer, rolGolfer },
-                { RolTypeEnum.MailingAbonnee, rolMailingAbonnee},
-                { RolTypeEnum.Fietser, rolFietser },
-                { RolTypeEnum.VriendVan, rolVriendVan },
-                { RolTypeEnum.Vrijwilliger, rolVrijwilliger},
-            };
-        return rollen;
-    }
 
     private async Task InsertTestPersonen(Dictionary<RolTypeEnum, Rol> rollen)
     {
