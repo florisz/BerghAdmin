@@ -5,15 +5,15 @@ using Microsoft.AspNetCore.Identity;
 
 using System.Security.Claims;
 
-namespace BerghAdmin.Services;
+namespace BerghAdmin.Services.Seeding;
 
-public class SeedUsersService : ISeedUsersService
+public class DebugSeedUsersService : ISeedUsersService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly UserManager<User> _userManager;
     private readonly IRolService _rolService;
 
-    public SeedUsersService(
+    public DebugSeedUsersService(
         ApplicationDbContext dbContext,
         UserManager<User> userManager,
         IRolService rolService)

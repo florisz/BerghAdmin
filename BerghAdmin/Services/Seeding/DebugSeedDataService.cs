@@ -3,9 +3,9 @@ using BerghAdmin.Services.Evenementen;
 
 using Microsoft.Extensions.Options;
 
-namespace BerghAdmin.Services;
+namespace BerghAdmin.Services.Seeding;
 
-public class SeedDataService : ISeedDataService
+public class DebugSeedDataService : ISeedDataService
 {
     private readonly SeedSettings _settings;
     private readonly ApplicationDbContext _dbContext;
@@ -13,7 +13,7 @@ public class SeedDataService : ISeedDataService
     private readonly IEvenementService _evenementService;
     private readonly IPersoonService _persoonService;
 
-    public SeedDataService(
+    public DebugSeedDataService(
         ApplicationDbContext dbContext,
         IRolService rolService,
         IEvenementService evenementService,

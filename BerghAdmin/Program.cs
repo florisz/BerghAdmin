@@ -9,7 +9,7 @@ using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
-
+using BerghAdmin.Services.Seeding;
 using HealthChecks.UI.Client;
 using Mailjet.Client;
 using Microsoft.AspNetCore.Authorization;
@@ -126,8 +126,13 @@ public class Program
         builder.Services.AddScoped<IBetalingenImporterService, BetalingenImporterService>();
         builder.Services.AddScoped<IPersoonService, PersoonService>();
         builder.Services.AddScoped<IRolService, RolService>();
-        builder.Services.AddTransient<ISeedDataService, SeedDataService>();
-        builder.Services.AddTransient<ISeedUsersService, SeedUsersService>();
+#if (DEBUG)
+        builder.Services.AddTransient<ISeedDataService, DebugSeedDataService>();
+        builder.Services.AddTransient<ISeedUsersService, DebugSeedUsersService>();
+#elif (RELEASE)
+        builder.Services.AddTransient<ISeedDataService, ReleaseSeedDataService>();
+        builder.Services.AddTransient<ISeedUsersService, ReleaseSeedUsersService>();
+#endif
         builder.Services.AddScoped<IDocumentService, DocumentService>();
         builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
         builder.Services.AddScoped<IDataImporterService, DataImporterService>();

@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace BerghAdmin.Services
+namespace BerghAdmin.Services.Seeding
 {
     public static class SeedDataIdHelper
     {
