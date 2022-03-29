@@ -5,15 +5,15 @@ using Microsoft.AspNetCore.Identity;
 
 using System.Security.Claims;
 
-namespace BerghAdmin.Services;
+namespace BerghAdmin.Services.Seeding;
 
-public class SeedUsersService : ISeedUsersService
+public class DebugSeedUsersService : ISeedUsersService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly UserManager<User> _userManager;
     private readonly IRolService _rolService;
 
-    public SeedUsersService(
+    public DebugSeedUsersService(
         ApplicationDbContext dbContext,
         UserManager<User> userManager,
         IRolService rolService)
@@ -28,30 +28,12 @@ public class SeedUsersService : ISeedUsersService
         if (DatabaseHasUsers())
         {
             return;
-            }
+        }
         var rollen = GetRollen();
 
         if (rollen != null)
         {
             var persoon = new Persoon
-            {
-                Voorletters = "F",
-                Voornaam = "Floris",
-                Achternaam = "Zwarteveen",
-                Adres = "Berkenlaan 12",
-                EmailAdres = "fzwarteveen@gmail.com",
-                GeboorteDatum = new DateTime(2002, 1, 1),
-                Geslacht = GeslachtEnum.Man,
-                Land = "Nederland",
-                Mobiel = "06-12345678",
-                Plaats = "Beek",
-                Postcode = "7037 CA",
-                Telefoon = "onbekend",
-                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.CommissieLid] }
-            };
-            await InsertUser(persoon, rollen, "admin", AdministratorPolicyHandler.Claim);
-
-            persoon = new Persoon
             {
                 Voorletters = "L P",
                 Voornaam = "Lars-Peter",
@@ -71,39 +53,57 @@ public class SeedUsersService : ISeedUsersService
 
             persoon = new Persoon
             {
-                Voorletters = "G",
-                Voornaam = "Gerard",
-                Achternaam = "Hendriksen",
-                Adres = "Straat 32",
-                EmailAdres = "ghendriksen@bedrijf.com",
+                Voorletters = "F",
+                Voornaam = "Floris",
+                Achternaam = "Zwarteveen",
+                Adres = "Berkenlaan 12",
+                EmailAdres = "fzwarteveen@gmail.com",
                 GeboorteDatum = new DateTime(2002, 1, 1),
                 Geslacht = GeslachtEnum.Man,
                 Land = "Nederland",
                 Mobiel = "06-12345678",
-                Plaats = "Zevenaar",
+                Plaats = "Beek",
+                Postcode = "7037 CA",
+                Telefoon = "onbekend",
+                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.CommissieLid] }
+            };
+            await InsertUser(persoon, rollen, "admin", AdministratorPolicyHandler.Claim);
+
+            persoon = new Persoon
+            {
+                Voorletters = "R",
+                Voornaam = "Richard",
+                Achternaam = "de Zwart",
+                Adres = "Straat 32",
+                EmailAdres = "richard@dezwartenco.nl",
+                GeboorteDatum = new DateTime(2002, 1, 1),
+                Geslacht = GeslachtEnum.Man,
+                Land = "Nederland",
+                Mobiel = "06-12345678",
+                Plaats = "Breda",
                 Postcode = "6900 AB",
                 Telefoon = "onbekend",
                 Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Golfer], rollen[RolTypeEnum.CommissieLid] }
             };
-            await InsertUser(persoon, rollen, "golfbeheer", BeheerGolfersPolicyHandler.Claim);
+            await InsertUser(persoon, rollen, "ict", AdministratorPolicyHandler.Claim);
 
             persoon = new Persoon
             {
-                Voorletters = "W",
-                Voornaam = "Wilbert",
-                Achternaam = "Esselink",
-                Adres = "Straat 102",
-                EmailAdres = "wilbert@mail.com",
+                Voorletters = "R",
+                Voornaam = "Reinald",
+                Achternaam = "Baart",
+                Adres = "Straat 32",
+                EmailAdres = "reinald.baart@gmail.com",
                 GeboorteDatum = new DateTime(2002, 1, 1),
                 Geslacht = GeslachtEnum.Man,
                 Land = "Nederland",
                 Mobiel = "06-12345678",
-                Plaats = "Bergh",
-                Postcode = "7000 XS",
+                Plaats = "Breda",
+                Postcode = "6900 AB",
                 Telefoon = "onbekend",
-                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Ambassadeur], rollen[RolTypeEnum.CommissieLid] }
+                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Golfer], rollen[RolTypeEnum.CommissieLid] }
             };
-            await InsertUser(persoon, rollen, "ambassadeurbeheer", BeheerAmbassadeursPolicyHandler.Claim);
+            await InsertUser(persoon, rollen, "webmaster", AdministratorPolicyHandler.Claim);
         }
     }
 
@@ -143,8 +143,7 @@ public class SeedUsersService : ISeedUsersService
         {
             CurrentPersoonId = persoon.Id,
             Name = naam,
-            //Roles = new string[] { "admin" },
-            UserName = $"{naam}@bihz.nl",
+            UserName = $"{naam}@berghinhetzadel.nl",
             Email = $"{naam}@berghinhetzadel.nl",
             AccessFailedCount = 0,
             EmailConfirmed = true,

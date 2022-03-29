@@ -15,6 +15,7 @@ using BerghAdmin.Services.Bihz;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.ApplicationServices.KentaaInterface;
+using BerghAdmin.Services.Seeding;
 
 namespace BerghAdmin.Tests.BetalingenTests
 {
@@ -45,7 +46,7 @@ namespace BerghAdmin.Tests.BetalingenTests
                 .AddScoped<IKentaaInterfaceService, KentaaInterfaceService>()
 
                 .Configure<SeedSettings>(databaseConfiguration.GetSection("Seeding"))
-                .AddScoped<ISeedDataService, SeedDataService>()
+                .AddScoped<ISeedDataService, DebugSeedDataService>()
                 .AddScoped<IBetalingenImporterService, BetalingenImporterService>()
                 .AddScoped<IBetalingenService, BetalingenService>()
             ;
