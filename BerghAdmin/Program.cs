@@ -137,6 +137,7 @@ public class Program
         builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
         builder.Services.AddScoped<IDataImporterService, DataImporterService>();
         builder.Services.AddScoped<ISendMailService, SendMailService>();
+        builder.Services.AddScoped<IMailResponseHandlerService, MailResponseHandlerService>();
         builder.Services.AddScoped<IEvenementService, EvenementService>();
         builder.Services.AddScoped<IDonatieService, DonatieService>();
         builder.Services.AddScoped<IBihzUserService, BihzUserService>();

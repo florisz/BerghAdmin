@@ -70,8 +70,6 @@ namespace BerghAdmin.Pages
         private SfRichTextEditor _mailBody = new();
         private SfTextBox _subjectInput = new();
 
-        //TODO: Validation
-
         private string _fromAddress = "";
         private string? _toAddresses = "";
         private string? _ccAddresses = "";
@@ -122,7 +120,8 @@ namespace BerghAdmin.Pages
             Message.TextBody = textContent;
             Message.HtmlBody = htmlContent;
 
-            await SendMailService.SendMail(Message);
+            bool isSandboxMode = false; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
+            await SendMailService.SendMailAsync(Message, isSandboxMode);
 
             DialogClose();
         }

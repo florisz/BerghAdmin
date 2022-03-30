@@ -182,7 +182,7 @@
         MailMessage message = new()
         {
             From = new MailAddress(CurrentUser.Email, CurrentUser.Name),
-            Bcc = selectedAddresses
+            To = selectedAddresses
         };
         sendMailDialog.Message = message;
         await sendMailDialog.DialogOpen();

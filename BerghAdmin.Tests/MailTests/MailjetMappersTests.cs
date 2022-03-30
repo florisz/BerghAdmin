@@ -1,6 +1,5 @@
 ﻿using BerghAdmin.ApplicationServices.Mail;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Mailjet.Client.TransactionalEmails;
 using NUnit.Framework;
 
 namespace BerghAdmin.Tests.MailTests
@@ -9,51 +8,51 @@ namespace BerghAdmin.Tests.MailTests
     public class MailjetMappersTests
     {
         [Test]
-        public void ToMailjetAddress_NullMailAddress_ShouldReturnEmptyJObject()
+        public void ToMailjetAddress_NullMailAddress_ShouldReturnEmptySendContact()
         {
             MailAddress? address = null;
 
-            JObject actual = address.ToMailjetAddress();
+            SendContact? actual = address.ToMailjetAddress();
 
-            string expected = "{}";
-            Assert.AreEqual(expected, actual.ToString(Formatting.None));
+            Assert.IsNull(actual);
         }
 
         [Test]
-        public void ToMailjetAddress_MailAddressWithoutName_ShouldReturnJObject()
+        public void ToMailjetAddress_MailAddressWithoutName_ShouldReturnSendContact()
         {
             MailAddress? address = new("test@test.xyz", null);
 
-            JObject actual = address.ToMailjetAddress();
+            SendContact? actual = address.ToMailjetAddress();
 
-            string expected = "{\"Email\":\"test@test.xyz\",\"Name\":null}";
-            Assert.AreEqual(expected, actual.ToString(Formatting.None));
+            Assert.IsNotNull(actual);
+            Assert.AreEqual("test@test.xyz", actual.Email);
+            Assert.AreEqual(null, actual.Name);
         }
 
         [Test]
-        public void ToMailjetAddress_MailAddressWithName_ShouldReturnJObject()
+        public void ToMailjetAddress_MailAddressWithName_ShouldReturnSendContact()
         {
             MailAddress? address = new("test@test.xyz", "Test address");
 
-            JObject actual = address.ToMailjetAddress();
+            SendContact? actual = address.ToMailjetAddress();
 
-            string expected = "{\"Email\":\"test@test.xyz\",\"Name\":\"Test address\"}";
-            Assert.AreEqual(expected, actual.ToString(Formatting.None));
+            Assert.IsNotNull(actual);
+            Assert.AreEqual("test@test.xyz", actual.Email);
+            Assert.AreEqual("Test address", actual.Name);
         }
 
         [Test]
-        public void ToMailjetMessage_NullMessage_ShouldReturnEmptyJObject()
+        public void ToMailjetMessage_NullMessage_ShouldReturnNoEmails()
         {
             MailMessage? message = null;
 
-            JObject actual = message.ToMailjetMessage();
+            IEnumerable<TransactionalEmail> actual = message.ToMailjetMessages();
 
-            string expected = "{}";
-            Assert.AreEqual(expected, actual.ToString(Formatting.None));
+            Assert.IsEmpty(actual);
         }
 
         [Test]
-        public void ToMailjetMessage_SparseMessage_ShouldReturnJObject()
+        public void ToMailjetMessage_MinimalMessage_ShouldReturnOneEmail()
         {
             MailMessage? message = new()
             {
@@ -63,14 +62,21 @@ namespace BerghAdmin.Tests.MailTests
                 TextBody = "Contents"
             };
 
-            JObject actual = message.ToMailjetMessage();
+            IEnumerable<TransactionalEmail> actual = message.ToMailjetMessages();
 
-            string expected = "{\"From\":{\"Email\":\"sender@test.xyz\",\"Name\":null},\"To\":[{\"Email\":\"recipient@test.xyz\",\"Name\":null}],\"Cc\":[],\"Bcc\":[],\"Subject\":\"Subject\",\"TextPart\":\"Contents\",\"HTMLPart\":null}";
-            Assert.AreEqual(expected, actual.ToString(Formatting.None));
+            Assert.AreEqual(1, actual.Count());
+            TransactionalEmail email = actual.First();
+            Assert.AreEqual("sender@test.xyz", email.From.Email);
+            Assert.AreEqual(null, email.From.Name);
+            Assert.AreEqual("recipient@test.xyz", email.To.First().Email);
+            Assert.AreEqual(null, email.To.First().Name);
+            Assert.AreEqual("Subject", email.Subject);
+            Assert.AreEqual("Contents", email.TextPart);
+            Assert.AreEqual(null, email.HTMLPart);
         }
 
         [Test]
-        public void ToMailjetMessage_FullMessage_ShouldReturnJObject()
+        public void ToMailjetMessage_FullMessage_ShouldReturnEmails()
         {
             MailMessage? message = new()
             {
@@ -95,10 +101,30 @@ namespace BerghAdmin.Tests.MailTests
                 HtmlBody = "<h1>HTML</h1><p>Text</p>"
             };
 
-            JObject actual = message.ToMailjetMessage();
+            IEnumerable<TransactionalEmail> actual = message.ToMailjetMessages();
 
-            string expected = "{\"From\":{\"Email\":\"sender@test.xyz\",\"Name\":\"Sender\"},\"To\":[{\"Email\":\"recipient1@test.xyz\",\"Name\":\"Recipient 1\"},{\"Email\":\"recipient2@test.xyz\",\"Name\":\"Recipient 2\"}],\"Cc\":[{\"Email\":\"cc1@test.xyz\",\"Name\":\"Copy 1\"},{\"Email\":\"cc2@test.xyz\",\"Name\":\"Copy 2\"}],\"Bcc\":[{\"Email\":\"bcc1@test.xyz\",\"Name\":\"BlindCopy 1\"},{\"Email\":\"bcc2@test.xyz\",\"Name\":\"BlindCopy 2\"}],\"Subject\":\"Subject\",\"TextPart\":\"Contents\",\"HTMLPart\":\"<h1>HTML</h1><p>Text</p>\"}";
-            Assert.AreEqual(expected, actual.ToString(Formatting.None));
+            var emails = actual.ToList();
+            Assert.AreEqual(2, emails.Count);
+            TransactionalEmail firstEmail = emails[0];
+            Assert.AreEqual("sender@test.xyz", firstEmail.From.Email);
+            Assert.AreEqual("Sender", firstEmail.From.Name);
+            Assert.AreEqual("recipient1@test.xyz", firstEmail.To.First().Email);
+            Assert.AreEqual("Recipient 1", firstEmail.To.First().Name);
+            Assert.AreEqual("Subject", firstEmail.Subject);
+            Assert.AreEqual("Contents", firstEmail.TextPart);
+            Assert.AreEqual("<h1>HTML</h1><p>Text</p>", firstEmail.HTMLPart);
+            Assert.AreEqual(2, firstEmail.Cc.Count);
+            Assert.AreEqual(2, firstEmail.Bcc.Count);
+            TransactionalEmail secondEmail = emails[1];
+            Assert.AreEqual("sender@test.xyz", secondEmail.From.Email);
+            Assert.AreEqual("Sender", secondEmail.From.Name);
+            Assert.AreEqual("recipient2@test.xyz", secondEmail.To.First().Email);
+            Assert.AreEqual("Recipient 2", secondEmail.To.First().Name);
+            Assert.AreEqual("Subject", secondEmail.Subject);
+            Assert.AreEqual("Contents", secondEmail.TextPart);
+            Assert.AreEqual("<h1>HTML</h1><p>Text</p>", secondEmail.HTMLPart);
+            Assert.AreEqual(2, secondEmail.Cc.Count);
+            Assert.AreEqual(2, secondEmail.Bcc.Count);
         }
     }
 }
