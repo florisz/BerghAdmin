@@ -128,6 +128,13 @@ Bihz class. The content of the Bihz class is sent to one of the 4 corresponding 
 BerghAdmin web application. When received the incoming is processed as described in the table
 above.
 
+This illustrated with:
+
+[[KentaaReadApiSequence, Kentaa Api usage]]
+.Kentaa Api read sequence 
+image::KentaaInleesSequence.png[]
+
+
 ==  Infrastructure
 picture with:
 

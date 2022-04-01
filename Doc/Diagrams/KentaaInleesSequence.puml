@@ -1,0 +1,39 @@
+@startuml KentaaInleesSequence
+
+actor       Scheduler
+box "Azure" #lightblue
+participant KentaaFunction
+end box
+box "Kentaa" #lightgreen
+participant KentaaApi
+end box
+box "BerghAdmin webapp" #lightyellow
+participant BerghAdminAPI
+
+Scheduler -> KentaaFunction : read Kentaa data
+
+group Users
+KentaaFunction -> KentaaApi : kentaaUsers = read users
+KentaaFunction -> KentaaFunction : berghAdminUsers = convert users(kentaaUsers)
+KentaaFunction -> BerghAdminAPI : send users(berghAdminUsers)
+end
+
+group Projects
+KentaaFunction -> KentaaApi : kentaaProjects = read projects
+KentaaFunction -> KentaaFunction : berghAdminProjects = convert users(kentaaProjects)
+KentaaFunction -> BerghAdminAPI : send projects(berghAdminProjects)
+end
+
+group Actions
+KentaaFunction -> KentaaApi : kentaaActions = read actions
+KentaaFunction -> KentaaFunction : berghAdminActions = convert actions(kentaaActions)
+KentaaFunction -> BerghAdminAPI : send actions(berghAdminActions)
+end
+
+group Donations
+KentaaFunction -> KentaaApi : kentaaDonations = read donations
+KentaaFunction -> KentaaFunction : berghAdminDonations = convert users(kentaaDonations)
+KentaaFunction -> BerghAdminAPI : send donations(berghAdminDonations)
+end
+
+@enduml
