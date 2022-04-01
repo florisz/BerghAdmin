@@ -1,14 +1,21 @@
 ﻿@using System.Linq;
+@using BerghAdmin.Services.Configuration
+@using BerghAdmin.Authorization;
 @using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Options
 @using Syncfusion.Blazor.Buttons
+@using Microsoft.AspNetCore.Components.Authorization
 
 @using BerghAdmin.Data
 @using BerghAdmin.Pages
+@using System.Security.Claims
 
 
 @inject BerghAdmin.Services.IPersoonService persoonService
 @inject BerghAdmin.Services.IRolService rolService
 
+@inject UserManager<User> UserManager
 @inject NavigationManager NavigationManager
 @inject IJSRuntime jsRuntime
 
@@ -155,34 +162,49 @@
     public RolTypeEnum[] RolContext { get; set; } = Array.Empty<RolTypeEnum>();
     [Parameter]
     public bool ToonAlles { get; set; } = false;
+    [CascadingParameter]
+    private Task<AuthenticationState>? _authenticationStateTask { get; set; }
+
+    private User? CurrentUser;
 
     private bool ToonVerwijderd { get; set; } = false;
 
     // Everything to handle the email dialog
     SendMailDialog sendMailDialog = new();
-    private async Task ShowSendMailDialog()
+    private async void ShowSendMailDialog()
     {
-        string emailAddresses = await GetSelectedEmailAddresses();
-        sendMailDialog.toAddresses = emailAddresses;
-        sendMailDialog.DialogOpen();
+        if (string.IsNullOrWhiteSpace(CurrentUser?.Email))
+        {
+            return;
+        }
+
+        List<MailAddress> selectedAddresses = await GetSelectedEmailAddresses();
+        MailMessage message = new()
+        {
+            From = new MailAddress(CurrentUser.Email, CurrentUser.Name),
+            To = selectedAddresses
+        };
+        sendMailDialog.Message = message;
+        await sendMailDialog.DialogOpen();
     }
 
     private async Task CopySelectedEmailAddressesAsync()
     {
-        string emailAddresses = await GetSelectedEmailAddresses();
+        List<MailAddress> selectedAddresses = await GetSelectedEmailAddresses();
+        string emailAddresses = string.Join(';', selectedAddresses.Select(a => a.Address));
         await jsRuntime.InvokeVoidAsync("clipboardApi.copyTextToClipboard", emailAddresses, $"Emailaddressen naar klembord gekopieerd.");
     }
 
-    private async Task<string> GetSelectedEmailAddresses()
+    private async Task<List<MailAddress>> GetSelectedEmailAddresses()
     {
-        var emailAddressesList = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var selectedPersonen = await this.PersonenGrid.GetSelectedRecordsAsync();
-        foreach (var persoon in selectedPersonen.Where(p => !string.IsNullOrWhiteSpace(p.EmailAdres)))
+        var emailAddressesList = new List<MailAddress>();
+        var selectedPersonenWithMailAddress = (await this.PersonenGrid.GetSelectedRecordsAsync())
+            .Where(p => !string.IsNullOrWhiteSpace(p.EmailAdres));
+        foreach (var persoon in selectedPersonenWithMailAddress)
         {
-            emailAddressesList.Add(persoon.EmailAdres);
+            emailAddressesList.Add(new(persoon.EmailAdres, persoon.VolledigeNaam));
         }
-        string emailAddresses = string.Join(";", emailAddressesList);
-        return emailAddresses;
+        return emailAddressesList;
     }
 
     // Everything to handle the edit persoon dialog
@@ -223,12 +245,18 @@
     public double[] TotalValue { get; set; } = Array.Empty<double>();
     public string SelectedValue = string.Empty;
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
         base.OnInitialized();
         selectedRollen = RolContext.ToList<RolTypeEnum>();
         rollenList = GetRollen();
-        RefreshList();
+        await RefreshList();
+
+        if (_authenticationStateTask != null)
+        {            
+            var authenticationState = await _authenticationStateTask;
+            CurrentUser = await UserManager.GetUserAsync(authenticationState?.User);
+        }
     }
 
     private void ValueRemovedHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args)

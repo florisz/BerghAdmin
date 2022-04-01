@@ -2,5 +2,5 @@ namespace BerghAdmin.ApplicationServices.Mail;
 
 public interface ISendMailService
 {
-    Task<bool> SendMail(MailMessage message);
+    Task SendMailAsync(MailMessage message, bool isSandboxMode = false);
 }

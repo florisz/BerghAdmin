@@ -1,83 +1,55 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Mailjet.Client.Resources;
+using Mailjet.Client.TransactionalEmails;
+using Newtonsoft.Json.Linq;
 
 namespace BerghAdmin.ApplicationServices.Mail
 {
     public static class MailjetMappers
     {
-        public static JObject ToMailjetAddress(this MailAddress? address)
+        public static SendContact? ToMailjetAddress(this MailAddress? address)
         {
             if (address is null)
             {
-                return new JObject();
+                return null;
             }
 
-            return new JObject
-            {
-                { "Email", address.Address },
-                { "Name", address.Name }
-            };
+            return new(address.Address, address.Name);
         }
 
-        public static JArray ToMailjetAddresses(this IEnumerable<MailAddress>? addresses)
+        public static IEnumerable<SendContact> ToMailjetAddresses(this IEnumerable<MailAddress>? addresses)
         {
             if (addresses is null)
             {
-                return new JArray();
+                return Array.Empty<SendContact>();
             }
 
-            return new JArray(addresses.Select(address => address.ToMailjetAddress()));
+            return addresses.Select(a => new SendContact(a.Address, a.Name));
         }
 
-        public static JObject ToMailjetMessage(this MailMessage? message)
+        public static IEnumerable<TransactionalEmail> ToMailjetMessages(this MailMessage? mailMessage)
         {
-            if (message is null)
+            if (mailMessage is null)
             {
-                return new JObject();
+                return Array.Empty<TransactionalEmail>();
             }
 
-            JObject result = new()
-            {
-                {
-                    "From",
-                    message.From.ToMailjetAddress()
-                },
-                {
-                    "To",
-                    message.To.ToMailjetAddresses()
-                },
-                {
-                    "Cc",
-                    message.Cc.ToMailjetAddresses()
-                },
-                {
-                    "Bcc",
-                    message.Bcc.ToMailjetAddresses()
-                },
-                {
-                    "Subject",
-                    message.Subject
-                },
-                {
-                    "TextPart",
-                    message.TextBody
-                },
-                {
-                    "HTMLPart",
-                    message.HtmlBody
-                }
-            };
+            var emails = new List<TransactionalEmail>();
 
-            return result;
-        }
-
-        public static JArray ToMailjetMessages(this IEnumerable<MailMessage>? messages)
-        {
-            if (messages is null)
+            foreach (var toAddress in mailMessage.To)
             {
-                return new JArray();
+                var email = new TransactionalEmailBuilder()
+                    .WithFrom(mailMessage.From.ToMailjetAddress())
+                    .WithTo(toAddress.ToMailjetAddress())
+                    .WithCc(mailMessage.Cc.ToMailjetAddresses())
+                    .WithBcc(mailMessage.Bcc.ToMailjetAddresses())
+                    .WithSubject(mailMessage.Subject)
+                    .WithTextPart(mailMessage.TextBody)
+                    .WithHtmlPart(mailMessage.HtmlBody)
+                    .Build();
+                emails.Add(email);
             }
 
-            return new JArray(messages.Select(message => message.ToMailjetMessage()));
+            return emails;
         }
     }
 }
