@@ -271,6 +271,22 @@ public class DebugSeedDataService : ISeedDataService
                 Postcode = "6904 SD",
                 Telefoon = "onbekend",
                 Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Vrijwilliger] }
+            },
+            new Persoon
+            {
+                Voorletters = "F.",
+                Voornaam = "Floris",
+                Achternaam = "Zwarteveen",
+                Adres = "Straat 42",
+                EmailAdres = "fzwarteveen@gmail.com",
+                GeboorteDatum = new DateTime(1984, 1, 1),
+                Geslacht = GeslachtEnum.Man,
+                Land = "Nederland",
+                Mobiel = "06-12345678",
+                Plaats = "Beek",
+                Postcode = "7037 CA",
+                Telefoon = "onbekend",
+                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Vrijwilliger], rollen[RolTypeEnum.Fietser] }
             }
         );
 

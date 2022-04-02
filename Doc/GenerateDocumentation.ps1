@@ -7,9 +7,9 @@ java -jar "C:/Program Files/plantuml/plantuml.jar" "$directorypath/diagrams" -o 
 # generate the html version
 Write-Host
 Write-Host "Generating HTML documentation" -ForegroundColor Yellow
-asciidoctor --attribute=generate-html .\BerghAdminTOC.adoc
+asciidoctor --attribute=generate-html .\BerghAdminTOC.adoc -o BerghAdminDesign.html
 
 # generate the pdf version
 Write-Host
 Write-Host "Generating PDF documentation" -ForegroundColor Yellow
-asciidoctor -r asciidoctor-pdf -b pdf --attribute=generate-pdf .\BerghAdminTOC.adoc --verbose --trace
+asciidoctor -r asciidoctor-pdf -b pdf --attribute=generate-pdf .\BerghAdminTOC.adoc --verbose --trace -o BerghAdminDesign.pdf

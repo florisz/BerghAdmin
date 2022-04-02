@@ -1,0 +1,27 @@
+@startuml KentaaVerwerkActieSequence
+
+actor       KentaaFunction <<Azure>>
+box "BerghAdmin webapp" #lightyellow
+participant BerghAdminApi
+participant BihzActieService
+participant PersoonService
+end box
+database BerghAdminDb
+
+
+group Acties
+KentaaFunction -> BerghAdminApi : handle new actie(actie)
+
+BerghAdminApi -> BihzActieService : add(actie)
+
+activate BihzActieService #DarkSalmon
+BihzActieService -> BerghAdminDb : bihzActie = GetByKentaaId(actie.ActionId)
+BihzActieService -> PersoonService : persoon = GetByEmailAdres(bihzActie.EmailAdres)
+BihzActieService -> BihzActieService : LinkActieToPersoon(bihzActie, persoon)
+BihzActieService -> BerghAdminDb : Save(bihzActie)
+BihzActieService -> PersoonService : Save(persoon)
+PersoonService -> BerghAdminDb : Save(persoon)
+deactivate BihzActieService
+end
+
+@enduml

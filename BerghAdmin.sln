@@ -32,7 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BerghMonitor.Web", "BerghMo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{55C35791-8575-4710-8B90-6C72A0C6873F}"
 	ProjectSection(SolutionItems) = preProject
-		Doc\BerghAdminTOC.pdf = Doc\BerghAdminTOC.pdf
+		Doc\BerghAdminDesign.pdf = Doc\BerghAdminDesign.pdf
 	EndProjectSection
 EndProject
 Global

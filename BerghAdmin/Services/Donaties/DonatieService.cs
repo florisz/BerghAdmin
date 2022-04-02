@@ -28,7 +28,10 @@ public class DonatieService : IDonatieService
 
     public ErrorCodeEnum ProcessBihzDonatie(BihzDonatie bihzDonatie, Donateur? donateur)
     {
-        _logger.LogDebug("entering ProcessBihzDonatie");
+        if (donateur == null)
+        {
+            _logger.LogError($"Donatie with Kentaa id {bihzDonatie.DonationId} can not be processed; reason Persoon (Donateur) is unknown (has null value)");
+        }
 
         _logger.LogDebug($"betaalstatus={bihzDonatie.BetaalStatus}");
         if (bihzDonatie.BetaalStatus != PaymentStatusEnum.Paid)
@@ -48,7 +51,7 @@ public class DonatieService : IDonatieService
         donatie.KentaaDonatie = bihzDonatie;
 
         Save(donatie);
-
+        _logger.LogInformation($"Kentaa donatie with id {bihzDonatie.DonationId} successfully linked to persoon with id {donateur?.Id}");
 
         return ErrorCodeEnum.Ok;
     }

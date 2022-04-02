@@ -1,0 +1,28 @@
+@startuml KentaaVerwerkDonatieSequence
+
+actor       KentaaFunction <<Azure>>
+box "BerghAdmin webapp" #lightyellow
+participant BerghAdminApi
+participant BihzDonatieService
+participant BihzActieService
+participant PersoonService
+participant DonatieService
+end box
+database BerghAdminDb
+
+
+group Donaties
+KentaaFunction -> BerghAdminApi : handle new donatie(donatie)
+
+BerghAdminApi -> BihzDonatieService : add(donatie)
+
+activate BihzDonatieService #DarkSalmon
+BihzDonatieService -> BerghAdminDb : bihzDonatie = GetByKentaaId(donatie.DonationId)
+BihzDonatieService -> BihzActieService : bihzActie = GetByKentaaId(bihzDonatie.ActionId)
+BihzDonatieService -> PersoonService : persoon = GetById(bihzActie.PersoonId)
+BihzDonatieService -> DonatieService : ProcessBihzDonatie(bihzDonatie, persoon)
+BihzDonatieService -> BerghAdminDb : Save(bihzDonatie)
+deactivate BihzDonatieService
+end
+
+@enduml

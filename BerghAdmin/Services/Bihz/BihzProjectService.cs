@@ -3,33 +3,45 @@ using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 using BerghAdmin.Services.Evenementen;
 
-using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
-
 namespace BerghAdmin.Services.Bihz;
 
 public class BihzProjectService : IBihzProjectService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IEvenementService _evenementService;
+    private readonly ILogger<BihzProjectService> _logger;
 
-    public BihzProjectService(ApplicationDbContext context, IEvenementService evenementService)
+    public BihzProjectService(ApplicationDbContext context, IEvenementService evenementService, ILogger<BihzProjectService> logger)
     {
         _dbContext = context;
         _evenementService = evenementService;
+        _logger = logger;
     }
 
     public void Add(BihzProject project)
     {
-        var currentProject = GetByKentaaId(project.ProjectId);
+        _logger.LogDebug($"Entering Add BihzProject with KentaaId {project.ProjectId}");
 
-        currentProject = MapChanges(currentProject, project);
+        var bihzProject = MapChanges(GetByKentaaId(project.ProjectId), project);
 
-        if (currentProject.EvenementId == null)
+        if (bihzProject.EvenementId == null)
         {
-            LinkProjectToEvenement(currentProject);
+            // Evenement (fietstocht) has not been linked to a registered Kentaa project yet,
+            // Link thru the title of the Kentaa project
+            var evenement = _evenementService.GetByTitel(project.Titel ?? "no-title");
+
+            if (evenement == null)
+            {
+                _logger.LogError($"Kentaa project with id {project.ProjectId} can not be processed; reason: the corresponding evenement with title {project.Titel} is unknown.");
+                return;
+            }
+            evenement.BihzProject = bihzProject;
+            bihzProject.EvenementId = evenement.Id;
+
+            _evenementService.Save(evenement);
         }
 
-        Save(currentProject);
+        Save(bihzProject);
     }
 
     public void Add(IEnumerable<BihzProject> projects)
@@ -83,24 +95,6 @@ public class BihzProjectService : IBihzProjectService
         }
 
         return ErrorCodeEnum.Ok;
-    }
-
-    private void LinkProjectToEvenement(BihzProject bihzProject)
-    {
-        // make sure the bihz titel is set correctly in each evenement
-        var evenement = _evenementService.GetByTitel(bihzProject.Titel ?? "no-title");
-
-        if (evenement == null)
-        {
-            // TO BE DONE
-            // report to admin "kentaa project can not be mapped"
-        }
-        if (evenement != null)
-        {
-            evenement.BihzProject = bihzProject;
-            bihzProject.EvenementId = evenement.Id;
-            _evenementService.Save(evenement);
-        }
     }
 
     private static BihzProject MapChanges(BihzProject? currentProject, BihzProject newProject)

@@ -9,30 +9,41 @@ namespace BerghAdmin.Services.Bihz;
 public class BihzActieService : IBihzActieService
 {
     private readonly ApplicationDbContext dbContext;
-    private readonly ILogger<BihzActieService> logger;
+    private readonly ILogger<BihzActieService> _logger;
     private readonly IPersoonService _persoonService;
 
     public BihzActieService(ApplicationDbContext context, IPersoonService persoonService, ILogger<BihzActieService> logger)
     {
         this.dbContext = context;
         this._persoonService = persoonService;
-        this.logger = logger;
+        this._logger = logger;
     }
 
     public void Add(BihzActie actie)
     {
-        var currentActie = GetByKentaaId(actie.ActionId);
+        _logger.LogDebug($"Entering Add BihzActie with KentaaId {actie.ActionId}");
 
-        currentActie = MapChanges(currentActie, actie);
+        var bihzActie = MapChanges(GetByKentaaId(actie.ActionId), actie);
 
-        logger.LogInformation("About to save bihzActie {action}", JsonSerializer.Serialize(currentActie));
-
-        if (currentActie.PersoonId == null)
+        if (bihzActie.PersoonId == null)
         {
-            LinkActieToPersoon(currentActie);
+            // Persoon has not been linked to a registered Kentaa action yet,
+            // Link thru the email address of the Kentaa action
+            var persoon = _persoonService.GetByEmailAdres(bihzActie.Email ?? "no-email");
+
+            if (persoon == null)
+            {
+                _logger.LogError($"Kentaa actie with id {bihzActie.ActionId} can not be processed; reason: the corresponding persoon with email address {bihzActie.Email} is unknown.");
+                return;
+            }
+
+            persoon.BihzActie = bihzActie;
+            bihzActie.PersoonId = persoon.Id;
+
+            _persoonService.SavePersoon(persoon);
         }
 
-        Save(currentActie);
+        Save(bihzActie);
     }
 
     private static BihzActie MapChanges(BihzActie? currentActie, BihzActie newActie)
@@ -96,22 +107,4 @@ public class BihzActieService : IBihzActieService
         return ErrorCodeEnum.Ok;
     }
 
-
-    private void LinkActieToPersoon(BihzActie bihzActie)
-    {
-        // link with kentaa user id does not exist yet; try email
-        var persoon = _persoonService.GetByEmailAdres(bihzActie.Email ?? "no-email");
-
-        if (persoon == null)
-        {
-            // TO BE DONE
-            // report to admin "kentaa action can not be mapped"
-        }
-        if (persoon != null)
-        {
-            persoon.BihzActie = bihzActie;
-            bihzActie.PersoonId = persoon.Id;
-            _persoonService.SavePersoon(persoon);
-        }
-    }
 }

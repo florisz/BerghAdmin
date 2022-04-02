@@ -1,0 +1,27 @@
+@startuml KentaaVerwerkProjectSequence
+
+actor       KentaaFunction <<Azure>>
+box "BerghAdmin webapp" #lightyellow
+participant BerghAdminApi
+participant BihzProjectService
+participant EvenementService
+end box
+database BerghAdminDb
+
+
+group Projects
+KentaaFunction -> BerghAdminApi : handle new project(project)
+
+BerghAdminApi -> BihzProjectService : add(project)
+
+activate BihzProjectService #DarkSalmon
+BihzProjectService -> BerghAdminDb : bihzProject = GetByKentaaId(project.ProjectId)
+BihzProjectService -> EvenementService : evenement = GetByTitel(bihzProject.Titel)
+BihzProjectService -> BihzProjectService : LinkProjectToEvenement(bihzProject, evenement)
+BihzProjectService -> BerghAdminDb : Save(bihzProject)
+BihzProjectService -> EvenementService : Save(evenement)
+EvenementService -> BerghAdminDb : Save(evenement)
+deactivate BihzProjectService
+end
+
+@enduml

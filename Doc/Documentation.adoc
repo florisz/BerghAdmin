@@ -134,6 +134,50 @@ This illustrated with:
 .Kentaa Api read sequence 
 image::KentaaInleesSequence.png[]
 
+To handle all incoming data in the BerghAdmin Api, four endpoints have been created. one
+for each of the data types received from the Kentaa function. The following paragraphs will
+show this
+
+==== Projects
+Any incoming project must be mapped to an evenement. It is required the title of the
+incoming project must match the (unique) title of the evenement.
+This is shown in:
+
+[[KentaaVerwerkProjectSequence, Handle incoming Kentaa projects]]
+.Handle incoming Kentaa Projects sequence 
+image::KentaaVerwerkProjectSequence.png[]
+
+==== Acties
+An actie in Kentaa corresponds to the webpage of a user. With this page the user is collecting
+money for Bergh in het Zadel. 
+Any incoming actie must therefore be mapped to a persoon. It is required the email address of the
+incoming actie must match the (unique primary) email address of the persoon.
+This is shown in:
+
+[[KentaaVerwerkActieSequence, Handle incoming Kentaa acties]]
+.Handle incoming Kentaa Acties sequence 
+image::KentaaVerwerkActieSequence.png[]
+
+==== Users
+Incoming users are treated pretty similar as Acites (see previous paragraph). This is because
+each user is linked to a Persoon also. 
+Any incoming user must be mapped to a persoon. It is required the email address of the
+incoming user must match the (unique primary) email address of the persoon.
+This is shown in:
+
+[[KentaaVerwerkUserSequence, Handle incoming Kentaa users]]
+.Handle incoming Kentaa Users sequence 
+image::KentaaVerwerkUserSequence.png[]
+
+==== Donaties
+Incoming donaties are treated slightly different than the previous three types. This is
+mainly because donaties in Kentaa are linked to acties while each donatie in the BIHZ domain must
+be linked to a persoon.
+This results in the following design:
+
+[[KentaaVerwerkDonatieSequence, Handle incoming Kentaa donaties]]
+.Handle incoming Kentaa Donaties sequence 
+image::KentaaVerwerkDonatieSequence.png[]
 
 ==  Infrastructure
 picture with:
