@@ -145,6 +145,10 @@ public class Program
         builder.Services.AddScoped<IBihzProjectService, BihzProjectService>();
         builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
         builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
+
+        string syncFusionLicenseKey = builder.Configuration.GetValue<string>("SyncfusionConfiguration:LicenseKey");
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicenseKey);
+
         builder.Services.AddSyncfusionBlazor();
         builder.Services.AddSignalR(e =>
         {
