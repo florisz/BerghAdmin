@@ -17,12 +17,10 @@
             {
                 validationProblems.AddProblem(nameof(message.From), "Domain of sender's email address is not 'berghinhetzadel.nl'");
             }
-            if ((message.To == null || !message.To.Any()) &&
-                (message.Cc == null || !message.Cc.Any()) &&
-                (message.Bcc == null || !message.Bcc.Any()))
+            if (message.To == null || !message.To.Any())
                 
             {
-                validationProblems.AddProblem(nameof(message.To), "At least one of To, CC or BCC must be specified");
+                validationProblems.AddProblem(nameof(message.To), "At least one To address must be specified");
             }
 
             return validationProblems;

@@ -31,18 +31,43 @@ public class BihzDonatieService : IBihzDonatieService
 
     public void Add(BihzDonatie donatie)
     {
-        _logger.LogDebug("entering AddBihzDonatie");
+        Persoon? persoon = null;
 
-        var currentDonatie = GetByKentaaId(donatie.DonationId);
+        _logger.LogDebug($"Entering Add BihzDonatie with KentaaId {donatie.DonationId}");
 
-        currentDonatie = MapChanges(currentDonatie, donatie);
+        var bihzDonatie = MapChanges(GetByKentaaId(donatie.DonationId), donatie);
 
-        if (currentDonatie.PersoonId == null)
+        if (bihzDonatie.PersoonId == null)
         {
-            LinkDonatieToPersoon(currentDonatie);
+            // link via action
+            var bihzActie = _bihzActieService.GetByKentaaId(bihzDonatie.ActionId);
+            if (bihzActie == null)
+            {
+                _logger.LogError($"Kentaa donatie with id {donatie.DonationId} can not be processed succesfully; reason: the Kentaa donatie is linked to an unknown Kentaa action with id {bihzDonatie.ActionId}");
+            }
+            else
+            {
+                if (bihzActie!.PersoonId == null)
+                {
+                    _logger.LogError($"Kentaa donatie with id {donatie.DonationId} can not be processed succesfully; reason: actie with id {bihzActie.Id} is not linked to a persoon.");
+                }
+
+                persoon = _persoonService.GetById((int)bihzActie.PersoonId);
+                if (persoon == null)
+                {
+                    // this will happen for all donations non registered persons, more precisely a person not linked to an action
+                    _logger.LogWarning($"Kentaa donatie with id {donatie.DonationId} can not be processed succesfully; reason: donatie is linked to an unknown persoon with id {bihzActie.PersoonId}");
+                }
+                else
+                {
+                    bihzDonatie.PersoonId = persoon.Id;
+                }
+            }
         }
 
-        Save(currentDonatie);
+        _donatieService.ProcessBihzDonatie(bihzDonatie, persoon);
+
+        Save(bihzDonatie);
     }
 
     private static BihzDonatie MapChanges(BihzDonatie? currentDonatie, BihzDonatie donatie)
@@ -104,39 +129,6 @@ public class BihzDonatieService : IBihzDonatieService
         }
 
         return ErrorCodeEnum.Ok;
-    }
-
-    private void LinkDonatieToPersoon(BihzDonatie bihzDonatie)
-    {
-        _logger.LogDebug("entering LinkDonatieToPersoon");
-
-        // link via action
-        var bihzAction = _bihzActieService.GetByKentaaId(bihzDonatie.ActionId);
-        if (bihzAction == null)
-        {
-            _logger.LogError("Donatie not linked to an action; can not link it to a person");
-            // TO BE DONE
-            // report admin that donatie can not be linked
-            return;
-        }
-        if (bihzAction!.PersoonId == null)
-        {
-            _logger.LogError("Action not linked to persoon, can not link this incoming donatie");
-            return;
-        }
-
-        var persoon = _persoonService.GetById((int)bihzAction.PersoonId);
-
-        if (persoon == null)
-        {
-            _logger.LogError($"Donatie can not be linked, persoon with id {bihzAction.PersoonId} not found");
-            // TO BE DONE
-            // report to admin "kentaa donation can not be mapped"
-            return;
-        }
-
-        bihzDonatie.PersoonId = persoon.Id;
-        _donatieService.ProcessBihzDonatie(bihzDonatie, persoon);
     }
 
 }

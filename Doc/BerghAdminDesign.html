@@ -470,7 +470,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p><span class="image"><img src="./images/Logo-BIHZ.jpg" alt="Logo-BIHZ.jpg" width="140" height="140"></span></p>
 </div>
 <div class="paragraph text-left">
-<p>Generated on: 2022-03-12 11:41:49 +0100</p>
+<p>Generated on: 2022-04-02 13:23:58 +0200</p>
 </div>
 <hr>
 <div style="page-break-after: always;"></div>
@@ -744,6 +744,81 @@ Step2: add/update the Donatie via the BihzDonatie.Id</p></td>
 Bihz class. The content of the Bihz class is sent to one of the 4 corresponding endpoints of the
 BerghAdmin web application. When received the incoming is processed as described in the table
 above.</p>
+</div>
+<div class="paragraph">
+<p>This illustrated with:</p>
+</div>
+<div id="KentaaReadApiSequence" class="imageblock">
+<div class="content">
+<img src="./images/KentaaInleesSequence.png" alt="KentaaInleesSequence">
+</div>
+<div class="title">Figure 4. Kentaa Api read sequence</div>
+</div>
+<div class="paragraph">
+<p>To handle all incoming data in the BerghAdmin Api, four endpoints have been created. one
+for each of the data types received from the Kentaa function. The following paragraphs will
+show this</p>
+</div>
+<div class="sect3">
+<h4 id="_projects">5.2.1. Projects</h4>
+<div class="paragraph">
+<p>Any incoming project must be mapped to an evenement. It is required the title of the
+incoming project must match the (unique) title of the evenement.
+This is shown in:</p>
+</div>
+<div id="KentaaVerwerkProjectSequence" class="imageblock">
+<div class="content">
+<img src="./images/KentaaVerwerkProjectSequence.png" alt="KentaaVerwerkProjectSequence">
+</div>
+<div class="title">Figure 5. Handle incoming Kentaa Projects sequence</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_acties">5.2.2. Acties</h4>
+<div class="paragraph">
+<p>An actie in Kentaa corresponds to the webpage of a user. With this page the user is collecting
+money for Bergh in het Zadel.
+Any incoming actie must therefore be mapped to a persoon. It is required the email address of the
+incoming actie must match the (unique primary) email address of the persoon.
+This is shown in:</p>
+</div>
+<div id="KentaaVerwerkActieSequence" class="imageblock">
+<div class="content">
+<img src="./images/KentaaVerwerkActieSequence.png" alt="KentaaVerwerkActieSequence">
+</div>
+<div class="title">Figure 6. Handle incoming Kentaa Acties sequence</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_users">5.2.3. Users</h4>
+<div class="paragraph">
+<p>Incoming users are treated pretty similar as Acites (see previous paragraph). This is because
+each user is linked to a Persoon also.
+Any incoming user must be mapped to a persoon. It is required the email address of the
+incoming user must match the (unique primary) email address of the persoon.
+This is shown in:</p>
+</div>
+<div id="KentaaVerwerkUserSequence" class="imageblock">
+<div class="content">
+<img src="./images/KentaaVerwerkUserSequence.png" alt="KentaaVerwerkUserSequence">
+</div>
+<div class="title">Figure 7. Handle incoming Kentaa Users sequence</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_donaties">5.2.4. Donaties</h4>
+<div class="paragraph">
+<p>Incoming donaties are treated slightly different than the previous three types. This is
+mainly because donaties in Kentaa are linked to acties while each donatie in the BIHZ domain must
+be linked to a persoon.
+This results in the following design:</p>
+</div>
+<div id="KentaaVerwerkDonatieSequence" class="imageblock">
+<div class="content">
+<img src="./images/KentaaVerwerkDonatieSequence.png" alt="KentaaVerwerkDonatieSequence">
+</div>
+<div class="title">Figure 8. Handle incoming Kentaa Donaties sequence</div>
+</div>
 </div>
 </div>
 </div>

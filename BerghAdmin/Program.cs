@@ -9,7 +9,7 @@ using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
-
+using BerghAdmin.Services.Seeding;
 using HealthChecks.UI.Client;
 using Mailjet.Client;
 using Microsoft.AspNetCore.Authorization;
@@ -139,12 +139,18 @@ public class Program
         builder.Services.AddScoped<IBetalingenImporterService, BetalingenImporterService>();
         builder.Services.AddScoped<IPersoonService, PersoonService>();
         builder.Services.AddScoped<IRolService, RolService>();
-        builder.Services.AddTransient<ISeedDataService, SeedDataService>();
-        builder.Services.AddTransient<ISeedUsersService, SeedUsersService>();
+#if (DEBUG)
+        builder.Services.AddTransient<ISeedDataService, DebugSeedDataService>();
+        builder.Services.AddTransient<ISeedUsersService, DebugSeedUsersService>();
+#elif (RELEASE)
+        builder.Services.AddTransient<ISeedDataService, ReleaseSeedDataService>();
+        builder.Services.AddTransient<ISeedUsersService, ReleaseSeedUsersService>();
+#endif
         builder.Services.AddScoped<IDocumentService, DocumentService>();
         builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
         builder.Services.AddScoped<IDataImporterService, DataImporterService>();
         builder.Services.AddScoped<ISendMailService, SendMailService>();
+        builder.Services.AddScoped<IMailResponseHandlerService, MailResponseHandlerService>();
         builder.Services.AddScoped<IEvenementService, EvenementService>();
         builder.Services.AddScoped<IDonatieService, DonatieService>();
         builder.Services.AddScoped<IBihzUserService, BihzUserService>();
@@ -152,6 +158,10 @@ public class Program
         builder.Services.AddScoped<IBihzProjectService, BihzProjectService>();
         builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
         builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
+
+        string syncFusionLicenseKey = builder.Configuration.GetValue<string>("SyncfusionConfiguration:LicenseKey");
+        Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicenseKey);
+
         builder.Services.AddSyncfusionBlazor();
         builder.Services.AddSignalR(e =>
         {

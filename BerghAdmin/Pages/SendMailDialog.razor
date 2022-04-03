@@ -4,37 +4,38 @@
 @using Syncfusion.Blazor.Popups
 @using Syncfusion.Blazor.RichTextEditor
 
-<div id="SendEmailDialogTarget">
-    <SfDialog Target="#SendEmailDialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
-        <DialogEvents OnOverlayClick="@OnOverlayclick" Opened="@DialogOpen">
-        </DialogEvents>
-        <DialogTemplates>
-            <Header> Send email(s) </Header>
-            <Content>
-                <EditForm Model="@mailMessage">
-                    <div class="form-group">
-                        <SfTextBox @bind-Value="@toAddresses" Placeholder='To' ShowClearButton=true></SfTextBox>
-                    </div>
-                    <div class="form-group">
-                        <SfTextBox @bind-Value="@ccAddresses" Placeholder='CC' ShowClearButton=true></SfTextBox>
-                    </div>
-                    <div class="form-group">
-                        <SfTextBox @bind-Value="@bccAddresses" Placeholder='BCC' ShowClearButton=true></SfTextBox>
-                    </div>
-                    <div class="form-group">
-                        <SfTextBox @bind-Value="@mailMessage.Subject" Placeholder='Subject'></SfTextBox>
-                    </div>
-                    <div class="form-group">
-                        <SfRichTextEditor @ref="@mailBody" ShowCharCount="true" AutoSaveOnIdle="true" Height="500px">
-                            <RichTextEditorToolbarSettings Items="@Tools" />
-                        </SfRichTextEditor>
-                    </div>
-                </EditForm>
-            </Content>
-        </DialogTemplates>
-        <DialogButtons>
-            <DialogButton Content="Send" IsPrimary="true" OnClick="@SendEMail" />
-            <DialogButton Content="Close" IsPrimary="false" OnClick="@DialogClose" />
-        </DialogButtons>
-    </SfDialog>
-</div>
+<SfDialog Width="75%" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+    <DialogEvents OnOverlayClick="@OnOverlayclick" Opened="@Opened">
+    </DialogEvents>
+    <DialogTemplates>
+        <Header> Send email(s) </Header>
+        <Content>
+            <EditForm Model="@Message">
+                <div class="form-group">
+                    <SfTextBox @bind-Value="@_fromAddress" Placeholder='From' ShowClearButton=true></SfTextBox>
+                </div>
+                <div class="form-group">
+                    <SfTextBox @bind-Value="@_toAddresses" Placeholder='To' ShowClearButton=true></SfTextBox>
+                </div>
+                <div class="form-group">
+                    <SfTextBox @bind-Value="@_ccAddresses" Placeholder='CC' ShowClearButton=true></SfTextBox>
+                </div>
+                <div class="form-group">
+                    <SfTextBox @bind-Value="@_bccAddresses" Placeholder='BCC' ShowClearButton=true></SfTextBox>
+                </div>
+                <div class="form-group">
+                    <SfTextBox @ref="_subjectInput" @bind-Value="@Message.Subject" Placeholder='Subject'></SfTextBox>
+                </div>
+                <div class="form-group">
+                    <SfRichTextEditor @ref="@_mailBody" ShowCharCount="true" AutoSaveOnIdle="true" Height="500px">
+                        <RichTextEditorToolbarSettings Items="@Tools" />
+                    </SfRichTextEditor>
+                </div>
+            </EditForm>
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Send" IsPrimary="true" OnClick="@SendEMail" />
+        <DialogButton Content="Close" IsPrimary="false" OnClick="@DialogClose" />
+    </DialogButtons>
+</SfDialog>

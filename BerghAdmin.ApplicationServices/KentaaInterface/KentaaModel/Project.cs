@@ -41,7 +41,6 @@ public record Project
             DoelBedragBereikt = this.target_amount_achieved,
             DonatieUrl = this.donate_url,
             EindDatum = this.end_date,
-            //EvenementId = this.SegmentId, //TODO: which Id????
             ExterneReferentie = this.external_reference,
             Gesloten = this.closed,
             Omschrijving = this.description,

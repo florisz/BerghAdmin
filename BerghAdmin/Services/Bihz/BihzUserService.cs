@@ -10,25 +10,38 @@ public class BihzUserService : IBihzUserService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IPersoonService _persoonService;
+    private readonly ILogger<BihzUserService> _logger;
 
-    public BihzUserService(ApplicationDbContext context, IPersoonService persoonService)
+    public BihzUserService(ApplicationDbContext context, IPersoonService persoonService, ILogger<BihzUserService> logger)
     {
         _dbContext = context;
         _persoonService = persoonService;
+        _logger = logger;
     }
 
     public void Add(BihzUser user)
     {
-        var currentUser = GetByKentaaId(user.UserId);
+        _logger.LogDebug($"Entering Add BihzUser with KentaaId {user.UserId}");
 
-        currentUser = MapChanges(currentUser, user);
+        var bihzUser = MapChanges(GetByKentaaId(user.UserId), user);
 
-        if (currentUser.PersoonId == null)
+        if (bihzUser.PersoonId == null)
         {
-            LinkUserToPersoon(currentUser);
+            // Persoon has not been linked to a registered Kentaa user yet,
+            // link thru the email address of the Kentaa user
+            var persoon = _persoonService.GetByEmailAdres(bihzUser.Email ?? "no-email");
+            if (persoon == null)
+            {
+                _logger.LogError($"Kentaa user with id {bihzUser.UserId} can not be processed; reason: the corresponding persoon with email address {bihzUser.Email} is unknown.");
+                return;
+            }
+            persoon.BihzUser = bihzUser;
+            bihzUser.PersoonId = persoon.Id;
+
+            _persoonService.SavePersoon(persoon);
         }
 
-        Save(currentUser);
+        Save(bihzUser);
     }
 
     public void Add(IEnumerable<BihzUser> users)
@@ -82,24 +95,6 @@ public class BihzUserService : IBihzUserService
         }
 
         return ErrorCodeEnum.Ok;
-    }
-
-    private void LinkUserToPersoon(BihzUser bihzUser)
-    {
-        // link with email address
-        var persoon = _persoonService.GetByEmailAdres(bihzUser.Email ?? "no-email");
-
-        if (persoon == null)
-        {
-            // TO BE DONE
-            // report to admin "kentaa user can not be mapped"
-        }
-        if (persoon != null)
-        {
-            persoon.BihzUser = bihzUser;
-            bihzUser.PersoonId = persoon.Id;
-            _persoonService.SavePersoon(persoon);
-        }
     }
 
     private BihzUser MapChanges(BihzUser? currentUser, BihzUser user)

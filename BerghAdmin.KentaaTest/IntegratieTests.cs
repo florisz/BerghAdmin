@@ -6,7 +6,7 @@ using BerghAdmin.Services.Bihz;
 using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
-
+using BerghAdmin.Services.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,7 +46,7 @@ namespace BerghAdmin.Tests.Kentaa
                 .AddScoped<IRolService, RolService>()
                 .AddScoped<IPersoonService, PersoonService>()
                 .Configure<SeedSettings>(databaseConfiguration.GetSection("Seeding"))
-                .AddScoped<ISeedDataService, SeedDataService>()
+                .AddScoped<ISeedDataService, DebugSeedDataService>()
                 .AddScoped<IEvenementService, EvenementService>()
                 .AddScoped<IDonatieService, DonatieService>()
                 .AddHttpClient()
@@ -87,11 +87,13 @@ namespace BerghAdmin.Tests.Kentaa
             await InsertInitialData();
 
             var actions = kentaaService!.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
+
             await foreach (var action in actions)
             {
                 bihzActionService!.Add(action.Map());
             }
             var bihzActions = bihzActionService!.GetAll();
+
             Assert.IsTrue(await actions.CountAsync() == bihzActions?.Count());
         }
 
@@ -126,6 +128,7 @@ namespace BerghAdmin.Tests.Kentaa
                 bihzUserService!.Add(user.Map());
             }
             var bihzUsers = bihzUserService!.GetAll();
+
             Assert.IsTrue(await users.CountAsync() == bihzUsers?.Count());
         }
 
@@ -134,6 +137,15 @@ namespace BerghAdmin.Tests.Kentaa
         {
             await InsertInitialData();
 
+            // actions must be known to read donations; otherwise the link with
+            // the persoon can not be derived
+            var actions = kentaaService!.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
+
+            await foreach (var action in actions)
+            {
+                bihzActionService!.Add(action.Map());
+            }
+
             var donations = kentaaService!.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
 
             await foreach (var donation in donations)
@@ -141,6 +153,8 @@ namespace BerghAdmin.Tests.Kentaa
                 bihzDonatieService!.Add(donation.Map());
             }
             var bihzDonaties = bihzDonatieService!.GetAll();
+            var kentaaDonaties = donations.ToListAsync().Result;
+
             Assert.IsTrue(await donations.CountAsync() == bihzDonaties?.Count());
         }
 
@@ -194,8 +208,8 @@ namespace BerghAdmin.Tests.Kentaa
 
         private async Task InsertInitialData()
         {
-            var seedService = GetRequiredService<ISeedDataService>();
-            await seedService.SeedInitialData();
+            var seedDataService = GetRequiredService<ISeedDataService>();
+            await seedDataService.SeedInitialData();
         }
     }
 }
