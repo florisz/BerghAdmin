@@ -20,7 +20,7 @@ public class BihzProjectService : IBihzProjectService
 
     public void Add(BihzProject project)
     {
-        _logger.LogDebug($"Entering Add BihzProject with KentaaId {project.ProjectId}");
+        _logger.LogDebug("Add BihzProject with KentaaId {ProjectId}", project.ProjectId);
 
         var bihzProject = MapChanges(GetByKentaaId(project.ProjectId), project);
 
@@ -32,7 +32,8 @@ public class BihzProjectService : IBihzProjectService
 
             if (evenement == null)
             {
-                _logger.LogError($"Kentaa project with id {project.ProjectId} can not be processed; reason: the corresponding evenement with title {project.Titel} is unknown.");
+                _logger.LogError("Kentaa project with id {ProjectId} can not be processed; reason: the corresponding evenement with title {Titel} is unknown.",
+                        project.ProjectId, project.Titel);
                 return;
             }
             evenement.BihzProject = bihzProject;
@@ -42,6 +43,7 @@ public class BihzProjectService : IBihzProjectService
         }
 
         Save(bihzProject);
+        _logger.LogInformation("Kentaa project with id {ProjectId} successfully linked to evenement with id {Id}", bihzProject.ProjectId, bihzProject.EvenementId);
     }
 
     public void Add(IEnumerable<BihzProject> projects)

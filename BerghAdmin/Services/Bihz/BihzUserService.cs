@@ -21,7 +21,7 @@ public class BihzUserService : IBihzUserService
 
     public void Add(BihzUser user)
     {
-        _logger.LogDebug($"Entering Add BihzUser with KentaaId {user.UserId}");
+        _logger.LogDebug("Add BihzUser with KentaaId {UserId}", user.UserId);
 
         var bihzUser = MapChanges(GetByKentaaId(user.UserId), user);
 
@@ -32,7 +32,8 @@ public class BihzUserService : IBihzUserService
             var persoon = _persoonService.GetByEmailAdres(bihzUser.Email ?? "no-email");
             if (persoon == null)
             {
-                _logger.LogError($"Kentaa user with id {bihzUser.UserId} can not be processed; reason: the corresponding persoon with email address {bihzUser.Email} is unknown.");
+                _logger.LogError("Kentaa user with id {UserId} can not be processed; reason: the corresponding persoon with email address {Email} is unknown.",
+                        bihzUser.UserId, bihzUser.Email);
                 return;
             }
             persoon.BihzUser = bihzUser;
@@ -42,6 +43,7 @@ public class BihzUserService : IBihzUserService
         }
 
         Save(bihzUser);
+        _logger.LogInformation("Kentaa user with id {UserId} successfully linked to persoon with id {Id}", bihzUser.UserId, bihzUser.PersoonId);
     }
 
     public void Add(IEnumerable<BihzUser> users)

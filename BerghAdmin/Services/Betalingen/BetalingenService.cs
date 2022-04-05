@@ -15,7 +15,7 @@ public class BetalingenService : IBetalingenService
 
     public void Save(Betaling betaling)
     {
-        _logger.LogDebug($"Save betaling with volg nummer: {betaling.Volgnummer}");
+        _logger.LogDebug("Save betaling with volg nummer: {Volgnummer}", betaling.Volgnummer);
 
         if (betaling.Id == 0)
         {

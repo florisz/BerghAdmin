@@ -33,7 +33,7 @@ public class BihzDonatieService : IBihzDonatieService
     {
         Persoon? persoon = null;
 
-        _logger.LogDebug($"Entering Add BihzDonatie with KentaaId {donatie.DonationId}");
+        _logger.LogDebug("Entering Add BihzDonatie with KentaaId {donatieId}", donatie.DonationId);
 
         var bihzDonatie = MapChanges(GetByKentaaId(donatie.DonationId), donatie);
 
