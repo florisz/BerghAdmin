@@ -10,16 +10,22 @@ using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 using BerghAdmin.Services.Seeding;
+
 using HealthChecks.UI.Client;
+
 using Mailjet.Client;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Serilog;
+
 using Syncfusion.Blazor;
+
 using System.Text;
 
 namespace BerghAdmin;
@@ -67,17 +73,16 @@ public class Program
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         }).AllowAnonymous();
         app.MapPost("/actions",
-            [Authorize(Policy = "ApiGebruiker")]
             (BihzActie action, IBihzActieService service, HttpRequest req) => HandleNewAction(action, service, req))
             .AllowAnonymous();
         app.MapPost("/donations",
-            (BihzDonatie donation, IBihzDonatieService service) => HandleNewDonatie(donation, service))
+            (BihzDonatie donation, IBihzDonatieService service, HttpRequest req) => HandleNewDonatie(donation, service, req))
             .AllowAnonymous();
         app.MapPost("/projects",
-            (BihzProject project, IBihzProjectService service) => HandleNewProject(project, service))
+            (BihzProject project, IBihzProjectService service, HttpRequest req) => HandleNewProject(project, service, req))
             .AllowAnonymous();
         app.MapPost("/users",
-            (BihzUser user, IBihzUserService service) => HandleNewUser(user, service))
+            (BihzUser user, IBihzUserService service, HttpRequest req) => HandleNewUser(user, service, req))
             .AllowAnonymous();
     }
 
@@ -107,19 +112,12 @@ public class Program
             .AddSignInManager<SignInManager<User>>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
-        services.AddAuthentication("BasicAuthentication").AddScheme<ApiKeyOptions, ApiKeyAuthentication>("ApiKey", null);
         services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
         services.AddSingleton<IAuthorizationHandler, BeheerFietsersPolicyHandler>();
-        services.AddSingleton<IAuthorizationHandler, ApiGebruikerPolicyHandler>();
         services.AddAuthorization(options =>
         {
             options.AddPolicy("IsAdministrator", policy => policy.Requirements.Add(new IsAdministratorRequirement()));
             options.AddPolicy("BeheerFietsers", policy => policy.Requirements.Add(new IsFietsersBeheerderRequirement()));
-            options.AddPolicy("ApiGebruiker", policy =>
-            {
-                policy.AuthenticationSchemes.Add("ApiKey");
-                policy.Requirements.Add(new IsApiGebruikerRequirement());
-            });
             options.FallbackPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
@@ -226,24 +224,48 @@ public class Program
 
     static IResult HandleNewAction(BihzActie action, IBihzActieService service, HttpRequest req)
     {
+        if (ApiKeyMissing(req))
+            return Results.Unauthorized();
+
+        service.Add(action);
         return Results.Ok("Ik heb n Action toegevoegd");
     }
 
-    static IResult HandleNewDonatie(BihzDonatie donation, IBihzDonatieService service)
+    static IResult HandleNewDonatie(BihzDonatie donation, IBihzDonatieService service, HttpRequest req)
     {
+        if (ApiKeyMissing(req))
+            return Results.Unauthorized();
+
         service.Add(donation);
         return Results.Ok("Ik heb n Donation toegevoegd");
     }
 
-    static IResult HandleNewProject(BihzProject project, IBihzProjectService service)
+    static IResult HandleNewProject(BihzProject project, IBihzProjectService service, HttpRequest req)
     {
+        if (ApiKeyMissing(req))
+            return Results.Unauthorized();
+
         service.Add(project);
         return Results.Ok("Ik heb n Project toegevoegd");
     }
 
-    static IResult HandleNewUser(BihzUser user, IBihzUserService service)
+    static IResult HandleNewUser(BihzUser user, IBihzUserService service, HttpRequest req)
     {
+        if (ApiKeyMissing(req))
+            return Results.Unauthorized();
+
         service.Add(user);
         return Results.Ok("Ik heb n User toegevoegd");
+    }
+
+    static bool ApiKeyMissing(HttpRequest req)
+    {
+        const string APIKEYNAME = "api-key";
+        var headers = req.Headers;
+        if (!headers.ContainsKey(APIKEYNAME))
+            return true;
+
+        var apiKey = headers[APIKEYNAME];
+        return apiKey != "abcdefghijklm";
     }
 }

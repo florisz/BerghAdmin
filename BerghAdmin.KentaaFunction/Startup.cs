@@ -14,12 +14,13 @@ public class Startup : FunctionsStartup
     public override void Configure(IFunctionsHostBuilder builder)
     {
         var kentaaConfiguration = new ConfigurationBuilder()
-            .AddUserSecrets<KentaaConfiguration>()
+            .AddEnvironmentVariables()
             .Build();
 
         var berghConfiguration = new ConfigurationBuilder()
-            .AddUserSecrets<BerghAdminConfiguration>()
+            .AddEnvironmentVariables()
             .Build();
+
         builder.Services.AddOptions()
             .Configure<KentaaConfiguration>(kentaaConfiguration.GetSection("KentaaConfiguration"))
             .Configure<BerghAdminConfiguration>(berghConfiguration.GetSection("BerghAdminConfiguration"))

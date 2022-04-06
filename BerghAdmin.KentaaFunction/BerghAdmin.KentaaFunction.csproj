@@ -5,7 +5,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
-		<UserSecretsId>3832c27e-4f5d-4bd4-ab9c-113d4103700c</UserSecretsId>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="AspNetCore.HealthChecks.UI.Core" Version="6.0.4" />

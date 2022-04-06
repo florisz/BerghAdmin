@@ -8,8 +8,9 @@ az appservice plan create `
     --resource-group $rg `
     --name bergh-uat-plan `
     --location $location `
-    --sku F1 `
-    --is-linux
+    --sku B1 `
+    --is-linux `
+    --number-of-workers 1
 
 az webapp create `
     --name berghadmin-uat `
@@ -17,3 +18,45 @@ az webapp create `
     --plan bergh-uat-plan `
     --runtime '"dotnetcore|6.0"' 
 
+az webapp create `
+    --name bergh-monitor-uat `
+    --resource-group $rg `
+    --plan bergh-uat-plan `
+    --runtime '"dotnetcore|6.0"' 
+
+#### Function App
+az storage account create `
+    --name berghuatstorage `
+    --resource-group $rg `
+    --location $location `
+    --sku Standard_LRS	
+
+az monitor log-analytics workspace create `
+    --workspace-name bergh-uat-workspace `
+    --resource-group $rg `
+    --location $location `
+    --retention-time 30
+
+az monitor app-insights component create `
+    --resource-group $rg `
+    --location $location `
+    --app bergh-uat-appinsights
+    # --app-id $appid
+
+az functionapp plan create `
+    --name bergh-uat-functions `
+    --resource-group $rg `
+    --location $location `
+    --sku B1 `
+    --is-linux `
+    --number-of-workers 1
+
+az functionapp create `
+    --name bergh-uat-kentaa `
+    --resource-group $rg `
+    --os-type Linux `
+    --functions-version 4 `
+    --runtime dotnet `
+    --runtime-version 6 `
+    --storage-account berghuatstorage `
+    --plan bergh-uat-functions
