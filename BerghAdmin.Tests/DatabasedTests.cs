@@ -42,7 +42,7 @@ namespace BerghAdmin.Tests
         }
 
         // Helper function to avoid warnings in unit tests
-        internal T GetRequiredService<T>() where T:notnull
+        public T GetRequiredService<T>() where T:notnull
         {
             if (ServiceProvider == null)
                 throw new ArgumentNullException(nameof(ServiceProvider), "Test SetUp should run first");
