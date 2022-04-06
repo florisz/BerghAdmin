@@ -33,7 +33,8 @@ public class BihzActieService : IBihzActieService
 
             if (persoon == null)
             {
-                _logger.LogError($"Kentaa actie with id {bihzActie.ActionId} can not be processed; reason: the corresponding persoon with email address {bihzActie.Email} is unknown.");
+                _logger.LogError("Kentaa actie with id {ActionId} can not be processed; reason: the corresponding persoon with email address {Email} is unknown.",
+                        bihzActie.ActionId, bihzActie.Email);
                 return;
             }
 
@@ -44,6 +45,7 @@ public class BihzActieService : IBihzActieService
         }
 
         Save(bihzActie);
+        _logger.LogInformation("Kentaa actie with id {ActionId} successfully linked to persoon with id {Id}", bihzActie.ActionId, bihzActie.PersoonId);
     }
 
     private static BihzActie MapChanges(BihzActie? currentActie, BihzActie newActie)
