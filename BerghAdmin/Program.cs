@@ -52,10 +52,9 @@ public class Program
         RegisterAuthorization(builder.Services);
         RegisterServices(builder);
 
+
         var app = builder.Build();
         UseServices(app);
-        CreateEndpoints(app);
-
 
         var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
         seedDataService.SeedInitialData();
@@ -63,27 +62,6 @@ public class Program
         seedUsersService.SeedUsersData();
 
         app.Run();
-    }
-
-    private static void CreateEndpoints(WebApplication app)
-    {
-        app.MapHealthChecks("/health", new HealthCheckOptions
-        {
-            Predicate = _ => true,
-            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-        }).AllowAnonymous();
-        app.MapPost("/actions",
-            (BihzActie action, IBihzActieService service, HttpRequest req) => HandleNewAction(action, service, req))
-            .AllowAnonymous();
-        app.MapPost("/donations",
-            (BihzDonatie donation, IBihzDonatieService service, HttpRequest req) => HandleNewDonatie(donation, service, req))
-            .AllowAnonymous();
-        app.MapPost("/projects",
-            (BihzProject project, IBihzProjectService service, HttpRequest req) => HandleNewProject(project, service, req))
-            .AllowAnonymous();
-        app.MapPost("/users",
-            (BihzUser user, IBihzUserService service, HttpRequest req) => HandleNewUser(user, service, req))
-            .AllowAnonymous();
     }
 
     static string GetDatabaseConnectionString(WebApplicationBuilder builder)
@@ -133,6 +111,8 @@ public class Program
         builder.Services.AddOptions();
         builder.Services.AddHttpClient();
         builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
+        builder.Services.Configure<ApiConfiguration>(builder.Configuration.GetSection("ApiConfiguration"));
+        builder.Services.AddSingleton<EndpointHandler>();
         builder.Services.AddScoped<IBetalingenService, BetalingenService>();
         builder.Services.AddScoped<IBetalingenImporterService, BetalingenImporterService>();
         builder.Services.AddScoped<IPersoonService, PersoonService>();
@@ -220,52 +200,9 @@ public class Program
             endpoints.MapBlazorHub();
             endpoints.MapFallbackToPage("/_Host");
         });
+
+        var handler = app.Services.GetRequiredService<EndpointHandler>();
+        handler.CreateEndpoints(app);
     }
 
-    static IResult HandleNewAction(BihzActie action, IBihzActieService service, HttpRequest req)
-    {
-        if (ApiKeyMissing(req))
-            return Results.Unauthorized();
-
-        service.Add(action);
-        return Results.Ok("Ik heb n Action toegevoegd");
-    }
-
-    static IResult HandleNewDonatie(BihzDonatie donation, IBihzDonatieService service, HttpRequest req)
-    {
-        if (ApiKeyMissing(req))
-            return Results.Unauthorized();
-
-        service.Add(donation);
-        return Results.Ok("Ik heb n Donation toegevoegd");
-    }
-
-    static IResult HandleNewProject(BihzProject project, IBihzProjectService service, HttpRequest req)
-    {
-        if (ApiKeyMissing(req))
-            return Results.Unauthorized();
-
-        service.Add(project);
-        return Results.Ok("Ik heb n Project toegevoegd");
-    }
-
-    static IResult HandleNewUser(BihzUser user, IBihzUserService service, HttpRequest req)
-    {
-        if (ApiKeyMissing(req))
-            return Results.Unauthorized();
-
-        service.Add(user);
-        return Results.Ok("Ik heb n User toegevoegd");
-    }
-
-    static bool ApiKeyMissing(HttpRequest req)
-    {
-        const string APIKEYNAME = "api-key";
-        var headers = req.Headers;
-        if (!headers.ContainsKey(APIKEYNAME))
-            return true;
-
-        var apiKey = headers[APIKEYNAME];
-        return apiKey != "abcdefghijklm";
-    }
 }
