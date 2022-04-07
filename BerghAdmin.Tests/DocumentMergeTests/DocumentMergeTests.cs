@@ -120,14 +120,14 @@ namespace BerghAdmin.DocumentMergeTests
         {
             var mergedStream = mergeService.Merge(template, mergeDictionary);
             Assert.IsTrue(mergedStream.Length > 0);
-            using FileStream outputFileStream = new($"c:/temp/{template.Name}.docx", FileMode.Create);
+            using FileStream outputFileStream = new($"./DocumentMergeTests/TestDocumenten/{template.Name}.docx", FileMode.Create);
             mergedStream.Position = 0;
             mergedStream.CopyTo(outputFileStream);
             var pdfService = this.GetRequiredService<IPdfConverter>();
 
             outputFileStream.Position = 0;
             var pdfStream = pdfService.ConvertWordToPdf(outputFileStream);
-            var pdfOutputStream = new FileStream($"c:/temp/{template.Name}.pdf", FileMode.Create);
+            var pdfOutputStream = new FileStream($"./DocumentMergeTests/TestDocumenten/{template.Name}.pdf", FileMode.Create);
 
             pdfStream.Position = 0;
             pdfStream.CopyTo(pdfOutputStream);
