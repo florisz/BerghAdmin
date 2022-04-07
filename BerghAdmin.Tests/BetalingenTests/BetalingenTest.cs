@@ -1,21 +1,18 @@
-﻿using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
-using BerghAdmin.Data;
-using System;
-using BerghAdmin.Services.Betalingen;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using BerghAdmin.Services.Configuration;
-using BerghAdmin.Services;
+﻿using BerghAdmin.ApplicationServices.KentaaInterface;
 using BerghAdmin.DbContexts;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using BerghAdmin.Services;
+using BerghAdmin.Services.Betalingen;
 using BerghAdmin.Services.Bihz;
-using BerghAdmin.Services.Evenementen;
+using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
-using BerghAdmin.ApplicationServices.KentaaInterface;
+using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Seeding;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+using NUnit.Framework;
 
 namespace BerghAdmin.Tests.BetalingenTests
 {
@@ -48,6 +45,8 @@ namespace BerghAdmin.Tests.BetalingenTests
                 .Configure<SeedSettings>(databaseConfiguration.GetSection("Seeding"))
                 .AddScoped<ISeedDataService, DebugSeedDataService>()
                 .AddScoped<IBetalingenImporterService, BetalingenImporterService>()
+                .AddScoped<IBetalingenRepository, TableStorageBetalingenRepository>()
+                //.AddScoped<IBetalingenRepository, EFBetalingenRepository>()
                 .AddScoped<IBetalingenService, BetalingenService>()
             ;
 
@@ -91,7 +90,6 @@ namespace BerghAdmin.Tests.BetalingenTests
                 Assert.IsTrue(betalingen.Count >= 8, "Import must result in at least 8 betalingen");
                 Assert.AreEqual(betalingen.Count, _betalingenService!.GetAll().Count());
             }
-
         }
     }
 }

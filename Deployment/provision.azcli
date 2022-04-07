@@ -60,3 +60,8 @@ az functionapp create `
     --runtime-version 6 `
     --storage-account berghuatstorage `
     --plan bergh-uat-functions
+
+az functionapp config appsettings set `
+    --name bergh-uat-kentaa `
+    --resource-group $rg `
+    --settings "?????????????AzureWebJobsStorage=$storageConnectionString"

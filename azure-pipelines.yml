@@ -6,18 +6,75 @@
 trigger:
 - master
 
-pool:
-  vmImage: ubuntu-latest
+stages:
+- stage: BuildAndTest
+  displayName: Build and Test
+  pool:
+    vmImage: ubuntu-latest
+  
+  jobs:
+  - job: Build_Test_Publish
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'Build'
+      inputs:
+        command: 'build'
+        projects: '**/*.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: 'Test'
+      inputs:
+        command: 'test'
+        projects: '**/*.Tests.csproj'
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish website'
+      inputs:
+        command: 'publish'
+        arguments: '-o $(Build.ArtifactStagingDirectory)'
+        projects: '**/*.csproj'
+        publishWebProjects: false
+        zipAfterPublish: true
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
 
-steps:
-- task: DotNetCoreCLI@2
-  displayName: 'Build'
-  inputs:
-    command: 'build'
-    projects: '**/*.csproj'
-- task: DotNetCoreCLI@2
-  displayName: 'Test'
-  inputs:
-    command: 'test'
-    projects: '**/*.csproj'
+- stage: Deploy2UAT
+  jobs:
+  - job: deploy_to_UAT
+    displayName: Deploy to UAT
+    steps:
+    - task: DownloadBuildArtifacts@1
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(System.ArtifactsDirectory)'
+      
+    - task: AzureRmWebAppDeployment@4
+      displayName: Deploy Admin site
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'Bergh UAT Connection'
+        appType: 'webAppLinux'
+        WebAppName: 'berghadmin-uat'
+        packageForLinux: '$(System.ArtifactsDirectory)/**/BerghAdmin.zip'
+        RuntimeStack: 'DOTNETCORE|6.0'
 
+    - task: AzureRmWebAppDeployment@4
+      displayName: Deploy Monitor site
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'Bergh UAT Connection'
+        appType: 'webAppLinux'
+        WebAppName: 'bergh-monitor-uat'
+        packageForLinux: '$(System.ArtifactsDirectory)/**/BerghMonitor.Web.zip'
+        RuntimeStack: 'DOTNETCORE|6.0'
+
+    - task: AzureFunctionApp@1
+      displayName: Deploy Kentaa Function
+      inputs:
+        azureSubscription: 'Bergh UAT Connection'
+        appType: 'functionAppLinux'
+        appName: 'bergh-uat-kentaa'
+        package: '$(System.ArtifactsDirectory)/**/BerghAdmin.KentaaFunction.zip'
