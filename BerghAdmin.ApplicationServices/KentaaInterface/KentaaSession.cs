@@ -23,7 +23,8 @@ public class KentaaSession
         _httpClient.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
         _httpClient.DefaultRequestHeaders.Add("User-Agent", "BerghAdmin - Kentaa interface");
-
+        _httpClient.DefaultRequestHeaders.Add("X-Api-Key", _apiKey);
+        
         return _httpClient;
     }
 
@@ -35,9 +36,7 @@ public class KentaaSession
     public string Url(string subPath, KentaaFilter? filter)
     {
         var path = $"{_kentaaBasePath}/{subPath}";
-        var query = (filter == null)? 
-                        $"api_key={_apiKey}" :
-                        $"{filter.Build()};api_key={_apiKey}";
+        var query = filter?.Build();
         
         UriBuilder builder = new("https", _kentaaHost);
         builder.Path = path;

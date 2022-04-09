@@ -26,14 +26,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BerghAdmin.KentaaTest", "Be
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BerghAdmin.Data", "BerghAdmin.Data\BerghAdmin.Data.csproj", "{1F9DEED9-2F5C-49DB-84F3-6FFE0494BAF7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BerghMonitor", "BerghMonitor\BerghMonitor.csproj", "{CF1D3551-A1C3-42F5-8FD3-CFD21EB24910}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BerghMonitor.Web", "BerghMonitor.Web\BerghMonitor.Web.csproj", "{3CEBEF4F-8E63-4ECA-9234-91633D82E918}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{55C35791-8575-4710-8B90-6C72A0C6873F}"
 	ProjectSection(SolutionItems) = preProject
 		Doc\BerghAdminDesign.pdf = Doc\BerghAdminDesign.pdf
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BerghMonitor.Console", "BerghMonitor.Console\BerghMonitor.Console.csproj", "{58B73D8D-7BF3-4ADF-A5AF-AA23414A6628}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,14 +65,14 @@ Global
 		{1F9DEED9-2F5C-49DB-84F3-6FFE0494BAF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F9DEED9-2F5C-49DB-84F3-6FFE0494BAF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F9DEED9-2F5C-49DB-84F3-6FFE0494BAF7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CF1D3551-A1C3-42F5-8FD3-CFD21EB24910}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF1D3551-A1C3-42F5-8FD3-CFD21EB24910}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF1D3551-A1C3-42F5-8FD3-CFD21EB24910}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF1D3551-A1C3-42F5-8FD3-CFD21EB24910}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3CEBEF4F-8E63-4ECA-9234-91633D82E918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3CEBEF4F-8E63-4ECA-9234-91633D82E918}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CEBEF4F-8E63-4ECA-9234-91633D82E918}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3CEBEF4F-8E63-4ECA-9234-91633D82E918}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58B73D8D-7BF3-4ADF-A5AF-AA23414A6628}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58B73D8D-7BF3-4ADF-A5AF-AA23414A6628}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58B73D8D-7BF3-4ADF-A5AF-AA23414A6628}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58B73D8D-7BF3-4ADF-A5AF-AA23414A6628}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

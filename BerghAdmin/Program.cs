@@ -10,16 +10,22 @@ using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 using BerghAdmin.Services.Seeding;
+
 using HealthChecks.UI.Client;
+
 using Mailjet.Client;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+
 using Serilog;
+
 using Syncfusion.Blazor;
+
 using System.Text;
 
 namespace BerghAdmin;
@@ -46,26 +52,9 @@ public class Program
         RegisterAuthorization(builder.Services);
         RegisterServices(builder);
 
+
         var app = builder.Build();
         UseServices(app);
-
-        app.MapHealthChecks("/health", new HealthCheckOptions
-        {
-            Predicate = _ => true,
-            ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-        }).AllowAnonymous();
-        app.MapPost("/actions",
-            (BihzActie action, IBihzActieService service) => HandleNewAction(action, service))
-            .AllowAnonymous();
-        app.MapPost("/donations",
-            (BihzDonatie donation, IBihzDonatieService service) => HandleNewDonatie(donation, service))
-            .AllowAnonymous();
-        app.MapPost("/projects",
-            (BihzProject project, IBihzProjectService service) => HandleNewProject(project, service))
-            .AllowAnonymous();
-        app.MapPost("/users",
-            (BihzUser user, IBihzUserService service) => HandleNewUser(user, service))
-            .AllowAnonymous();
 
         var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
         seedDataService.SeedInitialData();
@@ -122,6 +111,8 @@ public class Program
         builder.Services.AddOptions();
         builder.Services.AddHttpClient();
         builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
+        builder.Services.Configure<ApiConfiguration>(builder.Configuration.GetSection("ApiConfiguration"));
+        builder.Services.AddSingleton<EndpointHandler>();
         builder.Services.AddScoped<IBetalingenService, BetalingenService>();
         builder.Services.AddScoped<IBetalingenImporterService, BetalingenImporterService>();
         builder.Services.AddScoped<IPersoonService, PersoonService>();
@@ -209,29 +200,9 @@ public class Program
             endpoints.MapBlazorHub();
             endpoints.MapFallbackToPage("/_Host");
         });
+
+        var handler = app.Services.GetRequiredService<EndpointHandler>();
+        handler.CreateEndpoints(app);
     }
 
-    static IResult HandleNewAction(BihzActie action, IBihzActieService service)
-    {
-        service.Add(action);
-        return Results.Ok("Ik heb n Action toegevoegd");
-    }
-
-    static IResult HandleNewDonatie(BihzDonatie donation, IBihzDonatieService service)
-    {
-        service.Add(donation);
-        return Results.Ok("Ik heb n Donation toegevoegd");
-    }
-
-    static IResult HandleNewProject(BihzProject project, IBihzProjectService service)
-    {
-        service.Add(project);
-        return Results.Ok("Ik heb n Project toegevoegd");
-    }
-
-    static IResult HandleNewUser(BihzUser user, IBihzUserService service)
-    {
-        service.Add(user);
-        return Results.Ok("Ik heb n User toegevoegd");
-    }
 }

@@ -5,9 +5,9 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
-		<UserSecretsId>3832c27e-4f5d-4bd4-ab9c-113d4103700c</UserSecretsId>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="AspNetCore.HealthChecks.UI.Core" Version="6.0.4" />
 		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
 		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.0.1" />

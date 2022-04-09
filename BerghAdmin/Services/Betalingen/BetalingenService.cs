@@ -4,12 +4,12 @@ namespace BerghAdmin.Services.Betalingen;
 
 public class BetalingenService : IBetalingenService
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IBetalingenRepository repo;
     private readonly ILogger<BetalingenService> _logger;
 
-    public BetalingenService(ApplicationDbContext context, ILogger<BetalingenService> logger)
+    public BetalingenService(IBetalingenRepository repo, ILogger<BetalingenService> logger)
     {
-        _dbContext = context;
+        this.repo = repo;
         _logger = logger;
     }
 
@@ -19,28 +19,19 @@ public class BetalingenService : IBetalingenService
 
         if (betaling.Id == 0)
         {
-            _dbContext
-                .Betalingen?
-                .Add(betaling);
+            repo.Add(betaling);
             _logger.LogInformation("Betaling {Betaling} is added", betaling);
         }
         else
         {
-            _dbContext
-                .Betalingen?
-                .Update(betaling);
+            repo.Update(betaling);
             _logger.LogInformation("Betaling {Betaling} is updated", betaling);
         }
-        _dbContext.SaveChanges();
     }
 
     public Betaling? GetByVolgnummer(string volgNummer)
-        => _dbContext
-            .Betalingen?
-            .FirstOrDefault(b => b.Volgnummer == volgNummer);
+        => repo.GetByVolgnummer(volgNummer);
 
     public IEnumerable<Betaling>? GetAll()
-        => _dbContext
-            .Betalingen?
-            .ToList();
+        => repo.GetAll();
 }

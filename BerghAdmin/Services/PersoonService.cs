@@ -112,8 +112,7 @@ public class PersoonService : IPersoonService
                 .Personen?
                 .Add(persoon);
 
-            _logger.LogInformation("Persoon with naam {volledigeNaam} retrieved was {result}",
-                    persoon?.VolledigeNaam, persoon == null ? "NOT Ok" : "Ok");
+            _logger.LogInformation("Persoon with naam {volledigeNaam} was added", persoon.VolledigeNaam);
         }
         else
         { 
@@ -121,8 +120,7 @@ public class PersoonService : IPersoonService
                 .Personen?
                 .Update(persoon);
 
-            _logger.LogInformation("Persoon with naam {volledigeNaam} retrieved was {result}",
-                    persoon?.VolledigeNaam, persoon == null ? "NOT Ok" : "Ok");
+            _logger.LogInformation("Persoon with naam {volledigeNaam} was updated", persoon.VolledigeNaam);
         }
         _dbContext.SaveChanges();
     }
