@@ -43,7 +43,7 @@ public class BihzProjectService : IBihzProjectService
         }
 
         Save(bihzProject);
-        _logger.LogInformation("Kentaa project with id {ProjectId} successfully linked to evenement with id {Id}", bihzProject.ProjectId, bihzProject.EvenementId);
+        _logger.LogInformation("Kentaa project with id {ProjectId} successfully linked to evenement with id {EvenementId}", bihzProject.ProjectId, bihzProject.EvenementId);
     }
 
     public void Add(IEnumerable<BihzProject> projects)

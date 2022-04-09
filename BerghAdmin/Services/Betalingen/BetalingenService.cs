@@ -22,12 +22,14 @@ public class BetalingenService : IBetalingenService
             _dbContext
                 .Betalingen?
                 .Add(betaling);
+            _logger.LogInformation("Betaling {Betaling} is added", betaling);
         }
         else
         {
             _dbContext
                 .Betalingen?
                 .Update(betaling);
+            _logger.LogInformation("Betaling {Betaling} is updated", betaling);
         }
         _dbContext.SaveChanges();
     }

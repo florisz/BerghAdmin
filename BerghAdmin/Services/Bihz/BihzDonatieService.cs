@@ -43,20 +43,22 @@ public class BihzDonatieService : IBihzDonatieService
             var bihzActie = _bihzActieService.GetByKentaaId(bihzDonatie.ActionId);
             if (bihzActie == null)
             {
-                _logger.LogError($"Kentaa donatie with id {donatie.DonationId} can not be processed succesfully; reason: the Kentaa donatie is linked to an unknown Kentaa action with id {bihzDonatie.ActionId}");
+                _logger.LogError("Kentaa donatie with id {DonationId} can not be processed succesfully; reason: the Kentaa donatie is linked to an unknown Kentaa action with id {ActionId}", 
+                        donatie.DonationId, bihzDonatie.ActionId);
             }
             else
             {
                 if (bihzActie!.PersoonId == null)
                 {
-                    _logger.LogError($"Kentaa donatie with id {donatie.DonationId} can not be processed succesfully; reason: actie with id {bihzActie.Id} is not linked to a persoon.");
+                    _logger.LogError("Kentaa donatie with id {DonationId} can not be processed succesfully; reason: actie with id {bihzActieId} is not linked to a persoon.",
+                            donatie.DonationId, bihzActie.Id);
                 }
 
                 persoon = _persoonService.GetById((int)bihzActie.PersoonId);
                 if (persoon == null)
                 {
-                    // this will happen for all donations non registered persons, more precisely a person not linked to an action
-                    _logger.LogWarning($"Kentaa donatie with id {donatie.DonationId} can not be processed succesfully; reason: donatie is linked to an unknown persoon with id {bihzActie.PersoonId}");
+                    _logger.LogWarning("Kentaa donatie with id {DonationId} can not be processed succesfully; reason: donatie is linked to an unknown persoon with id {PersoonId}.",
+                            donatie.DonationId, bihzActie.PersoonId);
                 }
                 else
                 {
@@ -68,6 +70,7 @@ public class BihzDonatieService : IBihzDonatieService
         _donatieService.ProcessBihzDonatie(bihzDonatie, persoon);
 
         Save(bihzDonatie);
+        _logger.LogInformation("Kentaa donatie with id {DonationId} successfully linked to persoon with id {PersoonId}", bihzDonatie.DonationId, bihzDonatie.PersoonId);
     }
 
     private static BihzDonatie MapChanges(BihzDonatie? currentDonatie, BihzDonatie donatie)

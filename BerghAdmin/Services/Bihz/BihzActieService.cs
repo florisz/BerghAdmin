@@ -21,7 +21,7 @@ public class BihzActieService : IBihzActieService
 
     public void Add(BihzActie actie)
     {
-        _logger.LogDebug($"Entering Add BihzActie with KentaaId {actie.ActionId}");
+        _logger.LogDebug("Entering Add BihzActie with KentaaId {KentaaActionId}", actie.ActionId);
 
         var bihzActie = MapChanges(GetByKentaaId(actie.ActionId), actie);
 
@@ -45,7 +45,7 @@ public class BihzActieService : IBihzActieService
         }
 
         Save(bihzActie);
-        _logger.LogInformation("Kentaa actie with id {ActionId} successfully linked to persoon with id {Id}", bihzActie.ActionId, bihzActie.PersoonId);
+        _logger.LogInformation("Kentaa actie with id {ActionId} successfully linked to persoon with id {PersoonId}", bihzActie.ActionId, bihzActie.PersoonId);
     }
 
     private static BihzActie MapChanges(BihzActie? currentActie, BihzActie newActie)

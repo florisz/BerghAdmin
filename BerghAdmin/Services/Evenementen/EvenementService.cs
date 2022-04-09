@@ -9,11 +9,13 @@ public class EvenementService : IEvenementService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IPersoonService _persoonService;
+    private readonly ILogger<EvenementService> _logger;
 
-    public EvenementService(ApplicationDbContext context, IPersoonService persoonService)
+    public EvenementService(ApplicationDbContext context, IPersoonService persoonService, ILogger<EvenementService> logger)
     {
         _dbContext = context;
         _persoonService = persoonService;
+        _logger = logger;
     }
 
     public Evenement? GetById(int id) 
@@ -36,6 +38,8 @@ public class EvenementService : IEvenementService
 
     public async Task<ErrorCodeEnum> Save(Evenement evenement)
     {
+        _logger.LogDebug("Entering save evenement {evenement}", evenement.Titel);
+
         if (evenement == null) 
         { 
             throw new ApplicationException("Evenement parameter can not be null"); 
@@ -70,6 +74,9 @@ public class EvenementService : IEvenementService
 
     public async Task<ErrorCodeEnum> AddDeelnemer(Evenement evenement, Persoon persoon)
     {
+        _logger.LogDebug("Entering Add deelnemer {persoon} to {evenement}", 
+                persoon.VolledigeNaam, evenement.Titel);
+
         if (evenement == null) { throw new ApplicationException("parameter evenement can not be null"); }
         if (persoon == null) { throw new ApplicationException("parameter persoon can not be null"); }
 
@@ -86,6 +93,8 @@ public class EvenementService : IEvenementService
         evenement.Deelnemers.Add (persoon);
 
         await _dbContext.SaveChangesAsync();
+
+        _logger.LogInformation("Deelnemer added {deelnemer} to {evenement}", persoon.VolledigeNaam, evenement.Titel);
 
         return ErrorCodeEnum.Ok;
     }
