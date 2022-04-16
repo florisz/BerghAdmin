@@ -103,6 +103,7 @@ public class Program
         builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
         builder.Services.Configure<ApiConfiguration>(builder.Configuration.GetSection("ApiConfiguration"));
         builder.Services.AddSingleton<EndpointHandler>();
+        builder.Services.AddScoped<IBetalingenRepository, EFBetalingenRepository>();
         builder.Services.AddScoped<IBetalingenService, BetalingenService>();
         builder.Services.AddScoped<IBetalingenImporterService, BetalingenImporterService>();
         builder.Services.AddScoped<IPersoonService, PersoonService>();
