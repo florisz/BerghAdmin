@@ -1,122 +1,126 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+namespace BerghAdmin.Services.TextMerge;
 
-namespace BerghAdmin.Services.TextMerge
+internal class MergeField 
 {
-    internal class MergeField 
-    {
-        public int StartPosition { get; set; }
-        public int Length { get; set; }
-    }
+    public int StartPosition { get; set; }
+    public int Length { get; set; }
+}
     
-    public class TextMergeService : ITextMergeService
+public class TextMergeService : ITextMergeService
+{
+    private readonly ILogger<TextMergeService> _logger;
+
+    private readonly string OPENINGS_TAG = "&lt;&lt;";
+    private readonly string CLOSING_TAG = "&gt;&gt;";
+
+    public TextMergeService(ILogger<TextMergeService> logger)
     {
-        private readonly string OPENINGS_TAG = "&lt;&lt;";
-        private readonly string CLOSING_TAG = "&gt;&gt;";
+        _logger = logger;
+    }
 
-        public bool IsValidMergeText(string htmlText, Dictionary<string,string> mergeFieldValues)
+    public bool IsValidMergeText(string htmlText, Dictionary<string,string> mergeFieldValues)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Stream Merge(Stream htmlText, Dictionary<string, string> mergeFieldValues)
+    {
+        throw new NotImplementedException();
+    }
+
+    public string Merge(string? htmlText, Dictionary<string, string>? mergeFieldValues)
+    {
+        _logger.LogDebug("Entering text merge {mergefieldValues}", mergeFieldValues);
+
+        if (string.IsNullOrEmpty(htmlText))
         {
-            throw new NotImplementedException();
+            return string.Empty;
+        } 
+        if (! htmlText.Contains(OPENINGS_TAG) && ! htmlText.Contains(CLOSING_TAG))
+        {
+            return htmlText;
+        }
+        if (mergeFieldValues == null)
+        {
+            throw new TextMergeNoMergeFieldException($"Not any merge field values are specified");
         }
 
-        public Stream Merge(Stream htmlText, Dictionary<string, string> mergeFieldValues)
+        var mergeFields = FindMergeFields(htmlText);
+        if (!MergeFieldsHaveValues(mergeFields, mergeFieldValues, out string missingMergeValues))
         {
-            throw new NotImplementedException();
+            throw new TextMergeNoMergeFieldException($"The following merge fields are unspecified: {missingMergeValues}");
         }
 
-        public string Merge(string? htmlText, Dictionary<string, string>? mergeFieldValues)
+        var mergedText = PerformMerge(htmlText, mergeFields, mergeFieldValues);
+
+        _logger.LogInformation("Text merged succesfully");
+
+        return mergedText;
+    }
+
+    private Dictionary<string, MergeField> FindMergeFields(string htmlText)
+    {
+        var foundTags = new Dictionary<string, MergeField>();
+
+        var searchFromPosition = 0;
+        while (true)
         {
-            if (string.IsNullOrEmpty(htmlText))
+            // start with a search for the openings tag
+            var tagPosition = htmlText.IndexOf(OPENINGS_TAG, searchFromPosition);
+            if (tagPosition < 0)
             {
-                return string.Empty;
-            } 
-            if (! htmlText.Contains(OPENINGS_TAG) && ! htmlText.Contains(CLOSING_TAG))
-            {
-                return htmlText;
+                // no openings tag maybe there is a faulty end tag
+                tagPosition = htmlText.IndexOf(CLOSING_TAG, searchFromPosition);
+                if (tagPosition >= 0)
+                {
+                    throw new TextMergeNoOpeningTagException($"Closing tag found at position {tagPosition} without openingstag.", tagPosition);
+                }
+                break;
             }
-            if (mergeFieldValues == null)
+            else
             {
-                throw new TextMergeNoMergeFieldException($"Not any merge field values are specified");
-            }
-
-            var mergeFields = FindMergeFields(htmlText);
-            if (!MergeFieldsHaveValues(mergeFields, mergeFieldValues, out string missingMergeValues))
-            {
-                throw new TextMergeNoMergeFieldException($"The following merge fields are unspecified: {missingMergeValues}");
-            }
-
-            var mergedText = PerformMerge(htmlText, mergeFields, mergeFieldValues);
-
-            return mergedText;
-        }
-
-        private Dictionary<string, MergeField> FindMergeFields(string htmlText)
-        {
-            var foundTags = new Dictionary<string, MergeField>();
-
-            var searchFromPosition = 0;
-            while (true)
-            {
-                // start with a search for the openings tag
-                var tagPosition = htmlText.IndexOf(OPENINGS_TAG, searchFromPosition);
+                var mergeField = new MergeField(){ StartPosition = tagPosition };
+                searchFromPosition = tagPosition + OPENINGS_TAG.Length;
+                tagPosition = htmlText.IndexOf(CLOSING_TAG, searchFromPosition); 
                 if (tagPosition < 0)
                 {
-                    // no openings tag maybe there is a faulty end tag
-                    tagPosition = htmlText.IndexOf(CLOSING_TAG, searchFromPosition);
-                    if (tagPosition >= 0)
-                    {
-                        throw new TextMergeNoOpeningTagException($"Closing tag found at position {tagPosition} without openingstag.", tagPosition);
-                    }
-                    break;
+                    throw new TextMergeNoClosingTagException($"Mergefield starting at position {mergeField.StartPosition} has no closing tag.", mergeField.StartPosition);
                 }
-                else
-                {
-                    var mergeField = new MergeField(){ StartPosition = tagPosition };
-                    searchFromPosition = tagPosition + OPENINGS_TAG.Length;
-                    tagPosition = htmlText.IndexOf(CLOSING_TAG, searchFromPosition); 
-                    if (tagPosition < 0)
-                    {
-                        throw new TextMergeNoClosingTagException($"Mergefield starting at position {mergeField.StartPosition} has no closing tag.", mergeField.StartPosition);
-                    }
-                    mergeField.Length = tagPosition + CLOSING_TAG.Length - mergeField.StartPosition;
-                    var name = htmlText.Substring(mergeField.StartPosition + OPENINGS_TAG.Length, mergeField.Length - OPENINGS_TAG.Length - CLOSING_TAG.Length);
-                    searchFromPosition = tagPosition + CLOSING_TAG.Length;
+                mergeField.Length = tagPosition + CLOSING_TAG.Length - mergeField.StartPosition;
+                var name = htmlText.Substring(mergeField.StartPosition + OPENINGS_TAG.Length, mergeField.Length - OPENINGS_TAG.Length - CLOSING_TAG.Length);
+                searchFromPosition = tagPosition + CLOSING_TAG.Length;
                     
-                    if (!foundTags.ContainsKey(name))
-                    {
-                        foundTags.Add(name, mergeField);
-                    }
+                if (!foundTags.ContainsKey(name))
+                {
+                    foundTags.Add(name, mergeField);
                 }
             }
-
-            return foundTags;
         }
 
-        private static bool MergeFieldsHaveValues(Dictionary<string, MergeField> mergeFields, Dictionary<string, string> mergeFieldValues, out string missingMergeValues)
-        {
-            var missingMergeValuesArray = mergeFields.Keys
-                .Where(key => !mergeFieldValues.ContainsKey(key))
-                .ToArray();
-
-            missingMergeValues = String.Join(", ", missingMergeValuesArray);
-
-            return missingMergeValues.Length == 0;
-        }
-
-        private string PerformMerge(string htmlText, Dictionary<string, MergeField> mergeFields, Dictionary<string, string> mergeFieldValues)
-        {
-            var newText = htmlText;
-            foreach(var mergeFieldKey in mergeFields.Keys)
-            {
-                newText = newText.Replace(OPENINGS_TAG + mergeFieldKey + CLOSING_TAG, mergeFieldValues[mergeFieldKey]);
-            }
-
-            return newText;
-        }
-
-
+        return foundTags;
     }
+
+    private static bool MergeFieldsHaveValues(Dictionary<string, MergeField> mergeFields, Dictionary<string, string> mergeFieldValues, out string missingMergeValues)
+    {
+        var missingMergeValuesArray = mergeFields.Keys
+            .Where(key => !mergeFieldValues.ContainsKey(key))
+            .ToArray();
+
+        missingMergeValues = String.Join(", ", missingMergeValuesArray);
+
+        return missingMergeValues.Length == 0;
+    }
+
+    private string PerformMerge(string htmlText, Dictionary<string, MergeField> mergeFields, Dictionary<string, string> mergeFieldValues)
+    {
+        var newText = htmlText;
+        foreach(var mergeFieldKey in mergeFields.Keys)
+        {
+            newText = newText.Replace(OPENINGS_TAG + mergeFieldKey + CLOSING_TAG, mergeFieldValues[mergeFieldKey]);
+        }
+
+        return newText;
+    }
+
 
 }

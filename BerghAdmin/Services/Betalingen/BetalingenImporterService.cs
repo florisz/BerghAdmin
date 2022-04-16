@@ -6,15 +6,19 @@ namespace BerghAdmin.Services.Betalingen;
 public class BetalingenImporterService : IBetalingenImporterService
 {
     private IBetalingenService _betalingenService;
+    private ILogger<BetalingenImporterService> _logger;
 
-    public BetalingenImporterService(IBetalingenService betalingenService)
+    public BetalingenImporterService(IBetalingenService betalingenService, ILogger<BetalingenImporterService> logger)
     {
         _betalingenService = betalingenService;
+        _logger = logger;
     }
 
     public List<Betaling> ImportBetalingen(Stream csvData)
     {
         var betalingen = new List<Betaling>();
+
+        _logger.LogDebug("Entering ImportBetalingen");
 
         try
         {
@@ -29,9 +33,10 @@ public class BetalingenImporterService : IBetalingenImporterService
                 betalingen.Add(ConvertToBetaling(record));
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             // Let the user know what went wrong.
+            _logger.LogError("Exception thrown: {message}; {innerException}", ex.Message, ex.InnerException);
         }
 
         return betalingen;

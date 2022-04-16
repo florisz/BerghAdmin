@@ -43,7 +43,7 @@ public class BihzUserService : IBihzUserService
         }
 
         Save(bihzUser);
-        _logger.LogInformation("Kentaa user with id {UserId} successfully linked to persoon with id {Id}", bihzUser.UserId, bihzUser.PersoonId);
+        _logger.LogInformation("Kentaa user with id {UserId} successfully linked to persoon with id {PersoonId}", bihzUser.UserId, bihzUser.PersoonId);
     }
 
     public void Add(IEnumerable<BihzUser> users)

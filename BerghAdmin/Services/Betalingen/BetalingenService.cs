@@ -20,10 +20,12 @@ public class BetalingenService : IBetalingenService
         if (betaling.Id == 0)
         {
             repo.Add(betaling);
+            _logger.LogInformation("Betaling {Betaling} is added", betaling);
         }
         else
         {
             repo.Update(betaling);
+            _logger.LogInformation("Betaling {Betaling} is updated", betaling);
         }
     }
 
