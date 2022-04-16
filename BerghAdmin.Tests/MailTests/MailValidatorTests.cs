@@ -1,4 +1,7 @@
 ﻿using BerghAdmin.ApplicationServices.Mail;
+
+using FluentAssertions;
+
 using NUnit.Framework;
 
 namespace BerghAdmin.Tests.MailTests
@@ -10,15 +13,15 @@ namespace BerghAdmin.Tests.MailTests
         public void Validate_NoSubject_ShouldReportSubjectRequired()
         {
             MailMessage message = new()
-            {
+            { 
                 From = new MailAddress("test@berghinhetzadel.nl", null),
                 To = new() { new MailAddress("recipient@test.xyz", null) }
             };
 
             var actual = message.Validate();
 
-            Assert.That(actual.ContainsKey("Subject"));
-            Assert.That(actual["Subject"].Count == 1);
+            actual.Should().ContainKey("Subject");
+            actual["Subject"].Should().Be(1);
         }
 
         [Test]
@@ -26,14 +29,14 @@ namespace BerghAdmin.Tests.MailTests
         {
             MailMessage message = new()
             {
+                Subject = "Test",
                 To = new() { new MailAddress("recipient@test.xyz", null) },
-                Subject = "Test"
             };
 
             var actual = message.Validate();
 
-            Assert.That(actual.ContainsKey("From"));
-            Assert.That(actual["From"].Count == 1);
+            actual.Should().ContainKey("From");
+            actual["From"].Should().Be(1);
         }
 
         [Test]
@@ -41,15 +44,15 @@ namespace BerghAdmin.Tests.MailTests
         {
             MailMessage message = new()
             {
-                From = new MailAddress("test@bad.xyz", null),
+                From = new MailAddress("test@bad.xyz", null), 
+                Subject = "Test",
                 To = new() { new MailAddress("recipient@test.xyz", null) },
-                Subject = "Test"
             };
 
             var actual = message.Validate();
 
-            Assert.That(actual.ContainsKey("From"));
-            Assert.That(actual["From"].Count == 1);
+            actual.Should().ContainKey("From");
+            actual["From"].Should().Be(1);
         }
 
         [Test]
@@ -58,13 +61,13 @@ namespace BerghAdmin.Tests.MailTests
             MailMessage message = new()
             {
                 From = new MailAddress("test@berghinhetzadel.nl", null),
-                Subject = "Test"
+                Subject = "Test",
             };
 
             var actual = message.Validate();
 
-            Assert.That(actual.ContainsKey("To"));
-            Assert.That(actual["To"].Count == 1);
+            actual.Should().ContainKey("To");
+            actual["To"].Should().Be(1);
         }
 
         [Test]
@@ -72,14 +75,14 @@ namespace BerghAdmin.Tests.MailTests
         {
             MailMessage message = new()
             {
-                From = new MailAddress("test@berghinhetzadel.nl", null),
+                From = new MailAddress("test@berghinhetzadel.nl", null), 
+                Subject = "Test",
                 To = new() { new MailAddress("recipient@test.xyz", null) },
-                Subject = "Test"
             };
 
             var actual = message.Validate();
 
-            Assert.IsEmpty(actual);
+            actual.Should().BeEmpty();
         }
     }
 }

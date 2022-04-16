@@ -37,7 +37,7 @@ app
 app.MapPost("/mail", ([FromBody]MailRequest payload) => HandleSendMail(payload))
     .AllowAnonymous();
 
-object HandleSendMail(MailRequest payload)
+static object HandleSendMail(MailRequest payload)
 {
     return new OkObjectResult("Sent");
 }

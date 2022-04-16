@@ -14,10 +14,8 @@ namespace BerghAdmin.Pages
 
         [Inject]
         private ISendMailService SendMailService { get; set; } = default!;
-        [Inject]
-        private IJSRuntime JsRuntime { get; set; } = default!;
 
-        private List<ToolbarItemModel> Tools = new List<ToolbarItemModel>()
+        private readonly List<ToolbarItemModel> Tools = new()
         {
             new ToolbarItemModel() { Command = ToolbarCommand.Bold },
             new ToolbarItemModel() { Command = ToolbarCommand.Italic },

@@ -159,7 +159,7 @@ namespace BerghAdmin.Tests.EvenementTests
                 // try to delete an exisitng deelnemer from the evenement
                 var result = await service2.DeleteDeelnemer(fietsTochtById, persoon);
                 Assert.AreEqual(ErrorCodeEnum.Ok, result);
-                Assert.AreEqual(0, fietsTochtById.Deelnemers?.Count());
+                Assert.AreEqual(0, fietsTochtById.Deelnemers?.Count);
 
                 // try to delete a non exisitng deelnemer from the evenement
                 result = await service2.DeleteDeelnemer(fietsTochtById, persoon);
@@ -179,8 +179,6 @@ namespace BerghAdmin.Tests.EvenementTests
             var persoon = new Persoon() { EmailAdres = "aap@noot.com" };
             await service.AddDeelnemer(fietsTocht, persoon);
 
-            service = null;
-
             var service2 = this.GetRequiredService<IEvenementService>();
             var fietsTochtById = service2.GetById(fietsTocht.Id);
             Assert.IsNotNull(fietsTochtById);
@@ -191,7 +189,7 @@ namespace BerghAdmin.Tests.EvenementTests
                 // try to delete an exisitng deelnemer from the evenement
                 var result = await service2.DeleteDeelnemer(fietsTochtById, persoon.Id);
                 Assert.AreEqual(ErrorCodeEnum.Ok, result);
-                Assert.AreEqual(0, fietsTochtById.Deelnemers?.Count());
+                Assert.AreEqual(0, fietsTochtById.Deelnemers?.Count);
 
                 // try to delete a non exisitng deelnemer from the evenement
                 result = await service2.DeleteDeelnemer(fietsTochtById, persoon);

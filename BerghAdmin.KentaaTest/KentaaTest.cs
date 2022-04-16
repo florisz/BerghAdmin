@@ -29,7 +29,7 @@ public class KentaaTest
         };
         var options = Options.Create<KentaaConfiguration>(optionValue);
 
-        var httpClientFactory = _serviceProvider.GetService<IHttpClientFactory>();
+        var httpClientFactory = _serviceProvider.GetRequiredService<IHttpClientFactory>();
         var kentaaInterfaceService = new KentaaInterfaceService(options, httpClientFactory);
         using var httpClient = httpClientFactory.CreateClient();
         

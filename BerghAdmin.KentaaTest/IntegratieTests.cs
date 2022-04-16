@@ -153,7 +153,6 @@ namespace BerghAdmin.Tests.Kentaa
                 bihzDonatieService!.Add(donation.Map());
             }
             var bihzDonaties = bihzDonatieService!.GetAll();
-            var kentaaDonaties = donations.ToListAsync().Result;
 
             Assert.IsTrue(await donations.CountAsync() == bihzDonaties?.Count());
         }
@@ -200,8 +199,8 @@ namespace BerghAdmin.Tests.Kentaa
             var chappie = persoonService!.GetByEmailAdres("chappie@aapnootmies.com");
             Assert.IsNotNull(chappie, "Persoon met email adres: -chappie@aapnootmies.com- is niet bekend");
             Assert.IsTrue(chappie?.BihzActie != null, "Persoon heeft geen gelinkte Action in Kentaa");
-            Assert.True(chappie?.Donaties != null, "Geen Donaties voor test persoon Chappie");
-            Assert.True(chappie.Donaties.Sum(d => d.Bedrag) >= 75, "Chappie moet minimaal 75 euro opgehaald hebben");
+            Assert.True(chappie!.Donaties != null, "Geen Donaties voor test persoon Chappie");
+            Assert.True(chappie!.Donaties!.Sum(d => d.Bedrag) >= 75, "Chappie moet minimaal 75 euro opgehaald hebben");
 
             Assert.Pass();
         }

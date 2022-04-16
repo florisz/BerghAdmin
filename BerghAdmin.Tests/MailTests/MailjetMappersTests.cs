@@ -25,8 +25,8 @@ namespace BerghAdmin.Tests.MailTests
             SendContact? actual = address.ToMailjetAddress();
 
             Assert.IsNotNull(actual);
-            Assert.AreEqual("test@test.xyz", actual.Email);
-            Assert.AreEqual(null, actual.Name);
+            Assert.AreEqual("test@test.xyz", actual!.Email);
+            Assert.AreEqual(null, actual!.Name);
         }
 
         [Test]
@@ -37,8 +37,8 @@ namespace BerghAdmin.Tests.MailTests
             SendContact? actual = address.ToMailjetAddress();
 
             Assert.IsNotNull(actual);
-            Assert.AreEqual("test@test.xyz", actual.Email);
-            Assert.AreEqual("Test address", actual.Name);
+            Assert.AreEqual("test@test.xyz", actual!.Email);
+            Assert.AreEqual("Test address", actual!.Name);
         }
 
         [Test]

@@ -1,3 +1,3 @@
 ﻿namespace BerghMonitor.Web;
 
-public record MailRequest(string to, string body);
+public record MailRequest(string To, string Body);

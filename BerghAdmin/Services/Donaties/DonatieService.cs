@@ -30,10 +30,10 @@ public class DonatieService : IDonatieService
     {
         if (donateur == null)
         {
-            _logger.LogError($"Donatie with Kentaa id {bihzDonatie.DonationId} can not be processed; reason Persoon (Donateur) is unknown (has null value)");
+            _logger.LogError("Donatie with Kentaa id {DonationId} can not be processed; reason Persoon (Donateur) is unknown (has null value)", bihzDonatie.DonationId);
         }
 
-        _logger.LogDebug($"betaalstatus={bihzDonatie.BetaalStatus}");
+        _logger.LogDebug("betaalstatus={status}", bihzDonatie.BetaalStatus);
         if (bihzDonatie.BetaalStatus != PaymentStatusEnum.Paid)
         {
             return ErrorCodeEnum.Forbidden;
@@ -51,7 +51,7 @@ public class DonatieService : IDonatieService
         donatie.KentaaDonatie = bihzDonatie;
 
         Save(donatie);
-        _logger.LogInformation($"Kentaa donatie with id {bihzDonatie.DonationId} successfully linked to persoon with id {donateur?.Id}");
+        _logger.LogInformation("Kentaa donatie with id {DonationId} successfully linked to persoon with id {donateurId}", bihzDonatie.DonationId, donateur?.Id);
 
         return ErrorCodeEnum.Ok;
     }
@@ -82,7 +82,7 @@ public class DonatieService : IDonatieService
         => _dbContext
             .Donaties?
             .Where(d => d.KentaaDonatie != null)
-            .FirstOrDefault(d => d.KentaaDonatie.Id == kentaaDonatieId);
+            .FirstOrDefault(d => d.KentaaDonatie!.Id == kentaaDonatieId);
 
     
     public void Save(Donatie donatie)

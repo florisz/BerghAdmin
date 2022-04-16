@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using Syncfusion.DocIO;
 using Syncfusion.DocIO.DLS;
 using Syncfusion.DocIORenderer;
 using Syncfusion.OfficeChart;

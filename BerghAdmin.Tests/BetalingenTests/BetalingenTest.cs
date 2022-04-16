@@ -75,21 +75,19 @@ namespace BerghAdmin.Tests.BetalingenTests
         [Test]
         public void TestImportRaboBetalingenBestand()
         {
-            using (FileStream fs = File.OpenRead("BetalingenTests/TestRaboBetalingenBestand.csv"))
+            using FileStream fs = File.OpenRead("BetalingenTests/TestRaboBetalingenBestand.csv");
+            var betalingen = _betalingenImporterService!.ImportBetalingen(fs);
+
+            foreach (var betaling in betalingen)
             {
-                var betalingen = _betalingenImporterService!.ImportBetalingen(fs);
-
-                foreach(var betaling in betalingen)
+                if (_betalingenService!.GetByVolgnummer(betaling.Volgnummer) == null)
                 {
-                    if (_betalingenService!.GetByVolgnummer(betaling.Volgnummer) == null)
-                    {
-                        _betalingenService.Save(betaling);
-                    }
+                    _betalingenService.Save(betaling);
                 }
-
-                Assert.IsTrue(betalingen.Count >= 8, "Import must result in at least 8 betalingen");
-                Assert.AreEqual(betalingen.Count, _betalingenService!.GetAll().Count());
             }
+
+            Assert.IsTrue(betalingen.Count >= 8, "Import must result in at least 8 betalingen");
+            Assert.AreEqual(betalingen.Count, _betalingenService!.GetAll()?.Count());
         }
     }
 }

@@ -5,7 +5,6 @@ namespace BerghAdmin.Services.Seeding;
 
 public class ReleaseSeedDataService : ISeedDataService
 {
-    private readonly SeedSettings _settings;
     private readonly ApplicationDbContext _dbContext;
     private readonly IRolService _rolService;
     private readonly IEvenementService _evenementService;
@@ -27,7 +26,7 @@ public class ReleaseSeedDataService : ISeedDataService
             return;
         }
 
-        var rollen = await SeedHelper.InsertRollen(_dbContext);
+        await SeedHelper.InsertRollen(_dbContext);
 
         await InsertEvenementen();
     }

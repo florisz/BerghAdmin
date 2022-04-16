@@ -6,7 +6,7 @@ namespace BerghAdmin.Services.Betalingen;
 
 public class TableStorageBetalingenRepository : IBetalingenRepository
 {
-    private TableClient tableClient;
+    private readonly TableClient tableClient;
 
     public TableStorageBetalingenRepository()
     {
@@ -24,6 +24,7 @@ public class TableStorageBetalingenRepository : IBetalingenRepository
         };
 
         var response = tableClient.AddEntity(entity);
+        // TODO: we should be checking this response
     }
 
     public void Update(Betaling betaling)

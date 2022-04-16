@@ -1,37 +1,40 @@
 using Mailjet.Client;
 using Mailjet.Client.TransactionalEmails;
+
 using Microsoft.Extensions.Logging;
 
 namespace BerghAdmin.ApplicationServices.Mail;
 
 public class SendMailService : ISendMailService
 {
-    private readonly IMailjetClient _mailjetClient;
-    private readonly IMailResponseHandlerService _mailResponseHandlerService;
-    private readonly ILogger<SendMailService> _logger;
+    private readonly IMailjetClient mailjetClient;
+    private readonly ILogger<SendMailService> logger;
 
     public SendMailService(
         IMailjetClient mailjetClient,
-        IMailResponseHandlerService mailResponseHandlerService,
         ILogger<SendMailService> logger)
     {
-        _mailjetClient = mailjetClient;
-        _mailResponseHandlerService = mailResponseHandlerService;
-        _logger = logger;
+        this.mailjetClient = mailjetClient;
+        this.logger = logger;
     }
 
     public async Task SendMailAsync(MailMessage message, bool isSandboxMode = false)
     {
-        Dictionary<string, List<string>> validationProblems = message.Validate();
+        var validationProblems = message.Validate();
         if (validationProblems.Any())
         {
-            Console.WriteLine(validationProblems);
+            logger.LogError("Error in email: {problems}", validationProblems);
             return;
         }
 
         var emails = message.ToMailjetMessages();
-        var response = await _mailjetClient.SendTransactionalEmailsAsync(emails, isSandboxMode);
+        var response = await mailjetClient.SendTransactionalEmailsAsync(emails, isSandboxMode);
 
-        await _mailResponseHandlerService.HandleMailResponseAsync(response);
+        response.Messages
+            .SelectMany(m => m.To.Select(t => new { m.Status, t.MessageUUID, t.MessageHref, t.Email }))
+            .ToList()
+            .ForEach(m => logger.LogInformation("Message {messageUuid} - {messageHref}: status {status}, to {to}",
+                    m.MessageUUID, m.MessageHref, m.Status, m.Email)
+            );
     }
 }

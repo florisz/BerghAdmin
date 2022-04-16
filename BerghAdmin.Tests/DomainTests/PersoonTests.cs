@@ -81,7 +81,7 @@ namespace BerghAdmin.Tests.DomainTests
             Assert.AreEqual(4, personenList.Count);
         }
 
-        private List<Persoon> PersonenWithRollen(List<Persoon> personen, List<Rol> rollen)
+        private static List<Persoon> PersonenWithRollen(List<Persoon> personen, List<Rol> rollen)
         {
             return personen
                     .Where(p => p.Rollen.FirstOrDefault(r => rollen.Contains(r) ) != null) 
