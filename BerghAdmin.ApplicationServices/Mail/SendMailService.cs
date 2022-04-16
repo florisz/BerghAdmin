@@ -18,7 +18,7 @@ public class SendMailService : ISendMailService
         this.logger = logger;
     }
 
-    public async Task SendMailAsync(MailMessage message, bool isSandboxMode = false)
+    public async Task SendMail(MailMessage message, bool isSandboxMode = false)
     {
         var validationProblems = message.Validate();
         if (validationProblems.Any())
@@ -36,5 +36,18 @@ public class SendMailService : ISendMailService
             .ForEach(m => logger.LogInformation("Message {messageUuid} - {messageHref}: status {status}, to {to}",
                     m.MessageUUID, m.MessageHref, m.Status, m.Email)
             );
+    }
+
+    public async Task SendMail(string to, string from, string subject, string message)
+    {
+        var msg = new MailMessage
+        {
+            From = new MailAddress(from, from),
+            To = new() { new MailAddress(to, to) },
+            Subject = subject,
+            TextBody = message
+        };
+
+        await SendMail(msg, false);
     }
 }

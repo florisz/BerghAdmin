@@ -119,7 +119,7 @@ namespace BerghAdmin.Pages
             Message.HtmlBody = htmlContent;
 
             bool isSandboxMode = false; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
-            await SendMailService.SendMailAsync(Message, isSandboxMode);
+            await SendMailService.SendMail(Message, isSandboxMode);
 
             DialogClose();
         }

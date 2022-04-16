@@ -1,32 +1,22 @@
-using BerghAdmin.ApplicationServices.Mail;
 using BerghAdmin.Authorization;
-using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
-using BerghAdmin.Services;
 using BerghAdmin.Services.Betalingen;
 using BerghAdmin.Services.Bihz;
-using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 using BerghAdmin.Services.Seeding;
 
-using HealthChecks.UI.Client;
-
 using Mailjet.Client;
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 using Serilog;
 
 using Syncfusion.Blazor;
-
-using System.Text;
 
 namespace BerghAdmin;
 
@@ -69,7 +59,7 @@ public class Program
         var cs = builder.Configuration.GetConnectionString("DefaultConnection");
         if (cs == null)
         {
-            throw new ApplicationException("Secrets for Database access (connection string & password) can not be found in configuration");
+            throw new ApplicationException("Secrets for Database access (connection string & password) cannot be found in configuration");
         }
         return cs;
     }

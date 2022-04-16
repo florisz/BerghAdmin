@@ -2,6 +2,8 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using BerghAdmin.Services.TextMerge;
 using System.Linq;
+using Moq;
+using Microsoft.Extensions.Logging;
 
 namespace BerghAdmin.Tests.MailMergeTests
 {
@@ -11,12 +13,12 @@ namespace BerghAdmin.Tests.MailMergeTests
         // most simple valid text
         private const string _simpleText = "<p>small text</p>";
         // valid html, with some html attributes
-        private const string _nonSimpleText = 
+        private const string _nonSimpleText =
             "<p><strong>Opening here</strong></p>" +
             "<p><strong>bold text</strong>​<br></p>" +
             "<p><em>​Italic</em>​<br></p>" +
-            "<p><strong>​<em>​<span style=\"text-decoration: underline;\">​Underlined italic bold text</span></em></strong>​<br></p>"+ 
-            "<blockquote>quoted text</blockquote>"+ 
+            "<p><strong>​<em>​<span style=\"text-decoration: underline;\">​Underlined italic bold text</span></em></strong>​<br></p>" +
+            "<blockquote>quoted text</blockquote>" +
             "<pre>source code<br></pre>";
         // valid html with one merge field
         private const string _textWithOpeningsTagOnly = "<p>Hallo &lt;&lt;naam</p>";
@@ -28,117 +30,107 @@ namespace BerghAdmin.Tests.MailMergeTests
         private const string _textWithMultipleMergeFields = "<p>Hallo &lt;&lt;naam&gt;&gt;<br/>wonend op: &lt;&lt;adres&gt;&gt;<br/>te: &lt;&lt;postcode&gt;&gt; &lt;&lt;woonplaats&gt;&gt;</p>";
 
         private readonly Dictionary<string, string> _mergeFieldValues = new()
-            {
-                { "naam", "Jan Jansen" },
-                { "adres", "Hoofdstraat 1" },
-                { "postcode", "1234 AB"},
-                { "woonplaats", "Amsterdam" }
-            };
+        {
+            { "naam", "Jan Jansen" },
+            { "adres", "Hoofdstraat 1" },
+            { "postcode", "1234 AB" },
+            { "woonplaats", "Amsterdam" }
+        };
 
         [SetUp]
         public void SetupTextMergeTests()
         {
 
-        }        
+        }
 
         [Test]
         public void TestTextIsEmpty()
         {
-            var mailMergeService = new TextMergeService();
-            var mergeResult = mailMergeService.Merge((string?)null, null);
+            var mergeResult = CreateService().Merge((string?)null, null);
             Assert.AreEqual("", mergeResult);
         }
 
         [Test]
         public void TestSimpleTextHasNoMergeFieldsWithoutDictionary()
         {
-            var mailMergeService = new TextMergeService();
-            var mergeResult = mailMergeService.Merge(_simpleText, null);
+            var mergeResult = CreateService().Merge(_simpleText, null);
             Assert.AreEqual(_simpleText, mergeResult);
         }
 
         [Test]
         public void TestSimpleTextHasNoMergeFieldsWithDictionary()
         {
-            var mailMergeService = new TextMergeService();
-            var mergeResult = mailMergeService.Merge(_simpleText, _mergeFieldValues);
+            var mergeResult = CreateService().Merge(_simpleText, _mergeFieldValues);
             Assert.AreEqual(_simpleText, mergeResult);
         }
 
         [Test]
         public void TestNonSimpleTextHasNoMergeFieldsWithoutDictionary()
         {
-            var mailMergeService = new TextMergeService();
-            var mergeResult = mailMergeService.Merge(_nonSimpleText, null);
+            var mergeResult = CreateService().Merge(_nonSimpleText, null);
             Assert.AreEqual(_nonSimpleText, mergeResult);
         }
 
         [Test]
         public void TestNonSimpleTextHasNoMergeFieldsWithDictionary()
         {
-            var mailMergeService = new TextMergeService();
-            var mergeResult = mailMergeService.Merge(_nonSimpleText, _mergeFieldValues);
+            var mergeResult = CreateService().Merge(_nonSimpleText, _mergeFieldValues);
             Assert.AreEqual(_nonSimpleText, mergeResult);
         }
 
         [Test]
         public void TestWithOpeningsTagOnly()
         {
-            var mailMergeService = new TextMergeService();
-            Assert.Throws<TextMergeNoClosingTagException>(() => mailMergeService.Merge(_textWithOpeningsTagOnly, _mergeFieldValues));
+            Assert.Throws<TextMergeNoClosingTagException>(() => CreateService().Merge(_textWithOpeningsTagOnly, _mergeFieldValues));
         }
 
         [Test]
         public void TestWithClosingTagOnly()
         {
-            var mailMergeService = new TextMergeService();
-            Assert.Throws<TextMergeNoOpeningTagException>(() => mailMergeService.Merge(_textWithClosingTagOnly, _mergeFieldValues));
+            Assert.Throws<TextMergeNoOpeningTagException>(() => CreateService().Merge(_textWithClosingTagOnly, _mergeFieldValues));
         }
 
         [Test]
         public void TestMergeFieldNoMergeValues()
         {
-            var mailMergeService = new TextMergeService();
-            Assert.Throws<TextMergeNoMergeFieldException>(() => mailMergeService.Merge(_textWithInvalidMergeField1, null));
+            Assert.Throws<TextMergeNoMergeFieldException>(() => CreateService().Merge(_textWithInvalidMergeField1, null));
         }
-        
+
         [Test]
         public void TestMergeFieldUnknown()
         {
-            var mailMergeService = new TextMergeService();
-            Assert.Throws<TextMergeNoMergeFieldException>(() => mailMergeService.Merge(_textWithInvalidMergeField1, _mergeFieldValues));
+            Assert.Throws<TextMergeNoMergeFieldException>(() => CreateService().Merge(_textWithInvalidMergeField1, _mergeFieldValues));
         }
 
         [Test]
         public void TestMergeFieldInvalidInHtml()
         {
-            var mailMergeService = new TextMergeService();
-            Assert.Throws<TextMergeNoMergeFieldException>(() => mailMergeService.Merge(_textWithInvalidMergeField2, null));
+            Assert.Throws<TextMergeNoMergeFieldException>(() => CreateService().Merge(_textWithInvalidMergeField2, null));
         }
 
         [Test]
         public void TestHasOneMergeFieldWithDictionary()
         {
-            var mailMergeService = new TextMergeService();
-            var mergeResult = mailMergeService.Merge(_textWithOneMergeField, _mergeFieldValues);
+            var mergeResult = CreateService().Merge(_textWithOneMergeField, _mergeFieldValues);
             Assert.AreEqual("<p>Hallo Jan Jansen</p>", mergeResult);
         }
 
         [Test]
         public void TestHasOneMergeFieldTwiceWithDictionary()
         {
-            var mailMergeService = new TextMergeService();
-            var mergeResult = mailMergeService.Merge(_textWithOneMergeFieldTwice, _mergeFieldValues);
+            var mergeResult = CreateService().Merge(_textWithOneMergeFieldTwice, _mergeFieldValues);
             Assert.AreEqual("<p>Hallo Jan JansenJan Jansen</p>", mergeResult);
         }
 
         [Test]
         public void TestHasMultipleMergeFieldWithDictionary()
         {
-            var mailMergeService = new TextMergeService();
-            var mergeResult = mailMergeService.Merge(_textWithMultipleMergeFields, _mergeFieldValues);
+            var mergeResult = CreateService().Merge(_textWithMultipleMergeFields, _mergeFieldValues);
             Assert.AreEqual("<p>Hallo Jan Jansen<br/>wonend op: Hoofdstraat 1<br/>te: 1234 AB Amsterdam</p>", mergeResult);
         }
-
+        private static TextMergeService CreateService()
+        {
+            return new TextMergeService(Mock.Of<ILogger<TextMergeService>>());
+        }
     }
 }

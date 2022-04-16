@@ -1,17 +1,36 @@
+using BerghAdmin.ApplicationServices.Mail;
+
 using BerghMonitor.Web;
 
 using HealthChecks.UI.Core;
 
+using Mailjet.Client;
+
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddUserSecrets<SendMailService>();
+builder.Services
+    .AddTransient<ISendMailService, SendMailService>()
+    .AddHttpClient<IMailjetClient, MailjetClient>(client =>
+    {
+        //set BaseAddress, MediaType, UserAgent
+        client.SetDefaultSettings();
+
+        string apiKey = builder.Configuration["MailJetConfiguration:ApiKey"];
+        string apiSecret = builder.Configuration["MailJetConfiguration:ApiSecret"];
+        client.UseBasicAuthentication(apiKey, apiSecret);
+    });
+
 builder.Services
     .AddHealthChecksUI(setup =>
     {
-        setup.AddWebhookNotification("mail-admin",
-            uri: "/mail", 
-            payload: "{ \"body\": \"Webhook report for [[LIVENESS]]: [[FAILURE]] - Description: [[DESCRIPTIONS]]\"}",
-            restorePayload: "{ \"subject\": \"[[LIVENESS]] is back to life\"}",
+        var webhookSettings = builder.Configuration.GetSection("HealthChecksUI:Webhooks");
+        setup.AddWebhookNotification(
+            "mail-admin",
+            webhookSettings["Uri"],
+            webhookSettings["Payload"],
+            webhookSettings["RestoredPayload"],
             shouldNotifyFunc: report => DateTime.UtcNow.Hour >= 8 && DateTime.UtcNow.Hour <= 23,
             customMessageFunc: (report) =>
             {
@@ -34,11 +53,14 @@ app
         config.MapHealthChecksUI(s => s.UseRelativeWebhookPath = true);
     });
 
-app.MapPost("/mail", ([FromBody]MailRequest payload) => HandleSendMail(payload))
+app.MapPost("/mail", ([FromBody] MailRequest payload) => HandleSendMail(payload))
     .AllowAnonymous();
 
-static object HandleSendMail(MailRequest payload)
+async Task<object> HandleSendMail(MailRequest payload)
 {
+    var sender = app.Services.GetRequiredService<ISendMailService>();
+    await sender.SendMail( payload.To, "sysadmin@berghintzadel.nl", payload.Subject, payload.Body );
+
     return new OkObjectResult("Sent");
 }
 
