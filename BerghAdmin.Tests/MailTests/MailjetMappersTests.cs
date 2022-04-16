@@ -62,7 +62,7 @@ namespace BerghAdmin.Tests.MailTests
                 TextBody = "Contents"
             };
 
-            IEnumerable<TransactionalEmail> actual = message.ToMailjetMessages();
+            var actual = message.ToMailjetMessages();
 
             Assert.AreEqual(1, actual.Count());
             TransactionalEmail email = actual.First();
@@ -72,7 +72,7 @@ namespace BerghAdmin.Tests.MailTests
             Assert.AreEqual(null, email.To.First().Name);
             Assert.AreEqual("Subject", email.Subject);
             Assert.AreEqual("Contents", email.TextPart);
-            Assert.AreEqual(null, email.HTMLPart);
+            Assert.AreEqual(string.Empty, email.HTMLPart);
         }
 
         [Test]

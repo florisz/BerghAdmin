@@ -21,7 +21,7 @@ namespace BerghAdmin.Tests.MailTests
             var actual = message.Validate();
 
             actual.Should().ContainKey("Subject");
-            actual["Subject"].Should().Be(1);
+            actual["Subject"].Message.Should().Be("Subject is required");
         }
 
         [Test]
@@ -36,7 +36,7 @@ namespace BerghAdmin.Tests.MailTests
             var actual = message.Validate();
 
             actual.Should().ContainKey("From");
-            actual["From"].Should().Be(1);
+            actual["From"].Message.Should().Be("Sender is required");
         }
 
         [Test]
@@ -51,8 +51,8 @@ namespace BerghAdmin.Tests.MailTests
 
             var actual = message.Validate();
 
-            actual.Should().ContainKey("From");
-            actual["From"].Should().Be(1);
+            actual.Should().ContainKey("Address");
+            actual["Address"].Message.Should().Contain("Domain of sender");
         }
 
         [Test]
@@ -67,7 +67,7 @@ namespace BerghAdmin.Tests.MailTests
             var actual = message.Validate();
 
             actual.Should().ContainKey("To");
-            actual["To"].Should().Be(1);
+            actual["To"].Message.Should().Be("At least one To address must be specified");
         }
 
         [Test]
@@ -80,9 +80,7 @@ namespace BerghAdmin.Tests.MailTests
                 To = new() { new MailAddress("recipient@test.xyz", null) },
             };
 
-            var actual = message.Validate();
-
-            actual.Should().BeEmpty();
+            message.Validate().Should().BeEmpty();
         }
     }
 }

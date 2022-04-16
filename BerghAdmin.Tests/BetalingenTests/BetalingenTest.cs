@@ -45,8 +45,8 @@ namespace BerghAdmin.Tests.BetalingenTests
                 .Configure<SeedSettings>(databaseConfiguration.GetSection("Seeding"))
                 .AddScoped<ISeedDataService, DebugSeedDataService>()
                 .AddScoped<IBetalingenImporterService, BetalingenImporterService>()
-                .AddScoped<IBetalingenRepository, TableStorageBetalingenRepository>()
-                //.AddScoped<IBetalingenRepository, EFBetalingenRepository>()
+                //.AddScoped<IBetalingenRepository, TableStorageBetalingenRepository>()
+                .AddScoped<IBetalingenRepository, EFBetalingenRepository>()
                 .AddScoped<IBetalingenService, BetalingenService>()
             ;
 
