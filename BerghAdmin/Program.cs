@@ -95,6 +95,7 @@ public class Program
 
     static void RegisterServices(WebApplicationBuilder builder)
     {
+        builder.Configuration.AddUserSecrets<SendMailService>();
         // Add services to the container.
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
@@ -147,8 +148,8 @@ public class Program
             //set BaseAddress, MediaType, UserAgent
             client.SetDefaultSettings();
 
-            string apiKey = builder.Configuration.GetValue<string>("MailJetConfiguration:ApiKey");
-            string apiSecret = builder.Configuration.GetValue<string>("MailJetConfiguration:ApiSecret");
+            string apiKey = builder.Configuration["MailJetConfiguration:ApiKey"];
+            string apiSecret = builder.Configuration["MailJetConfiguration:ApiSecret"];
             client.UseBasicAuthentication(apiKey, apiSecret);
         });
     }
