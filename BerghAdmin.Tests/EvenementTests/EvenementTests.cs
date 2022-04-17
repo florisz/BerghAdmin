@@ -4,7 +4,8 @@ using BerghAdmin.Services;
 using BerghAdmin.Services.Evenementen;
 
 using Microsoft.Extensions.DependencyInjection;
-
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
 namespace BerghAdmin.Tests.EvenementTests
@@ -16,7 +17,8 @@ namespace BerghAdmin.Tests.EvenementTests
         {
             services
                 .AddScoped<IEvenementService, EvenementService>()
-                .AddScoped<IPersoonService, PersoonService>();
+                .AddScoped<IPersoonService, PersoonService>()
+                .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
         }
 
         [Test]

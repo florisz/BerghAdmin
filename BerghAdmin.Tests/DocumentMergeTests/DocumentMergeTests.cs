@@ -1,13 +1,13 @@
 using NUnit.Framework;
+
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
 using BerghAdmin.Data;
-using System.IO;
 using BerghAdmin.Tests;
-using System;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace BerghAdmin.DocumentMergeTests
 {
@@ -161,6 +161,7 @@ namespace BerghAdmin.DocumentMergeTests
             services.AddScoped<IDocumentService, DocumentService>();
             services.AddScoped<IPdfConverter, PdfConverter>();
             services.AddScoped<IDocumentMergeService, DocumentMergeService>();
+            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
         }
     }
 }
