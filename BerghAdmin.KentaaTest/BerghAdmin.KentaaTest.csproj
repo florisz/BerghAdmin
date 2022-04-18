@@ -18,4 +18,10 @@
 	  <ProjectReference Include="..\BerghAdmin\BerghAdmin.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="secrets.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

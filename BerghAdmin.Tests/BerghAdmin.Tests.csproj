@@ -36,6 +36,9 @@
 	  <None Update="DocumentMergeTests\TestDocumenten\TestTemplate3.docx">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <None Update="secrets.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>
