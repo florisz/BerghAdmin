@@ -39,10 +39,10 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
 
-- stage: Deploy2UAT
+- stage: Deploy2BerghTest
   jobs:
-  - job: deploy_to_UAT
-    displayName: Deploy to UAT
+  - job: deploy_to_bergh_test
+    displayName: Deploy to Bergh Test
     steps:
     - task: DownloadBuildArtifacts@1
       inputs:
@@ -52,22 +52,22 @@ stages:
         downloadPath: '$(System.ArtifactsDirectory)'
       
     - task: AzureRmWebAppDeployment@4
-      displayName: Deploy Admin site
+      displayName: Deploy Bergh Admin site
       inputs:
         ConnectionType: 'AzureRM'
         azureSubscription: 'Bergh UAT Connection'
         appType: 'webAppLinux'
-        WebAppName: 'berghadmin-uat'
+        WebAppName: 'bergh-test-bergh-admin-webapp'
         packageForLinux: '$(System.ArtifactsDirectory)/**/BerghAdmin.zip'
         RuntimeStack: 'DOTNETCORE|6.0'
 
     - task: AzureRmWebAppDeployment@4
-      displayName: Deploy Monitor site
+      displayName: Deploy Bergh Monitor site
       inputs:
         ConnectionType: 'AzureRM'
         azureSubscription: 'Bergh UAT Connection'
         appType: 'webAppLinux'
-        WebAppName: 'bergh-monitor-uat'
+        WebAppName: 'bergh-test-bergh-monitor-webapp'
         packageForLinux: '$(System.ArtifactsDirectory)/**/BerghMonitor.Web.zip'
         RuntimeStack: 'DOTNETCORE|6.0'
 
@@ -76,5 +76,5 @@ stages:
       inputs:
         azureSubscription: 'Bergh UAT Connection'
         appType: 'functionAppLinux'
-        appName: 'bergh-uat-kentaa'
+        appName: 'bergh-test-functionapp-kentaa'
         package: '$(System.ArtifactsDirectory)/**/BerghAdmin.KentaaFunction.zip'
