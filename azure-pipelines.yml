@@ -55,7 +55,7 @@ stages:
       displayName: Deploy Bergh Admin site
       inputs:
         ConnectionType: 'AzureRM'
-        azureSubscription: 'Bergh UAT Connection'
+        azureSubscription: 'bergh-in-het-zadel-azure'
         appType: 'webAppLinux'
         WebAppName: 'bergh-test-bergh-admin-webapp'
         packageForLinux: '$(System.ArtifactsDirectory)/**/BerghAdmin.zip'
@@ -65,7 +65,7 @@ stages:
       displayName: Deploy Bergh Monitor site
       inputs:
         ConnectionType: 'AzureRM'
-        azureSubscription: 'Bergh UAT Connection'
+        azureSubscription: 'bergh-in-het-zadel-azure'
         appType: 'webAppLinux'
         WebAppName: 'bergh-test-bergh-monitor-webapp'
         packageForLinux: '$(System.ArtifactsDirectory)/**/BerghMonitor.Web.zip'
@@ -74,7 +74,7 @@ stages:
     - task: AzureFunctionApp@1
       displayName: Deploy Kentaa Function
       inputs:
-        azureSubscription: 'Bergh UAT Connection'
+        azureSubscription: 'bergh-in-het-zadel-azure'
         appType: 'functionAppLinux'
         appName: 'bergh-test-functionapp-kentaa'
         package: '$(System.ArtifactsDirectory)/**/BerghAdmin.KentaaFunction.zip'
