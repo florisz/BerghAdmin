@@ -20,6 +20,13 @@ public class KentaaInterfaceService : IKentaaInterfaceService
 
     public KentaaInterfaceService(IOptions<KentaaConfiguration> settings, IHttpClientFactory factory)
     {
+        if (settings == null || 
+            string.IsNullOrEmpty(settings.Value.KentaaHost) ||
+            string.IsNullOrEmpty(settings.Value.ApiKey))
+        {
+            throw new ApplicationException("Kentaa configuration is not containing correct values");
+        }
+
         _session = new KentaaSession(settings.Value.KentaaHost, settings.Value.KentaaBasePath, settings.Value.ApiKey);
         _httpClient = _session.Connect(factory);
     }

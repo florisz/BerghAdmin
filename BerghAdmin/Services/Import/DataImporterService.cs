@@ -7,6 +7,7 @@ using System.Linq;
 using BerghAdmin.Data;
 
 using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace BerghAdmin.Services.Import
 {
@@ -26,8 +27,12 @@ namespace BerghAdmin.Services.Import
             {
                 // Create an instance of StreamReader to read from a file.
                 // The using statement also closes the StreamReader.
+                var configuration = new CsvConfiguration(CultureInfo.InvariantCulture);
+                configuration.Delimiter = ";";
+                configuration.HasHeaderRecord = true;
+                
                 using StreamReader reader = new(csvData);
-                using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+                using var csv = new CsvReader(reader, configuration);
                 var records = csv.GetRecords<OldDataRecord>().ToList<OldDataRecord>();
                 foreach (var record in records)
                 {
@@ -78,9 +83,9 @@ namespace BerghAdmin.Services.Import
                     _persoonService.SavePersoon(persoon);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // Let the user know what went wrong.
+                throw new ApplicationException($"Csv import exception {ex.Message}", ex);
             }
         }
         private static DateTime? ConvertToDateType(string day, string month, string year)
