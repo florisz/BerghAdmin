@@ -1,5 +1,9 @@
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
+using BerghAdmin.Services.Authentication;
 using BerghAdmin.Services.Betalingen;
 using BerghAdmin.Services.Bihz;
 using BerghAdmin.Services.Donaties;
@@ -12,6 +16,7 @@ using Mailjet.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 using Serilog;
@@ -70,7 +75,8 @@ public class Program
             .AddDefaultIdentity<User>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
-                options.Password.RequiredLength = 6;
+                options.SignIn.RequireConfirmedPhoneNumber = true;
+                options.Password.RequiredLength = 10;
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
@@ -80,6 +86,7 @@ public class Program
             .AddSignInManager<SignInManager<User>>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
+        //services.AddTransient<IEmailSender, AuthenticationSender>();
         services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
         services.AddSingleton<IAuthorizationHandler, BeheerFietsersPolicyHandler>();
         services.AddAuthorization(options =>
@@ -96,6 +103,11 @@ public class Program
     static void RegisterServices(WebApplicationBuilder builder)
     {
         builder.Configuration.AddUserSecrets<SendMailService>();
+        builder.Configuration.AddAzureKeyVault(
+            new Uri("https://bergh-test-keyvault.vault.azure.net"),
+            new DefaultAzureCredential()
+            );
+
         // Add services to the container.
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
