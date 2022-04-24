@@ -102,7 +102,7 @@ az functionapp plan create `
     --number-of-workers 1
 
 write-host "Create azure functionapp $functionappkentaa (in $rg and $functionplan)" -ForegroundColor yellow
-az functionapp create `
+$functionAppId = az functionapp create `
     --name $functionappkentaa `
     --resource-group $rg `
     --os-type Linux `
@@ -110,11 +110,19 @@ az functionapp create `
     --runtime dotnet `
     --runtime-version 6 `
     --storage-account $storageaccount `
-    --plan $functionplan
+    --plan $functionplan `
+    --assign-identity [system] `
+    --query identity.principalId
+
 
 write-host "Create azure functionapp config $functionappkentaa in $rg" -ForegroundColor yellow
 
 az functionapp config appsettings set `
     --name $functionappkentaa `
     --resource-group $rg `
-    --settings "AZURE_FUNCTION_ENVIRONMENT=$env" "cron_users=0 0 1 * * *" "cron_projects=0 0 2 * * *" "cron_actions=0 0 3 * * *" "cron_donations=0 0 4 * * *"
+    --settings "AZURE_FUNCTIONS_ENVIRONMENT=$env" "cron_users=0 0 1 * * *" "cron_projects=0 0 2 * * *" "cron_actions=0 0 3 * * *" "cron_donations=0 0 4 * * *"
+
+az keyvault set-policy `
+    --secret-permissions get list `
+    --name $keyvault `
+    --object-id $functionAppId

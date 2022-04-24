@@ -16,6 +16,9 @@ public class Startup : FunctionsStartup
     public override void Configure(IFunctionsHostBuilder builder)
     {
         var env = Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT");
+        if (string.IsNullOrEmpty(env))
+            throw new ArgumentNullException("AZURE_FUNCTIONS_ENVIRONMENT not set");
+
         var kentaaConfiguration = new ConfigurationBuilder()
             .AddEnvironmentVariables()
             .Build();
