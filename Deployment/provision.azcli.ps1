@@ -59,16 +59,23 @@ az keyvault set-policy `
     --object-id 9bc7d8cb-3828-44f0-a682-89a96e0daa1d
 
 write-host "Create azure webapp $webmonitor (in $rg and $plan)" -ForegroundColor yellow
-az webapp create `
+$monitorId = az webapp create `
     --name $webmonitor `
     --resource-group $rg `
     --plan $plan `
-    --runtime '"dotnetcore|6.0"' 
+    --runtime '"dotnetcore|6.0"' `
+    --assign-identity [system] `
+    --query identity.principalId
 
 az webapp config appsettings set `
     --resource-group $rg `
-    --name $monitorapp `
-    --settings "VaultName=bergh-test-keyvault ASPNETCORE_ENVIRONMENT=$env"
+    --name $webmonitor `
+    --settings "VaultName=bergh-test-keyvault" "ASPNETCORE_ENVIRONMENT=$env"
+
+az keyvault set-policy `
+    --secret-permissions get list `
+    --name $keyvault `
+    --object-id $monitorId
 
 #### Function Apps
 write-host "Create azure storage account $storageaccount (in $rg at $location)" -ForegroundColor yellow
@@ -114,9 +121,7 @@ $functionAppId = az functionapp create `
     --assign-identity [system] `
     --query identity.principalId
 
-
 write-host "Create azure functionapp config $functionappkentaa in $rg" -ForegroundColor yellow
-
 az functionapp config appsettings set `
     --name $functionappkentaa `
     --resource-group $rg `

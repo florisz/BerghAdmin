@@ -1,3 +1,5 @@
+using Azure.Identity;
+
 using BerghAdmin.ApplicationServices.Mail;
 
 using BerghMonitor.Web;
@@ -9,7 +11,17 @@ using Mailjet.Client;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Configuration.AddUserSecrets<SendMailService>();
+var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+if (string.IsNullOrEmpty(env))
+    throw new ArgumentNullException("ASPNETCORE_ENVIRONMENT not set");
+
+builder.Configuration
+    .AddUserSecrets<SendMailService>()
+    .AddAzureKeyVault(
+        new Uri($"https://bergh-{env}-keyvault.vault.azure.net"),
+        new DefaultAzureCredential()
+    );
+
 builder.Services
     .AddTransient<ISendMailService, SendMailService>()
     .AddHttpClient<IMailjetClient, MailjetClient>(client =>
