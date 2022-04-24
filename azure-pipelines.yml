@@ -76,5 +76,5 @@ stages:
       inputs:
         azureSubscription: 'bergh-test-azurerm'
         appType: 'functionAppLinux'
-        appName: 'bergh-test-functionapp-kentaa'
+        appName: 'bergh-test-kentaa-functionapp'
         package: '$(System.ArtifactsDirectory)/**/BerghAdmin.KentaaFunction.zip'
