@@ -67,7 +67,7 @@ stages:
         ConnectionType: 'AzureRM'
         azureSubscription: 'bergh-test-azurerm'
         appType: 'webAppLinux'
-        WebAppName: 'bergh-test-bergh-monitor-webapp'
+        WebAppName: 'bergh-test-monitor-webapp'
         packageForLinux: '$(System.ArtifactsDirectory)/**/BerghMonitor.Web.zip'
         RuntimeStack: 'DOTNETCORE|6.0'
 
