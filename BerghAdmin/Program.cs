@@ -1,9 +1,7 @@
 using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
 
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
-using BerghAdmin.Services.Authentication;
 using BerghAdmin.Services.Betalingen;
 using BerghAdmin.Services.Bihz;
 using BerghAdmin.Services.Donaties;
@@ -16,7 +14,6 @@ using Mailjet.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 using Serilog;
@@ -103,11 +100,17 @@ public class Program
     static void RegisterServices(WebApplicationBuilder builder)
     {
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        if (string.IsNullOrEmpty(env))
+            throw new ArgumentNullException("ASPNETCORE_ENVIRONMENT");
+
         builder.Configuration.AddUserSecrets<SendMailService>();
-        builder.Configuration.AddAzureKeyVault(
-            new Uri($"https://bergh-{env}-keyvault.vault.azure.net"),
-            new DefaultAzureCredential()
-            );
+        if (env != "Development")
+        {
+            builder.Configuration.AddAzureKeyVault(
+              new Uri($"https://bergh-{env}-keyvault.vault.azure.net"),
+              new DefaultAzureCredential()
+              );
+        }
 
         // Add services to the container.
         builder.Services.AddRazorPages();
