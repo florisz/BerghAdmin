@@ -1,16 +1,18 @@
+$env = "test"
 $rg = "BerghTest"
 $location = "westeurope"
 
-$plan = "bergh-test-plan"
-$webapp = "bergh-test-bergh-admin-webapp"
-$webmonitor = "bergh-test-bergh-monitor-webapp"
-$storageaccount = "berghteststorageacc001"
-$workspace = "bergh-test-workspace"
-$appinsights = "bergh-test-appinsights"
-$functionplan = "bergh-test-functionplan"
-$functionappkentaa = "bergh-test-functionapp-kentaa"
-$keyvault = "bergh-test-keyvault"
+$plan = "bergh-$env-plan"
+$webapp = "bergh-$env-admin-webapp"
+$webmonitor = "bergh-$env-monitor-webapp"
+$storageaccount = "bergh$($env)storage"
+$workspace = "bergh-$env-workspace"
+$appinsights = "bergh-$env-appinsights"
+$functionplan = "bergh-$env-functionplan"
+$functionappkentaa = "bergh-$env-kentaa-functionapp"
+$keyvault = "bergh-$env-keyvault"
 
+# setup environment
 write-host "Create azure group $rg in $location" -ForegroundColor yellow
 az group create `
     --name $rg `
@@ -25,6 +27,12 @@ az appservice plan create `
     --is-linux `
     --number-of-workers 1
 
+az keyvault create `
+    --resource-group $rg `
+    --name $keyvault `
+    --location $location `
+    --sku Standard
+
 #### Web Apps
 write-host "Create azure webapp $webapp (in $rg and $plan)" -ForegroundColor yellow
 az webapp create `
@@ -37,7 +45,7 @@ write-host "Create azure webapp config settings for $webapp set keyvault to berg
 az webapp config appsettings set `
     --resource-group $rg `
     --name $webapp `
-    --settings 'VaultName=bergh-test-keyvault'
+    --settings "VaultName=bergh-test-keyvault ASPNETCORE_ENVIRONMENT=$env"
 
 write-host "Create azure webapp managed identity" -ForegroundColor yellow
 az webapp identity assign `
@@ -56,6 +64,11 @@ az webapp create `
     --resource-group $rg `
     --plan $plan `
     --runtime '"dotnetcore|6.0"' 
+
+az webapp config appsettings set `
+    --resource-group $rg `
+    --name $monitorapp `
+    --settings "VaultName=bergh-test-keyvault ASPNETCORE_ENVIRONMENT=$env"
 
 #### Function Apps
 write-host "Create azure storage account $storageaccount (in $rg at $location)" -ForegroundColor yellow
@@ -100,7 +113,8 @@ az functionapp create `
     --plan $functionplan
 
 write-host "Create azure functionapp config $functionappkentaa in $rg" -ForegroundColor yellow
+
 az functionapp config appsettings set `
     --name $functionappkentaa `
     --resource-group $rg `
-    --settings "?????????????AzureWebJobsStorage=$storageConnectionString"
+    --settings "AZURE_FUNCTION_ENVIRONMENT=$env" "cron_users=0 0 1 * * *" "cron_projects=0 0 2 * * *" "cron_actions=0 0 3 * * *" "cron_donations=0 0 4 * * *"

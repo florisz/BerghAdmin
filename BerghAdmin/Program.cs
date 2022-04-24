@@ -102,9 +102,10 @@ public class Program
 
     static void RegisterServices(WebApplicationBuilder builder)
     {
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         builder.Configuration.AddUserSecrets<SendMailService>();
         builder.Configuration.AddAzureKeyVault(
-            new Uri("https://bergh-test-keyvault.vault.azure.net"),
+            new Uri($"https://bergh-{env}-keyvault.vault.azure.net"),
             new DefaultAzureCredential()
             );
 

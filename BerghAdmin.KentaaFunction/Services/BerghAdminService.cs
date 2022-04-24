@@ -8,9 +8,9 @@ namespace BerghAdmin.KentaaFunction.Services;
 public class BerghAdminService
 {
     private readonly HttpClient berghClient;
-    private readonly BerghAdminConfiguration settings;
+    private readonly ApiConfiguration settings;
 
-    public BerghAdminService(HttpClient httpClient, IOptions<BerghAdminConfiguration> settings)
+    public BerghAdminService(HttpClient httpClient, IOptions<ApiConfiguration> settings)
     {
         berghClient = httpClient;
         this.settings = settings.Value;
