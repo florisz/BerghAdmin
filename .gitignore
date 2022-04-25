@@ -347,3 +347,5 @@ DBDownload*.xlsx
 SetSecrets.sh
 secrets*.json
 RunBihzRelease.ps1
+SetAzureSecrets.PS1
+
