@@ -1,3 +1,5 @@
+using Azure.Identity;
+
 using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services.Betalingen;
@@ -70,7 +72,8 @@ public class Program
             .AddDefaultIdentity<User>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
-                options.Password.RequiredLength = 6;
+                options.SignIn.RequireConfirmedPhoneNumber = true;
+                options.Password.RequiredLength = 10;
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
@@ -80,6 +83,7 @@ public class Program
             .AddSignInManager<SignInManager<User>>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
+        //services.AddTransient<IEmailSender, AuthenticationSender>();
         services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
         services.AddSingleton<IAuthorizationHandler, BeheerFietsersPolicyHandler>();
         services.AddAuthorization(options =>
@@ -95,6 +99,19 @@ public class Program
 
     static void RegisterServices(WebApplicationBuilder builder)
     {
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        if (string.IsNullOrEmpty(env))
+            throw new ArgumentNullException("ASPNETCORE_ENVIRONMENT");
+
+        builder.Configuration.AddUserSecrets<SendMailService>();
+        if (env != "Development")
+        {
+            builder.Configuration.AddAzureKeyVault(
+              new Uri($"https://bergh-{env}-keyvault.vault.azure.net"),
+              new DefaultAzureCredential()
+              );
+        }
+
         // Add services to the container.
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
@@ -147,8 +164,8 @@ public class Program
             //set BaseAddress, MediaType, UserAgent
             client.SetDefaultSettings();
 
-            string apiKey = builder.Configuration.GetValue<string>("MailJetConfiguration:ApiKey");
-            string apiSecret = builder.Configuration.GetValue<string>("MailJetConfiguration:ApiSecret");
+            string apiKey = builder.Configuration["MailJetConfiguration:ApiKey"];
+            string apiSecret = builder.Configuration["MailJetConfiguration:ApiSecret"];
             client.UseBasicAuthentication(apiKey, apiSecret);
         });
     }

@@ -1,4 +1,6 @@
-﻿using BerghAdmin.ApplicationServices.KentaaInterface;
+﻿using Azure.Identity;
+
+using BerghAdmin.ApplicationServices.KentaaInterface;
 using BerghAdmin.KentaaFunction.Services;
 
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -13,17 +15,27 @@ public class Startup : FunctionsStartup
 {
     public override void Configure(IFunctionsHostBuilder builder)
     {
+        var env = Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT");
+        if (string.IsNullOrEmpty(env))
+            throw new ArgumentNullException("AZURE_FUNCTIONS_ENVIRONMENT not set");
+
         var kentaaConfiguration = new ConfigurationBuilder()
             .AddEnvironmentVariables()
             .Build();
-
-        var berghConfiguration = new ConfigurationBuilder()
-            .AddEnvironmentVariables()
-            .Build();
+        
+        if (env != "Development")
+        {
+            kentaaConfiguration = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .AddAzureKeyVault(
+                  new Uri($"https://bergh-{env}-keyvault.vault.azure.net"),
+                  new DefaultAzureCredential()
+            ).Build();
+        }
 
         builder.Services.AddOptions()
             .Configure<KentaaConfiguration>(kentaaConfiguration.GetSection("KentaaConfiguration"))
-            .Configure<BerghAdminConfiguration>(berghConfiguration.GetSection("BerghAdminConfiguration"))
+            .Configure<ApiConfiguration>(kentaaConfiguration.GetSection("ApiConfiguration"))
             .AddScoped<IKentaaInterfaceService, KentaaInterfaceService>()
             .AddScoped<BerghAdminService>().AddHttpClient();
 
