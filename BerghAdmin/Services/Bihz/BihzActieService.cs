@@ -1,8 +1,7 @@
 ﻿using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
-
-using System.Text.Json;
+using BerghAdmin.Services.Evenementen;
 
 namespace BerghAdmin.Services.Bihz;
 
@@ -11,11 +10,13 @@ public class BihzActieService : IBihzActieService
     private readonly ApplicationDbContext dbContext;
     private readonly ILogger<BihzActieService> _logger;
     private readonly IPersoonService _persoonService;
+    private readonly IEvenementService _evenementService;
 
-    public BihzActieService(ApplicationDbContext context, IPersoonService persoonService, ILogger<BihzActieService> logger)
+    public BihzActieService(ApplicationDbContext context, IPersoonService persoonService, IEvenementService evenementService, ILogger<BihzActieService> logger)
     {
         this.dbContext = context;
         this._persoonService = persoonService;
+        this._evenementService = evenementService;
         this._logger = logger;
     }
 
@@ -42,6 +43,17 @@ public class BihzActieService : IBihzActieService
             bihzActie.PersoonId = persoon.Id;
 
             _persoonService.SavePersoon(persoon);
+
+            // Add this persoon as deelnemer of the fietstocht (= project in Kentaa)
+            if (bihzActie.ProjectId != null)
+            {
+                var evenement = _evenementService.GetByProjectId((int) bihzActie.ProjectId);
+                if (evenement != null)
+                {
+                    _logger.LogDebug(evenement.ToString());
+                    _evenementService.AddDeelnemer(evenement, persoon);
+                }
+            }
         }
 
         Save(bihzActie);

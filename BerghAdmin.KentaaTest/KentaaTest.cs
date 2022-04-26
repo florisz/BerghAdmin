@@ -38,33 +38,35 @@ public class KentaaTest
 
     public static async Task ReadAndPostAllResources(IKentaaInterfaceService service, HttpClient httpClient)
     {
+        const string berghAdminUrl = "https://bergh-test-bergh-admin-webapp.azurewebsites.net";
+
         var users = service.GetKentaaResourcesByQuery<KM.Users, KM.User>(new KentaaFilter());
         await foreach (var user in users)
         {
             Console.WriteLine($"Post user {user.first_name} {user.last_name} ({user.email})");
             var content = GetContent(user.Map());
-            await httpClient.PostAsync("https://localhost:44344/users", content);
+            await httpClient.PostAsync($"{berghAdminUrl}/users", content);
         }
         var projects = service.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
         await foreach (var project in projects)
         {
             Console.WriteLine($"Post Project {project.title} {project.description}");
             var content = GetContent(project.Map());
-            await httpClient.PostAsync("https://localhost:44344/projects", content);
+            await httpClient.PostAsync($"{berghAdminUrl}/projects", content);
         }
         var actions = service.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
         await foreach (var action in actions)
         {
             Console.WriteLine($"Post Action {action.title} {action.description}");
             var content = GetContent(action.Map());
-            await httpClient.PostAsync("https://localhost:44344/actions", content);
+            await httpClient.PostAsync($"{berghAdminUrl}/actions", content);
         }
         var donations = service.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
         await foreach (var donation in donations)
         {
             Console.WriteLine($"Post Donation; amount={donation.amount}; receivable={donation.receivable_amount}");
             var content = GetContent(donation.Map());
-            await httpClient.PostAsync("https://localhost:44344/donations", content);
+            await httpClient.PostAsync($"{berghAdminUrl}/donations", content);
         }
     }
 
