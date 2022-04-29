@@ -39,7 +39,7 @@ public class BihzProjectService : IBihzProjectService
             evenement.BihzProject = bihzProject;
             bihzProject.EvenementId = evenement.Id;
 
-            _evenementService.Save(evenement);
+            _evenementService.Save(evenement).Wait();
         }
 
         Save(bihzProject);

@@ -23,7 +23,10 @@ public class KentaaTest
     {
         var optionValue = new KentaaConfiguration()
         {
-            ApiKey = "9793e5718dafb2f50aec5483e8b88dea97d43a237a3cb7dbfa50d2d747285ebb",
+            //test kentaa
+            //ApiKey = "9793e5718dafb2f50aec5483e8b88dea97d43a237a3cb7dbfa50d2d747285ebb",
+            //production kentaa
+            ApiKey = "94f9fdcca1c0e574160f2a76675bee77971d5894c91d83d6bc221dbab5055555",
             KentaaBasePath = "v1",
             KentaaHost = "api.kentaa.nl"
         };
@@ -31,9 +34,11 @@ public class KentaaTest
 
         var httpClientFactory = _serviceProvider.GetRequiredService<IHttpClientFactory>();
         var kentaaInterfaceService = new KentaaInterfaceService(options, httpClientFactory);
-        using var httpClient = httpClientFactory.CreateClient();
-        
-        await ReadAndPostAllResources(kentaaInterfaceService, httpClient);
+        using (var httpClient = httpClientFactory.CreateClient())
+        {
+            httpClient.DefaultRequestHeaders.Add("api-key", "abcdefghijklm");
+            await ReadAndPostAllResources(kentaaInterfaceService, httpClient);
+        }
     }
 
     public static async Task ReadAndPostAllResources(IKentaaInterfaceService service, HttpClient httpClient)
