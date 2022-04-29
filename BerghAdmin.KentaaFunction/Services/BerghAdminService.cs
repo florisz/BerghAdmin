@@ -8,19 +8,17 @@ namespace BerghAdmin.KentaaFunction.Services;
 public class BerghAdminService
 {
     private readonly HttpClient berghClient;
-    private readonly ApiConfiguration settings;
 
-    public BerghAdminService(HttpClient httpClient, IOptions<ApiConfiguration> settings)
+    public BerghAdminService(HttpClient httpClient)
     {
-        berghClient = httpClient;
-        this.settings = settings.Value;
+        this.berghClient = httpClient;
     }
 
     public async Task Send<T>(IAsyncEnumerable<KM.User> users)
     {
         await foreach (var user in users)
         {
-            await berghClient.PostAsJsonAsync(new Uri(settings.Host, "users"), user.Map());
+            await berghClient.PostAsJsonAsync("users", user.Map());
         }
     }
 
@@ -28,7 +26,7 @@ public class BerghAdminService
     {
         await foreach (var project in projects)
         {
-            await berghClient.PostAsJsonAsync(new Uri(settings.Host, "projects"), project.Map());
+            await berghClient.PostAsJsonAsync("projects", project.Map());
         }
     }
 
@@ -36,14 +34,14 @@ public class BerghAdminService
     {
         await foreach (var action in actions)
         {
-            await berghClient.PostAsJsonAsync(new Uri(settings.Host, "actions"), action.Map());
+            await berghClient.PostAsJsonAsync("actions", action.Map());
         }
     }
     public async Task Send<T>(IAsyncEnumerable<KM.Donation> donations)
     {
         await foreach (var donation in donations)
         {
-            await berghClient.PostAsJsonAsync(new Uri(settings.Host, "donations"), donation.Map());
+            await berghClient.PostAsJsonAsync("donations", donation.Map());
         }
     }
 }
