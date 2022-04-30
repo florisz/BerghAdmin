@@ -21,7 +21,7 @@ public class EvenementService : IEvenementService
     public Evenement? GetById(int id) 
         => _dbContext
             .Evenementen?
-            .Find(id);
+            .FirstOrDefault(e => e.Id== id);
 
     public Evenement? GetByTitel(string? titel) 
         => _dbContext
@@ -30,10 +30,9 @@ public class EvenementService : IEvenementService
 
     public Evenement? GetByProjectId(int projectId)
     => _dbContext
-        .Evenementen?
-        .OfType<FietsTocht>()
-        .Where(ev => ev.BihzProject != null)
-        .FirstOrDefault(e => e.BihzProject!.Id == projectId);
+            .Evenementen?
+            .OfType<FietsTocht>()
+            .FirstOrDefault(e => e.KentaaProjectId == projectId);
 
 
     public async Task<ErrorCodeEnum> Save(Evenement evenement)

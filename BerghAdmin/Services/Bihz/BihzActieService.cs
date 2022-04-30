@@ -50,8 +50,8 @@ public class BihzActieService : IBihzActieService
                 var evenement = _evenementService.GetByProjectId((int) bihzActie.ProjectId);
                 if (evenement != null)
                 {
-                    _logger.LogDebug(evenement.ToString());
-                    _evenementService.AddDeelnemer(evenement, persoon);
+                    _logger.LogDebug("Add deelnemer {PersoonNaam} to evenement {EvenementNaam}", persoon.VolledigeNaam, evenement.Titel);
+                    _evenementService.AddDeelnemer(evenement, persoon).Wait();
                 }
             }
         }

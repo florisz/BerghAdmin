@@ -30,6 +30,7 @@ DROP TABLE Rollen
 DROP TABLE Documenten
 DROP TABLE BihzProjects
 DROP TABLE Evenementen
+DROP TABLE Logs
 
 /* clean to seed again */
 DELETE FROM Evenementen 

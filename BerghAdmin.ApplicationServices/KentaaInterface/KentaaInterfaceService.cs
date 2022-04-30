@@ -85,7 +85,7 @@ public class KentaaInterfaceService : IKentaaInterfaceService
         {
             Console.WriteLine(ex.Message);
         }
-        throw new ApplicationException($"Could not get {typeof(T).Name} donation from Kentaa; {url}");
+        throw new ApplicationException($"Could not get {typeof(T).Name} from Kentaa; {url}");
     }
 
 }

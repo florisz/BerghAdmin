@@ -35,29 +35,11 @@ public class DebugSeedUsersService : ISeedUsersService
         {
             var persoon = new Persoon
             {
-                Voorletters = "L P",
-                Voornaam = "Lars-Peter",
-                Achternaam = "Reumer",
-                Adres = "Laan 12",
-                EmailAdres = "lpreumer@mail.com",
-                GeboorteDatum = new DateTime(2002, 1, 1),
-                Geslacht = GeslachtEnum.Man,
-                Land = "Nederland",
-                Mobiel = "06-12345678",
-                Plaats = "Arnhem",
-                Postcode = "6100 DT",
-                Telefoon = "onbekend",
-                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.CommissieLid] }
-            };
-            await InsertUser(persoon, rollen, "secretaris", AdministratorPolicyHandler.Claim);
-
-            persoon = new Persoon
-            {
                 Voorletters = "F",
                 Voornaam = "Floris",
                 Achternaam = "Zwarteveen",
                 Adres = "Berkenlaan 12",
-                EmailAdres = "fzwarteveen@gmail.com",
+                EmailAdres = "florisz@maatschap42.nl",
                 GeboorteDatum = new DateTime(2002, 1, 1),
                 Geslacht = GeslachtEnum.Man,
                 Land = "Nederland",

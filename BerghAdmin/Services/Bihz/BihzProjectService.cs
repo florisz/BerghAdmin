@@ -36,14 +36,16 @@ public class BihzProjectService : IBihzProjectService
                         project.ProjectId, project.Titel);
                 return;
             }
-            evenement.BihzProject = bihzProject;
             bihzProject.EvenementId = evenement.Id;
 
-            _evenementService.Save(evenement);
+            evenement.KentaaProjectId = bihzProject.ProjectId;
+            _evenementService.Save(evenement).Wait();
+            
+            _logger.LogInformation("Kentaa project with id {ProjectId} successfully saved and linked to evenement with id {EvenementId}", bihzProject.ProjectId, bihzProject.EvenementId);
         }
 
         Save(bihzProject);
-        _logger.LogInformation("Kentaa project with id {ProjectId} successfully linked to evenement with id {EvenementId}", bihzProject.ProjectId, bihzProject.EvenementId);
+        _logger.LogInformation("Values from Kentaa project with id {ProjectId} successfully saved to evenement with id {EvenementId}", bihzProject.ProjectId, bihzProject.EvenementId);
     }
 
     public void Add(IEnumerable<BihzProject> projects)
