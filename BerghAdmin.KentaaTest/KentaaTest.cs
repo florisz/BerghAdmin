@@ -43,7 +43,8 @@ public class KentaaTest
 
     public static async Task ReadAndPostAllResources(IKentaaInterfaceService service, HttpClient httpClient)
     {
-        const string berghAdminUrl = "https://bergh-test-bergh-admin-webapp.azurewebsites.net";
+        //const string berghAdminUrl = "https://bergh-test-bergh-admin-webapp.azurewebsites.net";
+        const string berghAdminUrl = "https://localhost:44344";
 
         var users = service.GetKentaaResourcesByQuery<KM.Users, KM.User>(new KentaaFilter());
         await foreach (var user in users)
@@ -55,14 +56,14 @@ public class KentaaTest
         var projects = service.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
         await foreach (var project in projects)
         {
-            Console.WriteLine($"Post Project {project.title} {project.description}");
+            Console.WriteLine($"Post Project {project.title}");
             var content = GetContent(project.Map());
             await httpClient.PostAsync($"{berghAdminUrl}/projects", content);
         }
         var actions = service.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter());
         await foreach (var action in actions)
         {
-            Console.WriteLine($"Post Action {action.title} {action.description}");
+            Console.WriteLine($"Post Action {action.title}; User: {action.first_name} {action.last_name}; ProjectId={action.project_id}");
             var content = GetContent(action.Map());
             await httpClient.PostAsync($"{berghAdminUrl}/actions", content);
         }

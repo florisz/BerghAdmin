@@ -21,22 +21,18 @@ public class EvenementService : IEvenementService
     public Evenement? GetById(int id) 
         => _dbContext
             .Evenementen?
-            .Include(ev => ev.BihzProject)
             .FirstOrDefault(e => e.Id== id);
 
     public Evenement? GetByTitel(string? titel) 
         => _dbContext
             .Evenementen?
-            .Include(ev => ev.BihzProject)
             .FirstOrDefault(e => e.Titel == titel);
 
     public Evenement? GetByProjectId(int projectId)
     => _dbContext
             .Evenementen?
             .OfType<FietsTocht>()
-            .Include(ev => ev.BihzProject)
-            .Where(ev => ev.BihzProject != null)
-            .FirstOrDefault(e => e.BihzProject!.Id == projectId);
+            .FirstOrDefault(e => e.KentaaProjectId == projectId);
 
 
     public async Task<ErrorCodeEnum> Save(Evenement evenement)

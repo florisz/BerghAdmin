@@ -267,7 +267,7 @@ namespace BerghAdmin.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Donateur");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.DonatieBase", b =>
+            modelBuilder.Entity("BerghAdmin.Data.Donatie", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -312,6 +312,9 @@ namespace BerghAdmin.Migrations
 
                     b.Property<DateTime>("GeplandeDatum")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("KentaaProjectId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Titel")
                         .HasColumnType("nvarchar(max)");
@@ -603,10 +606,6 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EvenementId")
-                        .IsUnique()
-                        .HasFilter("[EvenementId] IS NOT NULL");
 
                     b.HasIndex("ProjectId")
                         .IsUnique();
@@ -964,7 +963,7 @@ namespace BerghAdmin.Migrations
                     b.HasDiscriminator().HasValue("Persoon");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.DonatieBase", b =>
+            modelBuilder.Entity("BerghAdmin.Data.Donatie", b =>
                 {
                     b.HasOne("BerghAdmin.Data.Donateur", "Donateur")
                         .WithMany("Donaties")
@@ -1005,13 +1004,6 @@ namespace BerghAdmin.Migrations
                     b.HasOne("BerghAdmin.Data.Persoon", null)
                         .WithOne("BihzActie")
                         .HasForeignKey("BerghAdmin.Data.Kentaa.BihzActie", "PersoonId");
-                });
-
-            modelBuilder.Entity("BerghAdmin.Data.Kentaa.BihzProject", b =>
-                {
-                    b.HasOne("BerghAdmin.Data.Evenement", null)
-                        .WithOne("BihzProject")
-                        .HasForeignKey("BerghAdmin.Data.Kentaa.BihzProject", "EvenementId");
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Kentaa.BihzUser", b =>
@@ -1171,11 +1163,6 @@ namespace BerghAdmin.Migrations
             modelBuilder.Entity("BerghAdmin.Data.Donateur", b =>
                 {
                     b.Navigation("Donaties");
-                });
-
-            modelBuilder.Entity("BerghAdmin.Data.Evenement", b =>
-                {
-                    b.Navigation("BihzProject");
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Persoon", b =>

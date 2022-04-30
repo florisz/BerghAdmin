@@ -37,8 +37,8 @@ public class PersoonService : IPersoonService
                         .SingleOrDefault(p => p.BihzActie != null &&
                                               p.BihzActie.Id == actionId);
 
-        _logger.LogInformation("Persoon with naam {volledigeNaam} retrieved by actionId {actionId} was {result}", 
-                persoon?.VolledigeNaam, actionId, persoon == null ? "NOT Ok" : "Ok");
+        _logger.LogInformation("Persoon (id={PersoonId}) with naam {volledigeNaam} retrieved by actionId {actionId} was {result}", 
+                persoon?.Id, persoon?.VolledigeNaam, actionId, persoon == null ? "NOT Ok" : "Ok");
 
         return persoon;
     }
@@ -67,8 +67,8 @@ public class PersoonService : IPersoonService
                 .Include(p => p.Rollen)
                 .SingleOrDefault(x => x.EmailAdres == emailAdres);
 
-        _logger.LogInformation("Persoon with naam {volledigeNaam} retrieved by emailadres {emailAdres} was {result}",
-                persoon?.VolledigeNaam, emailAdres, persoon == null ? "NOT Ok" : "Ok");
+        _logger.LogInformation("Persoon (id={PersoonId}) with naam {volledigeNaam} retrieved by emailadres {emailAdres} was {result}",
+                persoon?.Id, persoon?.VolledigeNaam, emailAdres, persoon == null ? "NOT Ok" : "Ok");
 
         return persoon;
     }
