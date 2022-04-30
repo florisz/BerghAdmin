@@ -151,7 +151,7 @@ public class DebugSeedUsersService : ISeedUsersService
             LockoutEnd = null,
             PhoneNumber = "",
             PhoneNumberConfirmed = true,
-            TwoFactorEnabled = false
+            TwoFactorEnabled = false,
         };
 
         var result = await this._userManager.CreateAsync(user, "qwerty@123");

@@ -37,8 +37,10 @@
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="6.0.2" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.3" />
 		<PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
 		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.7.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
 		<PackageReference Include="Syncfusion.Blazor.Buttons" Version="19.2.0.44" />
 		<PackageReference Include="Syncfusion.Blazor.Cards" Version="19.2.0.44" />
 		<PackageReference Include="Syncfusion.Blazor.DropDowns" Version="19.2.0.44" />
