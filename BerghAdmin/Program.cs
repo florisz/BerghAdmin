@@ -83,7 +83,6 @@ public class Program
             .AddSignInManager<SignInManager<User>>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
-        //services.AddTransient<IEmailSender, AuthenticationSender>();
         services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
         services.AddSingleton<IAuthorizationHandler, BeheerFietsersPolicyHandler>();
         services.AddAuthorization(options =>

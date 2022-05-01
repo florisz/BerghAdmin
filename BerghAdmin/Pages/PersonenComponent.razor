@@ -134,7 +134,7 @@
         <GridColumn Field=@nameof(Persoon.IsVerwijderd) HeaderText="Status" FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })" Width="150">
             <Template>
                 @{
-                    var persoon = (context as Persoon);
+                    var persoon = (Persoon)context;
                     if (! persoon.IsVerwijderd)
                     {
                         <div class="statustemp e-activecolor">

@@ -8,6 +8,7 @@ public class User : IdentityUser<int>
 {
     // reference to the persoon who is currently logged in as user
     public int CurrentPersoonId { get; set; }
+    public int LoginCount { get; set; }
 
     public string? Name { get; set; }
     [NotMapped]

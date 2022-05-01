@@ -18,38 +18,38 @@
 
 	<ItemGroup>
 		<PackageReference Include="Azure.Data.Tables" Version="12.5.0" />
-		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="6.0.2" />
+		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="6.0.4" />
 		<PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
 		<PackageReference Include="Azure.Identity" Version="1.6.0" />
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
 		<PackageReference Include="CsvHelper" Version="27.2.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.2">
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.4" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.4">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.2">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.4">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="6.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="6.0.4" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.3" />
 		<PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
 		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.7.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
-		<PackageReference Include="Syncfusion.Blazor.Buttons" Version="19.2.0.44" />
-		<PackageReference Include="Syncfusion.Blazor.Cards" Version="19.2.0.44" />
-		<PackageReference Include="Syncfusion.Blazor.DropDowns" Version="19.2.0.44" />
-		<PackageReference Include="Syncfusion.Blazor.Grid" Version="19.2.0.44" />
-		<PackageReference Include="Syncfusion.Blazor.Inputs" Version="19.2.0.44" />
-		<PackageReference Include="Syncfusion.Blazor.Navigations" Version="19.2.0.44" />
-		<PackageReference Include="Syncfusion.Blazor.Popups" Version="19.2.0.44" />
-		<PackageReference Include="Syncfusion.Blazor.RichTextEditor" Version="19.2.0.44" />
-		<PackageReference Include="Syncfusion.Blazor.Themes" Version="19.2.0.44" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
+		<PackageReference Include="Syncfusion.Blazor.Buttons" Version="20.1.0.51" />
+		<PackageReference Include="Syncfusion.Blazor.Cards" Version="20.1.0.51" />
+		<PackageReference Include="Syncfusion.Blazor.DropDowns" Version="20.1.0.51" />
+		<PackageReference Include="Syncfusion.Blazor.Grid" Version="20.1.0.51" />
+		<PackageReference Include="Syncfusion.Blazor.Inputs" Version="20.1.0.51" />
+		<PackageReference Include="Syncfusion.Blazor.Navigations" Version="20.1.0.51" />
+		<PackageReference Include="Syncfusion.Blazor.Popups" Version="20.1.0.51" />
+		<PackageReference Include="Syncfusion.Blazor.RichTextEditor" Version="20.1.0.51" />
+		<PackageReference Include="Syncfusion.Blazor.Themes" Version="20.1.0.51" />
 		<!--<PackageReference Include="Syncfusion.DocIO.Net.Core" Version="19.2.0.44" />
 		<PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="19.2.0.44" />-->
 	</ItemGroup>
