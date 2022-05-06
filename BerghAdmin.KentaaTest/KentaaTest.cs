@@ -43,8 +43,8 @@ public class KentaaTest
 
     public static async Task ReadAndPostAllResources(IKentaaInterfaceService service, HttpClient httpClient)
     {
-        //const string berghAdminUrl = "https://bergh-test-bergh-admin-webapp.azurewebsites.net";
-        const string berghAdminUrl = "https://localhost:44344";
+        const string berghAdminUrl = "https://bergh-test-bergh-admin-webapp.azurewebsites.net";
+        //const string berghAdminUrl = "https://localhost:44344";
 
         var users = service.GetKentaaResourcesByQuery<KM.Users, KM.User>(new KentaaFilter());
         await foreach (var user in users)

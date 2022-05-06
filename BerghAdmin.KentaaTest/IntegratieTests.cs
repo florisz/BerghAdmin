@@ -111,7 +111,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             var projects = bihzProjectService!.GetAll();
             Assert.AreEqual(await kentaaProjects.CountAsync(), projects.Count());
-            var aProject = projects.FirstOrDefault(p => p.Titel == "Hanzetocht 2023");
+            var aProject = projects.FirstOrDefault(p => p.Titel == "Fietstocht 2023");
             Assert.IsNotNull(aProject);
             Assert.IsTrue(aProject!.Gesloten == false);
         }
@@ -170,7 +170,7 @@ namespace BerghAdmin.Tests.Kentaa
             var kentaaProjects = kentaaService.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
             bihzProjectService!.Add(await kentaaProjects.Select(kp => kp.Map()).ToListAsync());
 
-            var fietsTochtNaam = "Hanzetocht 2023";
+            var fietsTochtNaam = "Fietstocht 2023";
             if (evenementService!.GetByTitel(fietsTochtNaam) is not FietsTocht fietsTocht)
             {
                 Assert.Fail($"Fietstocht {fietsTochtNaam} bestaat niet");
