@@ -9,18 +9,18 @@ namespace BerghAdmin.Services.Seeding;
 
 public class DebugSeedUsersService : ISeedUsersService
 {
-    private readonly ApplicationDbContext _dbContext;
     private readonly UserManager<User> _userManager;
     private readonly IRolService _rolService;
+    private readonly IPersoonService _persoonService;
 
     public DebugSeedUsersService(
-        ApplicationDbContext dbContext,
         UserManager<User> userManager,
-        IRolService rolService)
+        IRolService rolService,
+        IPersoonService persoonService)
     {
-        this._dbContext = dbContext;
         this._rolService = rolService;
         this._userManager = userManager;
+        this._persoonService = persoonService;
     }
 
     public async Task SeedUsersData()
@@ -118,8 +118,10 @@ public class DebugSeedUsersService : ISeedUsersService
 
     private async Task InsertUser(Persoon persoon, Dictionary<RolTypeEnum, Rol> rollen, string naam, Claim claim)
     {
-        await _dbContext.AddAsync(persoon);
-        await _dbContext.SaveChangesAsync();
+        if (_persoonService.GetByEmailAdres(persoon.EmailAdres) == null)
+        {
+            _persoonService.SavePersoon(persoon);
+        }
 
         var user = new User
         {
@@ -140,6 +142,7 @@ public class DebugSeedUsersService : ISeedUsersService
         if (result.Succeeded)
         {
             await this._userManager.AddClaimAsync(user, claim);
+            await this._userManager.UpdateAsync(user);
         }
     }
 
