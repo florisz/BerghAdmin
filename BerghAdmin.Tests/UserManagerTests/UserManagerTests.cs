@@ -17,8 +17,6 @@ namespace BerghAdmin.Tests.UserManagerTests
     [TestFixture]
     public class UserManagerTests : DatabasedTests
     {
-        private UserManager<User> _userManager;
-
         protected override void RegisterServices(ServiceCollection services)
         {
             services.AddIdentityCore<User>(options =>
@@ -31,26 +29,49 @@ namespace BerghAdmin.Tests.UserManagerTests
             services.AddAuthorizationCore();
             services.AddAuthenticationCore();
             services.AddAuthorizationPolicyEvaluator();
-            services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
             services
                 .AddScoped<IUserService, UserService>()
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-
-            // just some testing
-            _userManager = services.BuildServiceProvider().GetService<UserManager<User>>();
+            services.AddDataProtection();
         }
 
         [Test]
         public async Task AddUserWithoutClaimsTest()
         {
             var service = this.GetRequiredService<IUserService>();
-            var claims = new Claim[] { };
+
             var userName = "PommetjeHorlepiep";
+            var errors = await service.InsertUserAsync(userName);
+            if (errors != null)
+            {
+                Assert.Fail(string.Join(",", errors.Select(e => $"{e.Code}: {e.Description}").ToArray()));
+            }
 
-            var user = service.GetUserAsync(userName);
-
+            var user = await service.GetUserAsync(userName);
             Assert.IsNotNull(user);
+            Assert.AreEqual(userName, user.UserName);
+        }
+
+        [Test]
+        public async Task AddUserWithoutClaimsWitPersoonTest()
+        {
+            var service = this.GetRequiredService<IUserService>();
+
+            var userName = "PommetjeHorlepiep";
+            var persoon = new Persoon() { Id = 42, Voornaam = "Pommetje", Achternaam = "Horlepiep" };
+            var errors = await service.InsertUserAsync(userName, persoon);
+            if (errors != null)
+            {
+                Assert.Fail(string.Join(",", errors.Select(e => $"{e.Code}: {e.Description}").ToArray()));
+            }
+
+            var user = await service.GetUserAsync(userName);
+            Assert.IsNotNull(user);
+            Assert.AreEqual(userName, user.UserName);
+            Assert.AreEqual(42, user.CurrentPersoonId);
         }
 
         [Test]
@@ -59,12 +80,16 @@ namespace BerghAdmin.Tests.UserManagerTests
             var service = this.GetRequiredService<IUserService>();
             var claims = new Claim[] { AdministratorPolicyHandler.Claim };
             var userName = "PommetjeHorlepiep";
-            await service.InsertUserAsync(userName, claims);
+            var errors = await service.InsertUserAsync(userName, claims);
+            if (errors != null)
+            {
+                Assert.Fail(string.Join(",", errors.Select(e => $"{e.Code}: {e.Description}").ToArray()));
+            }
 
             var user = await service.GetUserAsync(userName);
             Assert.IsNotNull(user);
 
-            var userClaims = await _userManager.GetClaimsAsync(user);
+            var userClaims = await service.GetUserClaimsAsync(userName);
             Assert.AreEqual(1, userClaims.Count);
         }
 
@@ -74,12 +99,16 @@ namespace BerghAdmin.Tests.UserManagerTests
             var service = this.GetRequiredService<IUserService>();
             var claims = new Claim[] { AdministratorPolicyHandler.Claim, BeheerSecretariaatPolicyHandler.Claim };
             var userName = "PommetjeHorlepiep";
-            await service.InsertUserAsync(userName, claims);
+            var errors = await service.InsertUserAsync(userName, claims);
+            if (errors != null)
+            {
+                Assert.Fail(string.Join(",", errors.Select(e => $"{e.Code}: {e.Description}").ToArray()));
+            }
 
             var user = await service.GetUserAsync(userName);
             Assert.IsNotNull(user);
 
-            var userClaims = await _userManager.GetClaimsAsync(user);
+            var userClaims = await service.GetUserClaimsAsync(userName);
             Assert.AreEqual(2, userClaims.Count);
         }
     }

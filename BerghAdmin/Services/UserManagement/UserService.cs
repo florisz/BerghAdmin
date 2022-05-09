@@ -7,7 +7,7 @@ namespace BerghAdmin.Services.UserManagement;
 public class UserService : IUserService
 {
     private readonly UserManager<User> _userManager;
-    private const string DEFAULT_PASSWORD = "qwerty@123";
+    private const string DEFAULT_PASSWORD = "Qwerty@123";
 
     public UserService(UserManager<User> userManager)
     {
@@ -19,18 +19,35 @@ public class UserService : IUserService
         throw new NotImplementedException();
     }
 
-    public async Task<User?> GetUserAsync(string naam)
-    {
-        var result = await this._userManager.FindByNameAsync(naam);
+    public async Task<User> GetUserAsync(string naam)
+        => await this._userManager.FindByNameAsync(naam);
 
-        return result;
+    public async Task<IList<Claim>> GetUserClaimsAsync(string naam)
+    {
+        var user = await GetUserAsync(naam);
+        if (user == null)
+            return new List<Claim>();
+
+        var userClaims = await _userManager.GetClaimsAsync(user);
+
+        return userClaims;
     }
 
-    public async Task InsertUserAsync(string naam, Claim[] claims)
+    public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam)
+        => await InsertUserAsync(naam, new Claim[] { }, null );
+
+    public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Persoon? persoon)
+        => await InsertUserAsync(naam, new Claim[] { }, persoon);
+
+    public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Claim[]? claims)
+        => await InsertUserAsync(naam, claims, null);
+
+
+    public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Claim[]? claims, Persoon? persoon)
     {
         var user = new User
         {
-            CurrentPersoonId = null,
+            CurrentPersoonId = (persoon == null)? null : persoon.Id,
             Name = naam,
             UserName = naam,
             Email = $"{naam}@berghinhetzadel.nl",
@@ -44,31 +61,32 @@ public class UserService : IUserService
         };
 
         var result = await this._userManager.CreateAsync(user, DEFAULT_PASSWORD);
-        if (result.Succeeded)
+        if (!result.Succeeded)
+        {
+            return result.Errors;
+        }
+        else
         {
             foreach (var claim in claims)
             {
                 result = await this._userManager.AddClaimAsync(user, claim);
                 if (!result.Succeeded)
                 {
-                    throw new ApplicationException($"Claim {claim.Type} could not be added to user {user.Name}");
+                    return result.Errors;
                 }
             }
             await this._userManager.UpdateAsync(user);
         }
+
+        return null;
     }
 
-    public Task InsertUserAsync(string naam, Claim[] claims, Persoon persoon)
+    public Task<IEnumerable<IdentityError>?> UpdateUserAsync(string naam, Claim[]? claims)
     {
         throw new NotImplementedException();
     }
 
-    public Task UpdateUserAsync(string naam, Claim[] claims)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task UpdateUserAsync(string naam, Claim[] claims, Persoon persoon)
+    public Task<IEnumerable<IdentityError>?> UpdateUserAsync(string naam, Claim[]? claims, Persoon? persoon)
     {
         throw new NotImplementedException();
     }
