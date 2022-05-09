@@ -91,6 +91,8 @@ namespace BerghAdmin.Tests.UserManagerTests
 
             var userClaims = await service.GetUserClaimsAsync(userName);
             Assert.AreEqual(1, userClaims.Count);
+            Assert.AreEqual("role", userClaims[0].Type);
+            Assert.AreEqual("administrator", userClaims[0].Value);
         }
 
         [Test]
@@ -110,6 +112,10 @@ namespace BerghAdmin.Tests.UserManagerTests
 
             var userClaims = await service.GetUserClaimsAsync(userName);
             Assert.AreEqual(2, userClaims.Count);
+            Assert.AreEqual("role", userClaims[0].Type);
+            Assert.AreEqual("administrator", userClaims[0].Value);
+            Assert.AreEqual("role", userClaims[1].Type);
+            Assert.AreEqual("beheerambassadeurs", userClaims[1].Value);
         }
     }
 }
