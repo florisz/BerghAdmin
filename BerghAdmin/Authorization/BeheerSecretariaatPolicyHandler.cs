@@ -6,7 +6,7 @@ namespace BerghAdmin.Authorization;
 public class BeheerSecretariaatPolicyHandler : AuthorizationHandler<IsSecretariaatBeheerderRequirement>
 {
     public static Claim Claim
-        => new("role", "beheerambassadeurs");
+        => new("role", "beheersecretariaat");
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsSecretariaatBeheerderRequirement requirement)
     {
         if (context.User.HasClaim(Claim.Type, Claim.Value))

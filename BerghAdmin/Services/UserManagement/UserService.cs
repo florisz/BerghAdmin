@@ -7,7 +7,6 @@ namespace BerghAdmin.Services.UserManagement;
 public class UserService : IUserService
 {
     private readonly UserManager<User> _userManager;
-    private const string DEFAULT_PASSWORD = "Qwerty@123";
 
     public UserService(UserManager<User> userManager)
     {
@@ -17,6 +16,19 @@ public class UserService : IUserService
     public Task DeleteUserAsync(string naam)
     {
         throw new NotImplementedException();
+    }
+
+    public IList<Claim> GetClaims()
+    {
+        return new List<Claim>()
+        {
+            AdministratorPolicyHandler.Claim,
+            BeheerAmbassadeursPolicyHandler.Claim,
+            BeheerFietsersPolicyHandler.Claim,
+            BeheerFinancienPolicyHandler.Claim,
+            BeheerGolfersPolicyHandler.Claim,
+            BeheerSecretariaatPolicyHandler.Claim
+        };
     }
 
     public async Task<User> GetUserAsync(string naam)
@@ -36,63 +48,117 @@ public class UserService : IUserService
         return userClaims;
     }
 
-    public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam)
-        => await InsertUserAsync(naam, Array.Empty<Claim>(), null );
+    public async Task<IdentityResult> InsertUserAsync(User user, string password)
+        => await InsertUserAsync(user, password, Array.Empty<Claim>(), null );
 
-    public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Persoon? persoon)
-        => await InsertUserAsync(naam, Array.Empty<Claim>(), persoon);
+    public async Task<IdentityResult> InsertUserAsync(User user, string password, Persoon? persoon)
+        => await InsertUserAsync(user, password, Array.Empty<Claim>(), persoon);
 
-    public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Claim[] claims)
-        => await InsertUserAsync(naam, claims, null);
+    public async Task<IdentityResult> InsertUserAsync(User user, string password, Claim[] claims)
+        => await InsertUserAsync(user, password, claims, null);
 
 
-    public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Claim[] claims, Persoon? persoon)
+    public async Task<IdentityResult> InsertUserAsync(User user, string password, Claim[] claims, Persoon? persoon)
     {
-        var user = new User
-        {
-            CurrentPersoonId = (persoon == null)? null : persoon.Id,
-            Name = naam,
-            UserName = naam,
-            Email = $"{naam}@berghinhetzadel.nl",
-            AccessFailedCount = 0,
-            EmailConfirmed = true,
-            LockoutEnabled = false,
-            LockoutEnd = null,
-            PhoneNumber = "",
-            PhoneNumberConfirmed = true,
-            TwoFactorEnabled = false,
-        };
-
-        var result = await this._userManager.CreateAsync(user, DEFAULT_PASSWORD);
+        var result = await this._userManager.CreateAsync(user, password);
         if (!result.Succeeded)
         {
-            return result.Errors;
+            return result;
         }
         else
         {
             foreach (var claim in claims)
             {
+                if (!IsValidClaim(claim))
+                {
+                    throw new InvalidOperationException($"The claim {claim.Type} with value {claim.Value} and value type {claim.ValueType} can not be added.");
+                }
                 result = await this._userManager.AddClaimAsync(user, claim);
                 if (!result.Succeeded)
                 {
-                    return result.Errors;
+                    return result;
                 }
             }
-            await this._userManager.UpdateAsync(user);
+            result = await this._userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return result;
+            }
         }
 
-        return null;
+        return IdentityResult.Success;
     }
 
-    public Task<IEnumerable<IdentityError>?> UpdateUserAsync(string naam, Claim[] claims)
+    public async Task<IdentityResult> UpdateUserAsync(User user)
     {
-        throw new NotImplementedException();
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+
+        return IdentityResult.Success;
     }
 
-    public Task<IEnumerable<IdentityError>?> UpdateUserAsync(string naam, Claim[] claims, Persoon? persoon)
+    public async Task<IdentityResult> UpdateUserAsync(User user, string password)
     {
-        throw new NotImplementedException();
+        var result = await UpdateUserAsync(user);
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+        result = await _userManager.RemovePasswordAsync(user);
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+        result = await _userManager.AddPasswordAsync(user, password);
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+
+        return IdentityResult.Success;
     }
 
+    public async Task<IdentityResult> UpdateUserAsync(User user, Claim[] claims)
+    {
+        // update the user properties
+        var result = await this._userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+
+        // throw away all old claims
+        var oldClaims = await GetUserClaimsAsync(user.Name);
+        if (oldClaims.Count > 0)
+        {
+            result = await this._userManager.RemoveClaimsAsync(user, oldClaims);
+            if (!result.Succeeded)
+            {
+                return result;
+            }
+        }
+
+        // add all new claims
+        foreach (var claim in claims)
+        {
+            if (!IsValidClaim(claim))
+            {
+                throw new InvalidOperationException($"The claim {claim.Type} with value {claim.Value} and value type {claim.ValueType} can not be added.");
+            }
+            result = await this._userManager.AddClaimAsync(user, claim);
+            if (!result.Succeeded)
+            {
+                return result;
+            }
+        }
+
+        return IdentityResult.Success;
+    }
+
+    private bool IsValidClaim(Claim claim)
+        => GetClaims().FirstOrDefault(c => c.Value == claim.Value && c.Type == claim.Type) != null;
 
 }

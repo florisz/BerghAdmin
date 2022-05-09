@@ -3,7 +3,7 @@
 using System.Security.Claims;
 
 namespace BerghAdmin.Authorization;
-public class BeheeFinancienPolicyHandler : AuthorizationHandler<IsFinancienBeheerderRequirement>
+public class BeheerFinancienPolicyHandler : AuthorizationHandler<IsFinancienBeheerderRequirement>
 {
     public static Claim Claim
         => new("role", "beheerfinancien");

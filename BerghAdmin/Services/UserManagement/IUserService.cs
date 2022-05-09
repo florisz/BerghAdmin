@@ -9,11 +9,11 @@ public interface IUserService
     Task DeleteUserAsync(string naam);
     Task<User> GetUserAsync(string naam);
     IList<User> GetUsers();
+    IList<Claim> GetClaims();
     Task<IList<Claim>> GetUserClaimsAsync(string naam);
-    Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam);
-    Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Persoon? persoon);
-    Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Claim[] claims);
-    Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Claim[] claims, Persoon? persoon);
-    Task<IEnumerable<IdentityError>?> UpdateUserAsync(string naam, Claim[] claims);
-    Task<IEnumerable<IdentityError>?> UpdateUserAsync(string naam, Claim[] claims, Persoon? persoon);
+    Task<IdentityResult> InsertUserAsync(User user, string password);
+    Task<IdentityResult> InsertUserAsync(User user, string password, Claim[] claims);
+    Task<IdentityResult> UpdateUserAsync(User user);
+    Task<IdentityResult> UpdateUserAsync(User user, string password);
+    Task<IdentityResult> UpdateUserAsync(User user, Claim[] claims);
 }
