@@ -22,6 +22,9 @@ public class UserService : IUserService
     public async Task<User> GetUserAsync(string naam)
         => await this._userManager.FindByNameAsync(naam);
 
+    public IList<User> GetUsers()
+        =>_userManager.Users.ToList();
+
     public async Task<IList<Claim>> GetUserClaimsAsync(string naam)
     {
         var user = await GetUserAsync(naam);
@@ -34,16 +37,16 @@ public class UserService : IUserService
     }
 
     public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam)
-        => await InsertUserAsync(naam, new Claim[] { }, null );
+        => await InsertUserAsync(naam, Array.Empty<Claim>(), null );
 
     public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Persoon? persoon)
-        => await InsertUserAsync(naam, new Claim[] { }, persoon);
+        => await InsertUserAsync(naam, Array.Empty<Claim>(), persoon);
 
-    public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Claim[]? claims)
+    public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Claim[] claims)
         => await InsertUserAsync(naam, claims, null);
 
 
-    public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Claim[]? claims, Persoon? persoon)
+    public async Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Claim[] claims, Persoon? persoon)
     {
         var user = new User
         {
@@ -81,14 +84,15 @@ public class UserService : IUserService
         return null;
     }
 
-    public Task<IEnumerable<IdentityError>?> UpdateUserAsync(string naam, Claim[]? claims)
+    public Task<IEnumerable<IdentityError>?> UpdateUserAsync(string naam, Claim[] claims)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<IdentityError>?> UpdateUserAsync(string naam, Claim[]? claims, Persoon? persoon)
+    public Task<IEnumerable<IdentityError>?> UpdateUserAsync(string naam, Claim[] claims, Persoon? persoon)
     {
         throw new NotImplementedException();
     }
+
 
 }

@@ -8,6 +8,7 @@ public interface IUserService
 {
     Task DeleteUserAsync(string naam);
     Task<User> GetUserAsync(string naam);
+    IList<User> GetUsers();
     Task<IList<Claim>> GetUserClaimsAsync(string naam);
     Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam);
     Task<IEnumerable<IdentityError>?> InsertUserAsync(string naam, Persoon? persoon);

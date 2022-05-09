@@ -117,5 +117,26 @@ namespace BerghAdmin.Tests.UserManagerTests
             Assert.AreEqual("role", userClaims[1].Type);
             Assert.AreEqual("beheerambassadeurs", userClaims[1].Value);
         }
+
+        [Test]
+        public async Task AddAndGetMultipleUsers()
+        {
+            var service = this.GetRequiredService<IUserService>();
+            var userName = "PommetjeHorlepiep";
+            for (var i = 1; i <= 5; i++)
+            {
+                var errors = await service.InsertUserAsync($"{userName}{i}");
+                if (errors != null)
+                {
+                    Assert.Fail(string.Join(",", errors.Select(e => $"{e.Code}: {e.Description}").ToArray()));
+                }
+            }
+
+            var users = service.GetUsers();
+            Assert.IsNotNull(users);
+            Assert.AreEqual(5, users.Count);
+            Assert.IsTrue(users.All(u => u.UserName.StartsWith(userName)));
+        }
+
     }
 }
