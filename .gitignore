@@ -350,5 +350,5 @@ RunBihzRelease.ps1
 SetAzureSecrets.PS1
 
 # New VS Live Unit Testing configuration files
-.lutconfig
+*.lutconfig
 
