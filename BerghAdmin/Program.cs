@@ -1,3 +1,4 @@
+using System.IO.Abstractions;
 using Azure.Identity;
 
 using BerghAdmin.Authorization;
@@ -15,7 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 
 using Syncfusion.Blazor;
@@ -134,6 +135,19 @@ public class Program
         builder.Services.AddScoped<IDocumentService, DocumentService>();
         builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
         builder.Services.AddScoped<IDataImporterService, DataImporterService>();
+        builder.Services.AddSingleton<IFileSystem>(new FileSystem());
+        builder.Services.AddMemoryCache(options =>
+        {
+            options.ExpirationScanFrequency = TimeSpan.FromMinutes(10);
+        });
+        builder.Services.AddSingleton<IMailAttachmentsService>((provider) =>
+        {
+            var rootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+            return new MailAttachmentsService(rootPath,
+                provider.GetRequiredService<IFileSystem>(),
+                provider.GetRequiredService<IMemoryCache>(),
+                provider.GetRequiredService<ILogger<MailAttachmentsService>>());
+        });
         builder.Services.AddScoped<ISendMailService, SendMailService>();
         builder.Services.AddScoped<IEvenementService, EvenementService>();
         builder.Services.AddScoped<IDonatieService, DonatieService>();

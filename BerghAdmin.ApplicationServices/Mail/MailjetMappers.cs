@@ -23,7 +23,27 @@ namespace BerghAdmin.ApplicationServices.Mail
                 return Array.Empty<SendContact>();
             }
 
-            return addresses.Select(a => new SendContact(a.Address, a.Name));
+            return addresses.Select(a => a.ToMailjetAddress()!);
+        }
+
+        public static Attachment? ToMailjetAttachment(this MailAttachment attachment)
+        {
+            if (attachment is null)
+            {
+                return null;
+            }
+
+            return new Attachment(attachment.FilenameOnServer, attachment.ContentType, attachment.Base64Content, attachment.ContentID);
+        }
+
+        public static IEnumerable<Attachment> ToMailjetAttachments(this IEnumerable<MailAttachment>? attachments)
+        {
+            if (attachments is null)
+            {
+                return Array.Empty<Attachment>();
+            }
+
+            return attachments.Select(a => a.ToMailjetAttachment()!);
         }
 
         public static IEnumerable<TransactionalEmail> ToMailjetMessages(this MailMessage? mailMessage)
@@ -45,6 +65,7 @@ namespace BerghAdmin.ApplicationServices.Mail
                     .WithSubject(mailMessage.Subject)
                     .WithTextPart(mailMessage.TextBody)
                     .WithHtmlPart(mailMessage.HtmlBody)
+                    .WithInlinedAttachments(mailMessage.InlinedAttachments.ToMailjetAttachments())
                     .Build();
                 emails.Add(email);
             }
