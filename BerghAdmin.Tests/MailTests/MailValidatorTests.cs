@@ -13,7 +13,7 @@ namespace BerghAdmin.Tests.MailTests
         public void Validate_NoSubject_ShouldReportSubjectRequired()
         {
             MailMessage message = new()
-            { 
+            {
                 From = new MailAddress("test@berghinhetzadel.nl", null),
                 To = new() { new MailAddress("recipient@test.xyz", null) }
             };
@@ -44,7 +44,7 @@ namespace BerghAdmin.Tests.MailTests
         {
             MailMessage message = new()
             {
-                From = new MailAddress("test@bad.xyz", null), 
+                From = new MailAddress("test@bad.xyz", null),
                 Subject = "Test",
                 To = new() { new MailAddress("recipient@test.xyz", null) },
             };
@@ -75,7 +75,7 @@ namespace BerghAdmin.Tests.MailTests
         {
             MailMessage message = new()
             {
-                From = new MailAddress("test@berghinhetzadel.nl", null), 
+                From = new MailAddress("test@berghinhetzadel.nl", null),
                 Subject = "Test",
                 To = new() { new MailAddress("recipient@test.xyz", null) },
             };

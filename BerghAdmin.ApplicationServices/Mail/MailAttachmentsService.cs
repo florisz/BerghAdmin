@@ -27,23 +27,22 @@ namespace BerghAdmin.ApplicationServices.Mail
                 return;
             }
 
-            var imageSourcesPattern = @"<img[^>]+src=""([^"">]+)""";
-            MatchCollection? images = Regex.Matches(message.HtmlBody, imageSourcesPattern);
-            if (images == null)
+            var imageMatches = _imageRegex.Matches(message.HtmlBody);
+            if (imageMatches == null)
             {
                 return;
             }
 
             var sb = new StringBuilder(message.HtmlBody);
-            for (int count = 0; count < images.Count; count++)
+            for (int count = 0; count < imageMatches.Count; count++)
             {
-                var imageCapture = images[count];
+                var imageCapture = imageMatches[count];
                 if (imageCapture.Groups.Count < 2)
                 {
                     continue;
                 }
 
-                var imageSource = images[count].Groups[1].Value;
+                var imageSource = imageCapture.Groups[1].Value;
                 if (string.IsNullOrWhiteSpace(imageSource))
                 {
                     continue;
@@ -110,5 +109,8 @@ namespace BerghAdmin.ApplicationServices.Mail
         private readonly IFileSystem _fileSystem;
         private readonly IMemoryCache _cache;
         private readonly ILogger<MailAttachmentsService> _logger;
+        private readonly Regex _imageRegex = new(
+            @"<img[^>]+src=""([^"">]+)""",
+            RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
     }
 }

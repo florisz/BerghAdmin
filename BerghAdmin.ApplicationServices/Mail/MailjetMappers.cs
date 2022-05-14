@@ -1,6 +1,4 @@
-﻿using Mailjet.Client.Resources;
-using Mailjet.Client.TransactionalEmails;
-using Newtonsoft.Json.Linq;
+﻿using Mailjet.Client.TransactionalEmails;
 
 namespace BerghAdmin.ApplicationServices.Mail
 {
@@ -26,7 +24,7 @@ namespace BerghAdmin.ApplicationServices.Mail
             return addresses.Select(a => a.ToMailjetAddress()!);
         }
 
-        public static Attachment? ToMailjetAttachment(this MailAttachment attachment)
+        public static Attachment? ToMailjetAttachment(this MailAttachment? attachment)
         {
             if (attachment is null)
             {
