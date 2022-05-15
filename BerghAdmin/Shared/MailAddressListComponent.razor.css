@@ -1,0 +1,14 @@
+﻿.address-list-container {
+    width: 100%;
+    min-height: 34px;
+    border: 1px solid rgb(222, 226, 230);
+    padding: 3px;
+}
+
+    .address-list-container .add-button {
+        display: none;
+    }
+
+    .address-list-container:hover .add-button {
+        display: inline-block;
+    }

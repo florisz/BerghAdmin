@@ -9,12 +9,15 @@ namespace BerghAdmin.Pages
     {
         [Parameter]
         public bool IsVisible { get; set; } = false;
+        [Parameter]
+        public MailMessage Message { get; set; } = new();
 
         [Inject]
         private ISendMailService SendMailService { get; set; } = default!;
-
         [Inject]
         private IMailAttachmentsService MailAttachmentsService { get; set; } = default!;
+
+        private bool ShowCc = false;
 
         private readonly List<ToolbarItemModel> Tools = new()
         {
@@ -51,25 +54,6 @@ namespace BerghAdmin.Pages
             new ToolbarItemModel() { Command = ToolbarCommand.Redo }
         };
 
-        private MailMessage _message = new();
-        private string _fromAddress = "";
-        private string? _toAddresses = "";
-        private string? _ccAddresses = "";
-        private string? _bccAddresses = "";
-
-        public MailMessage Message
-        {
-            get => _message;
-            set
-            {
-                _message = value;
-                _fromAddress = _message.From == null ? "" : _message.From.Address;
-                _toAddresses = _message.To == null ? "" : string.Join(';', _message.To.Select(x => x.Address));
-                _ccAddresses = _message.Cc == null ? "" : string.Join(';', _message.Cc.Select(x => x.Address));
-                _bccAddresses = _message.Bcc == null ? "" : string.Join(';', _message.Bcc.Select(x => x.Address));
-            }
-        }
-
         private SfRichTextEditor _mailBodyEditor = new();
         private SfTextBox _subjectEditor = new();
 
@@ -88,35 +72,10 @@ namespace BerghAdmin.Pages
 
         private async Task SendEMail()
         {
-            Message.From = new MailAddress(_fromAddress, null);
-            if (!string.IsNullOrWhiteSpace(_toAddresses))
-            {
-                List<MailAddress> toAddresses = _toAddresses
-                    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                    .Select(a => new MailAddress(a, null))
-                    .ToList();
-                Message.To = toAddresses;
-            }
-            if (!string.IsNullOrWhiteSpace(_ccAddresses))
-            {
-                List<MailAddress> ccAddresses = _ccAddresses
-                    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                    .Select(a => new MailAddress(a, null))
-                    .ToList();
-                Message.Cc = ccAddresses;
-            }
-            if (!string.IsNullOrWhiteSpace(_bccAddresses))
-            {
-                List<MailAddress> bccAddresses = _bccAddresses
-                    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                    .Select(a => new MailAddress(a, null))
-                    .ToList();
-                Message.Bcc = bccAddresses;
-            }
             string textContent = await _mailBodyEditor.GetTextAsync();
             Message.TextBody = textContent;
             Message.HtmlBody = _mailBodyEditor.Value;
-            
+
             // Replace all content ids with inlined attachments
             await MailAttachmentsService.ReplaceServerImagesWithInlinedAttachmentsAsync(Message);
 

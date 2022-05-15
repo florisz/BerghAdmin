@@ -1,0 +1,16 @@
+﻿<div class="address-list-container">
+    @foreach (var address in Addresses)
+    {
+        <MailAddressComponent Address="@address"></MailAddressComponent>
+    }
+
+    <div class="add-button">
+        <SfButton CssClass="e-round e-small e-success" IconCss="e-icons e-plus-icon" @onclick="AddMailAddress"></SfButton>
+    </div>
+</div>
+
+<style>
+    .e-plus-icon::before {
+        content: '\e759';
+    }
+</style>
