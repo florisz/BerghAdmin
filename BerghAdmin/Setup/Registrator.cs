@@ -16,17 +16,20 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 using Serilog;
 
 using Syncfusion.Blazor;
+
+using System.IO.Abstractions;
 
 namespace BerghAdmin;
 
 public class Registrator
 {
     private WebApplicationBuilder builder;
-    private WebApplication? app;
+    private WebApplication? app = null;
 
     public Registrator(WebApplicationBuilder builder)
     {
@@ -65,15 +68,11 @@ public class Registrator
     }
 
     public WebApplication BuildApp()
-    {
-        app = this.builder.Build();
-        return app;
-    }
+        => GetApp();
 
     public void SetupDatabase()
     {
-        if (app == null)
-            throw new InvalidOperationException("Call BuildApp() before calling SetupDatabase");
+        var app = GetApp();
 
         var seedDataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<ISeedDataService>();
         seedDataService.SeedInitialData();
@@ -87,7 +86,8 @@ public class Registrator
         if (string.IsNullOrEmpty(env))
             throw new ArgumentNullException("ASPNETCORE_ENVIRONMENT");
 
-        builder.Configuration.AddUserSecrets<SendMailService>();
+        //builder.Configuration.AddUserSecrets<SendMailService>();
+        builder.Configuration.AddUserSecrets<Program>();
         if (env != "Development")
         {
             builder.Configuration.AddAzureKeyVault(
@@ -119,6 +119,19 @@ public class Registrator
         builder.Services.AddScoped<IDocumentService, DocumentService>();
         builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
         builder.Services.AddScoped<IDataImporterService, DataImporterService>();
+        builder.Services.AddSingleton<IFileSystem>(new FileSystem());
+        builder.Services.AddMemoryCache(options =>
+        {
+            options.ExpirationScanFrequency = TimeSpan.FromMinutes(10);
+        });
+        builder.Services.AddSingleton<IMailAttachmentsService>((provider) =>
+        {
+            var rootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+            return new MailAttachmentsService(rootPath,
+                provider.GetRequiredService<IFileSystem>(),
+                provider.GetRequiredService<IMemoryCache>(),
+                provider.GetRequiredService<ILogger<MailAttachmentsService>>());
+        });
         builder.Services.AddScoped<ISendMailService, SendMailService>();
         builder.Services.AddScoped<IEvenementService, EvenementService>();
         builder.Services.AddScoped<IDonatieService, DonatieService>();
@@ -156,9 +169,7 @@ public class Registrator
 
     public void UseServices()
     {
-        if (app == null)
-            throw new InvalidOperationException("Call BuildApp() before calling UseServices");
-
+        var app = GetApp();
         if (app.Environment.IsDevelopment())
         {
             // recommended to deactivate HTTPS redirection middleware in development
@@ -235,4 +246,7 @@ public class Registrator
         }
         return cs;
     }
+
+    private WebApplication GetApp()
+        => app ?? this.builder.Build();
 }
