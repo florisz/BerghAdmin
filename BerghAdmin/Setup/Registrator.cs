@@ -248,5 +248,5 @@ public class Registrator
     }
 
     private WebApplication GetApp()
-        => app ?? this.builder.Build();
+        => app ??= this.builder.Build();
 }
