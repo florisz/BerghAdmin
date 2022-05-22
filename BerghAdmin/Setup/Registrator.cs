@@ -119,17 +119,12 @@ public class Registrator
         builder.Services.AddScoped<IDocumentService, DocumentService>();
         builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
         builder.Services.AddScoped<IDataImporterService, DataImporterService>();
-        builder.Services.AddSingleton<IFileSystem>(new FileSystem());
-        builder.Services.AddMemoryCache(options =>
-        {
-            options.ExpirationScanFrequency = TimeSpan.FromMinutes(10);
-        });
-        builder.Services.AddSingleton<IMailAttachmentsService>((provider) =>
+        builder.Services.AddScoped<IFileSystem, FileSystem>();
+        builder.Services.AddScoped<IMailAttachmentsService>((provider) =>
         {
             var rootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
             return new MailAttachmentsService(rootPath,
                 provider.GetRequiredService<IFileSystem>(),
-                provider.GetRequiredService<IMemoryCache>(),
                 provider.GetRequiredService<ILogger<MailAttachmentsService>>());
         });
         builder.Services.AddScoped<ISendMailService, SendMailService>();
