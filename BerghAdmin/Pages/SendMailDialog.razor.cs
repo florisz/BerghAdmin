@@ -118,7 +118,7 @@ namespace BerghAdmin.Pages
             Message.HtmlBody = _mailBodyEditor.Value;
             
             // Replace all content ids with inlined attachments
-            await MailAttachmentsService.ReplaceServerImagesWithInlinedAttachmentsAsync(Message);
+            this.MailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(Message);
 
             bool isSandboxMode = false; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
             await SendMailService.SendMail(Message, isSandboxMode);

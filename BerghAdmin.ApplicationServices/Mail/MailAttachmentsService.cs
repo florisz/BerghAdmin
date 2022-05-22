@@ -1,9 +1,7 @@
-﻿using System.IO.Abstractions;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using Microsoft.Extensions.Logging;
 
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
+using System.IO.Abstractions;
+using System.Text.RegularExpressions;
 
 namespace BerghAdmin.ApplicationServices.Mail
 {
@@ -19,7 +17,7 @@ namespace BerghAdmin.ApplicationServices.Mail
             this.logger = logger;
         }
 
-        public async Task ReplaceServerImagesWithInlinedAttachmentsAsync(MailMessage message)
+        public void ReplaceServerImagesWithInlinedAttachments(MailMessage message)
         {
             if (message.HtmlBody == null)
             {

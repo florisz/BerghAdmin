@@ -23,24 +23,24 @@ namespace BerghAdmin.Tests.MailTests
         [TestCase("Logo: <img src=\"\" />", "Logo: <img src=\"\" />")]
         [TestCase("Logo: <img src=\"http://web.xyz/img.jpg\" />", "Logo: <img src=\"http://web.xyz/img.jpg\" />")]
         [TestCase("Logo: <img src=\"images/missing.jpg\" />", "Logo: <img src=\"images/missing.jpg\" />")]
-        public async Task AddInlinedAttachments(string? body, string? expected)
+        public void AddInlinedAttachments(string? body, string? expected)
         {
-            var message = await ReplaceImage(body);
+            var message = ReplaceImage(body);
             message.HtmlBody.Should().Be(expected);
         }
 
         [Test]
-        public async Task AddInlinedAttachments_HtmlBodyWithServerImage_ShouldReplaceWithInlinedAttachment()
+        public void AddInlinedAttachments_HtmlBodyWithServerImage_ShouldReplaceWithInlinedAttachment()
         {
-            var message = await ReplaceImage("Logo: <img src=\"images/LogoBihz.jpg\" />");
+            var message = ReplaceImage("Logo: <img src=\"images/LogoBihz.jpg\" />");
 
             StringAssert.IsMatch(_imageWithContentIdPattern, message.HtmlBody);
         }
 
         [Test]
-        public async Task AddInlinedAttachments_HtmlBodyWithSameImageTwice_ShouldReplaceWithInlinedAttachment()
+        public void AddInlinedAttachments_HtmlBodyWithSameImageTwice_ShouldReplaceWithInlinedAttachment()
         {
-            var message = await ReplaceImage("<div><p>Logo: <img src=\"images/LogoBihz.jpg\" /></p><p>Logo copy: <img src=\"images/logoBIHZ.JPG\" /></p></div>");
+            var message = ReplaceImage("<div><p>Logo: <img src=\"images/LogoBihz.jpg\" /></p><p>Logo copy: <img src=\"images/logoBIHZ.JPG\" /></p></div>");
 
             Assert.AreEqual(2, Regex.Matches(message.HtmlBody, _imageWithContentIdPattern).Count);
         }
@@ -49,7 +49,8 @@ namespace BerghAdmin.Tests.MailTests
         {
             var mockFiles = new Dictionary<string, MockFileData>()
             {
-                { @"/images/LogoBihz.jpg", new MockFileData(new byte[] { 1, 2, 3 } ) }
+                { @"/images/LogoBihz.jpg", new MockFileData(new byte[] { 1, 2, 3 } ) },
+                { @"/images/logoBIHZ.jpg", new MockFileData(new byte[] { 1, 2, 3 } ) },
             };
 
             return new MailAttachmentsService(
@@ -58,15 +59,14 @@ namespace BerghAdmin.Tests.MailTests
                 Mock.Of<ILogger<MailAttachmentsService>>());
         }
 
-        private static async Task<MailMessage> ReplaceImage(string htmlBody)
+        private static MailMessage ReplaceImage(string? htmlBody)
         {
             var message = new MailMessage()
             {
                 HtmlBody = htmlBody
             };
-            var service = CreateService();
 
-            await service.ReplaceServerImagesWithInlinedAttachmentsAsync(message);
+            CreateService().ReplaceServerImagesWithInlinedAttachments(message);
             return message;
         }
 
