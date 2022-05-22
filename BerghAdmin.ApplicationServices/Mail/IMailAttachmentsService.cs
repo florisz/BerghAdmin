@@ -2,6 +2,6 @@
 {
     public interface IMailAttachmentsService
     {
-        Task ReplaceServerImagesWithInlinedAttachmentsAsync(MailMessage message);
+        void ReplaceServerImagesWithInlinedAttachments(MailMessage message);
     }
 }

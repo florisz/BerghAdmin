@@ -1,147 +1,46 @@
-﻿using System.IO.Abstractions.TestingHelpers;
-using System.Text.RegularExpressions;
-using BerghAdmin.ApplicationServices.Mail;
-using Microsoft.Extensions.Caching.Memory;
+﻿using BerghAdmin.ApplicationServices.Mail;
+
+using FluentAssertions;
+
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+
 using Moq;
+
 using NUnit.Framework;
+
+using System.IO.Abstractions.TestingHelpers;
+using System.Text.RegularExpressions;
 
 namespace BerghAdmin.Tests.MailTests
 {
     [TestFixture]
     public class MailAttachmentsServiceTests
     {
-        [Test]
-        public async Task AddInlinedAttachments_NoHtmlBody_ShouldReturnNull()
+        [TestCase(null, null)]
+        [TestCase("", "")]
+        [TestCase("<p>Message</p>", "<p>Message</p>")]
+        [TestCase("Logo: <img />", "Logo: <img />")]
+        [TestCase("Logo: <img src=\"\" />", "Logo: <img src=\"\" />")]
+        [TestCase("Logo: <img src=\"http://web.xyz/img.jpg\" />", "Logo: <img src=\"http://web.xyz/img.jpg\" />")]
+        [TestCase("Logo: <img src=\"images/missing.jpg\" />", "Logo: <img src=\"images/missing.jpg\" />")]
+        public void AddInlinedAttachments(string? body, string? expected)
         {
-            var message = new MailMessage()
-            {
-                HtmlBody = null!
-            };
-            var service = CreateService();
-
-            await service.ReplaceServerImagesWithInlinedAttachmentsAsync(message);
-
-            Assert.IsNull(message.HtmlBody);
+            var message = ReplaceImage(body);
+            message.HtmlBody.Should().Be(expected);
         }
 
         [Test]
-        public async Task AddInlinedAttachments_EmptyHtmlBody_ShouldReturnEmptyHtmlBody()
+        public void AddInlinedAttachments_HtmlBodyWithServerImage_ShouldReplaceWithInlinedAttachment()
         {
-            var expectedHtmlBody = "";
-            var message = new MailMessage()
-            {
-                HtmlBody = expectedHtmlBody
-            };
-            var service = CreateService();
-
-            await service.ReplaceServerImagesWithInlinedAttachmentsAsync(message);
-
-            Assert.AreEqual(expectedHtmlBody, message.HtmlBody);
-        }
-
-        [Test]
-        public async Task AddInlinedAttachments_HtmlBodyWithoutServerImages_ShouldReturnSameHtmlBody()
-        {
-            var expectedHtmlBody = "<p>Message</p>";
-            var message = new MailMessage()
-            {
-                HtmlBody = expectedHtmlBody
-            };
-            var service = CreateService();
-
-            await service.ReplaceServerImagesWithInlinedAttachmentsAsync(message);
-
-            Assert.AreEqual(expectedHtmlBody, message.HtmlBody);
-        }
-
-        [Test]
-        public async Task AddInlinedAttachments_HtmlBodyWithImageWithoutSource_ShouldReturnSameHtmlBody()
-        {
-            var expectedHtmlBody = "Logo: <img />";
-            var message = new MailMessage()
-            {
-                HtmlBody = expectedHtmlBody
-            };
-            var service = CreateService();
-
-            await service.ReplaceServerImagesWithInlinedAttachmentsAsync(message);
-
-            Assert.AreEqual(expectedHtmlBody, message.HtmlBody);
-        }
-
-        [Test]
-        public async Task AddInlinedAttachments_HtmlBodyWithEmptyImageSource_ShouldReturnSameHtmlBody()
-        {
-            var expectedHtmlBody = "Logo: <img src=\"\" />";
-            var message = new MailMessage()
-            {
-                HtmlBody = expectedHtmlBody
-            };
-            var service = CreateService();
-
-            await service.ReplaceServerImagesWithInlinedAttachmentsAsync(message);
-
-            Assert.AreEqual(expectedHtmlBody, message.HtmlBody);
-        }
-
-        [Test]
-        public async Task AddInlinedAttachments_HtmlBodyWithInternetImage_ShouldReturnSameHtmlBody()
-        {
-            var expectedHtmlBody = "Logo: <img src=\"http://web.xyz/img.jpg\" />";
-            var message = new MailMessage()
-            {
-                HtmlBody = expectedHtmlBody
-            };
-            var service = CreateService();
-
-            await service.ReplaceServerImagesWithInlinedAttachmentsAsync(message);
-
-            Assert.AreEqual(expectedHtmlBody, message.HtmlBody);
-        }
-
-        [Test]
-        public async Task AddInlinedAttachments_HtmlBodyWithNotExistingServerImage_ShouldReturnSameHtmlBody()
-        {
-            var expectedHtmlBody = "Logo: <img src=\"images/missing.jpg\" />";
-            var message = new MailMessage()
-            {
-                HtmlBody = expectedHtmlBody
-            };
-            var service = CreateService();
-
-            await service.ReplaceServerImagesWithInlinedAttachmentsAsync(message);
-
-            StringAssert.StartsWith(expectedHtmlBody, message.HtmlBody);
-        }
-
-        [Test]
-        public async Task AddInlinedAttachments_HtmlBodyWithServerImage_ShouldReplaceWithInlinedAttachment()
-        {
-            var htmlBody = "Logo: <img src=\"images/LogoBihz.jpg\" />";
-            var message = new MailMessage()
-            {
-                HtmlBody = htmlBody
-            };
-            var service = CreateService();
-
-            await service.ReplaceServerImagesWithInlinedAttachmentsAsync(message);
+            var message = ReplaceImage("Logo: <img src=\"images/LogoBihz.jpg\" />");
 
             StringAssert.IsMatch(_imageWithContentIdPattern, message.HtmlBody);
         }
 
         [Test]
-        public async Task AddInlinedAttachments_HtmlBodyWithSameImageTwice_ShouldReplaceWithInlinedAttachment()
+        public void AddInlinedAttachments_HtmlBodyWithSameImageTwice_ShouldReplaceWithInlinedAttachment()
         {
-            var htmlBody = "<div><p>Logo: <img src=\"images/LogoBihz.jpg\" /></p><p>Logo copy: <img src=\"images/logoBIHZ.JPG\" /></p></div>";
-            var message = new MailMessage()
-            {
-                HtmlBody = htmlBody
-            };
-            var service = CreateService();
-
-            await service.ReplaceServerImagesWithInlinedAttachmentsAsync(message);
+            var message = ReplaceImage("<div><p>Logo: <img src=\"images/LogoBihz.jpg\" /></p><p>Logo copy: <img src=\"images/logoBIHZ.JPG\" /></p></div>");
 
             Assert.AreEqual(2, Regex.Matches(message.HtmlBody, _imageWithContentIdPattern).Count);
         }
@@ -150,19 +49,25 @@ namespace BerghAdmin.Tests.MailTests
         {
             var mockFiles = new Dictionary<string, MockFileData>()
             {
-                { @"C:\images\LogoBihz.jpg", new MockFileData(new byte[] { 1, 2, 3 } ) }
+                { @"/images/LogoBihz.jpg", new MockFileData(new byte[] { 1, 2, 3 } ) },
+                { @"/images/logoBIHZ.JPG", new MockFileData(new byte[] { 1, 2, 3 } ) },
             };
-            var fileSystem = new MockFileSystem(mockFiles);
 
-            var mockLogger = new Mock<ILogger<MailAttachmentsService>>();
+            return new MailAttachmentsService(
+                @"/",
+                new MockFileSystem(mockFiles),
+                Mock.Of<ILogger<MailAttachmentsService>>());
+        }
 
-            var cacheOptions = Options.Create(new MemoryCacheOptions
+        private static MailMessage ReplaceImage(string? htmlBody)
+        {
+            var message = new MailMessage()
             {
-                ExpirationScanFrequency = TimeSpan.FromMinutes(10)
-            });
-            var cache = new MemoryCache(cacheOptions);
+                HtmlBody = htmlBody
+            };
 
-            return new MailAttachmentsService(@"C:\", fileSystem, cache, mockLogger.Object);
+            CreateService().ReplaceServerImagesWithInlinedAttachments(message);
+            return message;
         }
 
         private const string _imageWithContentIdPattern = "<img src=\"cid:[0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12}\"\\s?\\/?>";
