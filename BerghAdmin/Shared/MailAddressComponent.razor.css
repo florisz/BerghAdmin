@@ -15,3 +15,10 @@
         background: rgb(108, 117, 125);
         color: rgb(255, 255, 255);
     }
+
+.e-extra-small {
+    width: 15px;
+    height: 15px;
+    margin: -2px 0 0 0;
+    font-size: 11px;
+}

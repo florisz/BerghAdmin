@@ -11,8 +11,11 @@ namespace BerghAdmin.Shared
 
         public void AddMailAddress(MouseEventArgs args)
         {
-            var mailAddress = new MailAddress("ad@test.xyz", "Adje");
+            var mailAddress = new MailAddress(string.Empty, string.Empty);
             Addresses.Add(mailAddress);
+            StateHasChanged();
+
+            //EditMailAddress();
         }
     }
 }
