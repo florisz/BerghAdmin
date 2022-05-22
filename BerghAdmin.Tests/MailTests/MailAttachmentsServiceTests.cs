@@ -50,7 +50,7 @@ namespace BerghAdmin.Tests.MailTests
             var mockFiles = new Dictionary<string, MockFileData>()
             {
                 { @"/images/LogoBihz.jpg", new MockFileData(new byte[] { 1, 2, 3 } ) },
-                { @"/images/logoBIHZ.jpg", new MockFileData(new byte[] { 1, 2, 3 } ) },
+                { @"/images/logoBIHZ.JPG", new MockFileData(new byte[] { 1, 2, 3 } ) },
             };
 
             return new MailAttachmentsService(
