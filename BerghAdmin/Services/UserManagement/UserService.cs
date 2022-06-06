@@ -18,16 +18,16 @@ public class UserService : IUserService
         throw new NotImplementedException();
     }
 
-    public IList<Claim> GetClaims()
+    public IDictionary<string, Claim> GetClaims()
     {
-        return new List<Claim>()
+        return new Dictionary<string, Claim>()
         {
-            AdministratorPolicyHandler.Claim,
-            BeheerAmbassadeursPolicyHandler.Claim,
-            BeheerFietsersPolicyHandler.Claim,
-            BeheerFinancienPolicyHandler.Claim,
-            BeheerGolfersPolicyHandler.Claim,
-            BeheerSecretariaatPolicyHandler.Claim
+            { AdministratorPolicyHandler.Claim.Value, AdministratorPolicyHandler.Claim },
+            { BeheerAmbassadeursPolicyHandler.Claim.Value, BeheerAmbassadeursPolicyHandler.Claim },
+            { BeheerFietsersPolicyHandler.Claim.Value, BeheerFietsersPolicyHandler.Claim },
+            { BeheerFinancienPolicyHandler.Claim.Value, BeheerFinancienPolicyHandler.Claim },
+            { BeheerGolfersPolicyHandler.Claim.Value, BeheerGolfersPolicyHandler.Claim },
+            { BeheerSecretariaatPolicyHandler.Claim.Value, BeheerSecretariaatPolicyHandler.Claim }
         };
     }
 
@@ -159,6 +159,6 @@ public class UserService : IUserService
     }
 
     private bool IsValidClaim(Claim claim)
-        => GetClaims().FirstOrDefault(c => c.Value == claim.Value && c.Type == claim.Type) != null;
+        => GetClaims().Values.FirstOrDefault(c => c.Value == claim.Value && c.Type == claim.Type) != null;
 
 }

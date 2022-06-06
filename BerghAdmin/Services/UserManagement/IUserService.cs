@@ -9,7 +9,7 @@ public interface IUserService
     Task DeleteUserAsync(string naam);
     Task<User> GetUserAsync(string naam);
     IList<User> GetUsers();
-    IList<Claim> GetClaims();
+    IDictionary<string, Claim> GetClaims();
     Task<IList<Claim>> GetUserClaimsAsync(string naam);
     Task<IdentityResult> InsertUserAsync(User user, string password);
     Task<IdentityResult> InsertUserAsync(User user, string password, Claim[] claims);

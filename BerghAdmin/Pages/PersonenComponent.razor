@@ -105,7 +105,6 @@
     <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple" PersistSelection="true"></GridSelectionSettings>
     <GridEvents RowSelected="GetSelectedRecords" TValue="Persoon" />
     <GridEvents ContextMenuItemClicked="OnContextMenuClick" TValue="Persoon" />
-    @* <GridEvents OnActionComplete="ActionCompletedHandler" TValue="Persoon" /> *@
 
     <GridColumns>
         <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
@@ -153,8 +152,8 @@
     </GridColumns>
 </SfGrid>
 
-<SendMailDialog @ref="sendMailDialog"></SendMailDialog>
-<EditPersoonDialog @ref="editPersoonDialog"></EditPersoonDialog>
+<SendMailDialog @ref="sendMailDialog" />
+<EditPersoonDialog @ref="editPersoonDialog" />
 
 
 @code {

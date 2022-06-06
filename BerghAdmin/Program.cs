@@ -8,7 +8,7 @@ using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 using BerghAdmin.Services.Seeding;
-
+using BerghAdmin.Services.UserManagement;
 using Mailjet.Client;
 
 using Microsoft.AspNetCore.Authorization;
@@ -114,6 +114,9 @@ public class Program
         // Add services to the container.
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
+#pragma warning disable CS0618 // Type or member is obsolete
+        builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = true; });
+#pragma warning restore CS0618 // Type or member is obsolete
         builder.Services.AddOptions();
         builder.Services.AddHttpClient();
         builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
@@ -137,6 +140,7 @@ public class Program
         builder.Services.AddScoped<ISendMailService, SendMailService>();
         builder.Services.AddScoped<IEvenementService, EvenementService>();
         builder.Services.AddScoped<IDonatieService, DonatieService>();
+        builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IBihzUserService, BihzUserService>();
         builder.Services.AddScoped<IBihzActieService, BihzActieService>();
         builder.Services.AddScoped<IBihzProjectService, BihzProjectService>();
