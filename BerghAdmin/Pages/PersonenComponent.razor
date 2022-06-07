@@ -184,7 +184,7 @@
             To = selectedAddresses
         };
         sendMailDialog.Message = message;
-        await sendMailDialog.DialogOpen();
+        sendMailDialog.DialogOpen();
     }
 
     private async Task CopySelectedEmailAddressesAsync()
@@ -374,19 +374,28 @@
         border-radius: 5px;
         text-align: center;
     }
-        .statustemp.e-inactivecolor {
-            background-color: #ffd7cc;
-            width: 64px;
+
+    .statustemp.e-inactivecolor {
+        background-color: #ffd7cc;
+        width: 64px;
     }
+
+    .statustemp.e-activecolor {
+        background-color: #ccffcc;
+        width: 57px;
+        cursor: pointer;
+    }
+
+    td.e-rowcell {
+        cursor: pointer;
+    }
+
     td.e-rowcell .statustxt.e-inactivecolor {
         color: #e60000;
         position: relative;
         top: 0px;
     }
-    .statustemp.e-activecolor {
-        background-color: #ccffcc;
-        width: 57px;
-    }
+
     td.e-rowcell .statustxt.e-activecolor {
         color: #00cc00;
         position: relative;
@@ -396,6 +405,7 @@
     td.e-rowcell .reservediv.reserve {
         color: #900C3F;
     }
+
     td.e-rowcell .reservediv.no-reserve {
         color: #166344;
     }

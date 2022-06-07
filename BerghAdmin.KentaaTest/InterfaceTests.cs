@@ -17,7 +17,7 @@ public class InterfaceTests : DatabasedTests
     protected override void RegisterServices(ServiceCollection services)
     {
         var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<KentaaConfiguration>()
+            .AddUserSecrets<BerghAdmin.Program>()
             .Build();
 
         services.AddHttpClient()

@@ -1,7 +1,5 @@
-﻿using System;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using Syncfusion.Blazor.Inputs;
 using Syncfusion.Blazor.RichTextEditor;
 
@@ -14,6 +12,9 @@ namespace BerghAdmin.Pages
 
         [Inject]
         private ISendMailService SendMailService { get; set; } = default!;
+
+        [Inject]
+        private IMailAttachmentsService MailAttachmentsService { get; set; } = default!;
 
         private readonly List<ToolbarItemModel> Tools = new()
         {
@@ -50,8 +51,12 @@ namespace BerghAdmin.Pages
             new ToolbarItemModel() { Command = ToolbarCommand.Redo }
         };
 
-
         private MailMessage _message = new();
+        private string _fromAddress = "";
+        private string? _toAddresses = "";
+        private string? _ccAddresses = "";
+        private string? _bccAddresses = "";
+
         public MailMessage Message
         {
             get => _message;
@@ -65,31 +70,24 @@ namespace BerghAdmin.Pages
             }
         }
 
-        private SfRichTextEditor _mailBody = new();
-        private SfTextBox _subjectInput = new();
+        private SfRichTextEditor _mailBodyEditor = new();
+        private SfTextBox _subjectEditor = new();
 
-        private string _fromAddress = "";
-        private string? _toAddresses = "";
-        private string? _ccAddresses = "";
-        private string? _bccAddresses = "";
-
-        public async Task DialogOpen()
+        public void DialogOpen()
         {
             IsVisible = true;
-            await _mailBody.RefreshUIAsync();
             StateHasChanged();
         }
 
-        private void Opened(Syncfusion.Blazor.Popups.OpenEventArgs args)
+        private async Task Opened(Syncfusion.Blazor.Popups.OpenEventArgs args)
         {
             args.PreventFocus = true;
-            _subjectInput.FocusIn();
+            await _subjectEditor.FocusIn();
+            await _mailBodyEditor.RefreshUIAsync();
         }
 
         private async Task SendEMail()
         {
-            string htmlContent = await _mailBody.GetXhtmlAsync();
-            string textContent = await _mailBody.GetTextAsync();
             Message.From = new MailAddress(_fromAddress, null);
             if (!string.IsNullOrWhiteSpace(_toAddresses))
             {
@@ -115,8 +113,12 @@ namespace BerghAdmin.Pages
                     .ToList();
                 Message.Bcc = bccAddresses;
             }
+            string textContent = await _mailBodyEditor.GetTextAsync();
             Message.TextBody = textContent;
-            Message.HtmlBody = htmlContent;
+            Message.HtmlBody = _mailBodyEditor.Value;
+            
+            // Replace all content ids with inlined attachments
+            this.MailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(Message);
 
             bool isSandboxMode = false; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
             await SendMailService.SendMail(Message, isSandboxMode);

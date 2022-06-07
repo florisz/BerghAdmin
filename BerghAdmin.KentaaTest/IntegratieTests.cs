@@ -30,7 +30,7 @@ namespace BerghAdmin.Tests.Kentaa
         protected override void RegisterServices(ServiceCollection services)
         {
             var kentaaConfiguration = new ConfigurationBuilder()
-                .AddUserSecrets<KentaaConfiguration>()
+                .AddUserSecrets<BerghAdmin.Program>()
                 .Build();
             var databaseConfiguration = new ConfigurationBuilder()
                 .AddUserSecrets<DatabaseConfiguration>()
