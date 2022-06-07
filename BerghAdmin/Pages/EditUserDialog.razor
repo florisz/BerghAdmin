@@ -130,36 +130,12 @@
         allClaimValues = allClaims.Keys.ToArray();
     }
 
-    protected async Task ValidSubmit(EditContext editContext)
-    {
-        if (_isNewUser)
-        {
-            if (string.IsNullOrEmpty(_newPassword))
-            {
-                errorDialog.Show("Vul eerst een valide password in.");
-            }
-            else
-            {
-                var newClaims = selectedClaims!
-                                .Select(v => allClaims![v])
-                                .ToArray();
-
-                await _userService.InsertUserAsync(_currentUser, _newPassword, newClaims);
-                await _originatingGrid.AddRecordAsync(_currentUser);
-            }
-        }
-        else
-        {
-            await _userService.UpdateUserAsync(_currentUser);
-            await _originatingGrid!.SetRowData(_currentUser.Name, _currentUser);
-        }
-    }
-
     public async Task ShowDialog(User user, SfGrid<User> grid)
     {
         _currentUser = user;
         _originatingGrid = grid;
         _isNewUser = _currentUser.Id == 0;
+        _newPassword = "";
 
         headerText = _isNewUser ? "Nieuwe user toevoegen" : "Wijzig user gegevens";
 
@@ -181,6 +157,33 @@
         this.StateHasChanged();
     }
 
+    protected async Task ValidSubmit(EditContext editContext)
+    {
+        if (_isNewUser)
+        {
+            if (string.IsNullOrEmpty(_newPassword))
+            {
+                errorDialog.Show("Vul eerst een valide password in.");
+            }
+            else
+            {
+                var newClaims = GetSelectedClaims();
+                await _userService.InsertUserAsync(_currentUser, _newPassword, newClaims);
+                await _originatingGrid!.AddRecordAsync(_currentUser);
+            }
+        }
+        else
+        {
+            var newClaims = GetSelectedClaims();
+            await _userService.UpdateUserAsync(_currentUser, newClaims);
+            if (!string.IsNullOrEmpty(_newPassword))
+            {
+                await _userService.UpdateUserPasswordAsync(_currentUser, _newPassword);
+            }
+            await _originatingGrid!.SetRowData(_currentUser.Name, _currentUser);
+        }
+    }
+
     private void OnOverlayclick(MouseEventArgs arg)
     {
         this.IsVisible = false;
@@ -192,6 +195,10 @@
         this.StateHasChanged();
     }
 
+    private Claim[] GetSelectedClaims()
+        => selectedClaims!
+            .Select(v => allClaims![v])
+            .ToArray();
 
 } 
 

@@ -8,7 +8,7 @@ using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 using BerghAdmin.Services.Seeding;
-
+using BerghAdmin.Services.UserManagement;
 using Mailjet.Client;
 
 using Microsoft.AspNetCore.Authorization;
@@ -130,6 +130,7 @@ public class Registrator
         builder.Services.AddScoped<ISendMailService, SendMailService>();
         builder.Services.AddScoped<IEvenementService, EvenementService>();
         builder.Services.AddScoped<IDonatieService, DonatieService>();
+        builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IBihzUserService, BihzUserService>();
         builder.Services.AddScoped<IBihzActieService, BihzActieService>();
         builder.Services.AddScoped<IBihzProjectService, BihzProjectService>();

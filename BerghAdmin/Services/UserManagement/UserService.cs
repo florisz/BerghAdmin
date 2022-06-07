@@ -100,27 +100,6 @@ public class UserService : IUserService
         return IdentityResult.Success;
     }
 
-    public async Task<IdentityResult> UpdateUserAsync(User user, string password)
-    {
-        var result = await UpdateUserAsync(user);
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-        result = await _userManager.RemovePasswordAsync(user);
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-        result = await _userManager.AddPasswordAsync(user, password);
-        if (!result.Succeeded)
-        {
-            return result;
-        }
-
-        return IdentityResult.Success;
-    }
-
     public async Task<IdentityResult> UpdateUserAsync(User user, Claim[] claims)
     {
         // update the user properties
@@ -131,7 +110,7 @@ public class UserService : IUserService
         }
 
         // throw away all old claims
-        var oldClaims = await GetUserClaimsAsync(user.Name);
+        var oldClaims = await GetUserClaimsAsync(user.UserName);
         if (oldClaims.Count > 0)
         {
             result = await this._userManager.RemoveClaimsAsync(user, oldClaims);
@@ -153,6 +132,22 @@ public class UserService : IUserService
             {
                 return result;
             }
+        }
+
+        return IdentityResult.Success;
+    }
+
+    public async Task<IdentityResult> UpdateUserPasswordAsync(User user, string password)
+    {
+        var result = await _userManager.RemovePasswordAsync(user);
+        if (!result.Succeeded)
+        {
+            return result;
+        }
+        result = await _userManager.AddPasswordAsync(user, password);
+        if (!result.Succeeded)
+        {
+            return result;
         }
 
         return IdentityResult.Success;

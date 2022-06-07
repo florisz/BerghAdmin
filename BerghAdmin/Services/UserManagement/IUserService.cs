@@ -14,6 +14,6 @@ public interface IUserService
     Task<IdentityResult> InsertUserAsync(User user, string password);
     Task<IdentityResult> InsertUserAsync(User user, string password, Claim[] claims);
     Task<IdentityResult> UpdateUserAsync(User user);
-    Task<IdentityResult> UpdateUserAsync(User user, string password);
     Task<IdentityResult> UpdateUserAsync(User user, Claim[] claims);
+    Task<IdentityResult> UpdateUserPasswordAsync(User user, string password);
 }
