@@ -84,7 +84,7 @@ public class DonatieService : IDonatieService
         => _dbContext
             .Donaties?
             .Where(d => d.KentaaDonatie != null)
-            .FirstOrDefault(d => d.KentaaDonatie.Id == kentaaDonatieId);
+            .FirstOrDefault(d => d.KentaaDonatie!.Id == kentaaDonatieId);
 
     
     public void Save(Donatie donatie)

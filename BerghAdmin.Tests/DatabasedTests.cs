@@ -1,11 +1,12 @@
-﻿using BerghAdmin.DbContexts;
+﻿using BerghAdmin.Authorization;
+using BerghAdmin.DbContexts;
 using BerghAdmin.Services.Configuration;
 using BerghAdmin.Tests.TestHelpers;
-
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using System;
 
@@ -15,6 +16,7 @@ namespace BerghAdmin.Tests
     {
         private ServiceProvider? ServiceProvider;
         protected ApplicationDbContext? ApplicationDbContext;
+
         protected abstract void RegisterServices(ServiceCollection services);
 
         [SetUp]
