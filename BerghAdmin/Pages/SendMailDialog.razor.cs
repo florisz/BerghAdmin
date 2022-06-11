@@ -7,9 +7,8 @@ namespace BerghAdmin.Pages
 {
     public partial class SendMailDialog
     {
-        [Parameter]
         public bool IsVisible { get; set; } = false;
-        [Parameter]
+
         public MailMessage Message { get; set; } = new();
 
         [Inject]

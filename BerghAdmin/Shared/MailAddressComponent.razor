@@ -1,4 +1,5 @@
 ﻿@using Syncfusion.Blazor.Popups
+@using BerghAdmin.Pages
 
 <div class="mail-address-container" title="@Address.Address" @onclick="EditMailAddress">
     @Address.Name
@@ -7,35 +8,7 @@
     </span>
 </div>
 
-<SfDialog Width="600" ShowCloseIcon="true" @bind-Visible="ShowDialog" AllowPrerender="false" IsModal="true">
-    <DialogEvents OnOverlayClick="@OnOverlayclick">
-    </DialogEvents>
-
-    <DialogTemplates>
-        <Header> Wijzigen e-mail adres</Header>
-        <Content>
-            <EditForm Model="@_editMailAddress">
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Naam</label>
-                    <div class="col-sm-10">
-                        <SfTextBox @bind-Value="@Address.Name" Placeholder="Naam"></SfTextBox>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">E-mailadres</label>
-                    <div class="col-sm-10">
-                        <SfTextBox @bind-Value="@Address.Address" Placeholder="E-mailadres"></SfTextBox>
-                    </div>
-                </div>
-            </EditForm>
-        </Content>
-    </DialogTemplates>
-
-    <DialogButtons>
-        <DialogButton Content="OK" IsPrimary="true" OnClick="@SaveMailAddress" />
-        <DialogButton Content="Afbreken" IsPrimary="false" OnClick="@CloseDialog" />
-    </DialogButtons>
-</SfDialog>
+<EditMailAddressDialog @ref="editMailAddressDialog"></EditMailAddressDialog>
 
 <style>
     .e-close-icon::before {

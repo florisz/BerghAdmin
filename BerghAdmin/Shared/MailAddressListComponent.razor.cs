@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BerghAdmin.Pages;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Syncfusion.Blazor.Buttons;
 
 namespace BerghAdmin.Shared
 {
@@ -9,13 +9,16 @@ namespace BerghAdmin.Shared
         [Parameter]
         public List<MailAddress> Addresses { get; set; } = new();
 
+        private EditMailAddressDialog editMailAddressDialog = new();
+
         public void AddMailAddress(MouseEventArgs args)
         {
             var mailAddress = new MailAddress(string.Empty, string.Empty);
             Addresses.Add(mailAddress);
             StateHasChanged();
 
-            //EditMailAddress();
+            editMailAddressDialog.Address = mailAddress;
+            editMailAddressDialog.DialogOpen();
         }
     }
 }
