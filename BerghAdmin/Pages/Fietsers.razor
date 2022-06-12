@@ -1,10 +1,12 @@
 ﻿@page "/Fietsers"
 @page "/Fietsers/Personen"
 
+@using BerghAdmin.Authorization
 @using BerghAdmin.Data
 
 @inject IJSRuntime jsRuntime
-@* @attribute [Authorize(Policy = "BeheerFietsers")] *@
+
+@attribute [Authorize(Policy = "IsBeheerFietsers")]
 
 <h3>Fietsers</h3>
 

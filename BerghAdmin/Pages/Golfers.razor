@@ -2,9 +2,12 @@
 @page "/Golfers/Personen"
 @page "/Golfers/Golfdagen"
 
+@using BerghAdmin.Authorization
 @using BerghAdmin.Data
 
 @inject IJSRuntime jsRuntime
+
+@attribute [Authorize(Policy = "IsBeheerGolfers")]
 
 <h3>Golfers</h3>
 

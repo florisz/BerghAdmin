@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -9,187 +10,245 @@ namespace BerghAdmin.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CurrentPersoonId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CurrentPersoonId = table.Column<int>(type: "int", nullable: true),
+                    LoginCount = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NormalizedEmail = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    EmailConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SecurityStamp = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ConcurrencyStamp = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PhoneNumber = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetime(6)", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Betalingen",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Bedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    DatumTijd = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DatumTijd = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     BetalingType = table.Column<int>(type: "int", nullable: false),
-                    Munt = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Volgnummer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Tegenrekening = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NaamTegenpartij = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NaamUiteindelijkePartij = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NaamInitierendePartij = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BICTegenpartij = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BatchID = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TransactieReferentie = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MachtigingsKenmerk = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IncassantID = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BetalingsKenmerk = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Omschrijving1 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Omschrijving2 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Omschrijving3 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RedenRetour = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OorspronkelijkBedrag = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OorspronkelijkMunt = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Koers = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Munt = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Volgnummer = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Tegenrekening = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NaamTegenpartij = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NaamUiteindelijkePartij = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    NaamInitierendePartij = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BICTegenpartij = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Code = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BatchID = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TransactieReferentie = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MachtigingsKenmerk = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IncassantID = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BetalingsKenmerk = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Omschrijving1 = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Omschrijving2 = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Omschrijving3 = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RedenRetour = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OorspronkelijkBedrag = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OorspronkelijkMunt = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Koers = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Betalingen", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "BihzDonaties",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     DonationId = table.Column<int>(type: "int", nullable: false),
                     ActionId = table.Column<int>(type: "int", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
-                    CreatieDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WijzigDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatieDatum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    WijzigDatum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     DonatieBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     TransactionKosten = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
-                    RegistratieFee = table.Column<bool>(type: "bit", nullable: false),
+                    RegistratieFee = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     RegistratieFeeBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
                     TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     NettoBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Currency = table.Column<int>(type: "int", nullable: false),
                     BetaalStatus = table.Column<int>(type: "int", nullable: false),
-                    BetaalStatusOp = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    BetaalTransactieId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BetaalId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BetaalOmschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AccountIban = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AccountBic = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BetaalStatusOp = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    BetaalTransactieId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BetaalId = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BetaalOmschrijving = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AccountIban = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AccountBic = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     PersoonId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BihzDonaties", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "BihzProjects",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Slug = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
                     SiteId = table.Column<int>(type: "int", nullable: false),
-                    CreatieDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WijzigDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ExterneReferentie = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Titel = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Omschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatieDatum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    WijzigDatum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ExterneReferentie = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Titel = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Omschrijving = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     DoelBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     AantalDonaties = table.Column<int>(type: "int", nullable: false),
-                    DoelBedragBereikt = table.Column<bool>(type: "bit", nullable: false),
-                    Zichtbaar = table.Column<bool>(type: "bit", nullable: false),
-                    Gesloten = table.Column<bool>(type: "bit", nullable: false),
-                    Beeindigd = table.Column<bool>(type: "bit", nullable: false),
-                    EindDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DonatieUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DoelBedragBereikt = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Zichtbaar = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Gesloten = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Beeindigd = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    EindDatum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Url = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DonatieUrl = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     EvenementId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BihzProjects", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Documenten",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ContentType = table.Column<int>(type: "int", nullable: false),
                     TemplateType = table.Column<int>(type: "int", nullable: false),
-                    Content = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    IsMergeTemplate = table.Column<bool>(type: "bit", nullable: false),
-                    Owner = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Content = table.Column<byte[]>(type: "longblob", nullable: false),
+                    IsMergeTemplate = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Owner = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Documenten", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Evenementen",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Titel = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GeplandeDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Titel = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    GeplandeDatum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     KentaaProjectId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Evenementen", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Rollen",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    Beschrijving = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MeervoudBeschrijving = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Beschrijving = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MeervoudBeschrijving = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Rollen", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ClaimType = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ClaimValue = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -200,15 +259,19 @@ namespace BerghAdmin.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LoginProvider = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ProviderKey = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ProviderDisplayName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -220,16 +283,20 @@ namespace BerghAdmin.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    LoginProvider = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Value = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -240,34 +307,49 @@ namespace BerghAdmin.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Donateur",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IsVerwijderd = table.Column<bool>(type: "bit", nullable: false),
-                    Adres = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Postcode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Plaats = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Land = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Naam = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    IsVerwijderd = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Adres = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Postcode = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Plaats = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Land = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Discriminator = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Naam = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ContactPersoonId = table.Column<int>(type: "int", nullable: true),
                     Geslacht = table.Column<int>(type: "int", nullable: true),
-                    Voorletters = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Voornaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Achternaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Tussenvoegsel = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GeboorteDatum = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Telefoon = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Mobiel = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmailAdres = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    EmailAdresExtra = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Voorletters = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Voornaam = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Achternaam = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Tussenvoegsel = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    GeboorteDatum = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Telefoon = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Mobiel = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    EmailAdres = table.Column<string>(type: "varchar(95)", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    EmailAdresExtra = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ProjectId = table.Column<int>(type: "int", nullable: true),
-                    IsReserve = table.Column<bool>(type: "bit", nullable: true)
+                    IsReserve = table.Column<bool>(type: "tinyint(1)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -282,19 +364,22 @@ namespace BerghAdmin.Migrations
                         column: x => x.ContactPersoonId,
                         principalTable: "Donateur",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Facturen",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nummer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Omschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Bedrag = table.Column<float>(type: "real", nullable: true),
-                    Datum = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsVerzonden = table.Column<bool>(type: "bit", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Nummer = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Omschrijving = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Bedrag = table.Column<float>(type: "float", nullable: true),
+                    Datum = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    IsVerzonden = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     FactuurType = table.Column<int>(type: "int", nullable: false),
                     EmailTekstId = table.Column<int>(type: "int", nullable: true),
                     FactuurTekstId = table.Column<int>(type: "int", nullable: true)
@@ -312,16 +397,18 @@ namespace BerghAdmin.Migrations
                         column: x => x.FactuurTekstId,
                         principalTable: "Documenten",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "VerzondenMails",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Onderwerp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    VerzendDatum = table.Column<DateTime>(type: "datetime2", nullable: true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Onderwerp = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    VerzendDatum = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     InhoudId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -332,7 +419,8 @@ namespace BerghAdmin.Migrations
                         column: x => x.InhoudId,
                         principalTable: "Documenten",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "FietsTochten",
@@ -347,16 +435,20 @@ namespace BerghAdmin.Migrations
                         name: "FK_FietsTochten_Evenementen_Id",
                         column: x => x.Id,
                         principalTable: "Evenementen",
-                        principalColumn: "Id");
-                });
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "GolfDagen",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    Locatie = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Omschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Locatie = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Omschrijving = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -365,37 +457,49 @@ namespace BerghAdmin.Migrations
                         name: "FK_GolfDagen_Evenementen_Id",
                         column: x => x.Id,
                         principalTable: "Evenementen",
-                        principalColumn: "Id");
-                });
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "BihzActies",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     ActionId = table.Column<int>(type: "int", nullable: false),
                     SiteId = table.Column<int>(type: "int", nullable: true),
                     ProjectId = table.Column<int>(type: "int", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: true),
-                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatieDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WijzigDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ExterneReferentie = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Voornaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Tussenvoegsels = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Achternaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Titel = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Omschrijving = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Slug = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatieDatum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    WijzigDatum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ExterneReferentie = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Voornaam = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Tussenvoegsels = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Achternaam = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Titel = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Omschrijving = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     DoelBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     AantalDonaties = table.Column<int>(type: "int", nullable: false),
-                    DoelBedragBereikt = table.Column<bool>(type: "bit", nullable: false),
-                    Beeindigd = table.Column<bool>(type: "bit", nullable: false),
-                    EindDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DoneerUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DoelBedragBereikt = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Beeindigd = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    EindDatum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Url = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DoneerUrl = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     PersoonId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -406,33 +510,48 @@ namespace BerghAdmin.Migrations
                         column: x => x.PersoonId,
                         principalTable: "Donateur",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "BihzUsers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     SiteId = table.Column<int>(type: "int", nullable: false),
-                    CreatieDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    WijzigDatum = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Voornaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Tussenvoegsels = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Achternaam = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Adres = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Adres2 = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Straat = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HuisNummer = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HuisNummerToevoeging = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Postcode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Woonplaats = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Land = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Telefoon = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GeboorteDatum = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Geslacht = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatieDatum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    WijzigDatum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Voornaam = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Tussenvoegsels = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Achternaam = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Adres = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Adres2 = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Straat = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    HuisNummer = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    HuisNummerToevoeging = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Postcode = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Woonplaats = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Land = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Telefoon = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    GeboorteDatum = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Geslacht = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     PersoonId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -443,7 +562,8 @@ namespace BerghAdmin.Migrations
                         column: x => x.PersoonId,
                         principalTable: "Donateur",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "EvenementPersoon",
@@ -467,7 +587,8 @@ namespace BerghAdmin.Migrations
                         principalTable: "Evenementen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "PersoonRol",
@@ -491,15 +612,16 @@ namespace BerghAdmin.Migrations
                         principalTable: "Rollen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Donaties",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DatumTijd = table.Column<DateTime>(type: "datetime2", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DatumTijd = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Bedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     DonateurId = table.Column<int>(type: "int", nullable: true),
                     FactuurId = table.Column<int>(type: "int", nullable: true),
@@ -523,7 +645,8 @@ namespace BerghAdmin.Migrations
                         column: x => x.FactuurId,
                         principalTable: "Facturen",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "MailbccGeadresseerden",
@@ -547,7 +670,8 @@ namespace BerghAdmin.Migrations
                         principalTable: "VerzondenMails",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "MailccGeadresseerden",
@@ -571,7 +695,8 @@ namespace BerghAdmin.Migrations
                         principalTable: "VerzondenMails",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "MailGeadresseerden",
@@ -595,7 +720,8 @@ namespace BerghAdmin.Migrations
                         principalTable: "VerzondenMails",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
@@ -616,8 +742,7 @@ namespace BerghAdmin.Migrations
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_BihzActies_ActionId",
@@ -629,8 +754,7 @@ namespace BerghAdmin.Migrations
                 name: "IX_BihzActies_PersoonId",
                 table: "BihzActies",
                 column: "PersoonId",
-                unique: true,
-                filter: "[PersoonId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_BihzDonaties_DonationId",
@@ -648,8 +772,7 @@ namespace BerghAdmin.Migrations
                 name: "IX_BihzUsers_PersoonId",
                 table: "BihzUsers",
                 column: "PersoonId",
-                unique: true,
-                filter: "[PersoonId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_BihzUsers_UserId",
@@ -666,8 +789,7 @@ namespace BerghAdmin.Migrations
                 name: "IX_Donateur_IsVerwijderd_EmailAdres",
                 table: "Donateur",
                 columns: new[] { "IsVerwijderd", "EmailAdres" },
-                unique: true,
-                filter: "[EmailAdres] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Donateur_ProjectId",

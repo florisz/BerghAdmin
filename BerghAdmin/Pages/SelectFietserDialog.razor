@@ -1,5 +1,6 @@
 ﻿@page "/select-fietsers-dialog"
 
+@using BerghAdmin.Authorization
 @using BerghAdmin.Services.Evenementen
 @using Syncfusion.Blazor.Popups
 @using System.Collections.Generic
@@ -11,6 +12,8 @@
 @inject IPersoonService _persoonService
 @inject IEvenementService _evenementService
 @inject IRolService _rolService
+
+@attribute [Authorize(Policy = "IsBeheerFietsers")]
 
 <div id="SelectFietserDialogTarget">
 

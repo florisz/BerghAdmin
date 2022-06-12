@@ -12,8 +12,8 @@
     <table>
         <tr width="100%">
             <td height="200px" width="200px">
-                <div id="Tile-Ambassadeurs">
-                    <SfCard class="e-card" >
+                <div id="Tile-Ambassadeurs" >
+                    <SfCard class="e-card">
                         <CardImage Image="images/tile-ambassadeurs.jpg"/>
                         <CardFooter>
                             <CardFooterContent>
@@ -29,7 +29,7 @@
                         <CardImage Image="images/tile-fietsers.jpg" />
                         <CardFooter>
                             <CardFooterContent>
-                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => NavigateTo("Fietsers"))">Beheer Fietsers</SfButton>
+    .e-card                           <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => NavigateTo("Fietsers"))">Beheer Fietsers</SfButton>
                             </CardFooterContent>
                         </CardFooter>
                     </SfCard>
@@ -75,7 +75,7 @@
             </td>
             <td height="200px" width="200px">
                 <div id="Tile-ApplicatieManagement">
-                    <SfCard class="e-card">
+                    <SfCard class="e-card" >
                         <CardImage Image="images/tile-applmgmt.jpg" />
                         <CardFooter>
                             <CardFooterContent>
@@ -133,6 +133,12 @@
     }
     .e-card-image {
         border-radius: 10px;
+    }
+    .e-card-opaque {
+        opacity: 0.3;
+    }
+    .e-card-bright {
+        opacity: 1.0;
     }
     .tile_layout.card-control-section .e-card .e-card-header .e-card-header-caption .e-card-header-title {
         font-size: 20px;

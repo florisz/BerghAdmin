@@ -1,5 +1,6 @@
 ﻿@page "/Fietsers/Tochten"
 
+@using BerghAdmin.Authorization
 @using BerghAdmin.Data
 @using BerghAdmin.Services.Evenementen
 
@@ -10,7 +11,7 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime jsRuntime
 
-@* @attribute [Authorize(Policy = "BeheerFietsers")] *@
+@attribute [Authorize(Policy = "IsBeheerFietsers")]
 
 <h3>Fietstochten</h3>
 

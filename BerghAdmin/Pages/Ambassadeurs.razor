@@ -1,9 +1,12 @@
 ﻿@page "/Ambassadeurs"
 @page "/Ambassadeurs/personen"
 
+@using BerghAdmin.Authorization
 @using BerghAdmin.Data
 
 @inject IJSRuntime jsRuntime
+
+@attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
 
 <h3>Ambassadeurs</h3>
 

@@ -1,5 +1,4 @@
 using BerghAdmin.Authorization;
-using BerghAdmin.DbContexts;
 
 using Microsoft.AspNetCore.Identity;
 
@@ -10,17 +9,10 @@ namespace BerghAdmin.Services.Seeding;
 public class DebugSeedUsersService : ISeedUsersService
 {
     private readonly UserManager<User> _userManager;
-    private readonly IRolService _rolService;
-    private readonly IPersoonService _persoonService;
 
-    public DebugSeedUsersService(
-        UserManager<User> userManager,
-        IRolService rolService,
-        IPersoonService persoonService)
+    public DebugSeedUsersService(UserManager<User> userManager)
     {
-        this._rolService = rolService;
         this._userManager = userManager;
-        this._persoonService = persoonService;
     }
 
     public async Task SeedUsersData()
@@ -29,103 +21,37 @@ public class DebugSeedUsersService : ISeedUsersService
         {
             return;
         }
-        var rollen = GetRollen();
 
-        if (rollen != null)
-        {
-            var persoon = new Persoon
-            {
-                Voorletters = "F",
-                Voornaam = "Floris",
-                Achternaam = "Zwarteveen",
-                Adres = "Berkenlaan 12",
-                EmailAdres = "florisz@maatschap42.nl",
-                GeboorteDatum = new DateTime(2002, 1, 1),
-                Geslacht = GeslachtEnum.Man,
-                Land = "Nederland",
-                Mobiel = "06-12345678",
-                Plaats = "Beek",
-                Postcode = "7037 CA",
-                Telefoon = "onbekend",
-                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.CommissieLid] }
-            };
-            await InsertUser(persoon, rollen, "admin", AdministratorPolicyHandler.Claim);
-
-            persoon = new Persoon
-            {
-                Voorletters = "R",
-                Voornaam = "Richard",
-                Achternaam = "de Zwart",
-                Adres = "Straat 32",
-                EmailAdres = "richard@dezwartenco.nl",
-                GeboorteDatum = new DateTime(2002, 1, 1),
-                Geslacht = GeslachtEnum.Man,
-                Land = "Nederland",
-                Mobiel = "06-12345678",
-                Plaats = "Breda",
-                Postcode = "6900 AB",
-                Telefoon = "onbekend",
-                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Golfer], rollen[RolTypeEnum.CommissieLid] }
-            };
-            await InsertUser(persoon, rollen, "ict", AdministratorPolicyHandler.Claim);
-
-            persoon = new Persoon
-            {
-                Voorletters = "R",
-                Voornaam = "Reinald",
-                Achternaam = "Baart",
-                Adres = "Straat 32",
-                EmailAdres = "reinald.baart@gmail.com",
-                GeboorteDatum = new DateTime(2002, 1, 1),
-                Geslacht = GeslachtEnum.Man,
-                Land = "Nederland",
-                Mobiel = "06-12345678",
-                Plaats = "Breda",
-                Postcode = "6900 AB",
-                Telefoon = "onbekend",
-                Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Golfer], rollen[RolTypeEnum.CommissieLid] }
-            };
-            await InsertUser(persoon, rollen, "webmaster", AdministratorPolicyHandler.Claim);
-        }
-    }
-
-    private Dictionary<RolTypeEnum, Rol> GetRollen()
-    {
-        var allRollen = new[] { RolTypeEnum.Ambassadeur,
-                                    RolTypeEnum.Begeleider, 
-                                    RolTypeEnum.CommissieLid,
-                                    RolTypeEnum.Golfer, 
-                                    RolTypeEnum.MailingAbonnee,
-                                    RolTypeEnum.Fietser, 
-                                    RolTypeEnum.VriendVan,
-                                    RolTypeEnum.Vrijwilliger
-                                };
-
-        var rollen = new Dictionary<RolTypeEnum, Rol>();
-
-        foreach (var rolEnum in allRollen)
-        {
-            var rol = _rolService.GetRolById(rolEnum);
-            rollen.Add(rolEnum, rol);
-        }
-        
-        return rollen;
+        await InsertUser("admin", new Claim[] { 
+            AdministratorPolicyHandler.Claim,
+            BeheerAmbassadeursPolicyHandler.Claim,
+            BeheerFietsersPolicyHandler.Claim,
+            BeheerFinancienPolicyHandler.Claim,
+            BeheerGolfersPolicyHandler.Claim,
+            BeheerSecretariaatPolicyHandler.Claim,
+        });
+        await InsertUser("secretariaat", new Claim[] {
+            BeheerAmbassadeursPolicyHandler.Claim,
+            BeheerFietsersPolicyHandler.Claim,
+            BeheerFinancienPolicyHandler.Claim,
+            BeheerGolfersPolicyHandler.Claim,
+            BeheerSecretariaatPolicyHandler.Claim,
+        });
+        await InsertUser("ambassadeursadmin", new Claim[] { BeheerAmbassadeursPolicyHandler.Claim });
+        await InsertUser("fietsenadmin", new Claim[] { BeheerFietsersPolicyHandler.Claim });
+        await InsertUser("financienadmin", new Claim[] { BeheerFinancienPolicyHandler.Claim });
+        await InsertUser("golfadmin", new Claim[] { BeheerGolfersPolicyHandler.Claim });
     }
 
     private bool DatabaseHasUsers()
         => this._userManager.Users.Count() > 0;
 
 
-    private async Task InsertUser(Persoon persoon, Dictionary<RolTypeEnum, Rol> rollen, string naam, Claim claim)
+    private async Task InsertUser(string naam, Claim[] claims)
     {
-        if (_persoonService.GetByEmailAdres(persoon.EmailAdres) == null)
-        {
-            _persoonService.SavePersoon(persoon);
-        }
-
         var user = new User
         {
-            CurrentPersoonId = persoon.Id,
+            CurrentPersoonId = null,
             Name = naam,
             UserName = $"{naam}@berghinhetzadel.nl",
             Email = $"{naam}@berghinhetzadel.nl",
@@ -136,14 +62,17 @@ public class DebugSeedUsersService : ISeedUsersService
             PhoneNumber = "",
             PhoneNumberConfirmed = true,
             TwoFactorEnabled = false,
+            LoginCount = 1
         };
 
-        var result = await this._userManager.CreateAsync(user, "qwerty@123");
+        var result = await this._userManager.CreateAsync(user, "Qwerty@123");
         if (result.Succeeded)
         {
-            await this._userManager.AddClaimAsync(user, claim);
-            await this._userManager.UpdateAsync(user);
+            foreach (var claim in claims)
+            {
+                await this._userManager.AddClaimAsync(user, claim);
+                await this._userManager.UpdateAsync(user);
+            }
         }
     }
-
 }

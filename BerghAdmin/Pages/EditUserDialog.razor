@@ -11,6 +11,8 @@
 
 @inject IUserService _userService
 
+@attribute [Authorize(Policy = "IsAdministrator")]
+
 <div id="EditUserDialogTarget">
 
     <SfDialog Target="#EditUserDialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
