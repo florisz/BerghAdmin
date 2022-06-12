@@ -316,7 +316,10 @@ namespace BerghAdmin.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DebiteurNummer = table.Column<int>(type: "int", nullable: true),
                     IsVerwijderd = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    SponsorNaam = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Adres = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Postcode = table.Column<string>(type: "longtext", nullable: true)
@@ -324,6 +327,18 @@ namespace BerghAdmin.Migrations
                     Plaats = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Land = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Telefoon = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Mobiel = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    EmailAdres = table.Column<string>(type: "varchar(95)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    EmailAdresExtra = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BedragToegezegd = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    DatumAangebracht = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Opmerkingen = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Discriminator = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -340,14 +355,6 @@ namespace BerghAdmin.Migrations
                     Tussenvoegsel = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     GeboorteDatum = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    Telefoon = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Mobiel = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    EmailAdres = table.Column<string>(type: "varchar(95)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    EmailAdresExtra = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ProjectId = table.Column<int>(type: "int", nullable: true),
                     IsReserve = table.Column<bool>(type: "tinyint(1)", nullable: true)
                 },
@@ -622,6 +629,8 @@ namespace BerghAdmin.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     DatumTijd = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Omschrijving = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Bedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     DonateurId = table.Column<int>(type: "int", nullable: true),
                     FactuurId = table.Column<int>(type: "int", nullable: true),

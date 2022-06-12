@@ -1,5 +1,5 @@
 # Create a migration
-cd Berg	<MigrationName>
+dotnet ef migrations add <MigrationName>
 # Create database and scheme
 -> Create SQL Database manually
 dotnet ef database update

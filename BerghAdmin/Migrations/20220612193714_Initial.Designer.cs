@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220608213100_Initial")]
+    [Migration("20220612193714_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -237,8 +237,24 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("Adres")
                         .HasColumnType("longtext");
 
+                    b.Property<decimal?>("BedragToegezegd")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<DateTime?>("DatumAangebracht")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("DebiteurNummer")
+                        .HasColumnType("int");
+
                     b.Property<string>("Discriminator")
                         .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("EmailAdres")
+                        .IsRequired()
+                        .HasColumnType("varchar(95)");
+
+                    b.Property<string>("EmailAdresExtra")
                         .HasColumnType("longtext");
 
                     b.Property<bool>("IsVerwijderd")
@@ -247,10 +263,22 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("Land")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Mobiel")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Opmerkingen")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Plaats")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Postcode")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SponsorNaam")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Telefoon")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -281,6 +309,9 @@ namespace BerghAdmin.Migrations
 
                     b.Property<int?>("KentaaDonatieId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Omschrijving")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -893,13 +924,6 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("Achternaam")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("EmailAdres")
-                        .IsRequired()
-                        .HasColumnType("varchar(95)");
-
-                    b.Property<string>("EmailAdresExtra")
-                        .HasColumnType("longtext");
-
                     b.Property<DateTime?>("GeboorteDatum")
                         .HasColumnType("datetime(6)");
 
@@ -909,14 +933,8 @@ namespace BerghAdmin.Migrations
                     b.Property<bool>("IsReserve")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("Mobiel")
-                        .HasColumnType("longtext");
-
                     b.Property<int?>("ProjectId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Telefoon")
-                        .HasColumnType("longtext");
 
                     b.Property<string>("Tussenvoegsel")
                         .HasColumnType("longtext");
