@@ -78,7 +78,7 @@ namespace BerghAdmin.Pages
             // Replace all content ids with inlined attachments
             this.MailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(Message);
 
-            bool isSandboxMode = false; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
+            bool isSandboxMode = true; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
             await SendMailService.SendMail(Message, isSandboxMode);
 
             DialogClose();

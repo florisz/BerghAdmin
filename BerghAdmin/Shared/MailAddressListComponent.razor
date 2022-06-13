@@ -9,7 +9,7 @@
     <SfButton CssClass="e-round e-small e-success ml-1" IconCss="e-icons e-plus-icon" @onclick="AddMailAddress"></SfButton>
 </div>
 
-<EditMailAddressDialog @ref="editMailAddressDialog"></EditMailAddressDialog>
+<EditMailAddressDialog @ref="editMailAddressDialog" OnMailAddressUpdated="@MailAddressUpdated"></EditMailAddressDialog>
 
 <style>
     .e-plus-icon::before {

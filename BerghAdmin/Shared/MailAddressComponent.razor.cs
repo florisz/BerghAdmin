@@ -1,4 +1,5 @@
-﻿using BerghAdmin.Pages;
+﻿using BerghAdmin.Events;
+using BerghAdmin.Pages;
 using Microsoft.AspNetCore.Components;
 
 namespace BerghAdmin.Shared
@@ -15,13 +16,19 @@ namespace BerghAdmin.Shared
 
         public void EditMailAddress()
         {
-            editMailAddressDialog.Address = Address;
+            editMailAddressDialog.Address = new MailAddress(Address.Address, Address.Name);
             editMailAddressDialog.DialogOpen();
         }
 
         public void DeleteMailAddress()
         {
             MailAddresses.Remove(Address);
+        }
+
+        public void MailAddressUpdated(MailAddressUpdatedEventArgs args)
+        {
+            Address = args.MailAddress;
+            StateHasChanged();
         }
     }
 }

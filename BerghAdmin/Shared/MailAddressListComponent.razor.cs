@@ -1,4 +1,5 @@
-﻿using BerghAdmin.Pages;
+﻿using BerghAdmin.Events;
+using BerghAdmin.Pages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -13,12 +14,14 @@ namespace BerghAdmin.Shared
 
         public void AddMailAddress(MouseEventArgs args)
         {
-            var mailAddress = new MailAddress(string.Empty, string.Empty);
-            Addresses.Add(mailAddress);
-            StateHasChanged();
-
-            editMailAddressDialog.Address = mailAddress;
+            editMailAddressDialog.Address = new MailAddress(string.Empty, string.Empty);
             editMailAddressDialog.DialogOpen();
+        }
+
+        public void MailAddressUpdated(MailAddressUpdatedEventArgs args)
+        {
+            Addresses.Add(args.MailAddress);
+            StateHasChanged();
         }
     }
 }

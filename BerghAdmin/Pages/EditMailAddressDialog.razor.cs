@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BerghAdmin.Events;
+using Microsoft.AspNetCore.Components;
 
 namespace BerghAdmin.Pages
 {
@@ -11,6 +12,8 @@ namespace BerghAdmin.Pages
         public bool ShowDialog { get; set; } = false;
         [Parameter]
         public List<MailAddress> MailAddresses { get; set; } = new();
+        [Parameter]
+        public EventCallback<MailAddressUpdatedEventArgs> OnMailAddressUpdated { get; set; }
 
         public void DialogOpen()
         {
@@ -18,15 +21,20 @@ namespace BerghAdmin.Pages
             StateHasChanged();
         }
 
-        public void SaveMailAddress()
+        public async Task SaveMailAddress()
         {
             CloseDialog();
             StateHasChanged();
+
+            await OnMailAddressUpdated.InvokeAsync(new MailAddressUpdatedEventArgs(Address));
         }
-        public void DeleteMailAddress()
+
+        public async Task DeleteMailAddress()
         {
             MailAddresses.Remove(Address);
             StateHasChanged();
+
+            await OnMailAddressUpdated.InvokeAsync(new MailAddressUpdatedEventArgs(Address));
         }
 
         public void CloseDialog()
