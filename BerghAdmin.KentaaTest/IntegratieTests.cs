@@ -55,7 +55,7 @@ namespace BerghAdmin.Tests.Kentaa
             ;
 
             services.AddDbContext<ApplicationDbContext>(
-                    options => options.UseSqlServer(GetDatabaseConnectionString(databaseConfiguration), po => po.EnableRetryOnFailure()));
+                    options => options.UseMySql(GetDatabaseConnectionString(databaseConfiguration), ServerVersion.Parse("5.7"), po => po.EnableRetryOnFailure()));
 
         }
 

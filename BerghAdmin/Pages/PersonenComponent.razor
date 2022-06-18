@@ -19,6 +19,8 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime jsRuntime
 
+@attribute [Authorize(Policy = "IsAnyRole")]
+
 <table>
     <tr>
         <td>

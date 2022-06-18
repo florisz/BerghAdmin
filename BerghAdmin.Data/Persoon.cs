@@ -25,10 +25,6 @@ public class Persoon : Donateur
     public string? Achternaam { get; set; }
     public string? Tussenvoegsel { get; set; }
     public DateTime? GeboorteDatum { get; set; }
-    public string? Telefoon  { get; set; }
-    public string? Mobiel  { get; set; }
-    public string EmailAdres  { get; set; } 
-    public string? EmailAdresExtra  { get; set; } 
     public HashSet<Rol> Rollen { get; set; } = new();
     public ICollection<VerzondenMail> Geadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<VerzondenMail> ccGeadresseerden { get; set; } = new List<VerzondenMail>();

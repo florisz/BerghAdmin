@@ -10,6 +10,8 @@
 @inject IPersoonService _persoonService
 @inject IRolService _rolService
 
+@attribute [Authorize(Policy = "IsAnyRole")]
+
 <div id="EditPersoonDialogTarget">
 
     <SfDialog Target="#EditPersoonDialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">

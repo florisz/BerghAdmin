@@ -1,5 +1,9 @@
 ﻿@page "/donaties"
 
+@using BerghAdmin.Authorization
+
+@attribute [Authorize(Policy = "IsBeheerFinancien")]
+
 <h1>Donaties</h1>
 
 @* <MudPaper Width="300px">

@@ -56,10 +56,18 @@ public class Registrator
 
         services.AddSingleton<IAuthorizationHandler, AdministratorPolicyHandler>();
         services.AddSingleton<IAuthorizationHandler, BeheerFietsersPolicyHandler>();
+        services.AddSingleton<IAuthorizationHandler, BeheerAmbassadeursPolicyHandler>();
+        services.AddSingleton<IAuthorizationHandler, BeheerFinancienPolicyHandler>();
+        services.AddSingleton<IAuthorizationHandler, BeheerGolfersPolicyHandler>();
+        services.AddSingleton<IAuthorizationHandler, BeheerSecretariaatPolicyHandler>();
         services.AddAuthorization(options =>
         {
             options.AddPolicy("IsAdministrator", policy => policy.Requirements.Add(new IsAdministratorRequirement()));
-            options.AddPolicy("BeheerFietsers", policy => policy.Requirements.Add(new IsFietsersBeheerderRequirement()));
+            options.AddPolicy("IsSecretariaat", policy => policy.Requirements.Add(new IsSecretariaatBeheerderRequirement()));
+            options.AddPolicy("IsBeheerAmbassadeurs", policy => policy.Requirements.Add(new IsAmbassadeursBeheerderRequirement()));
+            options.AddPolicy("IsBeheerFietsers", policy => policy.Requirements.Add(new IsFietsersBeheerderRequirement()));
+            options.AddPolicy("IsBeheerFinancien", policy => policy.Requirements.Add(new IsFinancienBeheerderRequirement()));
+            options.AddPolicy("IsBeheerGolfers", policy => policy.Requirements.Add(new IsGolfersBeheerderRequirement()));
             options.FallbackPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
@@ -146,7 +154,7 @@ public class Registrator
             e.MaximumReceiveMessageSize = 10240000;
         });
         builder.Services.AddDbContext<ApplicationDbContext>(
-            options => options.UseSqlServer(GetDatabaseConnectionString(builder), po => po.EnableRetryOnFailure()));
+            options => options.UseMySql(GetDatabaseConnectionString(builder), ServerVersion.Parse("5.7"), po => po.EnableRetryOnFailure()));
 
         builder.Services.AddHealthChecks()
             .AddDbContextCheck<ApplicationDbContext>();

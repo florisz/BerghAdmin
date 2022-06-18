@@ -6,6 +6,8 @@
 
 @inject BerghAdmin.Services.IDocumentService documentService
 
+@attribute [Authorize(Policy = "IsAdministrator")]
+
 <SfGrid DataSource="@templates" AllowPaging="true">
     <GridEditSettings 
         AllowAdding="true" 

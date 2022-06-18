@@ -2,6 +2,7 @@
 
 @using Syncfusion.Blazor.Cards
 @using Syncfusion.Blazor.Buttons
+@using System.Security.Claims
 
 @inject NavigationManager NavigationManager
 @inject IAuthorizationService AuthorizationService
@@ -12,8 +13,8 @@
     <table>
         <tr width="100%">
             <td height="200px" width="200px">
-                <div id="Tile-Ambassadeurs">
-                    <SfCard class="e-card" >
+                <div id="Tile-Ambassadeurs" >
+                    <SfCard class="e-card">
                         <CardImage Image="images/tile-ambassadeurs.jpg"/>
                         <CardFooter>
                             <CardFooterContent>
@@ -41,7 +42,7 @@
                         <CardImage Image="images/tile-golfers.jpg"/>
                         <CardFooter>
                             <CardFooterContent>
-                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => NavigateTo("Golfers"))">Beheer Golfers</SfButton>
+                            <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => NavigateTo("Golfers"))">Beheer Golfers</SfButton>
                             </CardFooterContent>
                         </CardFooter>
                     </SfCard>
@@ -75,11 +76,11 @@
             </td>
             <td height="200px" width="200px">
                 <div id="Tile-ApplicatieManagement">
-                    <SfCard class="e-card">
+                    <SfCard class="e-card" >
                         <CardImage Image="images/tile-applmgmt.jpg" />
                         <CardFooter>
                             <CardFooterContent>
-                                <SfButton CssClass="e-btn e-outline e-primary" @onclick="@(e => NavigateTo("ApplicatieManagement"))">Applicatie beheer</SfButton>
+                                <SfButton CssClass="e-btn e-outline e-primary" Disabled=@NotIsAdmin  @onclick="@(e => NavigateTo("ApplicatieManagement"))">Applicatie beheer</SfButton>
                             </CardFooterContent>
                         </CardFooter>
                     </SfCard>
@@ -90,6 +91,14 @@
 </div>
 @code
 {
+    bool NotIsAdmin = false;
+
+    protected async override void OnInitialized()
+    {
+        base.OnInitialized();
+        //NotIsAdmin = await AuthorizationService.AuthorizeAsync(ClaimsPrincipal.Current, "IsAdministrator") != AuthorizationResult.Success();
+    }
+
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         await jsRuntime.InvokeAsync<object>("SetSideMenu", "shared");
@@ -112,7 +121,7 @@
         padding: 0 0 15px 0;
     }
     .e-btn {
-        align: center;
+        align-items: center;
     }
     .tile_layout.card-control-section .e-error {
         height: 200px;
@@ -133,6 +142,12 @@
     }
     .e-card-image {
         border-radius: 10px;
+    }
+    .e-card-opaque {
+        opacity: 0.3;
+    }
+    .e-card-bright {
+        opacity: 1.0;
     }
     .tile_layout.card-control-section .e-card .e-card-header .e-card-header-caption .e-card-header-title {
         font-size: 20px;

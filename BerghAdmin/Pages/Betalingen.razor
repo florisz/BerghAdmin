@@ -1,3 +1,7 @@
 ﻿@page "/Financien/betalingen"
 
+@using BerghAdmin.Authorization
+
+@attribute [Authorize(Policy = "IsBeheerFinancien")]
+
 <h1>Betalingen</h1>

@@ -10,6 +10,8 @@
 
 @inject BerghAdmin.Services.UserManagement.IUserService userService
 
+@attribute [Authorize(Policy = "IsAdministrator")]
+
 <SfToolbar>
     <ToolbarItems>
         <ToolbarItem Text="Add" SuffixIcon="e-icons circle-add" Align="ItemAlign.Left" OnClick="AddClick"></ToolbarItem>

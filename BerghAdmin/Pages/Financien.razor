@@ -11,8 +11,7 @@
 @inject BerghAdmin.Services.Betalingen.IBetalingenImporterService importerService 
 @inject BerghAdmin.Services.Betalingen.IBetalingenService betalingenService 
 
-
-@* @attribute [Authorize(Policy = "IsAdministrator")] *@
+@attribute [Authorize(Policy = "IsBeheerFinancien")]
 
 <h3>Financiën</h3>
 <SfGrid @ref="@BetalingenGrid" DataSource="@BetalingenList" SelectedRowIndex=0>

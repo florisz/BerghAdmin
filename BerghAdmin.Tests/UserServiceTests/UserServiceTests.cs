@@ -192,7 +192,7 @@ public class UserServiceTests : DatabasedTests
         Assert.IsNotNull(user);
 
         var newPassword = "NewP@ssword#123";
-        result = await service.UpdateUserAsync(user, newPassword);
+        result = await service.UpdateUserPasswordAsync(user, newPassword);
         if (!result.Succeeded)
         {
             Assert.Fail(string.Join(",", result.Errors.Select(e => $"{e.Code}: {e.Description}").ToArray()));
