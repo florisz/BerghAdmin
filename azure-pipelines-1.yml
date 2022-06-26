@@ -6,7 +6,7 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo New infrastructure for Test will be procisioned
+- script: echo New infrastructure for Test will be provisioned
   displayName: 'Provision Test infra on Azure'
 
 - task: AzureCLI@2
