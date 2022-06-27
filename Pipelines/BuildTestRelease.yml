@@ -57,7 +57,7 @@ stages:
         ConnectionType: 'AzureRM'
         azureSubscription: 'BerghAzureResourceMgr'
         appType: 'webAppLinux'
-        WebAppName: 'bergh-test-bergh-admin-webapp'
+        WebAppName: 'bergh-test-admin-webapp'
         packageForLinux: '$(System.ArtifactsDirectory)/**/BerghAdmin.zip'
         RuntimeStack: 'DOTNETCORE|6.0'
 
