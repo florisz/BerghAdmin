@@ -3,6 +3,14 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+parameters:
+- name: targetEnvironment # where to deploy
+  type: string # data type of the parameter; required
+  default: test
+  values:
+  - test
+  - prod
+
 trigger:
 - master
 
@@ -78,3 +86,14 @@ stages:
         appType: 'functionAppLinux'
         appName: 'bergh-test-kentaa-functionapp'
         package: '$(System.ArtifactsDirectory)/**/BerghAdmin.KentaaFunction.zip'
+
+- stage: Deploy2BerghProd
+  jobs:
+  - job: deploy_to_bergh_prod
+    displayName: Deploy to Bergh Test
+    steps:
+    - task: ManualIntervention@8
+      inputs:
+        instructions: 'Give manual confirmation to deploy to production'
+        emailRecipients: 'fzwarteveen@gmail.com'
+        onTimeout: 'resume'
