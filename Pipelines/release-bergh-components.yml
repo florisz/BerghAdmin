@@ -11,8 +11,11 @@ parameters:
   
 steps:
 - script: echo Deploying for ${{ parameters.targetEnvironment }}
+  target: host
+
 - task: AzureRmWebAppDeployment@4
   displayName: Deploy Bergh Admin site
+  target: host
   inputs:
     ConnectionType: 'AzureRM'
     azureSubscription: 'BerghAzureResourceMgr'
@@ -23,6 +26,7 @@ steps:
 
 - task: AzureRmWebAppDeployment@4
   displayName: Deploy Bergh Monitor site
+  target: host
   inputs:
     ConnectionType: 'AzureRM'
     azureSubscription: 'BerghAzureResourceMgr'
@@ -33,6 +37,7 @@ steps:
 
 - task: AzureFunctionApp@1
   displayName: Deploy Kentaa Function
+  target: host
   inputs:
     azureSubscription: 'BerghAzureResourceMgr'
     appType: 'functionAppLinux'
