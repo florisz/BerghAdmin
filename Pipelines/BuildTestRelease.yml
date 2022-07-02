@@ -58,34 +58,12 @@ stages:
         downloadType: 'single'
         artifactName: 'drop'
         downloadPath: '$(System.ArtifactsDirectory)'
-      
-    - task: AzureRmWebAppDeployment@4
-      displayName: Deploy Bergh Admin site
-      inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: 'BerghAzureResourceMgr'
-        appType: 'webAppLinux'
-        WebAppName: 'bergh-test-admin-webapp'
-        packageForLinux: '$(System.ArtifactsDirectory)/**/BerghAdmin.zip'
-        RuntimeStack: 'DOTNETCORE|6.0'
+  
+    - extends: 
+        template: release-bergh-components.yml
+        parameters: 
+            targetEnvironment: test
 
-    - task: AzureRmWebAppDeployment@4
-      displayName: Deploy Bergh Monitor site
-      inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: 'BerghAzureResourceMgr'
-        appType: 'webAppLinux'
-        WebAppName: 'bergh-test-monitor-webapp'
-        packageForLinux: '$(System.ArtifactsDirectory)/**/BerghMonitor.Web.zip'
-        RuntimeStack: 'DOTNETCORE|6.0'
-
-    - task: AzureFunctionApp@1
-      displayName: Deploy Kentaa Function
-      inputs:
-        azureSubscription: 'BerghAzureResourceMgr'
-        appType: 'functionAppLinux'
-        appName: 'bergh-test-kentaa-functionapp'
-        package: '$(System.ArtifactsDirectory)/**/BerghAdmin.KentaaFunction.zip'
 
 - stage: Deploy2BerghProd
   jobs:
@@ -98,3 +76,15 @@ stages:
         instructions: 'Give manual confirmation to deploy to production'
         emailRecipients: 'fzwarteveen@gmail.com'
         onTimeout: 'reject'
+
+    - task: DownloadBuildArtifacts@1
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(System.ArtifactsDirectory)'  
+
+    - extends: 
+        template: release-bergh-components.yml
+        parameters: 
+            targetEnvironment: prod

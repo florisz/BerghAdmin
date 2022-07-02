@@ -1,0 +1,40 @@
+---
+# Task group for deploying all Bergh components
+
+parameters:
+- name: targetEnvironment # where to deploy
+  type: string # data type of the parameter; required
+  default: test
+  values:
+  - test
+  - prod
+  
+steps:
+- script: echo Deploying for ${{ parameters.targetEnvironment }}
+- task: AzureRmWebAppDeployment@4
+  displayName: Deploy Bergh Admin site
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'BerghAzureResourceMgr'
+    appType: 'webAppLinux'
+    WebAppName: 'bergh-${{ parameters.targetEnvironment }}-admin-webapp'
+    packageForLinux: '$(System.ArtifactsDirectory)/**/BerghAdmin.zip'
+    RuntimeStack: 'DOTNETCORE|6.0'
+
+- task: AzureRmWebAppDeployment@4
+  displayName: Deploy Bergh Monitor site
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'BerghAzureResourceMgr'
+    appType: 'webAppLinux'
+    WebAppName: 'bergh-${{ parameters.targetEnvironment }}-monitor-webapp'
+    packageForLinux: '$(System.ArtifactsDirectory)/**/BerghMonitor.Web.zip'
+    RuntimeStack: 'DOTNETCORE|6.0'
+
+- task: AzureFunctionApp@1
+  displayName: Deploy Kentaa Function
+  inputs:
+    azureSubscription: 'BerghAzureResourceMgr'
+    appType: 'functionAppLinux'
+    appName: 'bergh-${{ parameters.targetEnvironment }}-kentaa-functionapp'
+    package: '$(System.ArtifactsDirectory)/**/BerghAdmin.KentaaFunction.zip'
