@@ -72,6 +72,7 @@ stages:
   jobs:
   - job: deploy_to_bergh_prod
     displayName: Deploy to Bergh Test
+    pool: server
     steps:
     - task: ManualIntervention@8
       inputs:
