@@ -59,10 +59,9 @@ stages:
         artifactName: 'drop'
         downloadPath: '$(System.ArtifactsDirectory)'
   
-    - extends: 
-        template: release-bergh-components.yml
-        parameters: 
-            targetEnvironment: test
+    - template: release-bergh-components.yml
+      parameters: 
+        targetEnvironment: test
 
 
 - stage: Deploy2BerghProd
@@ -84,7 +83,6 @@ stages:
         artifactName: 'drop'
         downloadPath: '$(System.ArtifactsDirectory)'  
 
-    - extends: 
-        template: release-bergh-components.yml
-        parameters: 
-            targetEnvironment: prod
+    - template: release-bergh-components.yml
+      parameters: 
+        targetEnvironment: prod
