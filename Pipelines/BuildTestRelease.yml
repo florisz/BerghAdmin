@@ -48,6 +48,10 @@ stages:
         publishLocation: 'Container'
 
 - stage: Deploy2BerghTest
+  displayName: Deploy new version to Azure test 
+  pool:
+    vmImage: ubuntu-latest
+
   jobs:
   - job: deploy_to_bergh_test
     displayName: Deploy to Bergh Test
@@ -65,6 +69,10 @@ stages:
 
 
 - stage: Deploy2BerghProd
+  displayName: Deploy new version to Azure prod
+  pool:
+    vmImage: ubuntu-latest
+
   jobs:
   - job: deploy_to_bergh_prod
     displayName: Deploy to Bergh Test
