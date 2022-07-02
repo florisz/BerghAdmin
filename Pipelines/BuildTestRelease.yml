@@ -97,4 +97,4 @@ stages:
       inputs:
         instructions: 'Give manual confirmation to deploy to production'
         emailRecipients: 'fzwarteveen@gmail.com'
-        onTimeout: 'resume'
+        onTimeout: 'reject'
