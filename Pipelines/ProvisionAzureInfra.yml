@@ -14,5 +14,5 @@ steps:
     azureSubscription: 'BerghAzureResourceMgr'
     scriptType: 'ps'
     scriptLocation: 'scriptPath'
-    scriptPath: 'Deployment/provision-test-infra.azcli.ps1 $(TargetEnvironment)'
+    scriptPath: 'Provision/provision-test-infra.azcli.ps1 $(TargetEnvironment)'
 

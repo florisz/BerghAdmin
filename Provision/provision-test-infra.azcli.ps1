@@ -1,5 +1,15 @@
-$env = "test"
-$rg = "BerghTest"
+param($env = "test")
+
+if ($env -ne "test" and $env -ne "prod")
+{
+    Write-Error 'Parameter env can only be: test or prod'
+    throw 'Parameter errorenv must prod or test'
+}
+
+
+$ti= (Get-Culture).TextInfo
+$envUpper = $ti.ToTitleCase($env)
+$rg = "Bergh$envUpper"
 $location = "westeurope"
 
 $plan = "bergh-$env-plan"
@@ -17,6 +27,11 @@ $webappsettings = @(
 )
 
 # setup environment
+write-host "Delete azure group $rg in $location" -ForegroundColor yellow
+az group delete `
+    --name $rg `
+    --yes
+
 write-host "Create azure group $rg in $location" -ForegroundColor yellow
 az group create `
     --name $rg `
