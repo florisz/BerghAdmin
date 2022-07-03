@@ -1,0 +1,18 @@
+# Pipeline to provision infra components in azure for testing
+trigger:
+- none
+
+pool:
+  vmImage: windows-latest
+
+steps:
+- script: echo New infrastructure for Test will be provisioned
+  displayName: 'Provision Test infra on Azure'
+
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'BerghAzureResourceMgr'
+    scriptType: 'ps'
+    scriptLocation: 'scriptPath'
+    scriptPath: 'Deployment/provision-test-infra.azcli.ps1'
+

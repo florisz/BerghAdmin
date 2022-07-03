@@ -11,6 +11,10 @@ $appinsights = "bergh-$env-appinsights"
 $functionplan = "bergh-$env-functionplan"
 $functionappkentaa = "bergh-$env-kentaa-functionapp"
 $keyvault = "bergh-$env-keyvault"
+$webappsettings = @(
+  "VaultName=bergh-test-keyvault",
+  "ASPNETCORE_ENVIRONMENT=$env"
+)
 
 # setup environment
 write-host "Create azure group $rg in $location" -ForegroundColor yellow
@@ -45,7 +49,7 @@ write-host "Create azure webapp config settings for $webapp set keyvault to berg
 az webapp config appsettings set `
     --resource-group $rg `
     --name $webapp `
-    --settings "VaultName=bergh-test-keyvault ASPNETCORE_ENVIRONMENT=$env"
+    --settings @webappsettings
 
 write-host "Create azure webapp managed identity" -ForegroundColor yellow
 az webapp identity assign `
@@ -70,7 +74,7 @@ $monitorId = az webapp create `
 az webapp config appsettings set `
     --resource-group $rg `
     --name $webmonitor `
-    --settings "VaultName=bergh-test-keyvault" "ASPNETCORE_ENVIRONMENT=$env"
+    --settings @webappsettings
 
 az keyvault set-policy `
     --secret-permissions get list `

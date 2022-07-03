@@ -3,6 +3,14 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+parameters:
+- name: targetEnvironment # where to deploy
+  type: string # data type of the parameter; required
+  default: test
+  values:
+  - test
+  - prod
+
 trigger:
 - master
 
@@ -40,6 +48,8 @@ stages:
         publishLocation: 'Container'
 
 - stage: Deploy2BerghTest
+  displayName: Deploy new version to Azure test 
+
   jobs:
   - job: deploy_to_bergh_test
     displayName: Deploy to Bergh Test
@@ -50,31 +60,30 @@ stages:
         downloadType: 'single'
         artifactName: 'drop'
         downloadPath: '$(System.ArtifactsDirectory)'
-      
-    - task: AzureRmWebAppDeployment@4
-      displayName: Deploy Bergh Admin site
-      inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: 'bergh-test-azurerm'
-        appType: 'webAppLinux'
-        WebAppName: 'bergh-test-bergh-admin-webapp'
-        packageForLinux: '$(System.ArtifactsDirectory)/**/BerghAdmin.zip'
-        RuntimeStack: 'DOTNETCORE|6.0'
+  
+    - template: release-bergh-components.yml
+      parameters: 
+        targetEnvironment: test
 
-    - task: AzureRmWebAppDeployment@4
-      displayName: Deploy Bergh Monitor site
-      inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: 'bergh-test-azurerm'
-        appType: 'webAppLinux'
-        WebAppName: 'bergh-test-monitor-webapp'
-        packageForLinux: '$(System.ArtifactsDirectory)/**/BerghMonitor.Web.zip'
-        RuntimeStack: 'DOTNETCORE|6.0'
 
-    - task: AzureFunctionApp@1
-      displayName: Deploy Kentaa Function
+- stage: Deploy2BerghProd
+  displayName: Deploy new version to Azure prod
+
+  jobs:
+  - job: deploy_to_bergh_prod
+    displayName: Deploy to Bergh Test
+    steps:
+    - task: ManualValidation@0
       inputs:
-        azureSubscription: 'bergh-test-azurerm'
-        appType: 'functionAppLinux'
-        appName: 'bergh-test-kentaa-functionapp'
-        package: '$(System.ArtifactsDirectory)/**/BerghAdmin.KentaaFunction.zip'
+        notifyUsers: 'fzwarteveen@gmail.com'
+        instructions: 'Approve this build to be released to production'
+    - task: DownloadBuildArtifacts@1
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'drop'
+        downloadPath: '$(System.ArtifactsDirectory)'  
+
+    - template: release-bergh-components.yml
+      parameters: 
+        targetEnvironment: prod
