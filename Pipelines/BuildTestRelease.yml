@@ -74,11 +74,11 @@ stages:
     displayName: Deploy to Bergh Test
     
     steps:
-    - task: ManualValidation@0
-      target: server
-      inputs:
-        notifyUsers: 'fzwarteveen@gmail.com'
-        instructions: 'Approve this build to be released to production'
+#    - task: ManualValidation@0
+#      target: server
+#      inputs:
+#        notifyUsers: 'fzwarteveen@gmail.com'
+#        instructions: 'Approve this build to be released to production'
 
     - task: DownloadBuildArtifacts@1
       inputs:
