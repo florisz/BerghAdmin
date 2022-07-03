@@ -2,7 +2,7 @@
 {
     public class MailAddressUpdatedEventArgs : EventArgs
     {
-        public MailAddress MailAddress { get; set; }
+        public MailAddress MailAddress { get; }
 
         public MailAddressUpdatedEventArgs(MailAddress mailAddress)
         {

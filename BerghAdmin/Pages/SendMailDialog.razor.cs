@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BerghAdmin.Events;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Syncfusion.Blazor.Inputs;
 using Syncfusion.Blazor.RichTextEditor;
@@ -10,6 +11,9 @@ namespace BerghAdmin.Pages
         public bool IsVisible { get; set; } = false;
 
         public MailMessage Message { get; set; } = new();
+
+        [Parameter]
+        public EventCallback<MailMessageConfiguredEventArgs> OnMailMessageConfigured { get; set; }
 
         [Inject]
         private ISendMailService SendMailService { get; set; } = default!;
@@ -75,11 +79,13 @@ namespace BerghAdmin.Pages
             Message.TextBody = textContent;
             Message.HtmlBody = _mailBodyEditor.Value;
 
-            // Replace all content ids with inlined attachments
-            this.MailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(Message);
+            await OnMailMessageConfigured.InvokeAsync(new MailMessageConfiguredEventArgs(Message));
 
-            bool isSandboxMode = true; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
-            await SendMailService.SendMail(Message, isSandboxMode);
+            //// Replace all content ids with inlined attachments
+            //this.MailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(Message);
+
+            //bool isSandboxMode = true; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
+            //await SendMailService.SendMail(Message, isSandboxMode);
 
             DialogClose();
         }

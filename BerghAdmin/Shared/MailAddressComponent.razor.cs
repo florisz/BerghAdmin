@@ -27,7 +27,8 @@ namespace BerghAdmin.Shared
 
         public void MailAddressUpdated(MailAddressUpdatedEventArgs args)
         {
-            Address = args.MailAddress;
+            Address.Name = args.MailAddress.Name;
+            Address.Address = args.MailAddress.Address;
             StateHasChanged();
         }
     }
