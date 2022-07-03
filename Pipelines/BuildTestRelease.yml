@@ -72,11 +72,14 @@ stages:
   jobs:
   - job: deploy_to_bergh_prod
     displayName: Deploy to Bergh Test
+    
     steps:
     - task: ManualValidation@0
+      target: server
       inputs:
         notifyUsers: 'fzwarteveen@gmail.com'
         instructions: 'Approve this build to be released to production'
+
     - task: DownloadBuildArtifacts@1
       inputs:
         buildType: 'current'
