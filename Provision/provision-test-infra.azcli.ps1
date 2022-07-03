@@ -1,6 +1,6 @@
 param($env = "test")
 
-if ($env -ne "test" and $env -ne "prod")
+if ($env -ne "test" -and $env -ne "prod")
 {
     Write-Error 'Parameter env can only be: test or prod'
     throw 'Parameter errorenv must prod or test'
