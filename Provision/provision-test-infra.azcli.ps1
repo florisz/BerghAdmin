@@ -22,11 +22,15 @@ $functionplan = "bergh-$env-functionplan"
 $functionappkentaa = "bergh-$env-kentaa-functionapp"
 $keyvault = "bergh-$env-keyvault"
 $webappsettings = @(
-  "VaultName=bergh-test-keyvault",
+  "VaultName=bergh-$env-keyvault",
   "ASPNETCORE_ENVIRONMENT=$env"
 )
+# Test prequisites
+#   - database should exist
+#   - keyvault should exist
+# TO BE DONE
 
-# setup environment
+# setup environment clean up the current resource group and create a new one
 write-host "Delete azure group $rg in $location" -ForegroundColor yellow
 az group delete `
     --name $rg `
@@ -37,6 +41,14 @@ az group create `
     --name $rg `
     --location $location
 
+# write-host "Create azure keyvault $keyvault (in $rg at $location)" -ForegroundColor yellow
+# az keyvault create `
+#     --resource-group $rg `
+#     --name $keyvault `
+#     --location $location `
+#     --sku Standard
+
+#### Web Admin App
 write-host "Create azure appservice plan $plan (in $rg at $location)" -ForegroundColor yellow
 az appservice plan create `
     --resource-group $rg `
@@ -46,13 +58,6 @@ az appservice plan create `
     --is-linux `
     --number-of-workers 1
 
-az keyvault create `
-    --resource-group $rg `
-    --name $keyvault `
-    --location $location `
-    --sku Standard
-
-#### Web Apps
 write-host "Create azure webapp $webapp (in $rg and $plan)" -ForegroundColor yellow
 az webapp create `
     --name $webapp `
@@ -60,13 +65,13 @@ az webapp create `
     --plan $plan `
     --runtime '"dotnetcore|6.0"' 
 
-write-host "Create azure webapp config settings for $webapp set keyvault to bergh-test-keyvault" -ForegroundColor yellow
-az webapp config appsettings set `
+write-host "Create azure webapp config settings for $webapp set keyvault to $keyvault" -ForegroundColor yellow
+$webappId = az webapp config appsettings set `
     --resource-group $rg `
     --name $webapp `
     --settings @webappsettings
 
-write-host "Create azure webapp managed identity" -ForegroundColor yellow
+write-host "Create azure webapp managed identity for $webapp " -ForegroundColor yellow
 az webapp identity assign `
     --resource-group $rg `
     --name $webapp 
@@ -74,9 +79,10 @@ az webapp identity assign `
 write-host "Set azure keyvault policy (id comes from previous step!)" -ForegroundColor yellow
 az keyvault set-policy `
     --secret-permissions get list `
-    --name bergh-test-keyvault `
-    --object-id 9bc7d8cb-3828-44f0-a682-89a96e0daa1d
+    --name $keyvault `
+    --object-id $webappId
 
+### Web Monitor app
 write-host "Create azure webapp $webmonitor (in $rg and $plan)" -ForegroundColor yellow
 $monitorId = az webapp create `
     --name $webmonitor `
@@ -86,11 +92,13 @@ $monitorId = az webapp create `
     --assign-identity [system] `
     --query identity.principalId
 
+write-host "Create azure webapp config settings for $webmonitor set keyvault to $keyvault" -ForegroundColor yellow
 az webapp config appsettings set `
     --resource-group $rg `
     --name $webmonitor `
     --settings @webappsettings
 
+write-host "Set keyvault permissions for $webmonitor" -ForegroundColor yellow
 az keyvault set-policy `
     --secret-permissions get list `
     --name $keyvault `
@@ -116,7 +124,6 @@ az monitor app-insights component create `
     --resource-group $rg `
     --location $location `
     --app $appinsights
-    # --app-id $appid
 
 write-host "Create azure functionapp plan $functionplan (in $rg at $location)" -ForegroundColor yellow
 az functionapp plan create `
