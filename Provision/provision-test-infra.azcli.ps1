@@ -25,6 +25,7 @@ $webappsettings = @(
   "VaultName=bergh-$env-keyvault",
   "ASPNETCORE_ENVIRONMENT=$env"
 )
+
 # Test prequisites
 #   - database should exist
 #   - keyvault should exist
