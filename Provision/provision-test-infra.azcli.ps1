@@ -60,7 +60,7 @@ az appservice plan create `
     --number-of-workers 1
 
 write-host "Create azure webapp $webapp (in $rg and $plan)" -ForegroundColor yellow
-az webapp create `
+$webappId = az webapp create `
     --name $webapp `
     --resource-group $rg `
     --plan $plan `
@@ -77,7 +77,7 @@ az webapp identity assign `
     --resource-group $rg `
     --name $webapp 
 
-write-host "Set azure keyvault policy (id comes from previous step!)" -ForegroundColor yellow
+write-host "Set azure keyvault permissions for $webapp" -ForegroundColor yellow
 az keyvault set-policy `
     --secret-permissions get list `
     --name $keyvault `
@@ -112,6 +112,9 @@ az storage account create `
     --resource-group $rg `
     --location $location `
     --sku Standard_LRS	
+
+write-host "Enable dynamic installation of extensions" 
+az config set extension.use_dynamic_install=yes_without_prompt
 
 write-host "Create azure monitor log-analytics workspace $workspace  (in $rg at $location)" -ForegroundColor yellow
 az monitor log-analytics workspace create `
@@ -154,6 +157,7 @@ az functionapp config appsettings set `
     --resource-group $rg `
     --settings "AZURE_FUNCTIONS_ENVIRONMENT=$env" "cron_users=0 0 1 * * *" "cron_projects=0 0 2 * * *" "cron_actions=0 0 3 * * *" "cron_donations=0 0 4 * * *"
 
+write-host "Set keyvault permissions for $functionappkentaa" -ForegroundColor yellow
 az keyvault set-policy `
     --secret-permissions get list `
     --name $keyvault `
