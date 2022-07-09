@@ -119,11 +119,10 @@ public class Registrator
         builder.Services.AddScoped<IRolService, RolService>();
 #if (DEBUG)
         builder.Services.AddTransient<ISeedDataService, DebugSeedDataService>();
-        builder.Services.AddTransient<ISeedUsersService, DebugSeedUsersService>();
 #elif (RELEASE)
         builder.Services.AddTransient<ISeedDataService, ReleaseSeedDataService>();
-        builder.Services.AddTransient<ISeedUsersService, ReleaseSeedUsersService>();
 #endif
+        builder.Services.AddTransient<ISeedUsersService, ReleaseSeedUsersService>();
         builder.Services.AddScoped<IDocumentService, DocumentService>();
         builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
         builder.Services.AddScoped<IDataImporterService, DataImporterService>();

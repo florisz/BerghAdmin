@@ -1,7 +1,5 @@
 ﻿using BerghAdmin.Authorization;
-
 using Microsoft.AspNetCore.Identity;
-
 using System.Security.Claims;
 
 namespace BerghAdmin.Services.Seeding;
@@ -22,24 +20,36 @@ public class ReleaseSeedUsersService : ISeedUsersService
             return;
         }
 
-        await InsertUser("ict", AdministratorPolicyHandler.Claim);
-        await InsertUser("secretaris", AdministratorPolicyHandler.Claim);
-        await InsertUser("fietsen", BeheerGolfersPolicyHandler.Claim);
-        await InsertUser("golfdagbergh", BeheerGolfersPolicyHandler.Claim);
-        await InsertUser("penningmeester", BeheerAmbassadeursPolicyHandler.Claim);
-        await InsertUser("ambassadeurbeheer", BeheerAmbassadeursPolicyHandler.Claim);
-        await InsertUser("sponsoring", BeheerAmbassadeursPolicyHandler.Claim);
+        await InsertUser("admin", new Claim[] {
+            AdministratorPolicyHandler.Claim,
+            BeheerAmbassadeursPolicyHandler.Claim,
+            BeheerFietsersPolicyHandler.Claim,
+            BeheerFinancienPolicyHandler.Claim,
+            BeheerGolfersPolicyHandler.Claim,
+            BeheerSecretariaatPolicyHandler.Claim,
+        });
+        await InsertUser("secretariaat", new Claim[] {
+            BeheerAmbassadeursPolicyHandler.Claim,
+            BeheerFietsersPolicyHandler.Claim,
+            BeheerFinancienPolicyHandler.Claim,
+            BeheerGolfersPolicyHandler.Claim,
+            BeheerSecretariaatPolicyHandler.Claim,
+        });
+        await InsertUser("ambassadeursadmin", new Claim[] { BeheerAmbassadeursPolicyHandler.Claim });
+        await InsertUser("fietsenadmin", new Claim[] { BeheerFietsersPolicyHandler.Claim });
+        await InsertUser("financienadmin", new Claim[] { BeheerFinancienPolicyHandler.Claim });
+        await InsertUser("golfadmin", new Claim[] { BeheerGolfersPolicyHandler.Claim });
     }
 
     private bool DatabaseHasUsers()
-        => this._userManager.Users.Count() > 0;
+        => _userManager.Users.Any();
 
 
-    private async Task InsertUser(string naam, Claim claim)
+    private async Task InsertUser(string naam, Claim[] claims)
     {
         var user = new User
         {
-            CurrentPersoonId = 0, // to be set manually after all data is imported
+            CurrentPersoonId = null,
             Name = naam,
             UserName = $"{naam}@berghinhetzadel.nl",
             Email = $"{naam}@berghinhetzadel.nl",
@@ -49,13 +59,18 @@ public class ReleaseSeedUsersService : ISeedUsersService
             LockoutEnd = null,
             PhoneNumber = "",
             PhoneNumberConfirmed = true,
-            TwoFactorEnabled = false
+            TwoFactorEnabled = false,
+            LoginCount = 1
         };
 
-        var result = await this._userManager.CreateAsync(user, "qwerty@123");
+        var result = await this._userManager.CreateAsync(user, "Qwerty@123");
         if (result.Succeeded)
         {
-            await this._userManager.AddClaimAsync(user, claim);
+            foreach (var claim in claims)
+            {
+                await this._userManager.AddClaimAsync(user, claim);
+                await this._userManager.UpdateAsync(user);
+            }
         }
     }
 
