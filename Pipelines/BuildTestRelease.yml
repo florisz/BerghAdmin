@@ -47,12 +47,12 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
 
-- stage: Deploy2BerghTest
-  displayName: Deploy new version to Azure test 
+- stage: Deploy2BerghAzure
+  displayName: Deploy new version to Azure '$(TargetEnvironment)' 
 
   jobs:
-  - job: deploy_to_bergh_test
-    displayName: Deploy to Bergh Test
+  - job: deploy_to_bergh_azure
+    displayName: Deploy to Bergh '$(TargetEnvironment)' 
     steps:
     - task: DownloadBuildArtifacts@1
       inputs:
@@ -63,25 +63,4 @@ stages:
   
     - template: release-bergh-components.yml
       parameters: 
-        targetEnvironment: test
-
-
-- stage: Deploy2BerghProd
-  displayName: Deploy new version to Azure prod
-
-  jobs:
-  - job: deploy_to_bergh_prod
-    displayName: Deploy to Bergh Test
-    
-    steps:
-
-    - task: DownloadBuildArtifacts@1
-      inputs:
-        buildType: 'current'
-        downloadType: 'single'
-        artifactName: 'drop'
-        downloadPath: '$(System.ArtifactsDirectory)'  
-
-    - template: release-bergh-components.yml
-      parameters: 
-        targetEnvironment: prod
+        targetEnvironment: '$(TargetEnvironment)'
