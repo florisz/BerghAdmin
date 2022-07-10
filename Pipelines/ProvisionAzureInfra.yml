@@ -5,13 +5,13 @@ trigger:
 pool:
   vmImage: windows-latest
 
-  parameters:
-  - name: TargetEnvironment # where to deploy
-    type: string # data type of the parameter; required
-    default: test
-    values:
-      - test
-      - prod
+parameters:
+- name: TargetEnvironment # where to deploy
+  type: string # data type of the parameter; required
+  default: test
+  values:
+    - test
+    - prod
 
 steps:
 - script: echo New infrastructure for Test will be provisioned
