@@ -347,6 +347,8 @@ DBDownload*.xlsx
 SetSecrets.sh
 secrets*.json
 RunBihzRelease.ps1
+SetAzureSecretsTest.PS1
+SetAzureSecretsProd.PS1
 SetAzureSecrets.PS1
 
 # New VS Live Unit Testing configuration files
