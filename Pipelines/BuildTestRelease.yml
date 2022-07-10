@@ -48,11 +48,11 @@ stages:
         publishLocation: 'Container'
 
 - stage: Deploy2BerghAzure
-  displayName: Deploy new version to Azure '$(TargetEnvironment)' 
+  displayName: Deploy new version to Azure '${{parameters.TargetEnvironment}}' 
 
   jobs:
   - job: deploy_to_bergh_azure
-    displayName: Deploy to Bergh '$(TargetEnvironment)' 
+    displayName: Deploy to Bergh '${{parameters.TargetEnvironment}}' 
     steps:
     - task: DownloadBuildArtifacts@1
       inputs:
