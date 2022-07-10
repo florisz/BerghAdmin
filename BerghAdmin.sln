@@ -35,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Doc", "Doc", "{55C35791-857
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Provision", "Provision", "{CA424C92-4507-485E-8A59-C32200D2F728}"
 	ProjectSection(SolutionItems) = preProject
-		Provision\provision-test-infra.azcli.ps1 = Provision\provision-test-infra.azcli.ps1
+		Provision\provision-infra.azcli.ps1 = Provision\provision-infra.azcli.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{7D99CAC9-2924-42AC-A213-FEEF5C3CDF6A}"
