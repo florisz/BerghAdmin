@@ -64,7 +64,9 @@ $webappId = az webapp create `
     --name $webapp `
     --resource-group $rg `
     --plan $plan `
-    --runtime '"dotnetcore|6.0"' 
+    --runtime '"dotnetcore|6.0"' `
+    --assign-identity [system] `
+    --query identity.principalId 
 
 write-host "Create azure webapp config settings for $webapp set keyvault to $keyvault" -ForegroundColor yellow
 $webappId = az webapp config appsettings set `
