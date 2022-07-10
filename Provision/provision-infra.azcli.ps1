@@ -42,13 +42,6 @@ az group create `
     --name $rg `
     --location $location
 
-# write-host "Create azure keyvault $keyvault (in $rg at $location)" -ForegroundColor yellow
-# az keyvault create `
-#     --resource-group $rg `
-#     --name $keyvault `
-#     --location $location `
-#     --sku Standard
-
 #### Web Admin App
 write-host "Create azure appservice plan $plan (in $rg at $location)" -ForegroundColor yellow
 az appservice plan create `
@@ -68,22 +61,22 @@ $webappId = az webapp create `
     --assign-identity [system] `
     --query identity.principalId 
 
-write-host "Create azure webapp config settings for $webapp set keyvault to $keyvault" -ForegroundColor yellow
-$webappId = az webapp config appsettings set `
+write-host "Create azure webapp config settings for $webapp" -ForegroundColor yellow
+az webapp config appsettings set `
     --resource-group $rg `
     --name $webapp `
     --settings @webappsettings
+
+write-host "Set azure keyvault permissions for $webapp ($webappId) and keyvault $keyvault" -ForegroundColor yellow
+az keyvault set-policy `
+    --secret-permissions get list `
+    --name $keyvault `
+    --object-id $webappId
 
 write-host "Create azure webapp managed identity for $webapp " -ForegroundColor yellow
 az webapp identity assign `
     --resource-group $rg `
     --name $webapp 
-
-write-host "Set azure keyvault permissions for $webapp" -ForegroundColor yellow
-az keyvault set-policy `
-    --secret-permissions get list `
-    --name $keyvault `
-    --object-id $webappId
 
 ### Web Monitor app
 write-host "Create azure webapp $webmonitor (in $rg and $plan)" -ForegroundColor yellow

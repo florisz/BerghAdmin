@@ -11,6 +11,12 @@ parameters:
   - test
   - prod
 
+variables:
+  ${{ if eq(variables['Parameters.targetEnvironment'], 'prod') }}: # only works if you have a main branch
+    buildConfiguration: Release
+  ${{ else }}:
+    buildConfiguration: Debug
+
 trigger:
 - master
 
@@ -27,7 +33,7 @@ stages:
       displayName: 'Build'
       inputs:
         command: 'build'
-        arguments: '-d $(buildIndicator)'
+        arguments: '--configuration $(buildConfiguration)'
         projects: '**/*.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'Test'
