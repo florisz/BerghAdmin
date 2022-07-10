@@ -63,4 +63,4 @@ stages:
   
     - template: release-bergh-components.yml
       parameters: 
-        targetEnvironment: '$(TargetEnvironment)'
+        targetEnvironment: '${{TargetEnvironment}}'
