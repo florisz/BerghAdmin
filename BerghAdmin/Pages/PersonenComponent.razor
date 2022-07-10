@@ -15,10 +15,11 @@
 
 @inject BerghAdmin.Services.IPersoonService persoonService
 @inject BerghAdmin.Services.IRolService rolService
-
 @inject UserManager<User> UserManager
 @inject NavigationManager NavigationManager
 @inject IJSRuntime jsRuntime
+@inject ISendMailService SendMailService
+@inject IMailAttachmentsService MailAttachmentsService;
 
 @attribute [Authorize(Policy = "IsAnyRole")]
 
@@ -27,8 +28,7 @@
         <td>
             <div class="form-group col-md-6">
                 <label class="col-form-label">Overzicht van:</label>
-                <SfMultiSelect 
-                        TValue="RolTypeEnum[]" 
+                <SfMultiSelect TValue="RolTypeEnum[]"
                                TItem="Rol"
                                ClosePopupOnSelect="false"
                                @bind-Value="@RolContext"
@@ -37,7 +37,7 @@
                                DataSource="@rollenList"
                                Width="700px"
                                ShowDropDownIcon="true"
-                               ModelType="typeof(Rol)" >
+                               ModelType="typeof(Rol)">
                     <MultiSelectFieldSettings Value="Id" Text="Beschrijving"></MultiSelectFieldSettings>
                     <MultiSelectTemplates TItem="Rol">
                         <ItemTemplate>
@@ -52,8 +52,7 @@
                             }
                         </ItemTemplate>
                     </MultiSelectTemplates>
-                    <MultiSelectEvents 
-                        TItem="Rol" 
+                    <MultiSelectEvents TItem="Rol"
                                        TValue="RolTypeEnum[]"
                                        OnValueSelect="@OnValueSelectHandler"
                                        ValueRemoved="@ValueRemovedHandler"
@@ -64,22 +63,22 @@
         </td>
     </tr>
     @* <AuthorizeView Policy="IsAdministrator"> *@
-        <tr>
-            <td>
-                <div class="form-group col-md-12">
-                    <label class="col-form-label">Toon alle rollen</label>
-                    <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div class="form-group col-md-12">
-                    <label class="col-form-label">Inclusief Verwijderd</label>
-                    <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
-                </div>
-            </td>
-        </tr>
+    <tr>
+        <td>
+            <div class="form-group col-md-12">
+                <label class="col-form-label">Toon alle rollen</label>
+                <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="form-group col-md-12">
+                <label class="col-form-label">Inclusief Verwijderd</label>
+                <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
+            </div>
+        </td>
+    </tr>
     @* </AuthorizeView> *@
 </table>
 <br />
@@ -98,8 +97,7 @@
                                 new ContextMenuItemModel { Text = "Stuur email", Target = ".e-content", Id = "send-email" },
                                 new ContextMenuItemModel { Text = "Kopieer emailadres(sen)", Target = ".e-content", Id = "copy-emailaddresses" },
                             })">
-    <GridEditSettings 
-        AllowAdding="true" 
+    <GridEditSettings AllowAdding="true"
                       AllowDeleting="true"
                       AllowEditing="true"
                       Mode="EditMode.Dialog"
@@ -137,7 +135,7 @@
             <Template>
                 @{
                     var persoon = (Persoon)context;
-                    if (! persoon.IsVerwijderd)
+                    if (!persoon.IsVerwijderd)
                     {
                         <div class="statustemp e-activecolor">
                             <span class="statustxt e-activecolor">Actief</span>
@@ -155,7 +153,7 @@
     </GridColumns>
 </SfGrid>
 
-<SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured"/>
+<SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
 <EditPersoonDialog @ref="editPersoonDialog" />
 
 
@@ -182,12 +180,11 @@
 
         List<MailAddress> selectedAddresses = await GetSelectedEmailAddresses();
         MailMessage message = new()
-        {
-            From = new MailAddress(CurrentUser.Email, CurrentUser.Name),
-            To = selectedAddresses
-        };
-        sendMailDialog.Message = message;
-        sendMailDialog.DialogOpen();
+            {
+                From = new MailAddress(CurrentUser.Email, CurrentUser.Name),
+                To = selectedAddresses
+            };
+        sendMailDialog.DialogOpen(message);
     }
 
     private async Task CopySelectedEmailAddressesAsync()
@@ -255,7 +252,7 @@
         await RefreshList();
 
         if (_authenticationStateTask != null)
-        {            
+        {
             var authenticationState = await _authenticationStateTask;
             CurrentUser = await UserManager.GetUserAsync(authenticationState?.User);
         }
@@ -369,10 +366,15 @@
         return rollenList;
     }
 
-    private void OnMailMessageConfigured(MailMessageConfiguredEventArgs eventArgs)
+    private async void OnMailMessageConfigured(MailMessageConfiguredEventArgs eventArgs)
     {
         var message = eventArgs.Message;
-        // TODO: Use MailService to send this message
+
+        // Replace all content ids with inlined attachments
+        MailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(message);
+
+        bool isSandboxMode = false; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
+        await SendMailService.SendMail(message, isSandboxMode);
     }
 
 }
@@ -384,39 +386,39 @@
         text-align: center;
     }
 
-    .statustemp.e-inactivecolor {
-        background-color: #ffd7cc;
-        width: 64px;
-    }
+        .statustemp.e-inactivecolor {
+            background-color: #ffd7cc;
+            width: 64px;
+        }
 
-    .statustemp.e-activecolor {
-        background-color: #ccffcc;
-        width: 57px;
-        cursor: pointer;
-    }
+        .statustemp.e-activecolor {
+            background-color: #ccffcc;
+            width: 57px;
+            cursor: pointer;
+        }
 
     td.e-rowcell {
         cursor: pointer;
     }
 
-    td.e-rowcell .statustxt.e-inactivecolor {
-        color: #e60000;
-        position: relative;
-        top: 0px;
-    }
+        td.e-rowcell .statustxt.e-inactivecolor {
+            color: #e60000;
+            position: relative;
+            top: 0px;
+        }
 
-    td.e-rowcell .statustxt.e-activecolor {
-        color: #00cc00;
-        position: relative;
-        top: 0px;
-    }
+        td.e-rowcell .statustxt.e-activecolor {
+            color: #00cc00;
+            position: relative;
+            top: 0px;
+        }
 
-    td.e-rowcell .reservediv.reserve {
-        color: #900C3F;
-    }
+        td.e-rowcell .reservediv.reserve {
+            color: #900C3F;
+        }
 
-    td.e-rowcell .reservediv.no-reserve {
-        color: #166344;
-    }
+        td.e-rowcell .reservediv.no-reserve {
+            color: #166344;
+        }
 
 </style>

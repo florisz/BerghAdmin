@@ -8,19 +8,14 @@ namespace BerghAdmin.Pages
 {
     public partial class SendMailDialog
     {
-        public bool IsVisible { get; set; } = false;
-
-        public MailMessage Message { get; set; } = new();
-
         [Parameter]
         public EventCallback<MailMessageConfiguredEventArgs> OnMailMessageConfigured { get; set; }
 
-        [Inject]
-        private ISendMailService SendMailService { get; set; } = default!;
-        [Inject]
-        private IMailAttachmentsService MailAttachmentsService { get; set; } = default!;
+        public bool IsVisible { get; set; } = false;
 
-        private bool ShowCc = false;
+        private MailMessage? Message { get; set; }
+
+        private bool _showCc = false;
 
         private readonly List<ToolbarItemModel> Tools = new()
         {
@@ -60,8 +55,9 @@ namespace BerghAdmin.Pages
         private SfRichTextEditor _mailBodyEditor = new();
         private SfTextBox _subjectEditor = new();
 
-        public void DialogOpen()
+        public void DialogOpen(MailMessage message)
         {
+            Message = message;
             IsVisible = true;
             StateHasChanged();
         }
@@ -73,19 +69,13 @@ namespace BerghAdmin.Pages
             await _mailBodyEditor.RefreshUIAsync();
         }
 
-        private async Task SendEMail()
+        private async Task SaveMessage()
         {
             string textContent = await _mailBodyEditor.GetTextAsync();
             Message.TextBody = textContent;
             Message.HtmlBody = _mailBodyEditor.Value;
 
             await OnMailMessageConfigured.InvokeAsync(new MailMessageConfiguredEventArgs(Message));
-
-            //// Replace all content ids with inlined attachments
-            //this.MailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(Message);
-
-            //bool isSandboxMode = true; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
-            //await SendMailService.SendMail(Message, isSandboxMode);
 
             DialogClose();
         }
