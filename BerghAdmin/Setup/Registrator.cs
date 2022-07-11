@@ -98,8 +98,9 @@ public class Registrator
         builder.Configuration.AddUserSecrets<Program>();
         if (env != "Development")
         {
+            var vaultName = Environment.GetEnvironmentVariable("VaultName");
             builder.Configuration.AddAzureKeyVault(
-              new Uri($"https://bergh-{env}-keyvault.vault.azure.net"),
+              new Uri($"https://{vaultName}.vault.azure.net"),
               new DefaultAzureCredential()
               );
         }
