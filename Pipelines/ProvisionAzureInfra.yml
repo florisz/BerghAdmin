@@ -14,8 +14,8 @@ parameters:
     - prod
 
 steps:
-- script: echo New infrastructure for Test will be provisioned
-  displayName: 'Provision Test infra on Azure'
+- script: echo New infrastructure for ${{ parameters.TargetEnvironment }} will be provisioned
+  displayName: 'Provision ${{ parameters.TargetEnvironment }} infra on Azure'
 
 - task: AzureCLI@2
   inputs:

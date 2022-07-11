@@ -22,7 +22,7 @@ trigger:
 
 stages:
 - stage: BuildAndTest
-  displayName: Build and Test
+  displayName: Build and Test a $(buildConfiguration) version
   pool:
     vmImage: ubuntu-latest
   
