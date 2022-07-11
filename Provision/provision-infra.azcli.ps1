@@ -23,7 +23,7 @@ $functionappkentaa = "bergh-$env-kentaa-functionapp"
 $keyvault = "bergh-$env-keyvault"
 $webappsettings = @(
   "VaultName=bergh-$env-keyvault",
-  "ASPNETCORE_ENVIRONMENT=$env"
+  "ASPNETCORE_ENVIRONMENT=production"
 )
 
 # Test prequisites
