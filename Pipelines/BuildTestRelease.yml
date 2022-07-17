@@ -11,12 +11,18 @@ parameters:
   - test
   - prod
 
+variables:
+  ${{ if eq(variables['Parameters.targetEnvironment'], 'prod') }}: # only works if you have a main branch
+    buildConfiguration: Release
+  ${{ else }}:
+    buildConfiguration: Debug
+
 trigger:
 - master
 
 stages:
 - stage: BuildAndTest
-  displayName: Build and Test
+  displayName: Build and Test a $(buildConfiguration) version
   pool:
     vmImage: ubuntu-latest
   
@@ -27,6 +33,7 @@ stages:
       displayName: 'Build'
       inputs:
         command: 'build'
+        arguments: '--configuration $(buildConfiguration)'
         projects: '**/*.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'Test'
@@ -48,11 +55,11 @@ stages:
         publishLocation: 'Container'
 
 - stage: Deploy2BerghAzure
-  displayName: Deploy new version to Azure '$(TargetEnvironment)' 
+  displayName: Deploy new version to Azure '${{parameters.TargetEnvironment}}' 
 
   jobs:
   - job: deploy_to_bergh_azure
-    displayName: Deploy to Bergh '$(TargetEnvironment)' 
+    displayName: Deploy to Bergh '${{parameters.TargetEnvironment}}' 
     steps:
     - task: DownloadBuildArtifacts@1
       inputs:
@@ -63,4 +70,4 @@ stages:
   
     - template: release-bergh-components.yml
       parameters: 
-        targetEnvironment: '$(TargetEnvironment)'
+        targetEnvironment: '${{parameters.TargetEnvironment}}'

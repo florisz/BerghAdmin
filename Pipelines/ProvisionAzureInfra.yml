@@ -5,9 +5,17 @@ trigger:
 pool:
   vmImage: windows-latest
 
+parameters:
+- name: TargetEnvironment # where to deploy
+  type: string # data type of the parameter; required
+  default: test
+  values:
+    - test
+    - prod
+
 steps:
-- script: echo New infrastructure for Test will be provisioned
-  displayName: 'Provision Test infra on Azure'
+- script: echo New infrastructure for ${{ parameters.TargetEnvironment }} will be provisioned
+  displayName: 'Provision ${{ parameters.TargetEnvironment }} infra on Azure'
 
 - task: AzureCLI@2
   inputs:
@@ -16,4 +24,4 @@ steps:
     scriptLocation: 'scriptPath'
     scriptPath: 'Provision/provision-infra.azcli.ps1'
     arguments: > 
-        -env '$(TargetEnvironment)'
+        -env '${{ parameters.TargetEnvironment }}'
