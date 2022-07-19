@@ -4,6 +4,7 @@
 @using BerghAdmin.Authorization
 @using Microsoft.AspNetCore.Identity
 @using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
 @using BerghAdmin.Data
 @using System.IO
 
@@ -17,18 +18,11 @@
 <PersonenComponent RolContext="@rolContext" ToonAlles="true" />
 <br/>
 
-
-<SfButton @onclick="OpenDialog" CssClass="e-flat">Open import dialog</SfButton>
-
-<SfDialog Width="550px" IsModal="true" @bind-Visible="IsVisible">
-    <DialogEvents OnOverlayClick="@OnOverlayclick"></DialogEvents>
-    <DialogTemplates>
-        <Content> Download database CSV file </Content>
-    </DialogTemplates>
-    <SfUploader AutoUpload="false">
+<div class="form-group">
+    <SfUploader ID="UploadFiles">
         <UploaderEvents ValueChange="OnChange"></UploaderEvents>
     </SfUploader>
-</SfDialog>
+</div>
 
 @code
 {
@@ -50,6 +44,7 @@
     {
         this.IsVisible = false;
     }
+    
     private void OnChange(UploadChangeEventArgs args)
     {
         foreach (var file in args.Files)
