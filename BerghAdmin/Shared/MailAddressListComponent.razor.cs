@@ -20,7 +20,11 @@ namespace BerghAdmin.Shared
 
         public void MailAddressUpdated(MailAddressUpdatedEventArgs args)
         {
-            Addresses.Add(args.MailAddress);
+            if (args?.MailAddress != null)
+            {
+                Addresses.Add(args.MailAddress);
+            }
+
             StateHasChanged();
         }
     }

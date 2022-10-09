@@ -1,17 +1,14 @@
 ﻿@using Syncfusion.Blazor.Popups
 @using BerghAdmin.Pages
 
-<div class="mail-address-container" title="@Address.Address" @onclick="EditMailAddress">
+<div class="mail-address-container" title="@Address.Address" @onclick="EditMailAddress" @onclick:stopPropagation="true">
     @Address.Name
-    <span @onclick:stopPropagation>
-        <SfButton CssClass="e-round e-small e-danger ml-1" IconCss="e-icons e-close-icon" @onclick="DeleteMailAddress"></SfButton>
-    </span>
+    <a @onclick="DeleteMailAddress" @onclick:stopPropagation="true" class="delete-icon">
+        <SfIcon Name="IconName.Close" Size="IconSize.Small"></SfIcon>
+    </a>
 </div>
 
 <EditMailAddressDialog @ref="editMailAddressDialog" OnMailAddressUpdated="@MailAddressUpdated"></EditMailAddressDialog>
 
 <style>
-    .e-close-icon::before {
-        content: '\e7e7';
-    }
 </style>

@@ -12,6 +12,9 @@ namespace BerghAdmin.Shared
         [Parameter]
         public List<MailAddress> MailAddresses { get; set; } = new();
 
+        [Parameter]
+        public EventCallback<MailAddressUpdatedEventArgs> OnMailAddressUpdated { get; set; }
+
         private EditMailAddressDialog editMailAddressDialog = new();
 
         public void EditMailAddress()
@@ -20,15 +23,19 @@ namespace BerghAdmin.Shared
             editMailAddressDialog.DialogOpen();
         }
 
-        public void DeleteMailAddress()
+        public async Task DeleteMailAddress()
         {
             MailAddresses.Remove(Address);
+            await OnMailAddressUpdated.InvokeAsync(new MailAddressUpdatedEventArgs(null));
         }
 
         public void MailAddressUpdated(MailAddressUpdatedEventArgs args)
         {
-            Address.Name = args.MailAddress.Name;
-            Address.Address = args.MailAddress.Address;
+            if (args?.MailAddress != null)
+            {
+                Address.Name = args.MailAddress.Name;
+                Address.Address = args.MailAddress.Address;
+            }
             StateHasChanged();
         }
     }

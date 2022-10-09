@@ -2,9 +2,9 @@
 {
     public class MailAddressUpdatedEventArgs : EventArgs
     {
-        public MailAddress MailAddress { get; }
+        public MailAddress? MailAddress { get; }
 
-        public MailAddressUpdatedEventArgs(MailAddress mailAddress)
+        public MailAddressUpdatedEventArgs(MailAddress? mailAddress)
         {
             MailAddress = mailAddress;
         }
