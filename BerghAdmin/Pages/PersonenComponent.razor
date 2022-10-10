@@ -21,66 +21,59 @@
 
 @attribute [Authorize(Policy = "IsAnyRole")]
 
-<table>
-    <tr>
-        <td>
-            <div class="form-group col-md-6">
-                <label class="col-form-label">Overzicht van:</label>
-                <SfMultiSelect 
-                        TValue="RolTypeEnum[]" 
-                               TItem="Rol"
-                               ClosePopupOnSelect="false"
-                               @bind-Value="@RolContext"
-                               Placeholder="e.g Ambassadeur, Fietser, Golfer"
-                               Mode="VisualMode.Box"
-                               DataSource="@rollenList"
-                               Width="700px"
-                               ShowDropDownIcon="true"
-                               ModelType="typeof(Rol)" >
-                    <MultiSelectFieldSettings Value="Id" Text="Beschrijving"></MultiSelectFieldSettings>
-                    <MultiSelectTemplates TItem="Rol">
-                        <ItemTemplate>
-                            @{
-                                var contextValue = (context as Rol);
-                                bool isChecked = RolContext != null ? RolContext.Contains(contextValue.Id) : false;
+<div class="responsive-align">
+    <div class="row">
+        <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 search-item">
+            <label class="col-form-label">Overzicht van:</label>
+            <SfMultiSelect 
+                    TValue="RolTypeEnum[]" 
+                            TItem="Rol"
+                            ClosePopupOnSelect="false"
+                            @bind-Value="@RolContext"
+                            Placeholder="e.g Ambassadeur, Fietser, Golfer"
+                            Mode="VisualMode.Box"
+                            DataSource="@rollenList"
+                            Width="700px"
+                            ShowDropDownIcon="true"
+                            ModelType="typeof(Rol)" >
+                <MultiSelectFieldSettings Value="Id" Text="Beschrijving"></MultiSelectFieldSettings>
+                <MultiSelectTemplates TItem="Rol">
+                    <ItemTemplate>
+                        @{
+                            var contextValue = (context as Rol);
+                            bool isChecked = RolContext != null ? RolContext.Contains(contextValue.Id) : false;
 
-                                <span>
-                                    <SfCheckBox TChecked="bool" @bind-checked="@isChecked"></SfCheckBox>
-                                    @contextValue.Beschrijving
-                                </span>
-                            }
-                        </ItemTemplate>
-                    </MultiSelectTemplates>
-                    <MultiSelectEvents 
-                        TItem="Rol" 
-                                       TValue="RolTypeEnum[]"
-                                       OnValueSelect="@OnValueSelectHandler"
-                                       ValueRemoved="@ValueRemovedHandler"
-                                       Cleared="@ClearedHandler">
-                    </MultiSelectEvents>
-                </SfMultiSelect>
-            </div>
-        </td>
-    </tr>
+                            <span>
+                                <SfCheckBox TChecked="bool" @bind-checked="@isChecked"></SfCheckBox>
+                                @contextValue.Beschrijving
+                            </span>
+                        }
+                    </ItemTemplate>
+                </MultiSelectTemplates>
+                <MultiSelectEvents 
+                    TItem="Rol" 
+                                    TValue="RolTypeEnum[]"
+                                    OnValueSelect="@OnValueSelectHandler"
+                                    ValueRemoved="@ValueRemovedHandler"
+                                    Cleared="@ClearedHandler">
+                </MultiSelectEvents>
+            </SfMultiSelect>
+        </div>
+    </div>
     @* <AuthorizeView Policy="IsAdministrator"> *@
-        <tr>
-            <td>
-                <div class="form-group col-md-12">
-                    <label class="col-form-label">Toon alle rollen</label>
-                    <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div class="form-group col-md-12">
-                    <label class="col-form-label">Inclusief Verwijderd</label>
-                    <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
-                </div>
-            </td>
-        </tr>
+    <div class="row">
+        <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 search-item">
+            <label class="col-form-label">Toon alle rollen</label>
+                <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
+        </div>
+        <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 search-item">
+            <label class="col-form-label">Inclusief Verwijderd</label>
+            <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
+        </div>
+    </div>
+</div>
+
     @* </AuthorizeView> *@
-</table>
 <br />
 @*
     The grid showing all persons
@@ -104,6 +97,16 @@
                       Mode="EditMode.Dialog"
                       AllowEditOnDblClick="true">
     </GridEditSettings>
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Type="ItemType.Input" Align="Syncfusion.Blazor.Navigations.ItemAlign.Right">
+                <Template>
+                    <SfTextBox Placeholder="Enter values to search" Input="OnInputSearchString"></SfTextBox>
+                    <span class="e-search-icon e-icons"></span>
+                </Template>
+            </ToolbarItem>
+        </ToolbarItems>
+    </SfToolbar>
     <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple" PersistSelection="true"></GridSelectionSettings>
     <GridEvents RowSelected="GetSelectedRecords" TValue="Persoon" />
     <GridEvents ContextMenuItemClicked="OnContextMenuClick" TValue="Persoon" />
@@ -169,6 +172,12 @@
     private User? CurrentUser;
 
     private bool ToonVerwijderd { get; set; } = false;
+
+    // search in the grid functionaity
+    public void OnInputSearchString(InputEventArgs args)
+    {
+        this.PersonenGrid.Search(args.Value);
+    }
 
     // Everything to handle the email dialog
     SendMailDialog sendMailDialog = new();
