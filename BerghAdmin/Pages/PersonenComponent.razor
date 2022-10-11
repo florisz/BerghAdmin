@@ -23,64 +23,59 @@
 
 @attribute [Authorize(Policy = "IsAnyRole")]
 
-<table>
-    <tr>
-        <td>
-            <div class="form-group col-md-6">
-                <label class="col-form-label">Overzicht van:</label>
-                <SfMultiSelect TValue="RolTypeEnum[]"
-                               TItem="Rol"
-                               ClosePopupOnSelect="false"
-                               @bind-Value="@RolContext"
-                               Placeholder="e.g Ambassadeur, Fietser, Golfer"
-                               Mode="VisualMode.Box"
-                               DataSource="@rollenList"
-                               Width="700px"
-                               ShowDropDownIcon="true"
-                               ModelType="typeof(Rol)">
-                    <MultiSelectFieldSettings Value="Id" Text="Beschrijving"></MultiSelectFieldSettings>
-                    <MultiSelectTemplates TItem="Rol">
-                        <ItemTemplate>
-                            @{
-                                var contextValue = (context as Rol);
-                                bool isChecked = RolContext != null ? RolContext.Contains(contextValue.Id) : false;
+<div class="responsive-align">
+    <div class="row">
+        <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 search-item">
+            <label class="col-form-label">Overzicht van:</label>
+            <SfMultiSelect 
+                    TValue="RolTypeEnum[]" 
+                            TItem="Rol"
+                            ClosePopupOnSelect="false"
+                            @bind-Value="@RolContext"
+                            Placeholder="e.g Ambassadeur, Fietser, Golfer"
+                            Mode="VisualMode.Box"
+                            DataSource="@rollenList"
+                            Width="700px"
+                            ShowDropDownIcon="true"
+                            ModelType="typeof(Rol)" >
+                <MultiSelectFieldSettings Value="Id" Text="Beschrijving"></MultiSelectFieldSettings>
+                <MultiSelectTemplates TItem="Rol">
+                    <ItemTemplate>
+                        @{
+                            var contextValue = (context as Rol);
+                            bool isChecked = RolContext != null ? RolContext.Contains(contextValue.Id) : false;
 
-                                <span>
-                                    <SfCheckBox TChecked="bool" @bind-checked="@isChecked"></SfCheckBox>
-                                    @contextValue.Beschrijving
-                                </span>
-                            }
-                        </ItemTemplate>
-                    </MultiSelectTemplates>
-                    <MultiSelectEvents TItem="Rol"
-                                       TValue="RolTypeEnum[]"
-                                       OnValueSelect="@OnValueSelectHandler"
-                                       ValueRemoved="@ValueRemovedHandler"
-                                       Cleared="@ClearedHandler">
-                    </MultiSelectEvents>
-                </SfMultiSelect>
-            </div>
-        </td>
-    </tr>
+                            <span>
+                                <SfCheckBox TChecked="bool" @bind-checked="@isChecked"></SfCheckBox>
+                                @contextValue.Beschrijving
+                            </span>
+                        }
+                    </ItemTemplate>
+                </MultiSelectTemplates>
+                <MultiSelectEvents 
+                    TItem="Rol" 
+                                    TValue="RolTypeEnum[]"
+                                    OnValueSelect="@OnValueSelectHandler"
+                                    ValueRemoved="@ValueRemovedHandler"
+                                    Cleared="@ClearedHandler">
+                </MultiSelectEvents>
+            </SfMultiSelect>
+        </div>
+    </div>
     @* <AuthorizeView Policy="IsAdministrator"> *@
-    <tr>
-        <td>
-            <div class="form-group col-md-12">
-                <label class="col-form-label">Toon alle rollen</label>
+    <div class="row">
+        <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 search-item">
+            <label class="col-form-label">Toon alle rollen</label>
                 <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div class="form-group col-md-12">
-                <label class="col-form-label">Inclusief Verwijderd</label>
-                <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
-            </div>
-        </td>
-    </tr>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 search-item">
+            <label class="col-form-label">Inclusief Verwijderd</label>
+            <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
+        </div>
+    </div>
+</div>
+
     @* </AuthorizeView> *@
-</table>
 <br />
 @*
     The grid showing all persons
@@ -92,19 +87,34 @@
         AllowSelection="true"
         ShowColumnMenu="true"
         ContextMenuItems="@(new List<ContextMenuItemModel>() {
-                                new ContextMenuItemModel { Text = "Wijzig persoon", Target = ".e-content", Id = "edit-persoon" },
                                 new ContextMenuItemModel { Text = "Toevoegen persoon", Target = ".e-content", Id = "add-persoon" },
+                                new ContextMenuItemModel { Text = "Wijzig persoon", Target = ".e-content", Id = "edit-persoon" },
                                 new ContextMenuItemModel { Text = "Stuur email", Target = ".e-content", Id = "send-email" },
                                 new ContextMenuItemModel { Text = "Kopieer emailadres(sen)", Target = ".e-content", Id = "copy-emailaddresses" },
                             })">
-    <GridEditSettings AllowAdding="true"
-                      AllowDeleting="true"
-                      AllowEditing="true"
-                      Mode="EditMode.Dialog"
-                      AllowEditOnDblClick="true">
+    <GridEditSettings 
+        AllowAdding="true" 
+        AllowDeleting="true"
+        AllowEditing="true"
+        Mode="EditMode.Dialog"
+        AllowEditOnDblClick="false">
     </GridEditSettings>
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Text="Wijzig" TooltipText="Wijzig persoon" PrefixIcon="e-icons edit" Align="ItemAlign.Left" OnClick="EditPersoon" />
+            <ToolbarItem Text="Toevoegen" TooltipText="Toevoegen persoon" PrefixIcon="e-icons circle-add" Align="ItemAlign.Left" OnClick="AddPersoon" />
+            <ToolbarItem Text="Email" TooltipText="Stuur email" PrefixIcon="e-icons send" Align="ItemAlign.Left" OnClick="ShowSendMailDialog" />
+            <ToolbarItem Text="Kopieer" TooltipText="Kopieer email adressen" PrefixIcon="e-icons copy" Align="ItemAlign.Left" OnClick="CopySelectedEmailAddressesAsync" />
+            <ToolbarItem Text="Export" TooltipText="Export naar excel" PrefixIcon="e-icons export" Align="ItemAlign.Left" OnClick="ExportToExcelAsync" />
+            <ToolbarItem Type="ItemType.Input" Align="Syncfusion.Blazor.Navigations.ItemAlign.Right">
+                <Template>
+                    <SfTextBox Placeholder="Enter values to search" Input="OnInputSearchString"></SfTextBox>
+                    <span class="e-search-icon e-icons"></span>
+                </Template>
+            </ToolbarItem>
+        </ToolbarItems>
+    </SfToolbar>
     <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple" PersistSelection="true"></GridSelectionSettings>
-    <GridEvents RowSelected="GetSelectedRecords" TValue="Persoon" />
     <GridEvents ContextMenuItemClicked="OnContextMenuClick" TValue="Persoon" />
 
     <GridColumns>
@@ -155,6 +165,7 @@
 
 <SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
 <EditPersoonDialog @ref="editPersoonDialog" />
+<ErrorDialog @ref="errorDialog" />
 
 
 @code {
@@ -165,9 +176,17 @@
     [CascadingParameter]
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
 
+    private ErrorDialog errorDialog = new();
+
     private User? CurrentUser;
 
     private bool ToonVerwijderd { get; set; } = false;
+
+    // search in the grid functionaity
+    public void OnInputSearchString(InputEventArgs args)
+    {
+        this.PersonenGrid.Search(args.Value);
+    }
 
     // Everything to handle the email dialog
     SendMailDialog sendMailDialog = new();
@@ -206,6 +225,12 @@
         return emailAddressesList;
     }
 
+    // export to excel
+    private async Task ExportToExcelAsync()
+    {
+        // TO DO....
+    }
+
     // Everything to handle the edit persoon dialog
     EditPersoonDialog editPersoonDialog = new();
 
@@ -215,16 +240,12 @@
     {
         if (args.Item.Id == "edit-persoon" || args.Item.Id == "add-persoon")
         {
-            // open the edit dialog for a new or existing person
             var persoon = args.Item.Id == "edit-persoon" ? args.RowInfo.RowData as Persoon : new Persoon();
             editPersoonDialog.ShowDialog(persoon, rollenList, PersonenGrid);
             return;
         }
         if (args.Item.Id == "send-email")
         {
-            // TODO:
-            // get a list of all persons to send email to
-            // pass it to next funtion
             ShowSendMailDialog();
             return;
         }
@@ -235,14 +256,38 @@
         }
     }
 
+    private async Task EditPersoon()
+    {
+        // get selected personen first
+        var selectedPersonen = await this.PersonenGrid.GetSelectedRecordsAsync();
+        if (selectedPersonen.Count == 0)
+        {
+            errorDialog.Show("Selecteer eerst een persoon.");
+        }
+        else if (selectedPersonen.Count > 1)
+        {
+            errorDialog.Show("Er zijn meerdere personen geselecteerd. Selecteer eerst een persoon of gebruik de rechtermuisclick.");
+        }
+        else
+        {
+            // open the edit dialog for the selected person
+            editPersoonDialog.ShowDialog(selectedPersonen.ElementAt(0), rollenList, PersonenGrid);
+        }
+    }
+
+    private async Task AddPersoon()
+    {
+        var persoon = new Persoon();
+        // open the edit dialog for a this new person
+        editPersoonDialog.ShowDialog(persoon, rollenList, PersonenGrid);
+    }
+
+
     // Everything to handle persons
     public List<RolTypeEnum> selectedRollen = new();
     public List<Persoon> personenList = new();
     public List<Rol> rollenList = new();
     SfGrid<Persoon> PersonenGrid = new();
-    public List<double> SelectedRowIndexes { get; set; } = new();
-    public double[] TotalValue { get; set; } = Array.Empty<double>();
-    public string SelectedValue = string.Empty;
 
     protected override async void OnInitialized()
     {
@@ -274,18 +319,6 @@
     {
         selectedRollen = new List<RolTypeEnum>();
         RefreshList();
-    }
-
-    public async Task GetSelectedRecords(RowSelectEventArgs<Persoon> args)
-    {
-        SelectedRowIndexes = await this.PersonenGrid.GetSelectedRowIndexes();
-        TotalValue = SelectedRowIndexes.ToArray();
-        SelectedValue = "";
-        foreach (var data in TotalValue)
-        {
-            SelectedValue = SelectedValue + " " + data;
-        }
-        StateHasChanged();
     }
 
     public void ActionCompletedHandler(ActionEventArgs<Persoon> args)
