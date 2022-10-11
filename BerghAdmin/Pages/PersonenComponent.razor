@@ -62,13 +62,17 @@
     </div>
     @* <AuthorizeView Policy="IsAdministrator"> *@
     <div class="row">
-        <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 search-item">
+        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
             <label class="col-form-label">Toon alle rollen</label>
                 <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
         </div>
-        <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 search-item">
+        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
             <label class="col-form-label">Inclusief Verwijderd</label>
             <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
+        </div>
+        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
+            <label class="col-form-label">Zonder Reserves</label>
+            <SfCheckBox TChecked="bool" @bind-Checked="@ZonderReserves" @onchange="onZonderReservesChange" />
         </div>
     </div>
 </div>
@@ -179,6 +183,7 @@
     private User? CurrentUser;
 
     private bool ToonVerwijderd { get; set; } = false;
+    private bool ZonderReserves { get; set; } = false;
 
     // search in the grid functionaity
     public void OnInputSearchString(InputEventArgs args)
@@ -335,6 +340,11 @@
         RefreshList();
     }
 
+    private void onZonderReservesChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        RefreshList();
+    }
+
     public Task RefreshList()
     {
         // refresh with value from multiselect dropdown box
@@ -382,6 +392,12 @@
                         .Where(p => !p.IsVerwijderd)
                         .Where(p => p.Rollen.FirstOrDefault(r => rolTypes.Contains(r.Id)) != null)
                         .ToList<Persoon>();
+            if (ZonderReserves)
+            {
+                personen = personen
+                        .Where(p => p.IsReserve == false)
+                        .ToList<Persoon>();
+            }
         }
 
         return personen;
