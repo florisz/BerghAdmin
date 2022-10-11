@@ -149,9 +149,18 @@
                     var persoon = (Persoon)context;
                     if (! persoon.IsVerwijderd)
                     {
-                        <div class="statustemp e-activecolor">
-                            <span class="statustxt e-activecolor">Actief</span>
-                        </div>
+                        if (!persoon.IsReserve)
+                        {
+                            <div class="statustemp e-activecolor">
+                                <span class="statustxt e-activecolor">Actief</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="statustemp e-activereservecolor">
+                                <span class="statustxt e-activecolor">Actief (reserve)</span>
+                            </div>
+                        }
                     }
                     else
                     {
@@ -431,6 +440,12 @@
     .statustemp.e-activecolor {
         background-color: #ccffcc;
         width: 57px;
+        cursor: pointer;
+    }
+
+    .statustemp.e-activereservecolor {
+        background-color: #ccffcc;
+        width: 107px;
         cursor: pointer;
     }
 
