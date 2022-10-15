@@ -49,7 +49,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2">
+                            <td>
                                 <div class="form-group col-md-12">
                                     <label class="col-form-label">Adres:</label>
                                     <SfTextBox @bind-Value="@_currentPersoon.Adres"></SfTextBox>
@@ -67,6 +67,12 @@
                                     <SfTextBox @bind-Value="@_currentPersoon.Plaats"></SfTextBox>
                                 </div>
                             </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Land:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.Land"></SfTextBox>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
                             <td>
@@ -81,6 +87,12 @@
                                     <SfDropDownList TValue="GeslachtEnum" TItem="GeslachtFields" DataSource="@geslachtValues" @bind-Value="@_currentPersoon.Geslacht">
                                         <DropDownListFieldSettings  Value="GeslachtValue"></DropDownListFieldSettings>
                                     </SfDropDownList>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Kledingmaten:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.KledingMaten"></SfTextBox>
                                 </div>
                             </td>
                         </tr>

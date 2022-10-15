@@ -25,6 +25,7 @@ namespace BerghAdmin.Data
         public decimal? BedragToegezegd { get; set; }
         public DateTime? DatumAangebracht { get; set; }
         public string? Opmerkingen {  get; set; }
+        public string? KledingMaten {  get; set; }
         public IEnumerable<Donatie> Donaties { get; set; }
 
         [NotMapped]

@@ -122,23 +122,7 @@
     <GridColumns>
         <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
         <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true" Visible="false" />
-        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left" Width="110">
-            <Template>
-                @{
-                    var persoon = (context as Persoon);
-                    <div>
-                        @if (persoon.IsReserve)
-                        {
-                            <span class="reservediv reserve">@persoon.VolledigeNaam</span>
-                        }
-                        @if (!persoon.IsReserve)
-                        {
-                            <span class="reservediv no-reserve">@persoon.VolledigeNaam</span>
-                        }
-                    </div>
-                }
-            </Template>
-        </GridColumn>
+        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left" Width="110" />
         <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="70"></GridColumn>
         <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left" Width="70"></GridColumn>
         <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left" Width="120"></GridColumn>
@@ -444,7 +428,7 @@
     }
 
     .statustemp.e-activereservecolor {
-        background-color: #ccffcc;
+        background-color: #fffecc;
         width: 107px;
         cursor: pointer;
     }

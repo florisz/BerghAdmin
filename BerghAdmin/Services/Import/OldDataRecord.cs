@@ -53,6 +53,8 @@ namespace BerghAdmin.Services.Import
         public string GeboorteJaar { get; set; }
         [Name("ToonIntroductie")]
         public string ToonIntroductie { get; set; }
+        [Name("Kledingmaten")]
+        public string Kledingmaten { get; set; }
         [Name("IsVerwijderd")]
         public string IsVerwijderd { get; set; }
     }
