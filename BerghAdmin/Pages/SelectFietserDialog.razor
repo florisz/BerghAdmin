@@ -1,4 +1,4 @@
-﻿@page "/select-fietsers-dialog"
+﻿@page "/select-deelnemers-dialog"
 
 @using BerghAdmin.Authorization
 @using BerghAdmin.Services.Evenementen
@@ -15,15 +15,15 @@
 
 @attribute [Authorize(Policy = "IsBeheerFietsers")]
 
-<div id="SelectFietserDialogTarget">
+<div id="SelectDeelenemersDialogTarget">
 
-    <SfDialog Target="#SelectFietserDialogTarget" Width="700px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+    <SfDialog Target="#SelectDeelenemersDialogTarget" Width="700px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
         <DialogEvents OnOverlayClick="@OnOverlayclick" />
         <DialogTemplates>
-            <Header>Selecteer één of meer fietsers</Header>
+            <Header>Selecteer één of meer deelnemers (fietsers/begeleiders)</Header>
             <Content>
-                 <SfMultiSelect TValue="int[]" TItem="Persoon" Placeholder="Selecteer fietsers" DataSource="@Fietsers" @bind-Value="@SelectedFietserIds" AllowFiltering="true">
-                    <MultiSelectFieldSettings Text="VolledigeNaam" Value="Id"></MultiSelectFieldSettings>
+                 <SfMultiSelect TValue="int[]" TItem="Persoon" Placeholder="Selecteer deelnemers" DataSource="@Deelnemers" @bind-Value="@SelectedDeelnemerIds" AllowFiltering="true">
+                    <MultiSelectFieldSettings Text="VolledigeNaamMetRollen" Value="Id"></MultiSelectFieldSettings>
                 </SfMultiSelect>
                 <table class="table-buttons">
                     <tr>
@@ -45,22 +45,24 @@
 
     [Parameter]
     public bool IsVisible { get; set; } = false;
-    SfGrid<Persoon> _originatingGrid = null;
+    SfGrid<Persoon> _personenGrid = null;
+    SfGrid<FietsTocht> _fietsTochtenGrid = null;
     FietsTocht _currentFietsTocht = null;
-    List<Persoon> Fietsers = new List<Persoon>();
-    public int[] SelectedFietserIds { get; set; }
+    List<Persoon> Deelnemers = new List<Persoon>();
+    public int[] SelectedDeelnemerIds { get; set; }
 
-    public void ShowDialog(FietsTocht fietsTocht, SfGrid<Persoon> grid)
+    public void ShowDialog(FietsTocht fietsTocht, SfGrid<Persoon> personenGrid, SfGrid<FietsTocht> fietsTochtenGrid)
     {
         _currentFietsTocht = fietsTocht;
-        _originatingGrid = grid;
+        _personenGrid = personenGrid;
+        _fietsTochtenGrid = fietsTochtenGrid;
 
         // haal alle fietsers op en
         // verwijder alle fietsers uit de lijst die al deelnemer zijn
-        Fietsers = _persoonService.GetFietsers();
-        foreach (var fietser in _currentFietsTocht.Deelnemers)
+        Deelnemers = _persoonService.GetFietsersEnBegeleiders();
+        foreach (var deelnemer in _currentFietsTocht.Deelnemers)
         {
-            Fietsers.Remove(fietser);
+            Deelnemers.Remove(deelnemer);
         }
 
         IsVisible = true;
@@ -70,14 +72,15 @@
 
     private async Task onToevoegenClick(MouseEventArgs args)
     {
-        if (SelectedFietserIds == null)
+        if (SelectedDeelnemerIds == null)
             return;
 
-        foreach (var fietserId in SelectedFietserIds)
+        foreach (var deelnemerId in SelectedDeelnemerIds)
         {
-            await _evenementService.AddDeelnemer(_currentFietsTocht, fietserId);
+            await _evenementService.AddDeelnemer(_currentFietsTocht, deelnemerId);
         }
-        _originatingGrid.Refresh();
+        _personenGrid.Refresh();
+        _fietsTochtenGrid.Refresh();
         DialogClose();
     }
 

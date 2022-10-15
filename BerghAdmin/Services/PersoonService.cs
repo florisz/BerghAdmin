@@ -88,16 +88,17 @@ public class PersoonService : IPersoonService
         return personen;
     }
 
-    public List<Persoon>? GetFietsers()
+    public List<Persoon>? GetFietsersEnBegeleiders()
     {
-        _logger.LogDebug("Get alle fietsers");
+        _logger.LogDebug("Get alle fietsers en begeleiders");
 
         var personen = _dbContext
                 .Personen?
-                .Where(p => p.Rollen.Any(r => r.Id == RolTypeEnum.Fietser))
+                .Where(p => p.Rollen.Any(r => r.Id == RolTypeEnum.Fietser || r.Id == RolTypeEnum.Begeleider))
+                .OrderBy(p => p.Achternaam)
                 .ToList();
 
-        _logger.LogInformation("Get alle fietsers returned {count} results", personen == null ? 0 : personen.Count);
+        _logger.LogInformation("Get alle fietsers en begeleiders returned {count} results", personen == null ? 0 : personen.Count);
 
         return personen;
     }
