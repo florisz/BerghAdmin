@@ -248,6 +248,9 @@ public class Registrator
         {
             throw new ApplicationException("Secrets for Database access (connection string & password) cannot be found in configuration");
         }
+
+        Log.Logger.Debug($"DatabaseConnectionStrig={cs}");
+
         return cs;
     }
 
