@@ -81,6 +81,7 @@ public class PersoonService : IPersoonService
             .Personen?
             .Include(p => p.Rollen)
             .Include(p => p.Donaties)
+            .Include(p => p.IsDeelnemerVan)
             .ToList();
 
         _logger.LogInformation("Get alle personen returned {count} results", personen == null? 0 : personen.Count);
