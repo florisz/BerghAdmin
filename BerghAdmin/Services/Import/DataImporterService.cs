@@ -52,6 +52,7 @@ namespace BerghAdmin.Services.Import
                         Telefoon = record.Telefoon,
                         Mobiel = record.Mobiel,
                         EmailAdres = record.Emailadres,
+                        KledingMaten = record.Kledingmaten,
                         IsVerwijderd = record.IsVerwijderd == "1",
                         Rollen = new HashSet<Rol>()
                     };

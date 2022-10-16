@@ -41,12 +41,16 @@ public class Persoon : Donateur
 
     [NotMapped]
     public string VolledigeNaam
-        => string.Join(" ", new string?[] { 
-                                Voornaam, 
-                                string.IsNullOrEmpty(Voorletters)? "" : $"({Voorletters})", 
-                                Tussenvoegsel, 
-                                Achternaam } 
+        => string.Join(" ", new string?[] {
+                                Voornaam,
+                                string.IsNullOrEmpty(Voorletters)? "" : $"({Voorletters})",
+                                Tussenvoegsel,
+                                Achternaam }
         );
-    
+
+    [NotMapped]
+    public string VolledigeNaamMetRollen
+         => $"{VolledigeNaam} ( {GetRollenAsString} )";
+
 }
 

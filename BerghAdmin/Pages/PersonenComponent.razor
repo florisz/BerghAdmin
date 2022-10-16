@@ -64,13 +64,17 @@
     </div>
     @* <AuthorizeView Policy="IsAdministrator"> *@
     <div class="row">
-        <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 search-item">
+        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
             <label class="col-form-label">Toon alle rollen</label>
                 <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
         </div>
-        <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 search-item">
+        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
             <label class="col-form-label">Inclusief Verwijderd</label>
             <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
+        </div>
+        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
+            <label class="col-form-label">Zonder Reserves</label>
+            <SfCheckBox TChecked="bool" @bind-Checked="@ZonderReserves" @onchange="onZonderReservesChange" />
         </div>
     </div>
 </div>
@@ -120,23 +124,7 @@
     <GridColumns>
         <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
         <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true" Visible="false" />
-        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left" Width="110">
-            <Template>
-                @{
-                    var persoon = (context as Persoon);
-                    <div>
-                        @if (persoon.IsReserve)
-                        {
-                            <span class="reservediv reserve">@persoon.VolledigeNaam</span>
-                        }
-                        @if (!persoon.IsReserve)
-                        {
-                            <span class="reservediv no-reserve">@persoon.VolledigeNaam</span>
-                        }
-                    </div>
-                }
-            </Template>
-        </GridColumn>
+        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left" Width="110" />
         <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="70"></GridColumn>
         <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left" Width="70"></GridColumn>
         <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left" Width="120"></GridColumn>
@@ -147,9 +135,18 @@
                     var persoon = (Persoon)context;
                     if (!persoon.IsVerwijderd)
                     {
-                        <div class="statustemp e-activecolor">
-                            <span class="statustxt e-activecolor">Actief</span>
-                        </div>
+                        if (!persoon.IsReserve)
+                        {
+                            <div class="statustemp e-activecolor">
+                                <span class="statustxt e-activecolor">Actief</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="statustemp e-activereservecolor">
+                                <span class="statustxt e-activecolor">Actief (reserve)</span>
+                            </div>
+                        }
                     }
                     else
                     {
@@ -181,6 +178,7 @@
     private User? CurrentUser;
 
     private bool ToonVerwijderd { get; set; } = false;
+    private bool ZonderReserves { get; set; } = false;
 
     // search in the grid functionaity
     public void OnInputSearchString(InputEventArgs args)
@@ -336,6 +334,11 @@
         RefreshList();
     }
 
+    private void onZonderReservesChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        RefreshList();
+    }
+
     public Task RefreshList()
     {
         // refresh with value from multiselect dropdown box
@@ -383,6 +386,12 @@
                         .Where(p => !p.IsVerwijderd)
                         .Where(p => p.Rollen.FirstOrDefault(r => rolTypes.Contains(r.Id)) != null)
                         .ToList<Persoon>();
+            if (ZonderReserves)
+            {
+                personen = personen
+                        .Where(p => p.IsReserve == false)
+                        .ToList<Persoon>();
+            }
         }
 
         return personen;
@@ -429,6 +438,12 @@
             width: 57px;
             cursor: pointer;
         }
+
+    .statustemp.e-activereservecolor {
+        background-color: #fffecc;
+        width: 107px;
+        cursor: pointer;
+    }
 
     td.e-rowcell {
         cursor: pointer;

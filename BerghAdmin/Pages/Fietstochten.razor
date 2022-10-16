@@ -18,7 +18,7 @@
 @*
     The grid showing all fietstochten
 *@
-<SfGrid DataSource="@FietsTochtList" SelectedRowIndex=0>
+<SfGrid @ref="@FietsTochtGrid" DataSource="@FietsTochtList" SelectedRowIndex=0>
     <GridEditSettings 
         AllowAdding="true" 
         AllowDeleting="true" 
@@ -39,17 +39,23 @@
 <div class='e-statustext'>Deelnemers aan fietstocht: <b>@SelectedFietsTocht.Titel</b></div>
 <SfGrid @ref="@DeelnemersGrid" DataSource="@DeelnemerList"
     ContextMenuItems="@(new List<ContextMenuItemModel>() { 
-                            new ContextMenuItemModel { Text = "Toevoegen Fietser", Target = ".e-content", Id = "add-fietser" },
-                            new ContextMenuItemModel { Text = "Verwijderen Fietser", Target = ".e-content", Id = "delete-fietser" },
-                            new ContextMenuItemModel { Text = "Toon Donaties", Target = ".e-content", Id = "toon-donaties" },
+                            new ContextMenuItemModel { Text = "Toevoegen Deelnemer", Target = ".e-content", Id = "add-deelnemer" },
+                            new ContextMenuItemModel { Text = "Verwijderen Deelnemer", Target = ".e-content", Id = "delete-deelnemer" },
+                            new ContextMenuItemModel { Text = "Toon Deelnemer", Target = ".e-content", Id = "toon-donaties" },
                         })">
     <GridEvents ContextMenuItemClicked="OnContextMenuClick" TValue="Persoon" />
-    <GridColumns>
-        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left"  Width="110"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
-        <GridColumn Field=@nameof(Persoon.GetDonatieBedrag) HeaderText="Totaal" TextAlign="TextAlign.Left"  Width="200"></GridColumn>
+    <GridSortSettings>
+        <GridSortColumns>
+            <GridSortColumn Field="VolledigeNaam" Direction="SortDirection.Ascending"></GridSortColumn>
+        </GridSortColumns>
+    </GridSortSettings>
+   <GridColumns>
+        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left"  Width="110" />
+        <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="70" />
+        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left"  Width="70" />
+        <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left"  Width="120" />
+        <GridColumn Field=@nameof(Persoon.GetDonatieBedrag) HeaderText="Totaal" TextAlign="TextAlign.Left"  Width="50" />
+        <GridColumn Field=@nameof(Persoon.GetRollenAsString) HeaderText="Rollen" TextAlign="TextAlign.Left"  Width="200" />
     </GridColumns>
 </SfGrid>
 
@@ -59,10 +65,11 @@
 @code
 {
     // Everything to handle persons
-    public IEnumerable<FietsTocht> FietsTochtList;
-    public IEnumerable<Persoon> DeelnemerList { get; set; }
+    public IEnumerable<FietsTocht> FietsTochtList = new List<FietsTocht>();
+    public IEnumerable<Persoon> DeelnemerList { get; set; } = new List<Persoon>();
     public FietsTocht SelectedFietsTocht { get; set; } = new();
     SfGrid<Persoon> DeelnemersGrid = new();
+    SfGrid<FietsTocht> FietsTochtGrid = new();
 
     // Everything to handle the sow donaties dialog
     ShowDonatiesDialog showDonatiesDialog = new();
@@ -133,12 +140,12 @@
     // Triggers when the item is selected
     public async Task OnContextMenuClick(ContextMenuClickEventArgs<Persoon> args)
     {
-        if (args.Item.Id == "add-fietser")
+        if (args.Item.Id == "add-deelnemer")
         {
-            selectFietserDialog.ShowDialog(SelectedFietsTocht, DeelnemersGrid);
+            selectFietserDialog.ShowDialog(SelectedFietsTocht, DeelnemersGrid, FietsTochtGrid);
             return;
         }
-        if (args.Item.Id == "delete-fietser")
+        if (args.Item.Id == "delete-deelnemer")
         {
             var persoon = args.RowInfo.RowData as Persoon;
             if (persoon == null)
