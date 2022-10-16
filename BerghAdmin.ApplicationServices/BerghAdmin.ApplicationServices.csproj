@@ -13,8 +13,8 @@
 		<PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
-		<PackageReference Include="Syncfusion.DocIO.Net.Core" Version="20.1.0.52" />
-		<PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="20.1.0.52" />
+		<PackageReference Include="Syncfusion.DocIO.Net.Core" Version="20.1.0.56" />
+		<PackageReference Include="Syncfusion.DocIORenderer.Net.Core" Version="20.1.0.56" />
 		<PackageReference Include="MailJet.API" Version="2.0.2" />
 		<PackageReference Include="System.IO.Abstractions" Version="17.0.15" />
 	</ItemGroup>

@@ -1,3 +1,3 @@
 ﻿namespace BerghMonitor.Web;
 
-public record MailRequest(string Subject, string To, string Body);
+public record MailRequest(string Subject, string To, string Body, int? DonateurId);

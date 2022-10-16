@@ -71,7 +71,7 @@ app.MapPost("/mail", ([FromBody] MailRequest payload) => HandleSendMail(payload)
 async Task<object> HandleSendMail(MailRequest payload)
 {
     var sender = app.Services.GetRequiredService<ISendMailService>();
-    await sender.SendMail( payload.To, "sysadmin@berghintzadel.nl", payload.Subject, payload.Body );
+    await sender.SendMail( payload.To, "sysadmin@berghintzadel.nl", payload.Subject, payload.Body);
 
     return new OkObjectResult("Sent");
 }

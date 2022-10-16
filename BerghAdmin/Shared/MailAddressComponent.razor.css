@@ -1,0 +1,30 @@
+﻿.mail-address-container {
+    display: inline-block;
+    margin: 2px;
+    padding: 2px 5px;
+    border: 1px solid rgb(222, 226, 230);
+    border-radius: 7px;
+    cursor: pointer;
+    background: rgb(248, 249, 250);
+    color: rgb(73, 80, 87);
+    font-size: 0.85em;
+    user-select: none;
+}
+
+    .mail-address-container:hover {
+        background: rgb(228, 229, 230);
+        color: rgb(43, 50, 57);
+    }
+
+.delete-icon {
+    text-decoration: none !important;
+    margin-left: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+    .delete-icon:hover {
+        text-decoration: none !important;
+        background-color: #ff2020;
+        color: #ffffff !important;
+    }

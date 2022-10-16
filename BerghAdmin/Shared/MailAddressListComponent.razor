@@ -1,0 +1,18 @@
+﻿@using BerghAdmin.Pages
+
+<div class="address-list-container">
+    @foreach (var address in Addresses)
+    {
+        <MailAddressComponent Address="@address" MailAddresses="@Addresses" OnMailAddressUpdated="@MailAddressUpdated"></MailAddressComponent>
+    }
+
+    <SfButton CssClass="e-round e-small e-success ml-1" IconCss="e-icons e-plus-icon" @onclick="AddMailAddress"></SfButton>
+</div>
+
+<EditMailAddressDialog @ref="editMailAddressDialog" OnMailAddressUpdated="@MailAddressUpdated"></EditMailAddressDialog>
+
+<style>
+    .e-plus-icon::before {
+        content: '\e805';
+    }
+</style>

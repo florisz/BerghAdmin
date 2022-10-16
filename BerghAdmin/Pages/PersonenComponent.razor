@@ -1,4 +1,5 @@
 ﻿@using System.Linq;
+@using BerghAdmin.Events
 @using BerghAdmin.Services.Configuration
 @using BerghAdmin.Authorization;
 @using Microsoft.AspNetCore.Components
@@ -14,10 +15,11 @@
 
 @inject BerghAdmin.Services.IPersoonService persoonService
 @inject BerghAdmin.Services.IRolService rolService
-
 @inject UserManager<User> UserManager
 @inject NavigationManager NavigationManager
 @inject IJSRuntime jsRuntime
+@inject ISendMailService SendMailService
+@inject IMailAttachmentsService MailAttachmentsService;
 
 @attribute [Authorize(Policy = "IsAnyRole")]
 
@@ -132,7 +134,7 @@
             <Template>
                 @{
                     var persoon = (Persoon)context;
-                    if (! persoon.IsVerwijderd)
+                    if (!persoon.IsVerwijderd)
                     {
                         if (!persoon.IsReserve)
                         {
@@ -159,7 +161,7 @@
     </GridColumns>
 </SfGrid>
 
-<SendMailDialog @ref="sendMailDialog" />
+<SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
 <EditPersoonDialog @ref="editPersoonDialog" />
 <ErrorDialog @ref="errorDialog" />
 
@@ -195,12 +197,11 @@
 
         List<MailAddress> selectedAddresses = await GetSelectedEmailAddresses();
         MailMessage message = new()
-        {
-            From = new MailAddress(CurrentUser.Email, CurrentUser.Name),
-            To = selectedAddresses
-        };
-        sendMailDialog.Message = message;
-        sendMailDialog.DialogOpen();
+            {
+                From = new MailAddress(CurrentUser.Email, CurrentUser.Name),
+                To = selectedAddresses
+            };
+        sendMailDialog.DialogOpen(message);
     }
 
     private async Task CopySelectedEmailAddressesAsync()
@@ -217,7 +218,7 @@
             .Where(p => !string.IsNullOrWhiteSpace(p.EmailAdres));
         foreach (var persoon in selectedPersonenWithMailAddress)
         {
-            emailAddressesList.Add(new(persoon.EmailAdres, persoon.VolledigeNaam));
+            emailAddressesList.Add(new(persoon.EmailAdres, persoon.VolledigeNaam, persoon.Id));
         }
         return emailAddressesList;
     }
@@ -303,7 +304,7 @@
         await RefreshList();
 
         if (_authenticationStateTask != null)
-        {            
+        {
             var authenticationState = await _authenticationStateTask;
             CurrentUser = await UserManager.GetUserAsync(authenticationState?.User);
         }
@@ -416,6 +417,17 @@
         return rollenList;
     }
 
+    private async void OnMailMessageConfigured(MailMessageConfiguredEventArgs eventArgs)
+    {
+        var message = eventArgs.Message;
+
+        // Replace all content ids with inlined attachments
+        MailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(message);
+
+        bool isSandboxMode = false; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
+        await SendMailService.SendMail(message, isSandboxMode);
+    }
+
 }
 <style>
     .statustemp {
@@ -425,16 +437,16 @@
         text-align: center;
     }
 
-    .statustemp.e-inactivecolor {
-        background-color: #ffd7cc;
-        width: 64px;
-    }
+        .statustemp.e-inactivecolor {
+            background-color: #ffd7cc;
+            width: 64px;
+        }
 
-    .statustemp.e-activecolor {
-        background-color: #ccffcc;
-        width: 57px;
-        cursor: pointer;
-    }
+        .statustemp.e-activecolor {
+            background-color: #ccffcc;
+            width: 57px;
+            cursor: pointer;
+        }
 
     .statustemp.e-activereservecolor {
         background-color: #fffecc;
@@ -446,24 +458,24 @@
         cursor: pointer;
     }
 
-    td.e-rowcell .statustxt.e-inactivecolor {
-        color: #e60000;
-        position: relative;
-        top: 0px;
-    }
+        td.e-rowcell .statustxt.e-inactivecolor {
+            color: #e60000;
+            position: relative;
+            top: 0px;
+        }
 
-    td.e-rowcell .statustxt.e-activecolor {
-        color: #00cc00;
-        position: relative;
-        top: 0px;
-    }
+        td.e-rowcell .statustxt.e-activecolor {
+            color: #00cc00;
+            position: relative;
+            top: 0px;
+        }
 
-    td.e-rowcell .reservediv.reserve {
-        color: #900C3F;
-    }
+        td.e-rowcell .reservediv.reserve {
+            color: #900C3F;
+        }
 
-    td.e-rowcell .reservediv.no-reserve {
-        color: #166344;
-    }
+        td.e-rowcell .reservediv.no-reserve {
+            color: #166344;
+        }
 
 </style>

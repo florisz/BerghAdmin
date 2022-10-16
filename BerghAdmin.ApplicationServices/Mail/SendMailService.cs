@@ -38,12 +38,12 @@ public class SendMailService : ISendMailService
             );
     }
 
-    public async Task SendMail(string to, string from, string subject, string message)
+    public async Task SendMail(string to, string from, string subject, string message, int? donateurId = null)
     {
         var msg = new MailMessage
         {
-            From = new MailAddress(from, from),
-            To = new() { new MailAddress(to, to) },
+            From = new MailAddress(from, from, donateurId),
+            To = new() { new MailAddress(to, to, donateurId) },
             Subject = subject,
             TextBody = message
         };

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BerghAdmin.Events;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Syncfusion.Blazor.Inputs;
 using Syncfusion.Blazor.RichTextEditor;
@@ -8,13 +9,13 @@ namespace BerghAdmin.Pages
     public partial class SendMailDialog
     {
         [Parameter]
+        public EventCallback<MailMessageConfiguredEventArgs> OnMailMessageConfigured { get; set; }
+
         public bool IsVisible { get; set; } = false;
 
-        [Inject]
-        private ISendMailService SendMailService { get; set; } = default!;
+        private MailMessage? Message { get; set; }
 
-        [Inject]
-        private IMailAttachmentsService MailAttachmentsService { get; set; } = default!;
+        private bool _showCc = false;
 
         private readonly List<ToolbarItemModel> Tools = new()
         {
@@ -51,30 +52,12 @@ namespace BerghAdmin.Pages
             new ToolbarItemModel() { Command = ToolbarCommand.Redo }
         };
 
-        private MailMessage _message = new();
-        private string _fromAddress = "";
-        private string? _toAddresses = "";
-        private string? _ccAddresses = "";
-        private string? _bccAddresses = "";
-
-        public MailMessage Message
-        {
-            get => _message;
-            set
-            {
-                _message = value;
-                _fromAddress = _message.From == null ? "" : _message.From.Address;
-                _toAddresses = _message.To == null ? "" : string.Join(';', _message.To.Select(x => x.Address));
-                _ccAddresses = _message.Cc == null ? "" : string.Join(';', _message.Cc.Select(x => x.Address));
-                _bccAddresses = _message.Bcc == null ? "" : string.Join(';', _message.Bcc.Select(x => x.Address));
-            }
-        }
-
         private SfRichTextEditor _mailBodyEditor = new();
         private SfTextBox _subjectEditor = new();
 
-        public void DialogOpen()
+        public void DialogOpen(MailMessage message)
         {
+            Message = message;
             IsVisible = true;
             StateHasChanged();
         }
@@ -86,42 +69,13 @@ namespace BerghAdmin.Pages
             await _mailBodyEditor.RefreshUIAsync();
         }
 
-        private async Task SendEMail()
+        private async Task SaveMessage()
         {
-            Message.From = new MailAddress(_fromAddress, null);
-            if (!string.IsNullOrWhiteSpace(_toAddresses))
-            {
-                List<MailAddress> toAddresses = _toAddresses
-                    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                    .Select(a => new MailAddress(a, null))
-                    .ToList();
-                Message.To = toAddresses;
-            }
-            if (!string.IsNullOrWhiteSpace(_ccAddresses))
-            {
-                List<MailAddress> ccAddresses = _ccAddresses
-                    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                    .Select(a => new MailAddress(a, null))
-                    .ToList();
-                Message.Cc = ccAddresses;
-            }
-            if (!string.IsNullOrWhiteSpace(_bccAddresses))
-            {
-                List<MailAddress> bccAddresses = _bccAddresses
-                    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                    .Select(a => new MailAddress(a, null))
-                    .ToList();
-                Message.Bcc = bccAddresses;
-            }
             string textContent = await _mailBodyEditor.GetTextAsync();
             Message.TextBody = textContent;
             Message.HtmlBody = _mailBodyEditor.Value;
-            
-            // Replace all content ids with inlined attachments
-            this.MailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(Message);
 
-            bool isSandboxMode = false; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
-            await SendMailService.SendMail(Message, isSandboxMode);
+            await OnMailMessageConfigured.InvokeAsync(new MailMessageConfiguredEventArgs(Message));
 
             DialogClose();
         }
