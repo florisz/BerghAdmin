@@ -220,7 +220,7 @@
             .Where(p => !string.IsNullOrWhiteSpace(p.EmailAdres));
         foreach (var persoon in selectedPersonenWithMailAddress)
         {
-            emailAddressesList.Add(new(persoon.EmailAdres, persoon.VolledigeNaam));
+            emailAddressesList.Add(new(persoon.EmailAdres, persoon.VolledigeNaam, persoon.Id));
         }
         return emailAddressesList;
     }

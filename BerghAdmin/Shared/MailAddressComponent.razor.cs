@@ -19,7 +19,7 @@ namespace BerghAdmin.Shared
 
         public void EditMailAddress()
         {
-            editMailAddressDialog.Address = new MailAddress(Address.Address, Address.Name);
+            editMailAddressDialog.Address = new MailAddress(Address.Address, Address.Name, Address.DonateurId);
             editMailAddressDialog.DialogOpen();
         }
 
