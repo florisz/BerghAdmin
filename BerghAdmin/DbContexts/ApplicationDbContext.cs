@@ -57,6 +57,10 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .ToTable("FietsTochten");
 
         modelBuilder
+            .Entity<Evenement>()
+            .HasMany(f => f.Deelnemers);
+
+        modelBuilder
             .Entity<GolfDag>()
             .ToTable("GolfDagen");
 

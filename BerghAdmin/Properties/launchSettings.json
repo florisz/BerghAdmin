@@ -1,45 +1,54 @@
 {
-    "iisSettings": {
-        "windowsAuthentication": false,
-        "anonymousAuthentication": true,
-        "iisExpress": {
-            "applicationUrl": "http://localhost:30137",
-            "sslPort": 44344
-        }
-    },
-    "profiles": {
-        "IIS Express": {
-            "commandName": "IISExpress",
-            "launchBrowser": true,
-            "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            }
-        },
-        "BerghAdmin-development": {
-            "commandName": "Project",
-            "launchBrowser": true,
-            "applicationUrl": "https://localhost:5001;http://localhost:5000",
-            "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            }
-        },
-        "BerghAdmin-test": {
-            "commandName": "Project",
-            "dotnetRunMessages": "true",
-            "launchBrowser": true,
-            "applicationUrl": "https://localhost:5001;http://localhost:5000",
-            "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Test"
-            }
-        },
-        "BerghAdmin-production": {
-            "commandName": "Project",
-            "dotnetRunMessages": true,
-            "launchBrowser": true,
-            "applicationUrl": "https://localhost:443;http://localhost:80",
-            "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Production"
-            }
-        }
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:30137",
+      "sslPort": 44344
     }
+  },
+  "profiles": {
+      "IIS Express": {
+          "commandName": "IISExpress",
+          "launchBrowser": true,
+          "environmentVariables": {
+              "ASPNETCORE_ENVIRONMENT": "Development"
+          }
+      },
+      "BerghAdmin": {
+        "commandName": "Project",
+        "dotnetRunMessages": "true",
+        "launchBrowser": true,
+        "applicationUrl": "https://localhost:5001;http://localhost:5000",
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Test",
+          "VaultName": "Bergh-test-keyvault"
+      },
+      "BerghAdmin-development": {
+          "commandName": "Project",
+          "launchBrowser": true,
+          "applicationUrl": "https://localhost:5001;http://localhost:5000",
+          "environmentVariables": {
+              "ASPNETCORE_ENVIRONMENT": "Development"
+          }
+      },
+      "BerghAdmin-test": {
+          "commandName": "Project",
+          "dotnetRunMessages": "true",
+          "launchBrowser": true,
+          "applicationUrl": "https://localhost:5001;http://localhost:5000",
+          "environmentVariables": {
+              "ASPNETCORE_ENVIRONMENT": "Test"
+          }
+      },
+      "BerghAdmin-production": {
+          "commandName": "Project",
+          "dotnetRunMessages": true,
+          "launchBrowser": true,
+          "applicationUrl": "https://localhost:443;http://localhost:80",
+          "environmentVariables": {
+              "ASPNETCORE_ENVIRONMENT": "Production"
+          }
+      }
+  }
 }

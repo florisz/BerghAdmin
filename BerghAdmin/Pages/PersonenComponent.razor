@@ -89,6 +89,7 @@
         AllowPaging="true"
         AllowResizing="true"
         AllowSelection="true"
+        AllowExcelExport="true" 
         ShowColumnMenu="true"
         ContextMenuItems="@(new List<ContextMenuItemModel>() {
                                 new ContextMenuItemModel { Text = "Toevoegen persoon", Target = ".e-content", Id = "add-persoon" },
@@ -164,7 +165,6 @@
 <EditPersoonDialog @ref="editPersoonDialog" />
 <ErrorDialog @ref="errorDialog" />
 
-
 @code {
     [Parameter]
     public RolTypeEnum[] RolContext { get; set; } = Array.Empty<RolTypeEnum>();
@@ -226,7 +226,16 @@
     // export to excel
     private async Task ExportToExcelAsync()
     {
-        // TO DO....
+        string typeName = RolContext.Any()
+            ? RolContext.First().ToString()
+            : "Personen";
+        string fileName = $"{typeName}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+        ExcelExportProperties exportProperties = new()
+        {
+            FileName = fileName
+        };
+        await this.PersonenGrid.ExportToExcelAsync(exportProperties);
+        jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
     }
 
     // Everything to handle the edit persoon dialog

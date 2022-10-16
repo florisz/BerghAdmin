@@ -5,10 +5,12 @@
 @using System.Linq
 
 @using BerghAdmin.Services
+@using BerghAdmin.Services.Evenementen
 @using BerghAdmin.Data
 
 @inject IPersoonService _persoonService
 @inject IRolService _rolService
+@inject IEvenementService _evenementService
 
 @attribute [Authorize(Policy = "IsAnyRole")]
 
@@ -146,6 +148,15 @@
                                     </SfListBox>
                                 </div>
                             </td>
+                            <td colspan="2" valign="top">
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Fietstochten:</label>
+                                    <SfListBox TValue="int[]" TItem="FietsTocht" DataSource="@alleFietstochten" @bind-Value="@selectedFietstochten" @ref="fietstochtenListBox">
+                                        <ListBoxFieldSettings Text="Titel" Value="Id" />
+                                        <ListBoxSelectionSettings ShowCheckbox="true" />
+                                    </SfListBox>
+                                </div>
+                            </td>
                         </tr>
                         <div class="form-group">
                             <SfButton Type="submit" CssClass="e-flat" IsToggle="true" IsPrimary="true" Content="Opslaan"></SfButton> 
@@ -166,11 +177,14 @@
 
     public Persoon _currentPersoon { get; set; } = new Persoon();
     private List<Rol> _rollenList  = new List<Rol>();
+    private IEnumerable<FietsTocht>? _fietstochtenList;
     private SfGrid<Persoon> _originatingGrid;
     private bool _isNewPersoon;
 
     SfListBox<int[],RolData>? rollenListBox;
+    SfListBox<int[],FietsTocht>? fietstochtenListBox;
     public int[]? selectedRollen;
+    public int[]? selectedFietstochten;
 
     public string? headerText;
     public class GeslachtFields
@@ -192,15 +206,18 @@
     }
 
     public RolData[] allRolData = new RolData[] {};
+    public FietsTocht[] alleFietstochten = new FietsTocht[] {};
 
     protected override void OnInitialized()
     {
         allRolData =  GetAllRolData().ToArray();
+        alleFietstochten = _evenementService.GetAllFietsTochten().ToArray();
     }
 
     protected async Task ValidSubmit(EditContext editContext)
     {
         SetRollen(selectedRollen, _currentPersoon, _rollenList);
+        SetFietstochten(selectedFietstochten, _currentPersoon, _fietstochtenList);
         _persoonService.SavePersoon(_currentPersoon);
         if (_isNewPersoon)
         {
@@ -216,18 +233,25 @@
     {
         _currentPersoon = persoon;
         _rollenList = rollen;
+        _fietstochtenList = _evenementService.GetAllFietsTochten();
         _originatingGrid = grid;
         _isNewPersoon = _currentPersoon.Id == 0;
 
         headerText = _isNewPersoon ? "Nieuwe persoon toevoegen" : "Wijzig persoon gegevens";
 
         IsVisible = true;
-        
+
         // fill selected rollen
         selectedRollen = _currentPersoon
                             .Rollen
                             .Select(r => (int) r.Id)
                             .ToArray();
+
+        // fill fietstochten waar persoon deelnemer van is
+        selectedFietstochten = _currentPersoon
+                                .IsDeelnemerVan?
+                                .Select(f => (int)f.Id)
+                                .ToArray();
 
         // pas active record id
         this.StateHasChanged();
@@ -280,6 +304,31 @@
                     rol.Personen = new HashSet<Persoon>();
                 }
                 rol.Personen.Add(person);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// set the correct fietstochten for this person
+    /// do it the blunt way: new person -> just add, existing person -> delete all and add the selected ones
+    /// 
+    /// </summary>
+    /// <returns>void</returns>
+    private void SetFietstochten(int[]? selectedFietstochten, Persoon person, IEnumerable<FietsTocht>? fietstochtenList)
+    {
+        if (fietstochtenList?.Any() == true)
+        {
+            foreach (var fietstocht in fietstochtenList)
+            {
+                if (Array.Exists(selectedFietstochten, el => el == fietstocht.Id))
+                {
+                    person.IsDeelnemerVan.Add(fietstocht);
+                }
+                else
+                {
+                    person.IsDeelnemerVan.Remove(fietstocht);
+                }
             }
         }
     }
