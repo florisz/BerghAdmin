@@ -323,11 +323,11 @@
             {
                 if (Array.Exists(selectedFietstochten, el => el == fietstocht.Id))
                 {
-                    _evenementService.AddDeelnemer(fietstocht, person);
+                    person.IsDeelnemerVan.Add(fietstocht);
                 }
                 else
                 {
-                    _evenementService.DeleteDeelnemer(fietstocht, person);
+                    person.IsDeelnemerVan.Remove(fietstocht);
                 }
             }
         }
