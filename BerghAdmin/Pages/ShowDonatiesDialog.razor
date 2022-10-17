@@ -11,7 +11,7 @@
 
 <div id="ShowDonatiesDialogTarget">
     <SfDialog Target="#ShowDonatiesDialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
-        <DialogEvents OnOverlayClick="@OnOverlayclick" Opened="@DialogOpen">
+        <DialogEvents OnOverlayModalClick="@OnOverlayModalClick" Opened="@DialogOpen">
         </DialogEvents>
         <DialogTemplates>
             <Header>Donaties voor: @NaamPersoon</Header>
@@ -47,7 +47,7 @@
         this.StateHasChanged();
     }
 
-    private void OnOverlayclick(MouseEventArgs arg)
+    private void OnOverlayModalClick(OverlayModalClickEventArgs arg)
     {
         this.IsVisible = false;
     }

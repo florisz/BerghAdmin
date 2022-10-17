@@ -18,7 +18,7 @@
 <div id="SelectDeelenemersDialogTarget">
 
     <SfDialog Target="#SelectDeelenemersDialogTarget" Width="700px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
-        <DialogEvents OnOverlayClick="@OnOverlayclick" />
+        <DialogEvents OnOverlayModalClick="@OnOverlayModalClick" />
         <DialogTemplates>
             <Header>Selecteer één of meer deelnemers (fietsers/begeleiders)</Header>
             <Content>
@@ -89,7 +89,7 @@
         DialogClose();
     }
 
-    private void OnOverlayclick(MouseEventArgs arg)
+    private void OnOverlayModalClick(OverlayModalClickEventArgs arg)
     {
         this.IsVisible = false;
     }

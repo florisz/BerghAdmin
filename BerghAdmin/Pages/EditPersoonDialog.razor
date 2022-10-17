@@ -17,7 +17,7 @@
 <div id="EditPersoonDialogTarget">
 
     <SfDialog Target="#EditPersoonDialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
-        <DialogEvents OnOverlayClick="@OnOverlayclick" />
+        <DialogEvents OnOverlayModalClick="@OnOverlayModalClick" />
         <DialogTemplates>
             <Header>@headerText</Header>
             <Content>
@@ -257,7 +257,7 @@
         this.StateHasChanged();
     }
 
-    private void OnOverlayclick(MouseEventArgs arg)
+    private void OnOverlayModalClick(OverlayModalClickEventArgs arg)
     {
         this.IsVisible = false;
     }

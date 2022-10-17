@@ -1,7 +1,7 @@
 ﻿@using Syncfusion.Blazor.Buttons
 
 <SfDialog Width="250px" IsModal="true" @bind-Visible="@IsVisible">
-    <DialogEvents OnOverlayClick="@OnOverlayclick" />
+    <DialogEvents OnOverlayModalClick="@OnOverlayModalClick" />
     <DialogTemplates>
         <Header>Probleempje...</Header>
         <Content>@_content</Content>
@@ -19,7 +19,7 @@
         this.StateHasChanged();
     }
 
-    private void OnOverlayclick(MouseEventArgs arg)
+    private void OnOverlayModalClick(OverlayModalClickEventArgs arg)
     {
         this.IsVisible = false;
         this.StateHasChanged();

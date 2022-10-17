@@ -7,7 +7,7 @@
 @attribute [Authorize(Policy = "IsAnyRole")]
 
 <SfDialog Width="75%" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
-    <DialogEvents OnOverlayClick="@OnOverlayclick" Opened="@Opened">
+    <DialogEvents OnOverlayModalClick="@OnOverlayModalClick" Opened="@Opened">
     </DialogEvents>
     <DialogTemplates>
         <Header> Emails verzenden </Header>

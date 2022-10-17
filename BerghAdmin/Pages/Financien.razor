@@ -31,7 +31,7 @@
 <SfButton @onclick="OpenDialog" CssClass="e-flat">Import bankbestand</SfButton>
 
 <SfDialog Width="550px" IsModal="true" @bind-Visible="IsVisible">
-    <DialogEvents OnOverlayClick="@OnOverlayclick"></DialogEvents>
+    <DialogEvents OnOverlayModalClick="@OnOverlayModalClick"></DialogEvents>
     <DialogTemplates>
         <Content>Import Rabobank export CSV bestand met betalingen</Content>
     </DialogTemplates>
@@ -77,7 +77,7 @@
         this.IsVisible = true;
     }
 
-    private void OnOverlayclick(MouseEventArgs arg)
+    private void OnOverlayModalClick(OverlayModalClickEventArgs arg)
     {
         this.IsVisible = false;
         BetalingenGrid.Refresh();

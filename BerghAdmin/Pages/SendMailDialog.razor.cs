@@ -1,7 +1,7 @@
 ﻿using BerghAdmin.Events;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Syncfusion.Blazor.Inputs;
+using Syncfusion.Blazor.Popups;
 using Syncfusion.Blazor.RichTextEditor;
 
 namespace BerghAdmin.Pages
@@ -86,7 +86,7 @@ namespace BerghAdmin.Pages
             StateHasChanged();
         }
 
-        private void OnOverlayclick(MouseEventArgs arg)
+        private void OnOverlayModalClick(OverlayModalClickEventArgs arg)
         {
             DialogClose();
         }

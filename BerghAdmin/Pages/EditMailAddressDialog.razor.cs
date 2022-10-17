@@ -42,7 +42,7 @@ namespace BerghAdmin.Pages
             ShowDialog = false;
         }
 
-        public void OnOverlayclick()
+        public void OnOverlayModalClick()
         {
             CloseDialog();
         }
