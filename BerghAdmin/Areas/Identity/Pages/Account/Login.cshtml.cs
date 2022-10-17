@@ -86,18 +86,18 @@ namespace BerghAdmin.Areas.Identity.Pages.Account
                         await userManager.UpdateAsync(user);
                     }
 
-                    if (!result.RequiresTwoFactor)
-                    {
-                        return RedirectToPage("./Manage/TwoFactorAuthentication", new { ReturnUrl = returnUrl, Input.RememberMe });
-                    }
+                    //if (!result.RequiresTwoFactor)
+                    //{
+                    //    return RedirectToPage("./Manage/TwoFactorAuthentication", new { ReturnUrl = returnUrl, Input.RememberMe });
+                    //}
                     //return LocalRedirect(returnUrl);
                 }
 
 
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, Input.RememberMe });
-                }
+                //if (result.RequiresTwoFactor)
+                //{
+                //    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, Input.RememberMe });
+                //}
 
                 if (result.IsLockedOut)
                 {
