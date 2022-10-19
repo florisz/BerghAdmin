@@ -97,6 +97,12 @@
                                     <SfTextBox @bind-Value="@_currentPersoon.KledingMaten"></SfTextBox>
                                 </div>
                             </td>
+                            <td>
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Nummer:</label>
+                                    <SfTextBox @bind-Value="@_currentPersoon.Nummer"></SfTextBox>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
                             <td>
@@ -155,6 +161,12 @@
                                         <ListBoxFieldSettings Text="Titel" Value="Id" />
                                         <ListBoxSelectionSettings ShowCheckbox="true" />
                                     </SfListBox>
+                                </div>
+                            </td>
+                            <td valign="top">
+                                <div class="form-group col-md-12">
+                                    <label class="col-form-label">Kentaa donatiebedrag:</label>
+                                    <SfTextBox Value="@_currentPersoon.GetDonatieBedrag.ToString()" TValue="decimal?" ></SfTextBox>
                                 </div>
                             </td>
                         </tr>

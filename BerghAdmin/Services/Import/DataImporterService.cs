@@ -54,6 +54,7 @@ namespace BerghAdmin.Services.Import
                         EmailAdres = record.Emailadres,
                         KledingMaten = record.Kledingmaten,
                         IsVerwijderd = record.IsVerwijderd == "1",
+                        Nummer = record.Nummer,
                         Rollen = new HashSet<Rol>()
                     };
                     if (record.IsRenner == "1")
