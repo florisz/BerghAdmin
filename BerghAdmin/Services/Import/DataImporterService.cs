@@ -67,7 +67,7 @@ namespace BerghAdmin.Services.Import
                     }
                     if (record.IsReserve == "1")
                     {
-                        // TO BE DONE!
+                        persoon.IsReserve = true;
                     }
                     if (record.IsCommissielid == "1")
                     {
