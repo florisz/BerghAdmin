@@ -1,5 +1,3 @@
-using Microsoft.ApplicationInsights.Extensibility;
-
 using Serilog;
 
 namespace BerghAdmin;
