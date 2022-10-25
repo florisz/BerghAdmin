@@ -9,12 +9,13 @@ stages:
   
   jobs:
   - job: Build_Test_Publish
+    displayName: Build, Test and Publish artifacts
     steps:
     - task: DotNetCoreCLI@2
       displayName: 'Build'
       inputs:
         command: 'build'
-        arguments: '--configuration $(buildConfiguration)'
+        arguments: '--configuration release'
         projects: '**/*.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'Test'
@@ -29,6 +30,11 @@ stages:
         projects: '**/*.csproj'
         publishWebProjects: false
         zipAfterPublish: true
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
 
 - stage: Deploy2Test
   displayName: Deploy to Test
@@ -37,7 +43,18 @@ stages:
   - job: deploy
     displayName: Deploy to Bergh Test
     steps:
-      
     - template: release-bergh-components.yml
       parameters: 
         targetEnvironment: test
+
+- stage: Deploy2Prod
+  displayName: Deploy to Prod
+  
+  jobs:
+  - job: deploy
+    displayName: Deploy to Bergh Prod
+    steps:
+      
+    - template: release-bergh-components.yml
+      parameters: 
+        targetEnvironment: prod
