@@ -12,18 +12,18 @@ stages:
     displayName: Build, Test and Publish artifacts
     steps:
     - task: DotNetCoreCLI@2
-      displayName: 'Build'
+      displayName: 'Build code'
       inputs:
         command: 'build'
         arguments: '--configuration release'
         projects: '**/*.csproj'
     - task: DotNetCoreCLI@2
-      displayName: 'Test'
+      displayName: 'Run unit tests'
       inputs:
         command: 'test'
         projects: '**/*.Tests.csproj'
     - task: DotNetCoreCLI@2
-      displayName: 'Publish website'
+      displayName: 'Create publish artifacts'
       inputs:
         command: 'publish'
         arguments: '-o $(Build.ArtifactStagingDirectory)'
@@ -31,6 +31,7 @@ stages:
         publishWebProjects: false
         zipAfterPublish: true
     - task: PublishBuildArtifacts@1
+      displayName: 'Store publish artifacts'
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
@@ -40,21 +41,28 @@ stages:
   displayName: Deploy to Test
   
   jobs:
-  - job: deploy
-    displayName: Deploy to Bergh Test
-    steps:
-    - template: release-bergh-components.yml
-      parameters: 
-        targetEnvironment: test
+  - deployment: 
+    displayName: deploy Web App
+    environment: Test
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: release-bergh-components.yml
+            parameters: 
+              targetEnvironment: test
 
 - stage: Deploy2Prod
   displayName: Deploy to Prod
   
   jobs:
-  - job: deploy
-    displayName: Deploy to Bergh Prod
-    steps:
-      
-    - template: release-bergh-components.yml
-      parameters: 
-        targetEnvironment: prod
+  - deployment: 
+    displayName: deploy Web App
+    environment: Production
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: release-bergh-components.yml
+            parameters: 
+              targetEnvironment: prod
