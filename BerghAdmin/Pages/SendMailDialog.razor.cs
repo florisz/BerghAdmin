@@ -13,7 +13,7 @@ namespace BerghAdmin.Pages
 
         public bool IsVisible { get; set; } = false;
 
-        private MailMessage? Message { get; set; }
+        private MailMessage Message { get; set; } = new MailMessage();
 
         private bool _showCc = false;
 

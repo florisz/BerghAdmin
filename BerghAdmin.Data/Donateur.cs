@@ -8,6 +8,7 @@ namespace BerghAdmin.Data
         public Donateur()
         {
             Donaties = new List<Donatie>();
+            EmailAdres = "someone@mail.com";
         }
 
         public int Id { get; set; }

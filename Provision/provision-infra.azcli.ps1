@@ -21,9 +21,14 @@ $appinsights = "bergh-$env-appinsights"
 $functionplan = "bergh-$env-functionplan"
 $functionappkentaa = "bergh-$env-kentaa-functionapp"
 $keyvault = "bergh-$env-keyvault"
+$aspEnvironment = $env
+if ($env -eq "prod") {
+    $aspEnvironment = "Production"
+}
+
 $webappsettings = @(
   "VaultName=bergh-$env-keyvault",
-  "ASPNETCORE_ENVIRONMENT=production"
+  "ASPNETCORE_ENVIRONMENT=$aspEnvironment"
 )
 
 # Test prequisites

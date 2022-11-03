@@ -16,7 +16,7 @@ namespace BerghAdmin.Tests.MailTests
     [TestFixture]
     public class MailAttachmentsServiceTests
     {
-        [TestCase(null, null)]
+        [TestCase(null, "<html/>")]
         [TestCase("", "")]
         [TestCase("<p>Message</p>", "<p>Message</p>")]
         [TestCase("Logo: <img />", "Logo: <img />")]
@@ -63,7 +63,7 @@ namespace BerghAdmin.Tests.MailTests
         {
             var message = new MailMessage()
             {
-                HtmlBody = htmlBody
+                HtmlBody = htmlBody ?? "<html/>"
             };
 
             CreateService().ReplaceServerImagesWithInlinedAttachments(message);
