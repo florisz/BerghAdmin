@@ -29,7 +29,7 @@ public class Persoon : Donateur
     public ICollection<VerzondenMail> Geadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<VerzondenMail> ccGeadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<VerzondenMail> bccGeadresseerden { get; set; } = new List<VerzondenMail>();
-    public ICollection<Evenement>? IsDeelnemerVan { get; set; }
+    public ICollection<Evenement> IsDeelnemerVan { get; set; } = new List<Evenement>();
     public BihzActie? BihzActie { get; set; }
     public BihzUser? BihzUser { get; set; }
     public BihzProject? Project { get; set; }
@@ -52,5 +52,11 @@ public class Persoon : Donateur
     public string VolledigeNaamMetRollen
          => $"{VolledigeNaam} ( {GetRollenAsString} )";
 
+    public static Persoon Empty
+        => new Persoon()
+        {
+            Achternaam = "Onbekend",
+            Voornaam = "Onbekend",
+        };
 }
 

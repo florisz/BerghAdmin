@@ -235,7 +235,7 @@
             FileName = fileName
         };
         await this.PersonenGrid.ExportToExcelAsync(exportProperties);
-        jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
+        await jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
     }
 
     // Everything to handle the edit persoon dialog
@@ -282,7 +282,7 @@
         }
     }
 
-    private async Task AddPersoon()
+    private void AddPersoon()
     {
         var persoon = new Persoon();
         // open the edit dialog for a this new person

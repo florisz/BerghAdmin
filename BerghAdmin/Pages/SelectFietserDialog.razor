@@ -45,11 +45,11 @@
 
     [Parameter]
     public bool IsVisible { get; set; } = false;
-    SfGrid<Persoon> _personenGrid = null;
-    SfGrid<FietsTocht> _fietsTochtenGrid = null;
-    FietsTocht _currentFietsTocht = null;
+    SfGrid<Persoon> _personenGrid = new();
+    SfGrid<FietsTocht> _fietsTochtenGrid = new();
+    FietsTocht _currentFietsTocht = new();
     List<Persoon> Deelnemers = new List<Persoon>();
-    public int[] SelectedDeelnemerIds { get; set; }
+    public int[] SelectedDeelnemerIds { get; set; } = Array.Empty<int>();
 
     public void ShowDialog(FietsTocht fietsTocht, SfGrid<Persoon> personenGrid, SfGrid<FietsTocht> fietsTochtenGrid)
     {
@@ -59,7 +59,7 @@
 
         // haal alle fietsers op en
         // verwijder alle fietsers uit de lijst die al deelnemer zijn
-        Deelnemers = _persoonService.GetFietsersEnBegeleiders();
+        Deelnemers = _persoonService.GetFietsersEnBegeleiders() ?? new List<Persoon>();
         foreach (var deelnemer in _currentFietsTocht.Deelnemers)
         {
             Deelnemers.Remove(deelnemer);
@@ -79,8 +79,9 @@
         {
             await _evenementService.AddDeelnemer(_currentFietsTocht, deelnemerId);
         }
-        _personenGrid.Refresh();
-        _fietsTochtenGrid.Refresh();
+        
+        await _personenGrid.Refresh();
+        await _fietsTochtenGrid.Refresh();
         DialogClose();
     }
 
