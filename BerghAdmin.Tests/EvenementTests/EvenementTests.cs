@@ -1,4 +1,5 @@
 ﻿using BerghAdmin.Data;
+using BerghAdmin.Data.Kentaa;
 using BerghAdmin.General;
 using BerghAdmin.Services;
 using BerghAdmin.Services.Evenementen;
@@ -88,6 +89,54 @@ namespace BerghAdmin.Tests.EvenementTests
             {
                 Assert.AreEqual(fietsTochtById.Titel, fietsTochtUpdatedNaam);
             }
+        }
+
+        [Test]
+        public void GetByProjectWithMatchingId()
+        {
+            const int projectId = 42;
+
+            var service = this.GetRequiredService<IEvenementService>();
+            var fietsTocht = new FietsTocht() { KentaaProjectId = projectId, GeplandeDatum = new DateTime(2022, 1, 1) };
+            service.Save(fietsTocht);
+
+            var bihzProject = new BihzProject() { Id = 1, ProjectId = projectId };
+
+            var fietsTochtByProject = service.GetByProject(bihzProject);
+            Assert.IsNotNull(fietsTochtByProject);
+
+        }
+
+        [Test]
+        public void GetByProjectWithMatchingTitelTest()
+        {
+            const string projectTitel = "Hitchhikers Galactic Cycling Tour";
+
+            var service = this.GetRequiredService<IEvenementService>();
+            var fietsTocht = new FietsTocht() { Titel = projectTitel, GeplandeDatum = new DateTime(2022, 1, 1) };
+            service.Save(fietsTocht);
+
+            var bihzProject = new BihzProject() { Id = 1, Titel = projectTitel };
+
+            var fietsTochtByProject = service.GetByProject(bihzProject);
+            Assert.IsNotNull(fietsTochtByProject);
+        }
+
+        [Test]
+        public void GetByProjectWithMatchingIdAndTitelTest()
+        {
+            const int projectId = 42;
+            const string projectTitel = "Hitchhikers Galactic Cycling Tour";
+
+            var service = this.GetRequiredService<IEvenementService>();
+            var fietsTocht = new FietsTocht() { Titel = projectTitel, KentaaProjectId = projectId, GeplandeDatum = new DateTime(2022, 1, 1) };
+            service.Save(fietsTocht);
+
+            var bihzProject = new BihzProject() { Id = 1, ProjectId = projectId, Titel = projectTitel };
+
+            var fietsTochtByProject = service.GetByProject(bihzProject);
+            Assert.IsNotNull(fietsTochtByProject);
+
         }
 
         [Test]

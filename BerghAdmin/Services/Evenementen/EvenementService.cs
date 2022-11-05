@@ -1,4 +1,5 @@
 ﻿using BerghAdmin.Data;
+using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,21 @@ public class EvenementService : IEvenementService
             .OfType<FietsTocht>()
             .FirstOrDefault(e => e.KentaaProjectId == projectId);
 
+    public Evenement? GetByProject(BihzProject project)
+    {
+        if (project == null)
+        {
+            return null;
+        }
+
+        var evenement = GetByProjectId(project.ProjectId);
+        if (evenement == null)
+        {
+            evenement = GetByTitel(project.Titel);
+        }
+
+        return evenement;
+    }
 
     public async Task<ErrorCodeEnum> Save(Evenement evenement)
     {

@@ -28,7 +28,7 @@ public class BihzProjectService : IBihzProjectService
         {
             // Evenement (fietstocht) has not been linked to a registered Kentaa project yet,
             // Link thru the title of the Kentaa project
-            var evenement = _evenementService.GetByTitel(project.Titel ?? "no-title");
+            var evenement = _evenementService.GetByProject(project);
 
             if (evenement == null)
             {
