@@ -35,9 +35,9 @@
 @code {
     [Parameter]
     public bool IsVisible { get; set; } = false;
-    public Persoon Persoon { get; set; } = null;
-    private string NaamPersoon;
-    public IEnumerable<Donatie> DonatieList { get; set; }
+    public Persoon Persoon { get; set; } = Persoon.Empty;
+    private string NaamPersoon = Persoon.Empty.VolledigeNaam;
+    public IEnumerable<Donatie> DonatieList { get; set; } = Persoon.Empty.Donaties;
 
     public void DialogOpen()
     {

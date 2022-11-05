@@ -22,7 +22,7 @@
             <Header>@headerText</Header>
             <Content>
                 <EditForm Model="@_currentPersoon" OnValidSubmit="@ValidSubmit">
-                    <DataAnnotationsValidator/>
+                    <DataAnnotationsValidator />
                     <table>
                         <tr>
                             <td>
@@ -87,7 +87,7 @@
                                 <div class="form-group col-md-12">
                                     <label class="col-form-label">Geslacht:</label>
                                     <SfDropDownList TValue="GeslachtEnum" TItem="GeslachtFields" DataSource="@geslachtValues" @bind-Value="@_currentPersoon.Geslacht">
-                                        <DropDownListFieldSettings  Value="GeslachtValue"></DropDownListFieldSettings>
+                                        <DropDownListFieldSettings Value="GeslachtValue"></DropDownListFieldSettings>
                                     </SfDropDownList>
                                 </div>
                             </td>
@@ -166,13 +166,13 @@
                             <td valign="top">
                                 <div class="form-group col-md-12">
                                     <label class="col-form-label">Kentaa donatiebedrag:</label>
-                                    <SfTextBox Value="@_currentPersoon.GetDonatieBedrag.ToString()" TValue="decimal?" ></SfTextBox>
+                                    <SfTextBox Value="@_currentPersoon.GetDonatieBedrag.ToString()" TValue="decimal?"></SfTextBox>
                                 </div>
                             </td>
                         </tr>
                         <div class="form-group">
-                            <SfButton Type="submit" CssClass="e-flat" IsToggle="true" IsPrimary="true" Content="Opslaan"></SfButton> 
-                            <SfButton Type="button" CssClass="e-flat" IsToggle="false " IsPrimary="false" Content="Afbreken" OnClick="@DialogClose"></SfButton> 
+                            <SfButton Type="submit" CssClass="e-flat" IsToggle="true" IsPrimary="true" Content="Opslaan"></SfButton>
+                            <SfButton Type="button" CssClass="e-flat" IsToggle="false " IsPrimary="false" Content="Afbreken" OnClick="@DialogClose"></SfButton>
                         </div>
                     </table>
                 </EditForm>
@@ -188,15 +188,15 @@
     public bool IsVisible { get; set; } = false;
 
     public Persoon _currentPersoon { get; set; } = new Persoon();
-    private List<Rol> _rollenList  = new List<Rol>();
-    private IEnumerable<FietsTocht>? _fietstochtenList;
-    private SfGrid<Persoon> _originatingGrid;
+    private List<Rol> _rollenList = new List<Rol>();
+    private IEnumerable<FietsTocht> _fietstochtenList = Enumerable.Empty<FietsTocht>();
+    private SfGrid<Persoon> _originatingGrid = new();
     private bool _isNewPersoon;
 
-    SfListBox<int[],RolData>? rollenListBox;
-    SfListBox<int[],FietsTocht>? fietstochtenListBox;
+    SfListBox<int[], RolData>? rollenListBox;
+    SfListBox<int[], FietsTocht>? fietstochtenListBox;
     public int[]? selectedRollen;
-    public int[]? selectedFietstochten;
+    public int[] selectedFietstochten = Array.Empty<int>();
 
     public string? headerText;
     public class GeslachtFields
@@ -217,13 +217,13 @@
         public int Id { get; set; }
     }
 
-    public RolData[] allRolData = new RolData[] {};
-    public FietsTocht[] alleFietstochten = new FietsTocht[] {};
+    public RolData[] allRolData = new RolData[] { };
+    public FietsTocht[] alleFietstochten = Array.Empty<FietsTocht>();
 
     protected override void OnInitialized()
     {
-        allRolData =  GetAllRolData().ToArray();
-        alleFietstochten = _evenementService.GetAllFietsTochten().ToArray();
+        allRolData = GetAllRolData().ToArray();
+        alleFietstochten = _evenementService.GetAllFietsTochten()?.ToArray() ?? Array.Empty<FietsTocht>();
     }
 
     protected async Task ValidSubmit(EditContext editContext)
@@ -245,7 +245,7 @@
     {
         _currentPersoon = persoon;
         _rollenList = rollen;
-        _fietstochtenList = _evenementService.GetAllFietsTochten();
+        _fietstochtenList = _evenementService.GetAllFietsTochten() ?? Enumerable.Empty<FietsTocht>();
         _originatingGrid = grid;
         _isNewPersoon = _currentPersoon.Id == 0;
 
@@ -256,12 +256,12 @@
         // fill selected rollen
         selectedRollen = _currentPersoon
                             .Rollen
-                            .Select(r => (int) r.Id)
+                            .Select(r => (int)r.Id)
                             .ToArray();
 
         // fill fietstochten waar persoon deelnemer van is
         selectedFietstochten = _currentPersoon
-                                .IsDeelnemerVan?
+                                .IsDeelnemerVan
                                 .Select(f => (int)f.Id)
                                 .ToArray();
 
@@ -281,10 +281,10 @@
     }
 
     /// <summary>
-    /// 
+    ///
     /// set the correct rollen for this person
     /// do it the blunt way: new person -> just add, existing person -> delete all and add the selected ones
-    /// 
+    ///
     /// </summary>
     /// <returns>void</returns>
     private void SetRollen(int[]? selectedRollen, Persoon person, List<Rol> rollenList)
@@ -293,14 +293,14 @@
         if (person.Id != 0)
         {
             // delete all rol referenties for this person
-            foreach(var rol in rollenList)
+            foreach (var rol in rollenList)
             {
                 rol.Personen?.RemoveWhere(p => p.Id == person.Id);
             }
         }
 
         // add the selected rollen
-        foreach(var rolId in selectedRollen ?? Enumerable.Empty<int>())
+        foreach (var rolId in selectedRollen ?? Enumerable.Empty<int>())
         {
             var isEnumParsed = Enum.TryParse(rolId.ToString(), true, out RolTypeEnum selectedRolId);
             if (!isEnumParsed)
@@ -321,35 +321,32 @@
     }
 
     /// <summary>
-    /// 
+    ///
     /// set the correct fietstochten for this person
     /// do it the blunt way: new person -> just add, existing person -> delete all and add the selected ones
-    /// 
+    ///
     /// </summary>
     /// <returns>void</returns>
-    private void SetFietstochten(int[]? selectedFietstochten, Persoon person, IEnumerable<FietsTocht>? fietstochtenList)
+    private void SetFietstochten(int[] selectedFietstochten, Persoon person, IEnumerable<FietsTocht> fietstochtenList)
     {
-        if (fietstochtenList?.Any() == true)
+        foreach (var fietstocht in fietstochtenList)
         {
-            foreach (var fietstocht in fietstochtenList)
+            if (Array.Exists(selectedFietstochten, el => el == fietstocht.Id))
             {
-                if (Array.Exists(selectedFietstochten, el => el == fietstocht.Id))
-                {
-                    person.IsDeelnemerVan.Add(fietstocht);
-                }
-                else
-                {
-                    person.IsDeelnemerVan.Remove(fietstocht);
-                }
+                person.IsDeelnemerVan.Add(fietstocht);
+            }
+            else
+            {
+                person.IsDeelnemerVan.Remove(fietstocht);
             }
         }
     }
 
     /// <summary>
-    /// 
+    ///
     /// Enumerate all values of the RolTypeEnum and return a list with id, description of
     /// all enum values
-    /// 
+    ///
     /// </summary>
     /// <returns></returns>
     private RolData[] GetAllRolData()
@@ -374,7 +371,7 @@
         return rolData.ToArray<RolData>();
     }
 
-} 
+}
 
 <style>
     .col-form-label {
@@ -382,6 +379,7 @@
         padding-bottom: 1px;
         color: #8d7f7f;
     }
+
     .e-listbox-wrapper:not(.e-list-template) .e-list-item, .e-listbox-wrapper .e-list-nrt, .e-listbox-wrapper .e-selectall-parent, .e-listbox-container:not(.e-list-template) .e-list-item, .e-listbox-container .e-list-nrt, .e-listbox-container .e-selectall-parent {
         height: 25px;
         line-height: 1.5;

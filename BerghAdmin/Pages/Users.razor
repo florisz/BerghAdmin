@@ -38,7 +38,7 @@
     private EditUserDialog editUserDialog = new();
     private ErrorDialog errorDialog = new();
     SfGrid<User> UsersGrid = new();
-    private User _selectedUser = null;
+    private User? _selectedUser = null;
 
     protected override void OnInitialized()
     {
@@ -63,13 +63,13 @@
         return;
     }
 
-    public void AddClick(ClickEventArgs args) 
+    public async Task AddClick(ClickEventArgs args) 
     { 
         // the CurrentPersoonId field is not used but can not be null
-        editUserDialog.ShowDialog(new User() { CurrentPersoonId = 0 }, UsersGrid);
+        await editUserDialog.ShowDialog(new User() { CurrentPersoonId = 0 }, UsersGrid);
     } 
 
-    public void EditClick(ClickEventArgs args) 
+    public async Task EditClick(ClickEventArgs args) 
     {
         if (_selectedUser == null)
         {
@@ -77,7 +77,7 @@
         }
         else
         {
-            editUserDialog.ShowDialog(_selectedUser, UsersGrid);
+            await editUserDialog.ShowDialog(_selectedUser, UsersGrid);
         }
     } 
 

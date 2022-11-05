@@ -21,9 +21,14 @@ $appinsights = "bergh-$env-appinsights"
 $functionplan = "bergh-$env-functionplan"
 $functionappkentaa = "bergh-$env-kentaa-functionapp"
 $keyvault = "bergh-$env-keyvault"
+$aspEnvironment = $env
+if ($env -eq "prod") {
+    $aspEnvironment = "Production"
+}
+
 $webappsettings = @(
   "VaultName=bergh-$env-keyvault",
-  "ASPNETCORE_ENVIRONMENT=production"
+  "ASPNETCORE_ENVIRONMENT=$aspEnvironment"
 )
 
 # Test prequisites
@@ -157,3 +162,45 @@ az keyvault set-policy `
     --secret-permissions get list `
     --name $keyvault `
     --object-id $functionAppId
+
+# Add diagnostics to Apps
+# BerghAdmin
+$metrics = '[{\"category\":\"AllMetrics\",\"retentionPolicy\":{\"days\":0,\"enabled\":false},\"enabled\":true}]'
+$logs='[{\"category\":\"HTTP Logs\",\"retentionPolicy\":{\"days\":0,\"enabled\":false},\"enabled\":true}]'
+$resourceId = az webapp show `
+    --name $webapp `
+    --resource-group $rg `
+    --query id
+
+az monitor diagnostic-settings create `
+    --name "Metrics and HTTP logs" `
+    --resource $resourceId `
+    --workspace $workspace `
+    --metrics $metrics `
+    --logs $logs
+
+# BerghMonitor
+$resourceId = az webapp show `
+    --name $webmonitor `
+    --resource-group $rg `
+    --query id
+
+az monitor diagnostic-settings create `
+    --name "Metrics and HTTP logs" `
+    --resource $resourceId `
+    --workspace $workspace `
+    --metrics $metrics `
+    --logs $logs
+
+# Kentaa function App
+$resourceId = az webapp show `
+    --name $functionappkentaa `
+    --resource-group $rg `
+    --query id
+
+# $logs='[{\"category\":\"Function Application Logs\",\"retentionPolicy\":{\"days\":0,\"enabled\":false},\"enabled\":true}]'
+az monitor diagnostic-settings create `
+    --name "Metrics and FunctionApp logs" `
+    --resource $resourceId `
+    --workspace $workspace `
+    --metrics $metrics

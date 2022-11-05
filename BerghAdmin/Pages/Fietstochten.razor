@@ -123,11 +123,11 @@
     private IEnumerable<FietsTocht> GetFietsTochten()
     {
         var fietsTochten = evenementService
-                    .GetAllFietsTochten()
+                    .GetAllFietsTochten()?
                     .OrderByDescending(ft => ft.GeplandeDatum)
                     .ToList<FietsTocht>();
 
-        return fietsTochten;
+        return fietsTochten ?? Enumerable.Empty<FietsTocht>();
     }
 
     // Everything to handle the email dialog
@@ -153,7 +153,7 @@
 
             await evenementService.DeleteDeelnemer(SelectedFietsTocht, persoon);
             await RefreshList();
-            DeelnemersGrid.Refresh();
+            await DeelnemersGrid.Refresh();
 
             return;
         }
