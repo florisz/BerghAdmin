@@ -163,10 +163,10 @@ az keyvault set-policy `
     --name $keyvault `
     --object-id $functionAppId
 
-# Add diagnostics to Apps
+###### Add diagnostics to Apps #####
 # BerghAdmin
 $metrics = '[{\"category\":\"AllMetrics\",\"retentionPolicy\":{\"days\":0,\"enabled\":false},\"enabled\":true}]'
-$logs='[{\"category\":\"HTTP Logs\",\"retentionPolicy\":{\"days\":0,\"enabled\":false},\"enabled\":true}]'
+$logs='[{\"category\":\"AppServiceHttpLogs\",\"retentionPolicy\":{\"days\":0,\"enabled\":false},\"enabled\":true}]'
 $resourceId = az webapp show `
     --name $webapp `
     --resource-group $rg `
@@ -198,7 +198,7 @@ $resourceId = az webapp show `
     --resource-group $rg `
     --query id
 
-# $logs='[{\"category\":\"Function Application Logs\",\"retentionPolicy\":{\"days\":0,\"enabled\":false},\"enabled\":true}]'
+$logs='[{\"category\":\"FunctionAppLogs\",\"retentionPolicy\":{\"days\":0,\"enabled\":false},\"enabled\":true}]'
 az monitor diagnostic-settings create `
     --name "Metrics and FunctionApp logs" `
     --resource $resourceId `

@@ -45,6 +45,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{
 		Pipelines\release-bergh-components.yml = Pipelines\release-bergh-components.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BerghAdmin.UITests", "BerghAdmin.UITests\BerghAdmin.UITests.csproj", "{A3F95547-43F1-4B63-B30F-E0365BE40986}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +81,10 @@ Global
 		{3CEBEF4F-8E63-4ECA-9234-91633D82E918}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CEBEF4F-8E63-4ECA-9234-91633D82E918}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3CEBEF4F-8E63-4ECA-9234-91633D82E918}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3F95547-43F1-4B63-B30F-E0365BE40986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3F95547-43F1-4B63-B30F-E0365BE40986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3F95547-43F1-4B63-B30F-E0365BE40986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3F95547-43F1-4B63-B30F-E0365BE40986}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
