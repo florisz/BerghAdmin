@@ -51,6 +51,16 @@ stages:
           - template: release-bergh-components.yml
             parameters: 
               targetEnvironment: test
+  - job: 
+    displayName: Run smoke test
+    steps:
+    - pwsh: bin/Debug/net6.0/playwright.ps1 install --with-deps
+      displayName: Install PlayWright
+    - task: DotNetCoreCLI@2
+      displayName: 'Run UI tests'
+      inputs:
+        command: 'test'
+        projects: '**/*.UITests.csproj'
 
 - stage: Deploy2Prod
   displayName: Deploy to Prod
