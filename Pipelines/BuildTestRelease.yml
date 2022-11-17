@@ -65,17 +65,17 @@ stages:
         downloadPath: '$(System.ArtifactsDirectory)/BerghAdmin.UITests.zip'
     - task: ExtractFiles@1
       inputs:
-      archiveFilePatterns: '**/BerghAdmin.UITests.zip'
-      destinationFolder: './pw'
-      cleanDestinationFolder: true
-      overwriteExistingFiles: false
+        archiveFilePatterns: '**/BerghAdmin.UITests.zip'
+        destinationFolder: './pw'
+        cleanDestinationFolder: true
+        overwriteExistingFiles: false
     - pwsh: pw/playwright.ps1 install --with-deps
       displayName: Install PlayWright
     - task: DotNetCoreCLI@2
       displayName: 'Run UI tests'
       inputs:
-      command: 'test'
-      projects: '**/*.UITests.csproj'
+        command: 'test'
+        projects: '**/*.UITests.csproj'
 
 - stage: Deploy2Prod
   displayName: Deploy to Prod
