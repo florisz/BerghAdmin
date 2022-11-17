@@ -54,7 +54,13 @@ stages:
   - job: 
     displayName: Run smoke test
     steps:
-    - pwsh: bin/Debug/net6.0/playwright.ps1 install --with-deps
+    - task: ExtractFiles@1
+      inputs:
+        archiveFilePatterns: '**/BerghAdmin.UITests.zip'
+        destinationFolder: './pw'
+        cleanDestinationFolder: true
+        overwriteExistingFiles: false
+    - pwsh: pw/playwright.ps1 install --with-deps
       displayName: Install PlayWright
     - task: DotNetCoreCLI@2
       displayName: 'Run UI tests'

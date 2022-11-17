@@ -13,11 +13,13 @@ public class LoginTests:PageTest
 
     }
     [Test]
-    public async Task HomepageHasPlaywrightInTitleAndGetStartedLinkLinkingtoTheIntroPage()
+
+    public async Task LoginPageLoads()
     {
         var page = await Page.GotoAsync("https://bergh-test-admin-webapp.azurewebsites.net/Identity/Account/Login?ReturnUrl=%2F");
         
         Assert.NotNull(page);
-        Assert.AreEqual(HttpStatusCode.OK, page!.Status);
+        Assert.IsTrue(page!.Ok);
+        Assert.AreEqual((int)HttpStatusCode.OK, page!.Status);
     }
 }
