@@ -65,7 +65,7 @@ stages:
         downloadPath: '$(System.ArtifactsDirectory)'
     - task: ExtractFiles@1
       inputs:
-        archiveFilePatterns: '**/BerghAdmin.UITests.zip'
+        archiveFilePatterns: '$(Build.ArtifactStagingDirectory)/**/BerghAdmin.UITests.zip'
         destinationFolder: './pw'
         cleanDestinationFolder: true
         overwriteExistingFiles: false
