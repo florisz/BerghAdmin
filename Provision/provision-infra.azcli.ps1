@@ -62,7 +62,7 @@ $webappId = az webapp create `
     --name $webapp `
     --resource-group $rg `
     --plan $plan `
-    --runtime '"dotnetcore|6.0"' `
+    --runtime '"dotnetcore|7.0"' `
     --assign-identity [system] `
     --query identity.principalId 
 
@@ -89,7 +89,7 @@ $monitorId = az webapp create `
     --name $webmonitor `
     --resource-group $rg `
     --plan $plan `
-    --runtime '"dotnetcore|6.0"' `
+    --runtime '"dotnetcore|7.0"' `
     --assign-identity [system] `
     --query identity.principalId
 
@@ -145,7 +145,7 @@ $functionAppId = az functionapp create `
     --os-type Linux `
     --functions-version 4 `
     --runtime dotnet `
-    --runtime-version 6 `
+    --runtime-version 7 `
     --storage-account $storageaccount `
     --plan $functionplan `
     --assign-identity [system] `
