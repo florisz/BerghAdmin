@@ -330,7 +330,8 @@ public class DebugSeedDataService : ISeedDataService
         {
             Id = 0,
             GeplandeDatum = new DateTime(2023, 5, 3),
-            Titel = "Hanzetocht 2023"
+            Titel = "Fietstocht 2023",
+            KentaaProjectId = 17805
         };
 
         var persoon = this._persoonService.GetByEmailAdres("appie@aapnootmies.com");
