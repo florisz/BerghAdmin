@@ -144,7 +144,7 @@ $functionAppId = az functionapp create `
     --resource-group $rg `
     --os-type Linux `
     --functions-version 4 `
-    --runtime dotnet `
+    --runtime dotnet-isolated `
     --runtime-version 7 `
     --storage-account $storageaccount `
     --plan $functionplan `
