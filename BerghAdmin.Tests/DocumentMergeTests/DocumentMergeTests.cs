@@ -37,12 +37,12 @@ namespace BerghAdmin.DocumentMergeTests
         };
 
         [SetUp]
-        public void SetupData()
+        public async void SetupData()
         {
             if (this.ApplicationDbContext == null)
                 throw new ArgumentNullException("ApplicationDbContext");
 
-            CreateData(this.ApplicationDbContext, TestDocuments);
+            await CreateDataAsync(this.ApplicationDbContext, TestDocuments);
         }
 
         [Test]
@@ -135,7 +135,7 @@ namespace BerghAdmin.DocumentMergeTests
             pdfOutputStream.Close();
         }
 
-        private static void CreateData(ApplicationDbContext dbContext, List<TestDocument> testDocuments)
+        private static async Task CreateDataAsync(ApplicationDbContext dbContext, List<TestDocument> testDocuments)
         {
             foreach (var testDocument in testDocuments)
             {
@@ -153,7 +153,7 @@ namespace BerghAdmin.DocumentMergeTests
                     IsMergeTemplate = true
                 });
             }
-            dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
         }
 
         protected override void RegisterServices(ServiceCollection services)

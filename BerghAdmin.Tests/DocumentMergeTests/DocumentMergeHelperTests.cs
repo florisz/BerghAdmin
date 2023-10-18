@@ -28,16 +28,16 @@ namespace BerghAdmin.DocumentMergeTests
             return options;
         }
 
-        public static void CreateTestDataBaseInMemory(IServiceProvider serviceProvider, List<TestDocument> testDocuments)
+        public static async Task CreateTestDataBaseInMemoryAsync(IServiceProvider serviceProvider, List<TestDocument> testDocuments)
         {
             // You cannot use 'using' here. Otherwise you are disposing the context that the serviceProvider holds for us
             var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
             dbContext.Database.OpenConnection();
             dbContext.Database.EnsureCreated();
-            CreateData(dbContext, testDocuments);
+            await CreateDataAsync(dbContext, testDocuments);
         }
 
-        private static void CreateData(ApplicationDbContext dbContext, List<TestDocument> testDocuments)
+        private static async Task CreateDataAsync(ApplicationDbContext dbContext, List<TestDocument> testDocuments)
         {
             foreach (var testDocument in testDocuments)
             {
@@ -55,7 +55,7 @@ namespace BerghAdmin.DocumentMergeTests
                     IsMergeTemplate = true
                 });
             }
-            dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
         }
     }
 }
