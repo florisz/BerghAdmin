@@ -155,7 +155,10 @@ public class Registrator
         });
         builder.Services.AddDbContext<ApplicationDbContext>(
             options => options.UseMySql(GetDatabaseConnectionString(builder), ServerVersion.Parse("5.7"), po => po.EnableRetryOnFailure()));
-
+        // TOBEDONE
+        //        builder.Services.AddDbContextFactory<ContactContext>(
+        //            options => options.UseMySql(GetDatabaseConnectionString(builder), ServerVersion.Parse("5.7"), po => po.EnableRetryOnFailure()));
+        
         builder.Services.AddHealthChecks()
             .AddDbContextCheck<ApplicationDbContext>();
 

@@ -162,7 +162,8 @@
 </SfGrid>
 
 <SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
-<EditPersoonDialog @ref="editPersoonDialog" />
+@* TOBEDONE *@
+@*<EditPersoonDialog @ref="editPersoonDialog" />*@
 <ErrorDialog @ref="errorDialog" />
 
 @code {
@@ -173,7 +174,7 @@
     [CascadingParameter]
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
 
-    private ErrorDialog errorDialog = new();
+    private ErrorDialog errorDialog;
 
     private User? CurrentUser;
 
@@ -187,7 +188,7 @@
     }
 
     // Everything to handle the email dialog
-    SendMailDialog sendMailDialog = new();
+    SendMailDialog sendMailDialog;
     private async void ShowSendMailDialog()
     {
         if (string.IsNullOrWhiteSpace(CurrentUser?.Email))
@@ -239,7 +240,7 @@
     }
 
     // Everything to handle the edit persoon dialog
-    EditPersoonDialog editPersoonDialog;
+    // TOBEDONE EditPersoonDialog editPersoonDialog;
 
     // Everything to handle the context menu
     // Triggers when the item is selected
@@ -248,7 +249,8 @@
         if (args.Item.Id == "edit-persoon" || args.Item.Id == "add-persoon")
         {
             var persoon = args.Item.Id == "edit-persoon" ? args.RowInfo.RowData as Persoon : new Persoon();
-            editPersoonDialog.ShowDialog(persoon, rollenList, PersonenGrid);
+            // TOBEDONE
+            // editPersoonDialog.ShowDialog(persoon, rollenList, PersonenGrid);
             return;
         }
         if (args.Item.Id == "send-email")
@@ -278,7 +280,8 @@
         else
         {
             // open the edit dialog for the selected person
-            editPersoonDialog.ShowDialog(selectedPersonen.ElementAt(0), rollenList, PersonenGrid);
+            // TOBEDONE
+            // editPersoonDialog.ShowDialog(selectedPersonen.ElementAt(0), rollenList, PersonenGrid);
         }
     }
 
@@ -286,7 +289,8 @@
     {
         var persoon = new Persoon();
         // open the edit dialog for a this new person
-        editPersoonDialog.ShowDialog(persoon, rollenList, PersonenGrid);
+        // TOBEDONE
+        // editPersoonDialog.ShowDialog(persoon, rollenList, PersonenGrid);
     }
 
 
