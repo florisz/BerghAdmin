@@ -65,7 +65,7 @@ namespace BerghAdmin.Pages
         private async Task Opened(Syncfusion.Blazor.Popups.OpenEventArgs args)
         {
             args.PreventFocus = true;
-            await _subjectEditor.FocusIn();
+            await _subjectEditor.FocusAsync();
             await _mailBodyEditor.RefreshUIAsync();
         }
 

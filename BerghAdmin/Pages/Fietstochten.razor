@@ -148,7 +148,7 @@
             if (persoon == null)
                 return;
 
-            await evenementService.DeleteDeelnemer(SelectedFietsTocht, persoon);
+            await evenementService.DeleteDeelnemerAsync(SelectedFietsTocht, persoon);
             await RefreshList();
             await DeelnemersGrid.Refresh();
 

@@ -12,7 +12,7 @@ using NUnit.Framework;
 namespace BerghAdmin.Tests.EvenementTests
 {
     [TestFixture]
-    public class DonatieTests : DatabasedTests
+    public class DonatieTests : DatabaseTestSetup
     {
         protected override void RegisterServices(ServiceCollection services)
         {
@@ -23,24 +23,24 @@ namespace BerghAdmin.Tests.EvenementTests
         }
 
         [Test]
-        public void GetByNameTest()
+        public async Task GetByNameTest()
         {
             const string fietsTochtNaam = "Fietstocht1";
 
             var service = this.GetRequiredService<IEvenementService>();
-            service.Save(new FietsTocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
+            await service.SaveAsync(new FietsTocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
             var fietsTocht = service.GetByTitel(fietsTochtNaam);
 
             Assert.AreEqual(fietsTocht?.Titel, fietsTochtNaam);
         }
 
         [Test]
-        public void GetByIdTest()
+        public async Task GetByIdTest()
         {
             const string fietsTochtNaam = "Fietstocht2";
 
             var service = this.GetRequiredService<IEvenementService>();
-            service.Save(new FietsTocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
+            await service.SaveAsync(new FietsTocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
             var fietsTocht = service.GetByTitel(fietsTochtNaam);
 
             Assert.IsNotNull(fietsTocht);
@@ -62,24 +62,24 @@ namespace BerghAdmin.Tests.EvenementTests
             const string fietsTochtNaam = "Fietstocht3";
 
             var service = this.GetRequiredService<IEvenementService>();
-            await service.Save(new FietsTocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
-            var errorCode = await service.Save(new FietsTocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2023, 1, 1) });
+            await service.SaveAsync(new FietsTocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
+            var errorCode = await service.SaveAsync(new FietsTocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2023, 1, 1) });
 
             Assert.AreEqual(errorCode, ErrorCodeEnum.Conflict);
         }
 
         [Test]
-        public void UpdateEvenement()
+        public async Task UpdateEvenement()
         {
             const string fietsTochtNaam = "Fietstocht4";
             const string fietsTochtUpdatedNaam = "Fietstocht4.1";
 
             var service = this.GetRequiredService<IEvenementService>();
             var fietsTocht = new FietsTocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
-            service.Save(fietsTocht);
+            await service.SaveAsync(fietsTocht);
 
             fietsTocht.Titel = fietsTochtUpdatedNaam;
-            service.Save(fietsTocht);
+            await service.SaveAsync(fietsTocht);
 
             var fietsTochtById = service.GetById(fietsTocht.Id);
             Assert.IsNotNull(fietsTochtById);
@@ -92,29 +92,28 @@ namespace BerghAdmin.Tests.EvenementTests
         }
 
         [Test]
-        public void GetByProjectWithMatchingId()
+        public async Task GetByProjectWithMatchingId()
         {
             const int projectId = 42;
 
             var service = this.GetRequiredService<IEvenementService>();
             var fietsTocht = new FietsTocht() { KentaaProjectId = projectId, GeplandeDatum = new DateTime(2022, 1, 1) };
-            service.Save(fietsTocht);
+            await service.SaveAsync(fietsTocht);
 
             var bihzProject = new BihzProject() { Id = 1, ProjectId = projectId };
 
             var fietsTochtByProject = service.GetByProject(bihzProject);
             Assert.IsNotNull(fietsTochtByProject);
-
         }
 
         [Test]
-        public void GetByProjectWithMatchingTitelTest()
+        public async Task GetByProjectWithMatchingTitelTest()
         {
             const string projectTitel = "Hitchhikers Galactic Cycling Tour";
 
             var service = this.GetRequiredService<IEvenementService>();
             var fietsTocht = new FietsTocht() { Titel = projectTitel, GeplandeDatum = new DateTime(2022, 1, 1) };
-            service.Save(fietsTocht);
+            await service.SaveAsync(fietsTocht);
 
             var bihzProject = new BihzProject() { Id = 1, Titel = projectTitel };
 
@@ -123,24 +122,23 @@ namespace BerghAdmin.Tests.EvenementTests
         }
 
         [Test]
-        public void GetByProjectWithMatchingIdAndTitelTest()
+        public async Task GetByProjectWithMatchingIdAndTitelTest()
         {
             const int projectId = 42;
             const string projectTitel = "Hitchhikers Galactic Cycling Tour";
 
             var service = this.GetRequiredService<IEvenementService>();
             var fietsTocht = new FietsTocht() { Titel = projectTitel, KentaaProjectId = projectId, GeplandeDatum = new DateTime(2022, 1, 1) };
-            service.Save(fietsTocht);
+            await service.SaveAsync(fietsTocht);
 
             var bihzProject = new BihzProject() { Id = 1, ProjectId = projectId, Titel = projectTitel };
 
             var fietsTochtByProject = service.GetByProject(bihzProject);
             Assert.IsNotNull(fietsTochtByProject);
-
         }
 
         [Test]
-        public void GetAll()
+        public async Task GetAll()
         {
             var service = this.GetRequiredService<IEvenementService>();
 
@@ -148,14 +146,14 @@ namespace BerghAdmin.Tests.EvenementTests
             foreach (var name in strArray)
             {
                 var fietsTocht = new FietsTocht() { Titel = name, GeplandeDatum = new DateTime(2022, 1, 1) };
-                service.Save(fietsTocht);
+                await service.SaveAsync(fietsTocht);
             }
 
             strArray = new string[] { "wim", "zus", "jet" };
             foreach (var name in strArray)
             {
                 var golfDag = new GolfDag() { Titel = name, GeplandeDatum = new DateTime(2022, 1, 1) };
-                service.Save(golfDag);
+                await service.SaveAsync(golfDag);
             }
 
             var fietsTochten = service.GetAll<FietsTocht>();
@@ -166,21 +164,21 @@ namespace BerghAdmin.Tests.EvenementTests
         }
 
         [Test]
-        public void AddPersoon()
+        public async Task AddPersoon()
         {
             const string fietsTochtNaam = "Fietstocht4";
 
             var service = this.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
-            service.Save(fietsTocht);
-            service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
+            await service.SaveAsync(fietsTocht);
+            await service.AddDeelnemerAsync(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
             service = null;
 
             var service2 = this.GetRequiredService<IEvenementService>();
             var fietsTochtById = service2.GetById(fietsTocht.Id);
             var persoon = fietsTochtById?.Deelnemers.FirstOrDefault();
-            var isDeelnemerVan = persoon?.IsDeelnemerVan?.FirstOrDefault(f => f.Id == fietsTocht.Id) != null;
+            var isDeelnemerVan = persoon?.FietsTochten?.FirstOrDefault(f => f.Id == fietsTocht.Id) != null;
 
             Assert.IsNotNull(fietsTochtById);
             Assert.AreEqual(1, fietsTochtById?.Deelnemers.Count);
@@ -195,8 +193,8 @@ namespace BerghAdmin.Tests.EvenementTests
             var service = this.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
-            await service.Save(fietsTocht);
-            await service.AddDeelnemer(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
+            await service.SaveAsync(fietsTocht);
+            await service.AddDeelnemerAsync(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
             
             var service2 = this.GetRequiredService<IEvenementService>();
             var fietsTochtById = service2.GetById(fietsTocht.Id);
@@ -208,12 +206,12 @@ namespace BerghAdmin.Tests.EvenementTests
             if (fietsTochtById != null && persoon != null)
             {
                 // try to delete an exisitng deelnemer from the evenement
-                var result = await service2.DeleteDeelnemer(fietsTochtById, persoon);
+                var result = await service2.DeleteDeelnemerAsync(fietsTochtById, persoon);
                 Assert.AreEqual(ErrorCodeEnum.Ok, result);
                 Assert.AreEqual(0, fietsTochtById.Deelnemers?.Count);
 
                 // try to delete a non exisitng deelnemer from the evenement
-                result = await service2.DeleteDeelnemer(fietsTochtById, persoon);
+                result = await service2.DeleteDeelnemerAsync(fietsTochtById, persoon);
                 Assert.AreEqual(ErrorCodeEnum.Ok, result);
             }
         }
@@ -226,9 +224,9 @@ namespace BerghAdmin.Tests.EvenementTests
             var service = this.GetRequiredService<IEvenementService>();
 
             var fietsTocht = new FietsTocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
-            await service.Save(fietsTocht);
+            await service.SaveAsync(fietsTocht);
             var persoon = new Persoon() { EmailAdres = "aap@noot.com" };
-            await service.AddDeelnemer(fietsTocht, persoon);
+            await service.AddDeelnemerAsync(fietsTocht, persoon);
 
             var service2 = this.GetRequiredService<IEvenementService>();
             var fietsTochtById = service2.GetById(fietsTocht.Id);
@@ -238,12 +236,12 @@ namespace BerghAdmin.Tests.EvenementTests
             if (fietsTochtById != null)
             {
                 // try to delete an exisitng deelnemer from the evenement
-                var result = await service2.DeleteDeelnemer(fietsTochtById, persoon.Id);
+                var result = await service2.DeleteDeelnemerAsync(fietsTochtById, persoon.Id);
                 Assert.AreEqual(ErrorCodeEnum.Ok, result);
                 Assert.AreEqual(0, fietsTochtById.Deelnemers?.Count);
 
                 // try to delete a non exisitng deelnemer from the evenement
-                result = await service2.DeleteDeelnemer(fietsTochtById, persoon);
+                result = await service2.DeleteDeelnemerAsync(fietsTochtById, persoon);
                 Assert.AreEqual(ErrorCodeEnum.Ok, result);
             }
         }

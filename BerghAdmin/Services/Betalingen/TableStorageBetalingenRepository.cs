@@ -16,19 +16,20 @@ public class TableStorageBetalingenRepository : IBetalingenRepository
             new TableSharedKeyCredential("berghuatstorage", "HqU3OmMYf7lQCY7mvySH4bYwhj81RzJV6lS4H22chM6b17S5JH8VjBbmAByNA8b9Gb7Iii4Voy/bmih5sfl35Q=="));
     }
 
-    public void Add(Betaling betaling)
+    public async Task AddAsync(Betaling betaling)
     {
         var entity = new TableEntity(betaling.Code, betaling.Volgnummer)
         {
             { "data", JsonSerializer.Serialize(betaling) }
         };
 
-        var response = tableClient.AddEntity(entity);
+        var response = await tableClient.AddEntityAsync(entity);
         // TODO: we should be checking this response
     }
 
-    public void Update(Betaling betaling)
+    public async Task UpdateAsync(Betaling betaling)
     {
+        // TOBEDONE
     }
 
     public Betaling? GetByVolgnummer(string volgNummer)

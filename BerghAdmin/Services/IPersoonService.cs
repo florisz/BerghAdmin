@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace BerghAdmin.Services
 {
     public interface IPersoonService
@@ -6,8 +8,9 @@ namespace BerghAdmin.Services
         List<Persoon>? GetFietsersEnBegeleiders();
         Persoon? GetByActionId(int actionId);
         Persoon? GetById(int id);
+        Persoon? GetById(int id, bool tracked = false);
         Persoon? GetByEmailAdres(string emailAdres);
-        void SavePersoon(Persoon persoon);
-        void DeletePersoon(int id);
+        Task SavePersoonAsync(Persoon persoon);
+        Task DeletePersoonAsync(int id);
     }
 }

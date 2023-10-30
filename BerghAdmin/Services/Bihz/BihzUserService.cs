@@ -39,7 +39,7 @@ public class BihzUserService : IBihzUserService
             persoon.BihzUser = bihzUser;
             bihzUser.PersoonId = persoon.Id;
 
-            _persoonService.SavePersoon(persoon);
+            _persoonService.SavePersoonAsync(persoon);
         }
 
         Save(bihzUser);

@@ -82,7 +82,7 @@ namespace BerghAdmin.Services.Import
                         persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.MailingAbonnee) ?? throw new ArgumentNullException("Id", "GetRole MailingAbonne"));
                     }
 
-                    _persoonService.SavePersoon(persoon);
+                    _persoonService.SavePersoonAsync(persoon);
                 }
             }
             catch (Exception ex)

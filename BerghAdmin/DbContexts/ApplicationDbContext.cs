@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using BerghAdmin.Data.Kentaa;
 using BerghAdmin.Authorization;
+using System.Diagnostics;
 
 namespace BerghAdmin.DbContexts;
 
@@ -50,6 +51,10 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .Entity<Persoon>()
             .HasIndex(p => new { p.IsVerwijderd, p.EmailAdres })
             .IsUnique();
+        modelBuilder
+            .Entity<Persoon>()
+            .HasMany(r => r.Rollen)
+            .WithMany(p => p.Personen);
         // Persoon
 
         modelBuilder
@@ -58,8 +63,14 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
 
         modelBuilder
             .Entity<Evenement>()
-            .HasMany(f => f.Deelnemers);
+            .HasMany(f => f.Deelnemers)
+            .WithMany(p => p.FietsTochten);
 
+/*        modelBuilder
+            .Entity<Evenement>()
+            .HasMany(g => g.Deelnemers)
+            .WithMany(p => p.GolfDagen);
+*/
         modelBuilder
             .Entity<GolfDag>()
             .ToTable("GolfDagen");

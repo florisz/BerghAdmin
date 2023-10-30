@@ -1,0 +1,31 @@
+trigger:
+  branches:
+    include:
+    - none
+parameters:
+- name: TargetEnvironment
+  type: string
+  default: test
+  values:
+  - test
+  - prod
+stages:
+- stage: __default
+  jobs:
+  - job: Job
+    pool:
+      vmImage: windows-latest
+    steps:
+    - task: CmdLine@2
+      displayName: Provision test infra on Azure
+      inputs:
+        script: echo New infrastructure for test will be provisioned
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'BerghAzureResourceMgr'
+        scriptType: 'ps'
+        scriptLocation: 'scriptPath'
+        scriptPath: 'Provision/provision-infra.azcli.ps1'
+        arguments: >
+          -env 'test'
+

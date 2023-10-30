@@ -38,22 +38,33 @@ builder.Services
     .AddHealthChecksUI(setup =>
     {
         var webhookSettings = builder.Configuration.GetSection("HealthChecksUI:Webhooks");
+        UIHealthReport x = null;
+
+        // string name
+        // string uri
+        // string payload
+        // string restorePayload = ""
+        // Func<string, UIHealthReport, bool>? shouldNotifyFunc = null
+        // Func<string, UIHealthReport, string>? customMessageFunc = null
+        // Func<string, UIHealthReport, string>? customDescriptionFunc = null
         setup.AddWebhookNotification(
             "mail-admin",
             webhookSettings["Uri"],
             webhookSettings["Payload"],
             webhookSettings["RestoredPayload"],
-            shouldNotifyFunc: report => DateTime.UtcNow.Hour >= 8 && DateTime.UtcNow.Hour <= 23,
-            customMessageFunc: (report) =>
-            {
-                var failing = report.Entries.Where(e => e.Value.Status == UIHealthStatus.Unhealthy);
-                return $"{failing.Count()} healthchecks are failing";
-            },
-            customDescriptionFunc: report =>
-            {
-                var failing = report.Entries.Where(e => e.Value.Status == UIHealthStatus.Unhealthy);
-                return $"HealthChecks with names {string.Join("/", failing.Select(f => f.Key))} are failing";
-            });
+            shouldNotifyFunc:
+                (name, report) => DateTime.UtcNow.Hour is >= 8 and <= 23,
+                customMessageFunc: (name,report) =>
+                {
+                    var failing = report.Entries.Where(e => e.Value.Status == UIHealthStatus.Unhealthy);
+                    return $"{failing.Count()} healthchecks are failing";
+                },
+                customDescriptionFunc: (name, report) =>
+                {
+                    var failing = report.Entries.Where(e => e.Value.Status == UIHealthStatus.Unhealthy);
+                    return $"HealthChecks with names {string.Join("/", failing.Select(f => f.Key))} are failing";
+                }
+        );
     })
     .AddInMemoryStorage();
 

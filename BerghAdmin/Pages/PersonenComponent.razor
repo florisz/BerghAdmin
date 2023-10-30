@@ -10,16 +10,20 @@
 
 @using BerghAdmin.Data
 @using BerghAdmin.Pages
+@using BerghAdmin.Services
+@using BerghAdmin.Services.Evenementen
 @using System.Security.Claims
 
 
-@inject BerghAdmin.Services.IPersoonService persoonService
-@inject BerghAdmin.Services.IRolService rolService
-@inject UserManager<User> UserManager
-@inject NavigationManager NavigationManager
+@inject IPersoonService _persoonService
+@inject IRolService _rolService
+@inject IEvenementService _evenementService
+@inject ILogger<PersonenComponent> _logger
+@inject UserManager<User> _userManager
+@inject NavigationManager _navigationManager
 @inject IJSRuntime jsRuntime
-@inject ISendMailService SendMailService
-@inject IMailAttachmentsService MailAttachmentsService;
+@inject ISendMailService _sendMailService
+@inject IMailAttachmentsService _mailAttachmentsService;
 
 @attribute [Authorize(Policy = "IsAnyRole")]
 
@@ -28,13 +32,13 @@
         <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 search-item">
             <label class="col-form-label">Overzicht van:</label>
             <SfMultiSelect 
-                    TValue="RolTypeEnum[]" 
+                    TValue="int[]" 
                             TItem="Rol"
                             ClosePopupOnSelect="false"
                             @bind-Value="@RolContext"
                             Placeholder="e.g Ambassadeur, Fietser, Golfer"
                             Mode="VisualMode.Box"
-                            DataSource="@rollenList"
+                            DataSource="@_rollenList"
                             Width="700px"
                             ShowDropDownIcon="true"
                             ModelType="typeof(Rol)" >
@@ -53,11 +57,7 @@
                     </ItemTemplate>
                 </MultiSelectTemplates>
                 <MultiSelectEvents 
-                    TItem="Rol" 
-                                    TValue="RolTypeEnum[]"
-                                    OnValueSelect="@OnValueSelectHandler"
-                                    ValueRemoved="@ValueRemovedHandler"
-                                    Cleared="@ClearedHandler">
+                    TItem="Rol" TValue="int[]">
                 </MultiSelectEvents>
             </SfMultiSelect>
         </div>
@@ -84,8 +84,8 @@
 @*
     The grid showing all persons
 *@
-<SfGrid @ref="@PersonenGrid"
-        DataSource="@personenList"
+<SfGrid @ref="@_personenGrid"
+        DataSource="@_personenList"
         AllowPaging="true"
         AllowResizing="true"
         AllowSelection="true"
@@ -162,13 +162,12 @@
 </SfGrid>
 
 <SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
-@* TOBEDONE *@
-@*<EditPersoonDialog @ref="editPersoonDialog" />*@
+<EditPersoonDialog @ref="editPersoonDialog" />
 <ErrorDialog @ref="errorDialog" />
 
 @code {
     [Parameter]
-    public RolTypeEnum[] RolContext { get; set; } = Array.Empty<RolTypeEnum>();
+    public int[] RolContext { get; set; } = Array.Empty<int>();
     [Parameter]
     public bool ToonAlles { get; set; } = false;
     [CascadingParameter]
@@ -181,10 +180,29 @@
     private bool ToonVerwijderd { get; set; } = false;
     private bool ZonderReserves { get; set; } = false;
 
+    // Everything to handle persons
+    public List<int> _selectedRollen = new();
+    public List<Persoon> _personenList = new();
+    public List<Rol> _rollenList = new();
+    public List<FietsTocht> _fietsTochtenList = new();
+    SfGrid<Persoon> _personenGrid = new();
+
+    private void ValueRemovedHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args)
+    {
+        _selectedRollen.Remove(args.ItemData.Id);
+        RefreshList();
+    }
+
+    private void OnValueSelectHandler(Syncfusion.Blazor.DropDowns.SelectEventArgs<Rol> args)
+    {
+        _selectedRollen.Add(args.ItemData.Id);
+        RefreshList();
+    }
+
     // search in the grid functionaity
     public void OnInputSearchString(InputEventArgs args)
     {
-        this.PersonenGrid.Search(args.Value);
+        this._personenGrid.Search(args.Value);
     }
 
     // Everything to handle the email dialog
@@ -215,7 +233,7 @@
     private async Task<List<MailAddress>> GetSelectedEmailAddresses()
     {
         var emailAddressesList = new List<MailAddress>();
-        var selectedPersonenWithMailAddress = (await this.PersonenGrid.GetSelectedRecordsAsync())
+        var selectedPersonenWithMailAddress = (await this._personenGrid.GetSelectedRecordsAsync())
             .Where(p => !string.IsNullOrWhiteSpace(p.EmailAdres));
         foreach (var persoon in selectedPersonenWithMailAddress)
         {
@@ -235,12 +253,12 @@
         {
             FileName = fileName
         };
-        await this.PersonenGrid.ExportToExcelAsync(exportProperties);
+        await this._personenGrid.ExportToExcelAsync(exportProperties);
         await jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
     }
 
     // Everything to handle the edit persoon dialog
-    // TOBEDONE EditPersoonDialog editPersoonDialog;
+    EditPersoonDialog editPersoonDialog;
 
     // Everything to handle the context menu
     // Triggers when the item is selected
@@ -249,8 +267,7 @@
         if (args.Item.Id == "edit-persoon" || args.Item.Id == "add-persoon")
         {
             var persoon = args.Item.Id == "edit-persoon" ? args.RowInfo.RowData as Persoon : new Persoon();
-            // TOBEDONE
-            // editPersoonDialog.ShowDialog(persoon, rollenList, PersonenGrid);
+            ShowEditPersoonDialog(persoon);
             return;
         }
         if (args.Item.Id == "send-email")
@@ -265,10 +282,72 @@
         }
     }
 
+    /// <summary>
+    ///
+    /// set the correct rollen for this person
+    /// do it the blunt way: new person -> just add, existing person -> delete all and add the selected ones
+    ///
+    /// </summary>
+    /// <returns>void</returns>
+    private void SetRollen(int[]? selectedRollen, Persoon person, List<Rol> rollenList)
+    {
+        // only delete rollen for an existing person
+        if (person.Id != 0)
+        {
+            // delete all rol referenties for this person
+            foreach (var rol in rollenList)
+            {
+                rol.Personen?.RemoveWhere(p => p.Id == person.Id);
+            }
+        }
+
+        // add the selected rollen
+        foreach (var rolId in selectedRollen ?? Enumerable.Empty<int>())
+        {
+            var isEnumParsed = Enum.TryParse(rolId.ToString(), true, out RolTypeEnum selectedRolId);
+            if (!isEnumParsed)
+            {
+                throw new ApplicationException($"RolTypeEnum with integer value {rolId} does not exist");
+            }
+
+            var rol = rollenList.FirstOrDefault(r => r.Id == Convert.ToInt32(selectedRolId));
+            if (rol != null)
+            {
+                if (rol.Personen == null)
+                {
+                    rol.Personen = new HashSet<Persoon>();
+                }
+                rol.Personen.Add(person);
+            }
+        }
+    }
+
+    /// <summary>
+    ///
+    /// set the correct fietstochten for this person
+    /// do it the blunt way: new person -> just add, existing person -> delete all and add the selected ones
+    ///
+    /// </summary>
+    /// <returns>void</returns>
+    private void SetFietstochten(int[] selectedFietstochten, Persoon person, IEnumerable<FietsTocht> fietstochtenList)
+    {
+        foreach (var fietstocht in fietstochtenList)
+        {
+            if (Array.Exists(selectedFietstochten, el => el == fietstocht.Id))
+            {
+                person.FietsTochten.Add(fietstocht);
+            }
+            else
+            {
+                person.FietsTochten.Remove(fietstocht);
+            }
+        }
+    }
+
     private async Task EditPersoon()
     {
         // get selected personen first
-        var selectedPersonen = await this.PersonenGrid.GetSelectedRecordsAsync();
+        var selectedPersonen = await this._personenGrid.GetSelectedRecordsAsync();
         if (selectedPersonen.Count == 0)
         {
             errorDialog.Show("Selecteer eerst een persoon.");
@@ -280,8 +359,7 @@
         else
         {
             // open the edit dialog for the selected person
-            // TOBEDONE
-            // editPersoonDialog.ShowDialog(selectedPersonen.ElementAt(0), rollenList, PersonenGrid);
+            ShowEditPersoonDialog(selectedPersonen.ElementAt(0));
         }
     }
 
@@ -289,47 +367,26 @@
     {
         var persoon = new Persoon();
         // open the edit dialog for a this new person
-        // TOBEDONE
-        // editPersoonDialog.ShowDialog(persoon, rollenList, PersonenGrid);
+        ShowEditPersoonDialog(persoon);
     }
-
-
-    // Everything to handle persons
-    public List<RolTypeEnum> selectedRollen = new();
-    public List<Persoon> personenList = new();
-    public List<Rol> rollenList = new();
-    SfGrid<Persoon> PersonenGrid = new();
 
     protected override async void OnInitialized()
     {
-        base.OnInitialized();
-        selectedRollen = RolContext.ToList<RolTypeEnum>();
-        rollenList = GetRollen();
-        await RefreshList();
+        await base.OnInitializedAsync();
+
+        _logger.LogDebug($"PersonenComponent initialized; threadid={Thread.CurrentThread.ManagedThreadId}");
+
+        _selectedRollen = RolContext.ToList<int>();
+        _rollenList = GetRollen();
+        _fietsTochtenList = (_evenementService.GetAllFietsTochten() ?? Enumerable.Empty<FietsTocht>()).ToList();
+
+        RefreshList();
 
         if (_authenticationStateTask != null)
         {
             var authenticationState = await _authenticationStateTask;
-            CurrentUser = await UserManager.GetUserAsync(authenticationState?.User);
+            CurrentUser = await _userManager.GetUserAsync(authenticationState?.User);
         }
-    }
-
-    private void ValueRemovedHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args)
-    {
-        selectedRollen.Remove(args.ItemData.Id);
-        RefreshList();
-    }
-
-    private void OnValueSelectHandler(Syncfusion.Blazor.DropDowns.SelectEventArgs<Rol> args)
-    {
-        selectedRollen.Add(args.ItemData.Id);
-        RefreshList();
-    }
-
-    private void ClearedHandler(MouseEventArgs args)
-    {
-        selectedRollen = new List<RolTypeEnum>();
-        RefreshList();
     }
 
     public void ActionCompletedHandler(ActionEventArgs<Persoon> args)
@@ -355,18 +412,24 @@
     public Task RefreshList()
     {
         // refresh with value from multiselect dropdown box
-        if (!ToonAlles && (selectedRollen == null || selectedRollen.Count<RolTypeEnum>() == 0))
+        if (!ToonAlles && (_selectedRollen == null || _selectedRollen.Count() == 0))
         {
-            personenList = new List<Persoon>();
+            _personenList = new List<Persoon>();
         }
         else
         {
-            personenList = GetPersonen(selectedRollen).OrderBy(p => p.Achternaam).ToList<Persoon>();
+            _personenList = GetPersonen(_selectedRollen).OrderBy(p => p.Achternaam).ToList<Persoon>();
         }
         return Task.CompletedTask;
     }
 
-    private List<Persoon> GetPersonen(List<RolTypeEnum> rolTypes)
+    private void ShowEditPersoonDialog(Persoon persoon)
+    {
+        //editPersoonDialog = new EditPersoonDialog();
+        editPersoonDialog.ShowDialog(persoon.Id, _personenGrid);
+    }
+
+    private List<Persoon> GetPersonen(List<int> rolTypes)
     {
         var personen = new List<Persoon>();
 
@@ -375,13 +438,13 @@
             // also show persons with no role
             if (ToonVerwijderd)
             {
-                personen = persoonService
+                personen = _persoonService
                             .GetPersonen()!
                             .ToList<Persoon>();
             }
             else
             {
-                personen = persoonService
+                personen = _persoonService
                             .GetPersonen()!
                             .Where(p => !p.IsVerwijderd)
                             .ToList<Persoon>();
@@ -390,11 +453,11 @@
         else
         {
             // select persons with specified rol only
-            var currentRollen = rollenList
+            var currentRollen = _rollenList
                                 .Where(r => rolTypes.Contains(r.Id))
                                 .ToList<Rol>();
 
-            personen = persoonService
+            personen = _persoonService
                         .GetPersonen()!
                         .Where(p => !p.IsVerwijderd)
                         .Where(p => p.Rollen.FirstOrDefault(r => rolTypes.Contains(r.Id)) != null)
@@ -414,7 +477,7 @@
     {
         // TODO
         // Get list of all rollen based on enum
-        var rollenList = rolService
+        var rollenList = _rolService
                         .GetRollen()
                         .OrderBy(r => r.Beschrijving)
                         .ToList<Rol>();
@@ -426,10 +489,10 @@
         var message = eventArgs.Message;
 
         // Replace all content ids with inlined attachments
-        MailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(message);
+        _mailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(message);
 
         bool isSandboxMode = false; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
-        await SendMailService.SendMail(message, isSandboxMode);
+        await _sendMailService.SendMail(message, isSandboxMode);
     }
 
 }

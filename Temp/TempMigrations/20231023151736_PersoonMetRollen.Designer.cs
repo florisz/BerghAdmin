@@ -3,6 +3,7 @@ using System;
 using BerghAdmin.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231023151736_PersoonMetRollen")]
+    partial class PersoonMetRollen
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -712,7 +715,6 @@ namespace BerghAdmin.Migrations
             modelBuilder.Entity("BerghAdmin.Data.Rol", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<string>("Beschrijving")
@@ -755,12 +757,12 @@ namespace BerghAdmin.Migrations
                     b.Property<int>("DeelnemersId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FietsTochtenId")
+                    b.Property<int>("IsDeelnemerVanId")
                         .HasColumnType("int");
 
-                    b.HasKey("DeelnemersId", "FietsTochtenId");
+                    b.HasKey("DeelnemersId", "IsDeelnemerVanId");
 
-                    b.HasIndex("FietsTochtenId");
+                    b.HasIndex("IsDeelnemerVanId");
 
                     b.ToTable("EvenementPersoon");
                 });
@@ -1031,7 +1033,7 @@ namespace BerghAdmin.Migrations
 
                     b.HasOne("BerghAdmin.Data.Evenement", null)
                         .WithMany()
-                        .HasForeignKey("FietsTochtenId")
+                        .HasForeignKey("IsDeelnemerVanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace BerghAdmin.Tests.UserServiceTests;
 
 [TestFixture]
-public class UserServiceTests : DatabasedTests
+public class UserServiceTests : DatabaseTestSetup
 {
     private const string DEFAULT_PASSWORD = "Qwerty@123";
 

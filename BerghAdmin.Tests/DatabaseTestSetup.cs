@@ -12,7 +12,7 @@ using System;
 
 namespace BerghAdmin.Tests
 {
-    public abstract class DatabasedTests
+    public abstract class DatabaseTestSetup
     {
         private ServiceProvider? ServiceProvider;
         protected ApplicationDbContext? ApplicationDbContext;

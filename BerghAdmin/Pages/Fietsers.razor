@@ -14,7 +14,7 @@
 
 @code
 {
-    public RolTypeEnum[] rolContext = new RolTypeEnum[] { RolTypeEnum.Fietser };
+    public int[] rolContext = new int[] { Convert.ToInt32(RolTypeEnum.Fietser) };
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {

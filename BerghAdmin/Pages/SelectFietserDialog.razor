@@ -77,7 +77,7 @@
 
         foreach (var deelnemerId in SelectedDeelnemerIds)
         {
-            await _evenementService.AddDeelnemer(_currentFietsTocht, deelnemerId);
+            await _evenementService.AddDeelnemerAsync(_currentFietsTocht, deelnemerId);
         }
         
         await _personenGrid.Refresh();

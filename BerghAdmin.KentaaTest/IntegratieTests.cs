@@ -18,7 +18,7 @@ using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 namespace BerghAdmin.Tests.Kentaa
 {
     [TestFixture]
-    public class IntegratieTests : DatabasedTests
+    public class IntegratieTests : DatabaseTestSetup
     {
         private IEvenementService? evenementService;
         private IKentaaInterfaceService? kentaaService;
@@ -90,7 +90,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             await foreach (var action in actions)
             {
-                bihzActionService!.Add(action.Map());
+                await bihzActionService!.AddAsync(action.Map());
             }
             var bihzActions = bihzActionService!.GetAll();
 
@@ -106,7 +106,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             await foreach (var project in kentaaProjects)
             {
-                bihzProjectService!.Add(project.Map());
+                await bihzProjectService!.AddAsync(project.Map());
             }
 
             var projects = bihzProjectService!.GetAll();
@@ -143,7 +143,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             await foreach (var action in actions)
             {
-                bihzActionService!.Add(action.Map());
+                await bihzActionService!.AddAsync(action.Map());
             }
 
             var donations = kentaaService!.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
@@ -168,7 +168,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             // step 2: read projects and link to Evenementen
             var kentaaProjects = kentaaService.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
-            bihzProjectService!.Add(await kentaaProjects.Select(kp => kp.Map()).ToListAsync());
+            await bihzProjectService!.AddAsync(await kentaaProjects.Select(kp => kp.Map()).ToListAsync());
 
             var fietsTochtNaam = "Fietstocht 2023";
             if (evenementService!.GetByTitel(fietsTochtNaam) is not FietsTocht fietsTocht)
@@ -179,7 +179,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             // step 3: read all actions and link to Personen
             var kentaaActions = await kentaaService.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(new KentaaFilter()).ToListAsync();
-            bihzActionService!.Add(kentaaActions.Select(ka => ka.Map()));
+            await bihzActionService!.AddAsync(kentaaActions.Select(ka => ka.Map()));
 
             string[] emailAdresses = { "appie@aapnootmies.com", "bert@aapnootmies.com", "chappie@aapnootmies.com" };
             foreach (var emailAdress in emailAdresses)

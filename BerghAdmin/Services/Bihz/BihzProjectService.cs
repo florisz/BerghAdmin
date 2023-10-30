@@ -18,7 +18,7 @@ public class BihzProjectService : IBihzProjectService
         _logger = logger;
     }
 
-    public void Add(BihzProject project)
+    public async Task AddAsync(BihzProject project)
     {
         _logger.LogDebug("Add BihzProject with KentaaId {ProjectId}", project.ProjectId);
 
@@ -28,18 +28,18 @@ public class BihzProjectService : IBihzProjectService
         {
             // Evenement (fietstocht) has not been linked to a registered Kentaa project yet,
             // Link thru the title of the Kentaa project
-            var evenement = _evenementService.GetByProject(project);
+            var fietsTocht = _evenementService.GetByProject(project) as FietsTocht;
 
-            if (evenement == null)
+            if (fietsTocht == null)
             {
                 _logger.LogError("Kentaa project with id {ProjectId} can not be processed; reason: the corresponding evenement with title {Titel} is unknown.",
                         project.ProjectId, project.Titel);
                 return;
             }
-            bihzProject.EvenementId = evenement.Id;
+            bihzProject.EvenementId = fietsTocht.Id;
 
-            evenement.KentaaProjectId = bihzProject.ProjectId;
-            _evenementService.Save(evenement).Wait();
+            fietsTocht.KentaaProjectId = bihzProject.ProjectId;
+            await _evenementService.SaveAsync(fietsTocht);
             
             _logger.LogInformation("Kentaa project with id {ProjectId} successfully saved and linked to evenement with id {EvenementId}", bihzProject.ProjectId, bihzProject.EvenementId);
         }
@@ -48,11 +48,11 @@ public class BihzProjectService : IBihzProjectService
         _logger.LogInformation("Values from Kentaa project with id {ProjectId} successfully saved to evenement with id {EvenementId}", bihzProject.ProjectId, bihzProject.EvenementId);
     }
 
-    public void Add(IEnumerable<BihzProject> projects)
+    public async Task AddAsync(IEnumerable<BihzProject> projects)
     {
         foreach (var project in projects)
         {
-            Add(project);
+            await AddAsync(project);
         }
     }
 

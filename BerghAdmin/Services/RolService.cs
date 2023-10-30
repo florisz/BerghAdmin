@@ -1,19 +1,27 @@
 using BerghAdmin.DbContexts;
+using BerghAdmin.Services.Betalingen;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace BerghAdmin.Services
 {
     public class RolService : IRolService
     {
         private readonly ApplicationDbContext _dbContext;
+        private ILogger<RolService> _logger;
 
-        public RolService(ApplicationDbContext context)
+        public RolService(ApplicationDbContext dbContext, ILogger<RolService> logger)
         {
-            _dbContext = context;
+            _dbContext = dbContext;
+            _logger = logger;
+            logger.LogDebug($"RolService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
         }
 
         public Rol GetRolById(RolTypeEnum id)
         {
-            var rol = _dbContext.Rollen?.SingleOrDefault(x => x.Id == id);
+            var rol = _dbContext
+                .Rollen?
+                .SingleOrDefault(x => x.Id == Convert.ToInt32(id));
             
             if (rol == null)
             {
@@ -25,12 +33,15 @@ namespace BerghAdmin.Services
 
         public List<Rol> GetRollen()
         {
-            if (_dbContext.Rollen == null)
+            var rollen = _dbContext
+                    .Rollen;
+
+            if (rollen == null)
             {
                 return new List<Rol>();
             }
 
-            return _dbContext.Rollen.ToList();
+            return rollen.ToList();
         }
 
     }

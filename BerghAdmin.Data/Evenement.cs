@@ -8,8 +8,8 @@ public abstract class Evenement
     public int Id { get; set; }
     public string? Titel { get; set; }
     public DateTime GeplandeDatum { get; set; }
-    public int? KentaaProjectId { get; set; }
     public HashSet<Persoon> Deelnemers { get; set;} = new();
+    public int? KentaaProjectId { get; set; }
     [NotMapped]
     public int AantalDeelnemers { get { return Deelnemers.Count; } }
 }

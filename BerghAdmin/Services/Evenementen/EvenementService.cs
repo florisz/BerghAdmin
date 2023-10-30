@@ -12,29 +12,38 @@ public class EvenementService : IEvenementService
     private readonly IPersoonService _persoonService;
     private readonly ILogger<EvenementService> _logger;
 
-    public EvenementService(ApplicationDbContext context, IPersoonService persoonService, ILogger<EvenementService> logger)
+    public EvenementService(ApplicationDbContext dbContext, IPersoonService persoonService, ILogger<EvenementService> logger)
     {
-        _dbContext = context;
+        _dbContext = dbContext;
         _persoonService = persoonService;
         _logger = logger;
+        logger.LogDebug($"EvenementService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
+}
+
+    public Evenement? GetById(int id)
+    {
+        return _dbContext
+            .Evenementen?
+            .AsNoTracking()
+            .FirstOrDefault(e => e.Id == id);
     }
 
-    public Evenement? GetById(int id) 
-        => _dbContext
+    public Evenement? GetByTitel(string? titel)
+    {
+        return _dbContext
             .Evenementen?
-            .FirstOrDefault(e => e.Id== id);
-
-    public Evenement? GetByTitel(string? titel) 
-        => _dbContext
-            .Evenementen?
+            .AsNoTracking()
             .FirstOrDefault(e => e.Titel == titel);
+    }
 
     public Evenement? GetByProjectId(int projectId)
-    => _dbContext
+    {
+        return _dbContext
             .Evenementen?
+            .AsNoTracking()
             .OfType<FietsTocht>()
             .FirstOrDefault(e => e.KentaaProjectId == projectId);
-
+    }
     public Evenement? GetByProject(BihzProject project)
     {
         if (project == null)
@@ -51,13 +60,12 @@ public class EvenementService : IEvenementService
         return evenement;
     }
 
-    public async Task<ErrorCodeEnum> Save(Evenement evenement)
+    public async Task<ErrorCodeEnum> SaveAsync(Evenement evenement)
     {
         _logger.LogDebug("Entering save evenement {evenement}", evenement.Titel);
-
-        if (evenement == null) 
-        { 
-            throw new ApplicationException("Evenement parameter can not be null"); 
+        if (evenement == null)
+        {
+            throw new ApplicationException("Evenement parameter can not be null");
         }
 
         if (evenement.Id == 0)
@@ -79,25 +87,27 @@ public class EvenementService : IEvenementService
     }
 
     public IEnumerable<T>? GetAll<T>()
-        => _dbContext
+    {
+        return _dbContext
             .Evenementen?
             .Include(e => e.Deelnemers)
+            .AsNoTracking()
             .OfType<T>();
-
+    }
     public IEnumerable<FietsTocht>? GetAllFietsTochten()
         => GetAll<FietsTocht>();
 
-    public async Task<ErrorCodeEnum> AddDeelnemer(Evenement evenement, Persoon persoon)
+    public async Task<ErrorCodeEnum> AddDeelnemerAsync(Evenement evenement, Persoon persoon)
     {
-        _logger.LogDebug("Entering Add deelnemer {persoon} to {evenement}", 
-                persoon.VolledigeNaam, evenement.Titel);
+        _logger.LogDebug("Entering Add deelnemer {persoon} to {evenement}",
+            persoon.VolledigeNaam, evenement.Titel);
 
         if (evenement == null) { throw new ApplicationException("parameter evenement can not be null"); }
         if (persoon == null) { throw new ApplicationException("parameter persoon can not be null"); }
 
         if (evenement.Deelnemers?.FirstOrDefault(p => p.Id == persoon.Id) != null)
-        { 
-            return ErrorCodeEnum.Conflict; 
+        {
+            return ErrorCodeEnum.Conflict;
         }
 
         if (evenement.Deelnemers == null)
@@ -105,16 +115,15 @@ public class EvenementService : IEvenementService
             evenement.Deelnemers = new HashSet<Persoon>();
         }
 
-        evenement.Deelnemers.Add (persoon);
+        evenement.Deelnemers.Add(persoon);
 
         await _dbContext.SaveChangesAsync();
 
         _logger.LogInformation("Deelnemer added {deelnemer} to {evenement}", persoon.VolledigeNaam, evenement.Titel);
-
         return ErrorCodeEnum.Ok;
     }
 
-    public async Task<ErrorCodeEnum> AddDeelnemer(Evenement evenement, int persoonId)
+    public async Task<ErrorCodeEnum> AddDeelnemerAsync(Evenement evenement, int persoonId)
     {
         if (evenement == null) { throw new ApplicationException("parameter evenement can not be null"); }
 
@@ -124,10 +133,10 @@ public class EvenementService : IEvenementService
             return ErrorCodeEnum.NotFound;
         }
 
-        return await AddDeelnemer(evenement, persoon);
+        return await AddDeelnemerAsync(evenement, persoon);
     }
 
-    public async Task<ErrorCodeEnum> DeleteDeelnemer(Evenement evenement, Persoon persoon)
+    public async Task<ErrorCodeEnum> DeleteDeelnemerAsync(Evenement evenement, Persoon persoon)
     {
         if (evenement == null) { throw new ApplicationException("parameter evenement can not be null"); }
         if (persoon == null) { throw new ApplicationException("parameter persoon can not be null"); }
@@ -140,11 +149,11 @@ public class EvenementService : IEvenementService
         evenement.Deelnemers.Remove(persoon);
 
         await _dbContext.SaveChangesAsync();
-
+        
         return ErrorCodeEnum.Ok;
     }
 
-    public async Task<ErrorCodeEnum> DeleteDeelnemer(Evenement evenement, int persoonId)
+    public async Task<ErrorCodeEnum> DeleteDeelnemerAsync(Evenement evenement, int persoonId)
     {
         if (evenement == null) { throw new ApplicationException("parameter evenement can not be null"); }
 
@@ -154,7 +163,7 @@ public class EvenementService : IEvenementService
             return ErrorCodeEnum.NotFound;
         }
 
-        return await DeleteDeelnemer(evenement, persoon);
+        return await DeleteDeelnemerAsync(evenement, persoon);
     }
 
 }

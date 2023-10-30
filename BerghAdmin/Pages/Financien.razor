@@ -82,8 +82,8 @@
         this.IsVisible = false;
         BetalingenGrid.Refresh();
     }
-
-    private void OnChange(UploadChangeEventArgs args)
+    
+    private async Task OnChange(UploadChangeEventArgs args)
     {
         List<Betaling> betalingen = new List<Betaling>(); 
 
@@ -101,7 +101,7 @@
         {
             if (betalingenService!.GetByVolgnummer(betaling.Volgnummer) == null)
             {
-                betalingenService.Save(betaling);
+                await betalingenService.SaveAsync(betaling);
             }
         }
     }

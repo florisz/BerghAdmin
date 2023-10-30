@@ -2,8 +2,8 @@
 {
     public interface IBetalingenRepository
     {
-        void Add(Betaling betaling);
-        void Update(Betaling betaling);
+        Task AddAsync(Betaling betaling);
+        Task UpdateAsync(Betaling betaling);
         Betaling? GetByVolgnummer(string volgNummer);
         IEnumerable<Betaling>? GetAll();
     }

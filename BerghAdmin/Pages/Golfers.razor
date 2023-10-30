@@ -15,7 +15,7 @@
 
 @code
 {
-    public RolTypeEnum[] rolContext = new RolTypeEnum[] { RolTypeEnum.Golfer };
+    public int[] rolContext = new int[] { Convert.ToInt32(RolTypeEnum.Golfer) };
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {

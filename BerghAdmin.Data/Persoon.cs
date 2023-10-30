@@ -25,15 +25,22 @@ public class Persoon : Donateur
     public string? Achternaam { get; set; }
     public string? Tussenvoegsel { get; set; }
     public DateTime? GeboorteDatum { get; set; }
-    public HashSet<Rol> Rollen { get; set; } = new();
+    public HashSet<Rol> Rollen { get; set; } = new HashSet<Rol>();
     public ICollection<VerzondenMail> Geadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<VerzondenMail> ccGeadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<VerzondenMail> bccGeadresseerden { get; set; } = new List<VerzondenMail>();
-    public ICollection<Evenement> IsDeelnemerVan { get; set; } = new List<Evenement>();
+    public ICollection<Evenement> FietsTochten { get; set; } = new List<Evenement>();
+    [NotMapped]
+    public ICollection<Evenement> GolfDagen { get; set; } = new List<Evenement>();
     public BihzActie? BihzActie { get; set; }
     public BihzUser? BihzUser { get; set; }
     public BihzProject? Project { get; set; }
     public bool IsReserve { get; set; } = false;
+
+    [NotMapped]
+    public int[] SelectedFietsTochten => FietsTochten.Select(f => f.Id).ToArray<int>();
+    [NotMapped]
+    public int[] SelectedRollen => Rollen.Select(r => r.Id).ToArray<int>();
 
     [NotMapped]
     public string GetRollenAsString

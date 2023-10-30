@@ -1,4 +1,5 @@
 ﻿using BerghAdmin.DbContexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace BerghAdmin.Services.Betalingen;
 
@@ -6,34 +7,37 @@ public class EFBetalingenRepository : IBetalingenRepository
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public EFBetalingenRepository(ApplicationDbContext context)
+    public EFBetalingenRepository(ApplicationDbContext _dbContext)
     {
-        _dbContext = context;
+        _dbContext = _dbContext;
     }
 
-    public void Add(Betaling betaling)
+    public async Task AddAsync(Betaling betaling)
     {
         _dbContext
             .Betalingen?
             .Add(betaling);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 
-    public void Update(Betaling betaling)
+    public async Task UpdateAsync(Betaling betaling)
     {
         _dbContext
             .Betalingen?
             .Update(betaling);
-        _dbContext.SaveChanges();
+        await _dbContext.SaveChangesAsync();
     }
 
     public Betaling? GetByVolgnummer(string volgNummer)
-        => _dbContext
+    {
+        return _dbContext
             .Betalingen?
             .FirstOrDefault(b => b.Volgnummer == volgNummer);
-
+    }
     public IEnumerable<Betaling>? GetAll()
-        => _dbContext
+    {
+        return _dbContext
             .Betalingen?
             .ToList();
+    }
 }
