@@ -14,7 +14,7 @@
 @using BerghAdmin.Services.Evenementen
 @using System.Security.Claims
 
-
+@inject NavigationManager _navigationManager
 @inject IPersoonService _persoonService
 @inject IRolService _rolService
 @inject IEvenementService _evenementService
@@ -162,7 +162,6 @@
 </SfGrid>
 
 <SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
-<EditPersoonDialog @ref="editPersoonDialog" />
 <ErrorDialog @ref="errorDialog" />
 
 @code {
@@ -257,9 +256,6 @@
         await jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
     }
 
-    // Everything to handle the edit persoon dialog
-    EditPersoonDialog editPersoonDialog;
-
     // Everything to handle the context menu
     // Triggers when the item is selected
     public async Task OnContextMenuClick(ContextMenuClickEventArgs<Persoon> args)
@@ -267,7 +263,7 @@
         if (args.Item.Id == "edit-persoon" || args.Item.Id == "add-persoon")
         {
             var persoon = args.Item.Id == "edit-persoon" ? args.RowInfo.RowData as Persoon : new Persoon();
-            ShowEditPersoonDialog(persoon);
+            GotoEditPersoonPage(persoon);
             return;
         }
         if (args.Item.Id == "send-email")
@@ -359,7 +355,7 @@
         else
         {
             // open the edit dialog for the selected person
-            ShowEditPersoonDialog(selectedPersonen.ElementAt(0));
+            GotoEditPersoonPage(selectedPersonen.ElementAt(0));
         }
     }
 
@@ -367,7 +363,7 @@
     {
         var persoon = new Persoon();
         // open the edit dialog for a this new person
-        ShowEditPersoonDialog(persoon);
+        GotoEditPersoonPage(persoon);
     }
 
     protected override async void OnInitialized()
@@ -423,10 +419,9 @@
         return Task.CompletedTask;
     }
 
-    private void ShowEditPersoonDialog(Persoon persoon)
+    private void GotoEditPersoonPage(Persoon persoon)
     {
-        //editPersoonDialog = new EditPersoonDialog();
-        editPersoonDialog.ShowDialog(persoon.Id, _personenGrid);
+        _navigationManager.NavigateTo($"/Fietsers/EditPersoon?persoonId={persoon.Id}");
     }
 
     private List<Persoon> GetPersonen(List<int> rolTypes)

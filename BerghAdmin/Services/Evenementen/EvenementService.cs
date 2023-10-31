@@ -24,7 +24,6 @@ public class EvenementService : IEvenementService
     {
         return _dbContext
             .Evenementen?
-            .AsNoTracking()
             .FirstOrDefault(e => e.Id == id);
     }
 
@@ -32,7 +31,6 @@ public class EvenementService : IEvenementService
     {
         return _dbContext
             .Evenementen?
-            .AsNoTracking()
             .FirstOrDefault(e => e.Titel == titel);
     }
 
@@ -40,7 +38,6 @@ public class EvenementService : IEvenementService
     {
         return _dbContext
             .Evenementen?
-            .AsNoTracking()
             .OfType<FietsTocht>()
             .FirstOrDefault(e => e.KentaaProjectId == projectId);
     }
@@ -59,6 +56,16 @@ public class EvenementService : IEvenementService
 
         return evenement;
     }
+
+    public IEnumerable<T>? GetAll<T>()
+    {
+        return _dbContext
+            .Evenementen?
+            .Include(e => e.Deelnemers)
+            .OfType<T>();
+    }
+    public IEnumerable<FietsTocht>? GetAllFietsTochten()
+        => GetAll<FietsTocht>();
 
     public async Task<ErrorCodeEnum> SaveAsync(Evenement evenement)
     {
@@ -85,17 +92,6 @@ public class EvenementService : IEvenementService
 
         return ErrorCodeEnum.Ok;
     }
-
-    public IEnumerable<T>? GetAll<T>()
-    {
-        return _dbContext
-            .Evenementen?
-            .Include(e => e.Deelnemers)
-            .AsNoTracking()
-            .OfType<T>();
-    }
-    public IEnumerable<FietsTocht>? GetAllFietsTochten()
-        => GetAll<FietsTocht>();
 
     public async Task<ErrorCodeEnum> AddDeelnemerAsync(Evenement evenement, Persoon persoon)
     {

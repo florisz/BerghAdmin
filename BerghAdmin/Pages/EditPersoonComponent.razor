@@ -1,0 +1,317 @@
+﻿@using BerghAdmin.DbContexts;
+@using BerghAdmin.Pages
+@using BerghAdmin.Services
+@using BerghAdmin.Services.Evenementen
+
+@using Microsoft.EntityFrameworkCore;
+
+@using Syncfusion.Blazor.Popups
+
+@using System.Collections;
+@using System.Collections.Generic
+@using System.Linq
+@using System.Security.Claims
+
+@using BerghAdmin.Data
+
+@inject IServiceScopeFactory _scopeFactory
+@inject IPersoonService _persoonService
+@inject IRolService _rolService
+@inject IEvenementService _evenementService
+@inject ILogger<EditPersoonComponent> _logger
+
+@attribute [Authorize(Policy = "IsAnyRole")]
+
+<EditForm Model="@_currentPersoon">
+    <DataAnnotationsValidator />
+    <table>
+        <tr>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Voorletters:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.Voorletters"></SfTextBox>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Voornaam:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.Voornaam"></SfTextBox>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Tussenvoegsel:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.Tussenvoegsel"></SfTextBox>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Achternaam:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.Achternaam"></SfTextBox>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Adres:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.Adres"></SfTextBox>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Postcode:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.Postcode"></SfTextBox>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Woonplaats:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.Plaats"></SfTextBox>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Land:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.Land"></SfTextBox>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Geboortedatum:</label>
+                    <SfDatePicker @bind-Value="@_currentPersoon.GeboorteDatum"></SfDatePicker>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Geslacht:</label>
+                    <SfDropDownList TValue="GeslachtEnum" TItem="GeslachtFields" DataSource="@geslachtValues" @bind-Value="@_currentPersoon.Geslacht">
+                        <DropDownListFieldSettings Value="GeslachtValue"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Kledingmaten:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.KledingMaten"></SfTextBox>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Nummer:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.Nummer"></SfTextBox>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Telefoon:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.Telefoon"></SfTextBox>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Mobiel:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.Mobiel"></SfTextBox>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Email:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.EmailAdres"></SfTextBox>
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Email extra:</label>
+                    <SfTextBox @bind-Value="@_currentPersoon.EmailAdresExtra"></SfTextBox>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Is Verwijderd:</label>
+                    <SfCheckBox TChecked="bool" @bind-Checked="@_currentPersoon.IsVerwijderd" />
+                </div>
+            </td>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Is Reserve:</label>
+                    <SfCheckBox TChecked="bool" @bind-Checked="@_currentPersoon.IsReserve" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Rollen:</label>
+                    <SfListBox @ref="_rollenListBox"
+                               TValue="Rol[]" 
+                               DataSource="@_alleRollenArray" 
+                               TItem="Rol"
+                               @bind-Value="@_selectedRollenArray">
+                        <ListBoxFieldSettings Text="Beschrijving" Value="Id" />
+                        <ListBoxEvents TItem="Rol" TValue="Rol[]" OnActionComplete="UpdateRollen" />
+                        <ListBoxEvents TItem="Rol" TValue="Rol[]" Created="CreatedRollenListBox" />
+                        <ListBoxSelectionSettings ShowCheckbox="true"
+                                                  Mode="Syncfusion.Blazor.DropDowns.SelectionMode.Multiple" />
+                    </SfListBox>
+                </div>
+            </td>
+            <td colspan="2" valign="top">
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Fietstochten:</label>
+                    <SfListBox @ref="_fietsTochtenListBox"
+                               TValue="FietsTocht[]" 
+                               DataSource="@_alleFietsTochtenArray" 
+                               TItem="FietsTocht"
+                               @bind-Value="_selectedFietsTochtenArray">
+                        <ListBoxFieldSettings Text="Titel" Value="Id" />
+                        <ListBoxEvents TItem="FietsTocht" TValue="FietsTocht[]" OnActionComplete="UpdateFietsTochten" />
+                        <ListBoxEvents TItem="FietsTocht" TValue="FietsTocht[]" Created="CreatedFietsTochtenListBox" />
+                        <ListBoxSelectionSettings ShowCheckbox="true" 
+                                                  Mode="Syncfusion.Blazor.DropDowns.SelectionMode.Multiple" />
+                    </SfListBox>
+                </div>
+            </td>
+            <td valign="top">
+                <div class="form-group col-md-12">
+                    <label class="col-form-label">Kentaa donatiebedrag:</label>
+                    <SfTextBox Value="@_currentPersoon.GetDonatieBedrag.ToString()" TValue="decimal?"></SfTextBox>
+                </div>
+            </td>
+        </tr>
+        <div class="form-group">
+            <SfButton Type="button" CssClass="e-flat" IsToggle="true" IsPrimary="true" Content="Opslaan en sluiten" OnClick="@OnDialogSaveAndClose"></SfButton>
+            <SfButton Type="button" CssClass="e-flat" IsToggle="false " IsPrimary="false" Content="Afbreken" OnClick="@OnDialogClose"></SfButton>
+        </div>
+    </table>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public int PersoonId { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState>? _authenticationStateTask { get; set; }
+
+    private int _persoonId;
+    private Persoon _currentPersoon { get; set; } = new Persoon();
+    private List<Rol> _alleRollen = new List<Rol>();
+    private Rol[] _alleRollenArray = new Rol[] { };
+    private Rol[] _selectedRollenArray = new Rol[] { };
+    private IEnumerable<FietsTocht> _alleFietsTochten = Enumerable.Empty<FietsTocht>();
+    private FietsTocht[] _alleFietsTochtenArray = new FietsTocht[] { };
+    private FietsTocht[] _selectedFietsTochtenArray = new FietsTocht[] { };
+    private bool IsNewPersoon() { return PersoonId == 0; }
+    SfListBox<Rol[], Rol> _rollenListBox;
+    SfListBox<FietsTocht[], FietsTocht> _fietsTochtenListBox; 
+    public string? headerText;
+    public class GeslachtFields
+    {
+        public GeslachtEnum GeslachtValue { get; set; }
+        public string GeslachtText { get; set; } = "";
+    }
+    public List<GeslachtFields> geslachtValues = new List<GeslachtFields>()
+    {
+        new GeslachtFields() { GeslachtValue = GeslachtEnum.Man, GeslachtText = GeslachtEnum.Man.ToString() },
+        new GeslachtFields() { GeslachtValue = GeslachtEnum.Vrouw, GeslachtText = GeslachtEnum.Vrouw.ToString() },
+        new GeslachtFields() { GeslachtValue = GeslachtEnum.Onbekend, GeslachtText = GeslachtEnum.Onbekend.ToString() }
+    };
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        // TO DO get person id from query string
+        _currentPersoon = _persoonService.GetById(PersoonId, true);
+        _alleRollen = _rolService.GetRollen();
+        _alleRollenArray = _alleRollen.ToArray();
+        _alleFietsTochten = _evenementService.GetAllFietsTochten();
+        _alleFietsTochtenArray = _alleFietsTochten.ToArray();
+        headerText = IsNewPersoon() ? "Nieuwe persoon toevoegen" : "Wijzig persoon gegevens";
+
+        _logger.LogDebug($"Initialize EditPersoonDialoog; threadid={Thread.CurrentThread.ManagedThreadId}");
+    }
+
+    private void OnDialogClose()
+    {
+        // go to previous page
+        // TO DO
+    }
+
+    private async Task OnDialogSaveAndClose()
+    {
+        var rollenValues = _rollenListBox.GetDataByValue(_selectedRollenArray);
+        var fietsTochtenValues = _fietsTochtenListBox.GetDataByValue(_selectedFietsTochtenArray);
+        
+        _currentPersoon.Rollen = new HashSet<Rol>(rollenValues);
+        _currentPersoon.FietsTochten = new List<Evenement>(fietsTochtenValues);
+        // save and go to previous page
+        await _persoonService.SavePersoonAsync(_currentPersoon);
+        if (IsNewPersoon())
+        {
+            // TO DO force refresh in calling page?
+            //await _originatingGrid.AddRecordAsync(_currentPersoon);
+        }
+        else
+        {
+            // TO DO force refresh in calling page?
+            //await _originatingGrid.SetRowData(_currentPersoon.Id, _currentPersoon);
+        }
+    }
+
+    public void UpdateFietsTochten(ActionCompleteEventArgs<FietsTocht> args)
+    {
+        // You can customize your code here.
+    }
+
+    public void UpdateRollen(ActionCompleteEventArgs<Rol> args)
+    {
+        // You can customize your code here.
+    }
+
+    private async Task CreatedFietsTochtenListBox()
+    {
+        // select from _currentPersoon.FietsTochten all elements of type FietsTocht
+        var list = _currentPersoon
+                    .FietsTochten
+                    .OfType<FietsTocht>()
+                    .ToArray<FietsTocht>();
+
+        await _fietsTochtenListBox?.SelectItemsAsync(list, true);
+    }
+
+    private async Task CreatedRollenListBox()
+    {
+        var list = _currentPersoon
+                    .Rollen
+                    .ToArray<Rol>();
+
+        await _rollenListBox?.SelectItemsAsync(list, true);
+    }
+
+    private async Task SavePersoon(Persoon persoon)
+    {
+        await _persoonService.SavePersoonAsync(persoon);
+    }
+}
+
+<style>
+    .col-form-label {
+        padding-top: 1px;
+        padding-bottom: 1px;
+        color: #8d7f7f;
+    }
+
+    .e-listbox-wrapper:not(.e-list-template) .e-list-item, .e-listbox-wrapper .e-list-nrt, .e-listbox-wrapper .e-selectall-parent, .e-listbox-container:not(.e-list-template) .e-list-item, .e-listbox-container .e-list-nrt, .e-listbox-container .e-selectall-parent {
+        height: 25px;
+        line-height: 1.5;
+        padding: 1px 16px 1px 16px;
+        position: relative;
+    }
+</style>

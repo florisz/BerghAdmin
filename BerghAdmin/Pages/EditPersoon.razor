@@ -1,0 +1,40 @@
+﻿@page "/Fietsers/EditPersoon"
+
+@using BerghAdmin.Authorization
+@using BerghAdmin.Data
+@using BerghAdmin.General
+
+@using Microsoft.AspNetCore.WebUtilities
+
+@inject NavigationManager _navManager
+@inject IJSRuntime jsRuntime
+
+@attribute [Authorize(Policy = "IsBeheerFietsers")]
+
+<h3>Aanpassen Persoon</h3>
+
+<EditPersoonComponent PersoonId="@_persoonId"/>
+
+@code
+{
+    public int[] rolContext = new int[] { Convert.ToInt32(RolTypeEnum.Fietser) };
+    int _persoonId;
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "fietser");
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (!_navManager.TryGetQueryString<int>("persoonId", out _persoonId))
+        {
+            // TO DO: We don't have a persoonId
+            _navManager.NavigateTo("/Error");
+        }
+    }
+
+
+}
