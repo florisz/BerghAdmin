@@ -1,6 +1,6 @@
 # BerghAdmin README
 ## Why
-Bergh in het Zadel is a non-profit organization collecting money to fight cancer or as we put it "Samen voor meer tijd" (Together voor more time).
+Bergh in het Zadel is a non-profit organization collecting money to fight cancer or as we put it "Samen voor meer tijd" (Together for more time).
 For more information visit https://www.berghinhetzadel.nl/
 
 With the size of the organization and its volunteers support is needed for all backoffice processes. This repo contains the source code vor the system that delivers this support.
