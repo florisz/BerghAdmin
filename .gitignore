@@ -350,6 +350,8 @@ RunBihzRelease.ps1
 SetAzureSecretsTest.PS1
 SetAzureSecretsProd.PS1
 SetAzureSecrets.PS1
+BerghAdminDesign.pdf
+BerghAdminDesign.html
 
 # New VS Live Unit Testing configuration files
 *.lutconfig
