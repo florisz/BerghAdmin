@@ -6,23 +6,24 @@ Class Rol {
 }
 
 enum RolType {
-  Ambassadeur 
+  Contactpersoon 
   Begeleider
   CommissieLid
-  Fietser 
+  Fietser
   Golfer
   MailingAbonnee
-  Reserve 
   VriendVan
   Vrijwilliger
 }
 
-Class Organisatie {
+Class Sponsor {
 }
-Persoon -right- Organisatie : > is verbonden aan
 
-Persoon -down- Rol
-Rol -left- RolType : is 1 van >
+Class Ambassadeur {
+}
+
+Class GolfDagSponsor {
+}
 
 Class VerzondenMail {
 }
@@ -32,68 +33,81 @@ Class Donateur {
 
 class Donatie {
 }
-
 note "Relatie met Kentaa\nlater modelleren" as Note3
 Donatie .. Note3
-
-Donateur <|-up- Persoon
-Donateur <|-up- Organisatie
-Donateur *-- "1" Donatie : doet >
 
 class Factuur {
   IsBetaald()
 }
+
 enum FactuurType {
   Mail
   Post
   Pdf
   Kentaa
 }
-Factuur -right- FactuurType : is 1 van >
 
 class Betaling {
-  
 }
+
 enum BetalingType {
   Unknown
   Cash
   Kentaa
   Bank
 }
+
+class Document {
+}
+
+class Template {
+}
+
+class Evenement {
+}
+
+class Fietstocht {
+}
+note "Deelnemers hebben de\nrol Fietser" as Note1
+Fietstocht .. Note1
+
+class Golfdag {
+}
+note "Deelnemers hebben de\nrol Golfer" as Note2
+Golfdag .. Note2
+
+Persoon -right- Sponsor : > is verbonden aan
+Persoon -up- "*" Rol
+Rol -left- RolType : is 1 van >
+
+Persoon "*" -left- "*" VerzondenMail : < verstuurd aan
+Persoon "*" -up- "*" Evenement : > neemt deel aan
+
+Donateur <|-up- Persoon
+Donateur <|-up- Sponsor
+Donateur *-- "1" Donatie : doet >
+
+Ambassadeur -up-|> Sponsor
+GolfDagSponsor -up-|> Sponsor
+
+Ambassadeur -down- Factuur
+GolfDagSponsor -down- Factuur
+
+Factuur -right- FactuurType : is 1 van >
+
 Betaling -right- BetalingType : is 1 van >
 
 Donatie -- Factuur : > kan resulteren in
 Factuur -- Betaling : < is gelinkt aan
 
-class Document {
-
-}
-class Template {
-
-}
 Document <|-right- Template
 
 Factuur ..> Document : > bevat tekst
 VerzondenMail ..> Document : > bevat tekst
 
-class Evenement {
+Evenement <|-down- Fietstocht
+Evenement <|-down- Golfdag
 
-}
-class Fietstocht {
-
-}
-note "Deelnemers hebben de\nrol rolFietser" as Note1
-Fietstocht .. Note1
-class Golfdag {
-
-}
-note "Deelnemers hebben de\nrol rolGolfer" as Note2
-Golfdag .. Note2
-
-Evenement <|-up- Fietstocht
-Evenement <|-up- Golfdag
-
-VerzondenMail "*" -down- "*" Persoon : > verstuurd aan
-Evenement "*" -down- "*" Persoon : < neemt deel aan
+Evenement -down- Sponsor : > kan gesponsord\nworden door
 
 @enduml

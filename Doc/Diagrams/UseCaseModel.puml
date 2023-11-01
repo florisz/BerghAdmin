@@ -3,12 +3,12 @@
 skinparam actorStyle awesome
 skinparam packageStyle rectangle
 
-actor FietstochtenAdmin as A1
-actor GolfdagenAdmin as A2
-actor AmbassadeursAdmin as A3
-actor FinancienAdmin as A4
-actor Secretaris as A5
-actor Timer as A6 
+actor FietstochtenAdmin as FTA
+actor GolfdagenAdmin as GA
+actor AmbassadeursAdmin as AA
+actor FinancienAdmin as FA
+actor Secretaris as S
+actor Timer as T 
 
 package BerghAdmin {
     usecase (Beheer Fietstochten) as UC1
@@ -24,18 +24,27 @@ package Algemeen {
     usecase (Lees Kentaa\ninformatie) as UC8
 }
 
-A1 --> UC1
-A2 --> UC2
-A3 --> UC3
+FTA --> UC1
+GA --> UC2
+AA --> UC3
 
-A4 --> UC4
+FA --> UC4
 
-A5 -up-> UC5
-A5 -up-> UC6
-A5 -up-> UC7
+S -up-> UC5
+S -up-> UC6
+S -up-> UC7
 
-A6 -up-> UC8
+T -up-> UC8
 
+UC1 --> UC5
+UC2 --> UC5
+UC3 --> UC5
+UC1 --> UC6
+UC2 --> UC6
+UC3 --> UC6
+UC2 --> UC7
+UC3 --> UC7
+UC4 --> UC7
 BerghAdmin .down.> Algemeen
 
 @enduml
