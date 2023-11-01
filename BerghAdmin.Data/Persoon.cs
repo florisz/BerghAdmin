@@ -3,19 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BerghAdmin.Data;
 
-public enum GeslachtEnum
-{
-    Onbekend,
-    Man,
-    Vrouw
-}
-
 public class Persoon : Donateur
 {
     public Persoon() : base()
     {
         Geslacht = GeslachtEnum.Onbekend;
         Rollen = new HashSet<Rol>();
+        FietsTochten = new List<Evenement>();
         EmailAdres = "";
     }
 

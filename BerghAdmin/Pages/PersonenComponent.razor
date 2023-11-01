@@ -260,10 +260,15 @@
     // Triggers when the item is selected
     public async Task OnContextMenuClick(ContextMenuClickEventArgs<Persoon> args)
     {
-        if (args.Item.Id == "edit-persoon" || args.Item.Id == "add-persoon")
+        if (args.Item.Id == "edit-persoon")
         {
-            var persoon = args.Item.Id == "edit-persoon" ? args.RowInfo.RowData as Persoon : new Persoon();
-            GotoEditPersoonPage(persoon);
+            var persoon = args.RowInfo.RowData as Persoon;
+            await EditPersoon();
+            return;
+        }
+        if (args.Item.Id == "add-persoon")
+        {
+            AddPersoon();
             return;
         }
         if (args.Item.Id == "send-email")
@@ -275,68 +280,6 @@
         {
             await CopySelectedEmailAddressesAsync();
             return;
-        }
-    }
-
-    /// <summary>
-    ///
-    /// set the correct rollen for this person
-    /// do it the blunt way: new person -> just add, existing person -> delete all and add the selected ones
-    ///
-    /// </summary>
-    /// <returns>void</returns>
-    private void SetRollen(int[]? selectedRollen, Persoon person, List<Rol> rollenList)
-    {
-        // only delete rollen for an existing person
-        if (person.Id != 0)
-        {
-            // delete all rol referenties for this person
-            foreach (var rol in rollenList)
-            {
-                rol.Personen?.RemoveWhere(p => p.Id == person.Id);
-            }
-        }
-
-        // add the selected rollen
-        foreach (var rolId in selectedRollen ?? Enumerable.Empty<int>())
-        {
-            var isEnumParsed = Enum.TryParse(rolId.ToString(), true, out RolTypeEnum selectedRolId);
-            if (!isEnumParsed)
-            {
-                throw new ApplicationException($"RolTypeEnum with integer value {rolId} does not exist");
-            }
-
-            var rol = rollenList.FirstOrDefault(r => r.Id == Convert.ToInt32(selectedRolId));
-            if (rol != null)
-            {
-                if (rol.Personen == null)
-                {
-                    rol.Personen = new HashSet<Persoon>();
-                }
-                rol.Personen.Add(person);
-            }
-        }
-    }
-
-    /// <summary>
-    ///
-    /// set the correct fietstochten for this person
-    /// do it the blunt way: new person -> just add, existing person -> delete all and add the selected ones
-    ///
-    /// </summary>
-    /// <returns>void</returns>
-    private void SetFietstochten(int[] selectedFietstochten, Persoon person, IEnumerable<FietsTocht> fietstochtenList)
-    {
-        foreach (var fietstocht in fietstochtenList)
-        {
-            if (Array.Exists(selectedFietstochten, el => el == fietstocht.Id))
-            {
-                person.FietsTochten.Add(fietstocht);
-            }
-            else
-            {
-                person.FietsTochten.Remove(fietstocht);
-            }
         }
     }
 
@@ -355,15 +298,15 @@
         else
         {
             // open the edit dialog for the selected person
-            GotoEditPersoonPage(selectedPersonen.ElementAt(0));
+            var id = selectedPersonen.ElementAt(0).Id;
+            _navigationManager.NavigateTo($"/Fietsers/EditPersoon?persoonId={id}");
         }
     }
 
     private void AddPersoon()
     {
-        var persoon = new Persoon();
         // open the edit dialog for a this new person
-        GotoEditPersoonPage(persoon);
+        _navigationManager.NavigateTo($"/Fietsers/EditPersoon?persoonId=0");
     }
 
     protected override async void OnInitialized()
@@ -419,12 +362,7 @@
         return Task.CompletedTask;
     }
 
-    private void GotoEditPersoonPage(Persoon persoon)
-    {
-        _navigationManager.NavigateTo($"/Fietsers/EditPersoon?persoonId={persoon.Id}");
-    }
-
-    private List<Persoon> GetPersonen(List<int> rolTypes)
+   private List<Persoon> GetPersonen(List<int> rolTypes)
     {
         var personen = new List<Persoon>();
 

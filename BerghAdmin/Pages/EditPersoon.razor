@@ -11,13 +11,10 @@
 
 @attribute [Authorize(Policy = "IsBeheerFietsers")]
 
-<h3>Aanpassen Persoon</h3>
-
 <EditPersoonComponent PersoonId="@_persoonId"/>
 
 @code
 {
-    public int[] rolContext = new int[] { Convert.ToInt32(RolTypeEnum.Fietser) };
     int _persoonId;
 
     protected async override Task OnAfterRenderAsync(bool firstRender)

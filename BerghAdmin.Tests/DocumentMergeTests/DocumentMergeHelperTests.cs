@@ -52,7 +52,8 @@ namespace BerghAdmin.DocumentMergeTests
                     Name = testDocument.Name,
                     ContentType = ContentTypeEnum.Word,
                     Content = content,
-                    IsMergeTemplate = true
+                    IsMergeTemplate = true,
+                    Owner = "Test"
                 });
             }
             await dbContext.SaveChangesAsync();

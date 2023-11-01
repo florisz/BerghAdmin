@@ -7,6 +7,7 @@
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>946b6d26-a803-4ceb-b7b8-201ebfdb93a6</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -14,6 +15,7 @@
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0-beta4" />
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.13" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.13" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />

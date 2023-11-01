@@ -36,8 +36,16 @@ public class DocumentMergeTests : DatabaseTestSetup
         },
     };
 
+    protected override void RegisterServices(ServiceCollection services)
+    {
+        services.AddScoped<IDocumentService, DocumentService>();
+        services.AddScoped<IPdfConverter, PdfConverter>();
+        services.AddScoped<IDocumentMergeService, DocumentMergeService>();
+        services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+    }
+
     [SetUp]
-    public async void SetupData()
+    public async Task SetupData()
     {
         if (this.ApplicationDbContext == null)
             throw new ArgumentNullException("ApplicationDbContext");
@@ -150,17 +158,11 @@ public class DocumentMergeTests : DatabaseTestSetup
                 Name = testDocument.Name,
                 ContentType = ContentTypeEnum.Word,
                 Content = content,
-                IsMergeTemplate = true
+                IsMergeTemplate = true,
+                Owner = "Test"
             });
         }
         await dbContext.SaveChangesAsync();
     }
 
-    protected override void RegisterServices(ServiceCollection services)
-    {
-        services.AddScoped<IDocumentService, DocumentService>();
-        services.AddScoped<IPdfConverter, PdfConverter>();
-        services.AddScoped<IDocumentMergeService, DocumentMergeService>();
-        services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-    }
 }

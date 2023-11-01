@@ -1,4 +1,5 @@
 ﻿@using BerghAdmin.DbContexts;
+@using BerghAdmin.General;
 @using BerghAdmin.Pages
 @using BerghAdmin.Services
 @using BerghAdmin.Services.Evenementen
@@ -14,6 +15,8 @@
 
 @using BerghAdmin.Data
 
+@inject NavigationManager _navigationManager
+@inject ApplicationDbContext _dbContext
 @inject IServiceScopeFactory _scopeFactory
 @inject IPersoonService _persoonService
 @inject IRolService _rolService
@@ -21,6 +24,15 @@
 @inject ILogger<EditPersoonComponent> _logger
 
 @attribute [Authorize(Policy = "IsAnyRole")]
+
+@if (IsNewPersoon())
+{
+    <h3>Fietsers - Nieuwe persoon toevoegen</h3>
+}
+else
+{
+    <h3>Fietsers - Wijzig persoon gegevens</h3>
+}
 
 <EditForm Model="@_currentPersoon">
     <DataAnnotationsValidator />
@@ -87,7 +99,7 @@
             <td>
                 <div class="form-group col-md-12">
                     <label class="col-form-label">Geslacht:</label>
-                    <SfDropDownList TValue="GeslachtEnum" TItem="GeslachtFields" DataSource="@geslachtValues" @bind-Value="@_currentPersoon.Geslacht">
+                    <SfDropDownList TValue="GeslachtEnum" TItem="Geslacht" DataSource="@geslachtValues" @bind-Value="@_currentPersoon.Geslacht">
                         <DropDownListFieldSettings Value="GeslachtValue"></DropDownListFieldSettings>
                     </SfDropDownList>
                 </div>
@@ -155,8 +167,6 @@
                                TItem="Rol"
                                @bind-Value="@_selectedRollenArray">
                         <ListBoxFieldSettings Text="Beschrijving" Value="Id" />
-                        <ListBoxEvents TItem="Rol" TValue="Rol[]" OnActionComplete="UpdateRollen" />
-                        <ListBoxEvents TItem="Rol" TValue="Rol[]" Created="CreatedRollenListBox" />
                         <ListBoxSelectionSettings ShowCheckbox="true"
                                                   Mode="Syncfusion.Blazor.DropDowns.SelectionMode.Multiple" />
                     </SfListBox>
@@ -171,8 +181,6 @@
                                TItem="FietsTocht"
                                @bind-Value="_selectedFietsTochtenArray">
                         <ListBoxFieldSettings Text="Titel" Value="Id" />
-                        <ListBoxEvents TItem="FietsTocht" TValue="FietsTocht[]" OnActionComplete="UpdateFietsTochten" />
-                        <ListBoxEvents TItem="FietsTocht" TValue="FietsTocht[]" Created="CreatedFietsTochtenListBox" />
                         <ListBoxSelectionSettings ShowCheckbox="true" 
                                                   Mode="Syncfusion.Blazor.DropDowns.SelectionMode.Multiple" />
                     </SfListBox>
@@ -185,10 +193,12 @@
                 </div>
             </td>
         </tr>
-        <div class="form-group">
-            <SfButton Type="button" CssClass="e-flat" IsToggle="true" IsPrimary="true" Content="Opslaan en sluiten" OnClick="@OnDialogSaveAndClose"></SfButton>
-            <SfButton Type="button" CssClass="e-flat" IsToggle="false " IsPrimary="false" Content="Afbreken" OnClick="@OnDialogClose"></SfButton>
-        </div>
+        <tr>
+            <td colspan="2">
+                <SfButton Type="button" CssClass="e-outline large-margin" IsToggle="true" IsPrimary="true" Content="Opslaan en sluiten" OnClick="@OnDialogSaveAndClose"></SfButton>
+                <SfButton Type="button" CssClass="e-outline large-margin" IsToggle="false " IsPrimary="false" Content="Afbreken zonder opslaan" OnClick="@OnDialogClose"></SfButton>
+            </td>
+        </tr>
     </table>
 </EditForm>
 
@@ -199,40 +209,34 @@
     [CascadingParameter]
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
 
-    private int _persoonId;
     private Persoon _currentPersoon { get; set; } = new Persoon();
-    private List<Rol> _alleRollen = new List<Rol>();
     private Rol[] _alleRollenArray = new Rol[] { };
     private Rol[] _selectedRollenArray = new Rol[] { };
-    private IEnumerable<FietsTocht> _alleFietsTochten = Enumerable.Empty<FietsTocht>();
     private FietsTocht[] _alleFietsTochtenArray = new FietsTocht[] { };
     private FietsTocht[] _selectedFietsTochtenArray = new FietsTocht[] { };
     private bool IsNewPersoon() { return PersoonId == 0; }
     SfListBox<Rol[], Rol> _rollenListBox;
     SfListBox<FietsTocht[], FietsTocht> _fietsTochtenListBox; 
+    private Geslacht[] geslachtValues = GeslachtService.GetGeslachtValues();
     public string? headerText;
-    public class GeslachtFields
-    {
-        public GeslachtEnum GeslachtValue { get; set; }
-        public string GeslachtText { get; set; } = "";
-    }
-    public List<GeslachtFields> geslachtValues = new List<GeslachtFields>()
-    {
-        new GeslachtFields() { GeslachtValue = GeslachtEnum.Man, GeslachtText = GeslachtEnum.Man.ToString() },
-        new GeslachtFields() { GeslachtValue = GeslachtEnum.Vrouw, GeslachtText = GeslachtEnum.Vrouw.ToString() },
-        new GeslachtFields() { GeslachtValue = GeslachtEnum.Onbekend, GeslachtText = GeslachtEnum.Onbekend.ToString() }
-    };
+
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
-        // TO DO get person id from query string
-        _currentPersoon = _persoonService.GetById(PersoonId, true);
-        _alleRollen = _rolService.GetRollen();
-        _alleRollenArray = _alleRollen.ToArray();
-        _alleFietsTochten = _evenementService.GetAllFietsTochten();
-        _alleFietsTochtenArray = _alleFietsTochten.ToArray();
+        if (IsNewPersoon())
+        {
+            _currentPersoon = new Persoon();
+        }
+        else
+        {
+            _currentPersoon = _persoonService.GetById(PersoonId, true);
+        }
+        _alleRollenArray = _rolService.GetRollen().ToArray();
+        _selectedRollenArray = _currentPersoon.Rollen.ToArray();
+        _alleFietsTochtenArray = _evenementService.GetAllFietsTochten().ToArray();
+        _selectedFietsTochtenArray = _currentPersoon.FietsTochten.OfType<FietsTocht>().ToArray();
         headerText = IsNewPersoon() ? "Nieuwe persoon toevoegen" : "Wijzig persoon gegevens";
 
         _logger.LogDebug($"Initialize EditPersoonDialoog; threadid={Thread.CurrentThread.ManagedThreadId}");
@@ -240,65 +244,27 @@
 
     private void OnDialogClose()
     {
-        // go to previous page
-        // TO DO
+        // TO DO: If edits were made, ask for confirmation
+        _dbContext.UndoingChangesDbContextLevel();
+        _navigationManager.NavigateTo($"/Fietsers/Personen");
     }
 
     private async Task OnDialogSaveAndClose()
     {
-        var rollenValues = _rollenListBox.GetDataByValue(_selectedRollenArray);
+        // Convert the arrays to typed data for the current persoon
+        // Note: listboxes only support binding to arrays so this 'hack' is needed
+        // TO DO: later change data types in arrays
         var fietsTochtenValues = _fietsTochtenListBox.GetDataByValue(_selectedFietsTochtenArray);
-        
-        _currentPersoon.Rollen = new HashSet<Rol>(rollenValues);
         _currentPersoon.FietsTochten = new List<Evenement>(fietsTochtenValues);
-        // save and go to previous page
+        var rollenValues = _rollenListBox.GetDataByValue(_selectedRollenArray);
+        _currentPersoon.Rollen = new HashSet<Rol>(rollenValues);
+
         await _persoonService.SavePersoonAsync(_currentPersoon);
-        if (IsNewPersoon())
-        {
-            // TO DO force refresh in calling page?
-            //await _originatingGrid.AddRecordAsync(_currentPersoon);
-        }
-        else
-        {
-            // TO DO force refresh in calling page?
-            //await _originatingGrid.SetRowData(_currentPersoon.Id, _currentPersoon);
-        }
+        
+        // go to previous page TO DO: depends on where we came from, to be fixed
+        _navigationManager.NavigateTo($"/Fietsers/Personen");
     }
-
-    public void UpdateFietsTochten(ActionCompleteEventArgs<FietsTocht> args)
-    {
-        // You can customize your code here.
-    }
-
-    public void UpdateRollen(ActionCompleteEventArgs<Rol> args)
-    {
-        // You can customize your code here.
-    }
-
-    private async Task CreatedFietsTochtenListBox()
-    {
-        // select from _currentPersoon.FietsTochten all elements of type FietsTocht
-        var list = _currentPersoon
-                    .FietsTochten
-                    .OfType<FietsTocht>()
-                    .ToArray<FietsTocht>();
-
-        await _fietsTochtenListBox?.SelectItemsAsync(list, true);
-    }
-
-    private async Task CreatedRollenListBox()
-    {
-        var list = _currentPersoon
-                    .Rollen
-                    .ToArray<Rol>();
-
-        await _rollenListBox?.SelectItemsAsync(list, true);
-    }
-
-    private async Task SavePersoon(Persoon persoon)
-    {
-        await _persoonService.SavePersoonAsync(persoon);
-    }
+    
 }
 
 <style>
@@ -313,5 +279,8 @@
         line-height: 1.5;
         padding: 1px 16px 1px 16px;
         position: relative;
+    }
+    .large-margin {
+        margin: 6px;
     }
 </style>

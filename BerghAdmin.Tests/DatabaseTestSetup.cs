@@ -1,14 +1,10 @@
-﻿using BerghAdmin.Authorization;
-using BerghAdmin.DbContexts;
-using BerghAdmin.Services.Configuration;
+﻿using BerghAdmin.DbContexts;
 using BerghAdmin.Tests.TestHelpers;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 using NUnit.Framework;
-using System;
 
 namespace BerghAdmin.Tests
 {
@@ -25,6 +21,8 @@ namespace BerghAdmin.Tests
             // give each test its own separate database and service setup
             var connection = InMemoryDatabaseHelper.GetSqliteInMemoryConnection();
 
+            // creater a host builder to get the configuration
+            var host = CreateHostBuilder().Build();
             var services = new ServiceCollection();
             services
                 .AddEntityFrameworkSqlite()
@@ -32,7 +30,7 @@ namespace BerghAdmin.Tests
                 {
                     builder.UseSqlite(connection);
                 }, ServiceLifetime.Singleton, ServiceLifetime.Singleton);
-
+            
             RegisterServices(services);
 
             ServiceProvider = services.BuildServiceProvider();
@@ -41,7 +39,28 @@ namespace BerghAdmin.Tests
 
             ApplicationDbContext?.Database.OpenConnection();
             ApplicationDbContext?.Database.EnsureCreated();
+
+            // get secret value from configuration
+            var configuration = new ConfigurationBuilder()
+                .AddUserSecrets<Program>()
+                .Build();
+
+            var syncFusionLicenseKey = configuration.GetValue<string>("SyncfusionConfiguration:LicenseKey");
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicenseKey);
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args = null) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) =>
+                {
+                    config.AddJsonFile("appsettings.json", optional: true);
+                    config.AddEnvironmentVariables();
+                    config.AddUserSecrets<Program>();
+                })
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.AddOptions();
+                });
 
         // Helper function to avoid warnings in unit tests
         public T GetRequiredService<T>() where T:notnull
