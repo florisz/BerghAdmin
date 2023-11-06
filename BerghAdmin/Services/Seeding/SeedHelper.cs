@@ -1,7 +1,4 @@
-using System;
-using System.Threading.Tasks;
 using BerghAdmin.DbContexts;
-using Microsoft.EntityFrameworkCore;
 
 namespace BerghAdmin.Services.Seeding
 {
@@ -12,33 +9,31 @@ namespace BerghAdmin.Services.Seeding
                 .GetRollen()
                 .Any();
 
-        public static async Task<Dictionary<RolTypeEnum, Rol>> InsertRollen(ApplicationDbContext dbContext)
+        public static async Task<Dictionary<RolTypeEnum, Rol>> InsertRollen(IRolService rolService)
         {
             var rolAmbassadeur = new Rol { Id = Convert.ToInt32(RolTypeEnum.Ambassadeur), Beschrijving = "Ambassadeur", MeervoudBeschrijving = "Ambassadeurs" };
-            await dbContext.AddAsync(rolAmbassadeur);
+            await rolService.AddRol(rolAmbassadeur);
 
             var rolBegeleider = new Rol { Id = Convert.ToInt32(RolTypeEnum.Begeleider), Beschrijving = "Begeleider", MeervoudBeschrijving = "Begeleiders" };
-            await dbContext.AddAsync(rolBegeleider);
+            await rolService.AddRol(rolBegeleider);
 
             var rolCommissieLid = new Rol { Id = Convert.ToInt32(RolTypeEnum.CommissieLid), Beschrijving = "Commissielid", MeervoudBeschrijving = "Commissieleden" };
-            await dbContext.AddAsync(rolCommissieLid);
+            await rolService.AddRol(rolCommissieLid);
 
             var rolGolfer = new Rol { Id = Convert.ToInt32(RolTypeEnum.Golfer), Beschrijving = "Golfer", MeervoudBeschrijving = "Golfers" };
-            await dbContext.AddAsync(rolGolfer);
+            await rolService.AddRol(rolGolfer);
 
             var rolMailingAbonnee = new Rol { Id = Convert.ToInt32(RolTypeEnum.MailingAbonnee), Beschrijving = "Mailing abonnee", MeervoudBeschrijving = "Mailing Abonnees" };
-            await dbContext.AddAsync(rolMailingAbonnee);
+            await rolService.AddRol(rolMailingAbonnee);
 
             var rolFietser = new Rol { Id = Convert.ToInt32(RolTypeEnum.Fietser), Beschrijving = "Fietser", MeervoudBeschrijving = "Fieters" };
-            await dbContext.AddAsync(rolFietser);
+            await rolService.AddRol(rolFietser);
 
             var rolVriendVan = new Rol { Id = Convert.ToInt32(RolTypeEnum.VriendVan), Beschrijving = "Vriend van", MeervoudBeschrijving = "Vrienden van" };
-            await dbContext.AddAsync(rolVriendVan);
+            await rolService.AddRol(rolVriendVan);
 
             var rolVrijwilliger = new Rol { Id = Convert.ToInt32(RolTypeEnum.Vrijwilliger), Beschrijving = "Vrijwilliger", MeervoudBeschrijving = "Vrijwilligers" };
-            await dbContext.AddAsync(rolVrijwilliger);
-
-            await dbContext.SaveChangesAsync();
+            await rolService.AddRol(rolVrijwilliger);
 
             var rollen = new Dictionary<RolTypeEnum, Rol>
             {

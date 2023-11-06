@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BerghAdmin.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Extended1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,9 +21,8 @@ namespace BerghAdmin.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    CurrentPersoonId = table.Column<int>(type: "int", nullable: true),
                     LoginCount = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: true)
+                    Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -178,7 +177,7 @@ namespace BerghAdmin.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DonatieUrl = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    EvenementId = table.Column<int>(type: "int", nullable: true)
+                    FietstochtId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -208,10 +207,40 @@ namespace BerghAdmin.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Evenementen",
+                name: "Donateur",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    EmailAdres = table.Column<string>(type: "varchar(95)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IsVerwijderd = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    Adres = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Postcode = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Plaats = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Land = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Telefoon = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Mobiel = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Opmerkingen = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Donateur", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Fietstochten",
+                columns: table => new
+                {
+                    FietstochtId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Titel = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -220,7 +249,26 @@ namespace BerghAdmin.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Evenementen", x => x.Id);
+                    table.PrimaryKey("PK_Fietstochten", x => x.FietstochtId);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Golfdagen",
+                columns: table => new
+                {
+                    GolfdagId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Locatie = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Titel = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    GeplandeDatum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    KentaaProjectId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Golfdagen", x => x.GolfdagId);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -314,74 +362,6 @@ namespace BerghAdmin.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Donateur",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    DebiteurNummer = table.Column<int>(type: "int", nullable: true),
-                    IsVerwijderd = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    SponsorNaam = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Adres = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Postcode = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Plaats = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Land = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Telefoon = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Mobiel = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    EmailAdres = table.Column<string>(type: "varchar(95)", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    EmailAdresExtra = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    BedragToegezegd = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
-                    DatumAangebracht = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    Opmerkingen = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    KledingMaten = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Nummer = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Discriminator = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Naam = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    ContactPersoonId = table.Column<int>(type: "int", nullable: true),
-                    Geslacht = table.Column<int>(type: "int", nullable: true),
-                    Voorletters = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Voornaam = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Achternaam = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Tussenvoegsel = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    GeboorteDatum = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    ProjectId = table.Column<int>(type: "int", nullable: true),
-                    IsReserve = table.Column<bool>(type: "tinyint(1)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Donateur", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Donateur_BihzProjects_ProjectId",
-                        column: x => x.ProjectId,
-                        principalTable: "BihzProjects",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Donateur_Donateur_ContactPersoonId",
-                        column: x => x.ContactPersoonId,
-                        principalTable: "Donateur",
-                        principalColumn: "Id");
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Facturen",
                 columns: table => new
                 {
@@ -391,7 +371,7 @@ namespace BerghAdmin.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Omschrijving = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Bedrag = table.Column<float>(type: "float", nullable: true),
+                    Bedrag = table.Column<float>(type: "float", precision: 18, scale: 2, nullable: true),
                     Datum = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     IsVerzonden = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     FactuurType = table.Column<int>(type: "int", nullable: false),
@@ -437,42 +417,81 @@ namespace BerghAdmin.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "FietsTochten",
+                name: "Personen",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Geslacht = table.Column<int>(type: "int", nullable: false),
+                    Voorletters = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Voornaam = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Achternaam = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Tussenvoegsel = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    GeboorteDatum = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    EmailAdresExtra = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    KledingMaten = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Nummer = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Handicap = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Buggy = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    ProjectId = table.Column<int>(type: "int", nullable: true),
+                    IsReserve = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FietsTochten", x => x.Id);
+                    table.PrimaryKey("PK_Personen", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FietsTochten_Evenementen_Id",
+                        name: "FK_Personen_BihzProjects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "BihzProjects",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Personen_Donateur_Id",
                         column: x => x.Id,
-                        principalTable: "Evenementen",
+                        principalTable: "Donateur",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "GolfDagen",
+                name: "Donaties",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    Locatie = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DatumTijd = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Omschrijving = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Bedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    DonateurId = table.Column<int>(type: "int", nullable: true),
+                    FactuurId = table.Column<int>(type: "int", nullable: true),
+                    KentaaDonatieId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GolfDagen", x => x.Id);
+                    table.PrimaryKey("PK_Donaties", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GolfDagen_Evenementen_Id",
-                        column: x => x.Id,
-                        principalTable: "Evenementen",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Donaties_BihzDonaties_KentaaDonatieId",
+                        column: x => x.KentaaDonatieId,
+                        principalTable: "BihzDonaties",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Donaties_Donateur_DonateurId",
+                        column: x => x.DonateurId,
+                        principalTable: "Donateur",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Donaties_Facturen_FactuurId",
+                        column: x => x.FactuurId,
+                        principalTable: "Facturen",
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -520,9 +539,9 @@ namespace BerghAdmin.Migrations
                 {
                     table.PrimaryKey("PK_BihzActies", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BihzActies_Donateur_PersoonId",
+                        name: "FK_BihzActies_Personen_PersoonId",
                         column: x => x.PersoonId,
-                        principalTable: "Donateur",
+                        principalTable: "Personen",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -572,95 +591,60 @@ namespace BerghAdmin.Migrations
                 {
                     table.PrimaryKey("PK_BihzUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BihzUsers_Donateur_PersoonId",
+                        name: "FK_BihzUsers_Personen_PersoonId",
                         column: x => x.PersoonId,
-                        principalTable: "Donateur",
+                        principalTable: "Personen",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "EvenementPersoon",
+                name: "FietstochtPersoon",
                 columns: table => new
                 {
                     DeelnemersId = table.Column<int>(type: "int", nullable: false),
-                    FietsTochtenId = table.Column<int>(type: "int", nullable: false)
+                    FietstochtenId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EvenementPersoon", x => new { x.DeelnemersId, x.FietsTochtenId });
+                    table.PrimaryKey("PK_FietstochtPersoon", x => new { x.DeelnemersId, x.FietstochtenId });
                     table.ForeignKey(
-                        name: "FK_EvenementPersoon_Donateur_DeelnemersId",
+                        name: "FK_FietstochtPersoon_Fietstochten_FietstochtenId",
+                        column: x => x.FietstochtenId,
+                        principalTable: "Fietstochten",
+                        principalColumn: "FietstochtId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FietstochtPersoon_Personen_DeelnemersId",
                         column: x => x.DeelnemersId,
-                        principalTable: "Donateur",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EvenementPersoon_Evenementen_FietsTochtenId",
-                        column: x => x.FietsTochtenId,
-                        principalTable: "Evenementen",
+                        principalTable: "Personen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "PersoonRol",
+                name: "GolfdagPersoon",
                 columns: table => new
                 {
-                    PersonenId = table.Column<int>(type: "int", nullable: false),
-                    RollenId = table.Column<int>(type: "int", nullable: false)
+                    DeelnemersId = table.Column<int>(type: "int", nullable: false),
+                    GolfdagenId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PersoonRol", x => new { x.PersonenId, x.RollenId });
+                    table.PrimaryKey("PK_GolfdagPersoon", x => new { x.DeelnemersId, x.GolfdagenId });
                     table.ForeignKey(
-                        name: "FK_PersoonRol_Donateur_PersonenId",
-                        column: x => x.PersonenId,
-                        principalTable: "Donateur",
-                        principalColumn: "Id",
+                        name: "FK_GolfdagPersoon_Golfdagen_GolfdagenId",
+                        column: x => x.GolfdagenId,
+                        principalTable: "Golfdagen",
+                        principalColumn: "GolfdagId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PersoonRol_Rollen_RollenId",
-                        column: x => x.RollenId,
-                        principalTable: "Rollen",
+                        name: "FK_GolfdagPersoon_Personen_DeelnemersId",
+                        column: x => x.DeelnemersId,
+                        principalTable: "Personen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Donaties",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    DatumTijd = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Omschrijving = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Bedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    DonateurId = table.Column<int>(type: "int", nullable: true),
-                    FactuurId = table.Column<int>(type: "int", nullable: true),
-                    KentaaDonatieId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Donaties", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Donaties_BihzDonaties_KentaaDonatieId",
-                        column: x => x.KentaaDonatieId,
-                        principalTable: "BihzDonaties",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Donaties_Donateur_DonateurId",
-                        column: x => x.DonateurId,
-                        principalTable: "Donateur",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Donaties_Facturen_FactuurId",
-                        column: x => x.FactuurId,
-                        principalTable: "Facturen",
-                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -675,9 +659,9 @@ namespace BerghAdmin.Migrations
                 {
                     table.PrimaryKey("PK_MailbccGeadresseerden", x => new { x.bccGeadresseerdenId, x.bccGeadresseerdenId1 });
                     table.ForeignKey(
-                        name: "FK_MailbccGeadresseerden_Donateur_bccGeadresseerdenId",
+                        name: "FK_MailbccGeadresseerden_Personen_bccGeadresseerdenId",
                         column: x => x.bccGeadresseerdenId,
-                        principalTable: "Donateur",
+                        principalTable: "Personen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -700,9 +684,9 @@ namespace BerghAdmin.Migrations
                 {
                     table.PrimaryKey("PK_MailccGeadresseerden", x => new { x.ccGeadresseerdenId, x.ccGeadresseerdenId1 });
                     table.ForeignKey(
-                        name: "FK_MailccGeadresseerden_Donateur_ccGeadresseerdenId",
+                        name: "FK_MailccGeadresseerden_Personen_ccGeadresseerdenId",
                         column: x => x.ccGeadresseerdenId,
-                        principalTable: "Donateur",
+                        principalTable: "Personen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -725,15 +709,121 @@ namespace BerghAdmin.Migrations
                 {
                     table.PrimaryKey("PK_MailGeadresseerden", x => new { x.GeadresseerdenId, x.GeadresseerdenId1 });
                     table.ForeignKey(
-                        name: "FK_MailGeadresseerden_Donateur_GeadresseerdenId",
+                        name: "FK_MailGeadresseerden_Personen_GeadresseerdenId",
                         column: x => x.GeadresseerdenId,
-                        principalTable: "Donateur",
+                        principalTable: "Personen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_MailGeadresseerden_VerzondenMails_GeadresseerdenId1",
                         column: x => x.GeadresseerdenId1,
                         principalTable: "VerzondenMails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "PersoonRol",
+                columns: table => new
+                {
+                    PersonenId = table.Column<int>(type: "int", nullable: false),
+                    RollenId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PersoonRol", x => new { x.PersonenId, x.RollenId });
+                    table.ForeignKey(
+                        name: "FK_PersoonRol_Personen_PersonenId",
+                        column: x => x.PersonenId,
+                        principalTable: "Personen",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PersoonRol_Rollen_RollenId",
+                        column: x => x.RollenId,
+                        principalTable: "Rollen",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Sponsoren",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    DebiteurNummer = table.Column<int>(type: "int", nullable: true),
+                    Naam = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ContactPersoonId = table.Column<int>(type: "int", nullable: false),
+                    CompagnonId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sponsoren", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sponsoren_Donateur_Id",
+                        column: x => x.Id,
+                        principalTable: "Donateur",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Sponsoren_Personen_CompagnonId",
+                        column: x => x.CompagnonId,
+                        principalTable: "Personen",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Sponsoren_Personen_ContactPersoonId",
+                        column: x => x.ContactPersoonId,
+                        principalTable: "Personen",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Ambassadeur",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    ToegezegdBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    DatumAangebracht = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Pakket = table.Column<int>(type: "int", nullable: false),
+                    Fax = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Ambassadeur", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Ambassadeur_Sponsoren_Id",
+                        column: x => x.Id,
+                        principalTable: "Sponsoren",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "GolfdagSponsor",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    GolfdagId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GolfdagSponsor", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GolfdagSponsor_Golfdagen_GolfdagId",
+                        column: x => x.GolfdagId,
+                        principalTable: "Golfdagen",
+                        principalColumn: "GolfdagId");
+                    table.ForeignKey(
+                        name: "FK_GolfdagSponsor_Sponsoren_Id",
+                        column: x => x.Id,
+                        principalTable: "Sponsoren",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -797,22 +887,6 @@ namespace BerghAdmin.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Donateur_ContactPersoonId",
-                table: "Donateur",
-                column: "ContactPersoonId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Donateur_IsVerwijderd_EmailAdres",
-                table: "Donateur",
-                columns: new[] { "IsVerwijderd", "EmailAdres" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Donateur_ProjectId",
-                table: "Donateur",
-                column: "ProjectId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Donaties_DonateurId",
                 table: "Donaties",
                 column: "DonateurId");
@@ -828,11 +902,6 @@ namespace BerghAdmin.Migrations
                 column: "KentaaDonatieId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EvenementPersoon_FietsTochtenId",
-                table: "EvenementPersoon",
-                column: "FietsTochtenId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Facturen_EmailTekstId",
                 table: "Facturen",
                 column: "EmailTekstId");
@@ -841,6 +910,21 @@ namespace BerghAdmin.Migrations
                 name: "IX_Facturen_FactuurTekstId",
                 table: "Facturen",
                 column: "FactuurTekstId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FietstochtPersoon_FietstochtenId",
+                table: "FietstochtPersoon",
+                column: "FietstochtenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GolfdagPersoon_GolfdagenId",
+                table: "GolfdagPersoon",
+                column: "GolfdagenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GolfdagSponsor_GolfdagId",
+                table: "GolfdagSponsor",
+                column: "GolfdagId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MailbccGeadresseerden_bccGeadresseerdenId1",
@@ -858,9 +942,24 @@ namespace BerghAdmin.Migrations
                 column: "GeadresseerdenId1");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Personen_ProjectId",
+                table: "Personen",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PersoonRol_RollenId",
                 table: "PersoonRol",
                 column: "RollenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sponsoren_CompagnonId",
+                table: "Sponsoren",
+                column: "CompagnonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sponsoren_ContactPersoonId",
+                table: "Sponsoren",
+                column: "ContactPersoonId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VerzondenMails_InhoudId",
@@ -871,6 +970,9 @@ namespace BerghAdmin.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Ambassadeur");
+
             migrationBuilder.DropTable(
                 name: "AspNetUserClaims");
 
@@ -893,13 +995,13 @@ namespace BerghAdmin.Migrations
                 name: "Donaties");
 
             migrationBuilder.DropTable(
-                name: "EvenementPersoon");
+                name: "FietstochtPersoon");
 
             migrationBuilder.DropTable(
-                name: "FietsTochten");
+                name: "GolfdagPersoon");
 
             migrationBuilder.DropTable(
-                name: "GolfDagen");
+                name: "GolfdagSponsor");
 
             migrationBuilder.DropTable(
                 name: "MailbccGeadresseerden");
@@ -923,22 +1025,31 @@ namespace BerghAdmin.Migrations
                 name: "Facturen");
 
             migrationBuilder.DropTable(
-                name: "Evenementen");
+                name: "Fietstochten");
+
+            migrationBuilder.DropTable(
+                name: "Golfdagen");
+
+            migrationBuilder.DropTable(
+                name: "Sponsoren");
 
             migrationBuilder.DropTable(
                 name: "VerzondenMails");
 
             migrationBuilder.DropTable(
-                name: "Donateur");
+                name: "Rollen");
 
             migrationBuilder.DropTable(
-                name: "Rollen");
+                name: "Personen");
 
             migrationBuilder.DropTable(
                 name: "Documenten");
 
             migrationBuilder.DropTable(
                 name: "BihzProjects");
+
+            migrationBuilder.DropTable(
+                name: "Donateur");
         }
     }
 }

@@ -1,4 +1,6 @@
 using BerghAdmin.DbContexts;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace BerghAdmin.Services;
 
@@ -7,26 +9,28 @@ public class DocumentService : IDocumentService
     private readonly ILogger<DocumentService> _logger;
     private readonly ApplicationDbContext _dbContext;
 
-    public DocumentService(ApplicationDbContext context, ILogger<DocumentService> logger)
+    public DocumentService(ApplicationDbContext dbContext, ILogger<DocumentService> logger)
     {
-        _dbContext = context;
+        _dbContext = dbContext;
         _logger = logger;
+        logger.LogDebug($"DocumentService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
     }
-        
-    public void DeleteDocument(int id)
+
+    public Task DeleteDocument(int id)
     {
         throw new NotImplementedException();
     }
 
     public Document? GetDocumentById(int id)
     {
-        _logger.LogDebug("Get document {documentId}", id);
+        _logger.LogDebug($"Get document {id}");
 
         var doc = _dbContext
                     .Documenten?
                     .Find(id);
 
-        _logger.LogInformation("Get document with id {documentId} was {result}", id, doc == null? "NOT Ok" : "Ok");
+        var result = (doc == null) ? "NOT Ok" : "Ok";
+        _logger.LogInformation($"Get document with id {id} was {result}");
 
         return doc;
     }
@@ -51,20 +55,21 @@ public class DocumentService : IDocumentService
         return templates;
     }
 
-    public void SaveDocument(Document document)
+    public async Task SaveDocument(Document document)
     {
-        _logger.LogDebug("Save document merge {documentName}", document.Name);
+        _logger.LogDebug($"Save document merge {document.Name}");
 
         if (document.Id == 0) 
         {
             _dbContext.Documenten?.Add(document);
-            _logger.LogInformation("Document {documentName} added", document.Name);
+            _logger.LogInformation($"Document {document.Name} added");
         }
         else
         { 
             _dbContext.Documenten?.Update(document);
-            _logger.LogInformation("Document {documentName} updated", document.Name);
+            _logger.LogInformation($"Document {document.Name} updated");
         }
-        _dbContext.SaveChanges();
+
+        await _dbContext.SaveChangesAsync();
     }
 }

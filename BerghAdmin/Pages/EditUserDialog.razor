@@ -150,8 +150,11 @@
         }
         else
         {
+            // simple hack to prevent a code warning;
+            // see comment in User class on how to possibly fix this better
+            var name = _currentUser.UserName == null ? "" : _currentUser.UserName;
             var claims = await _userService
-                                .GetUserClaimsAsync(_currentUser.UserName);
+                                .GetUserClaimsAsync(name);
 
             selectedClaims = claims.Select(c => c.Value).ToArray();
         }
@@ -182,7 +185,7 @@
             {
                 await _userService.UpdateUserPasswordAsync(_currentUser, _newPassword);
             }
-            await _originatingGrid!.SetRowData(_currentUser.Name, _currentUser);
+            await _originatingGrid!.SetRowDataAsync(_currentUser.Name, _currentUser);
         }
     }
 

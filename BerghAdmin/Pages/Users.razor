@@ -66,7 +66,7 @@
     public async Task AddClick(ClickEventArgs args) 
     { 
         // the CurrentPersoonId field is not used but can not be null
-        await editUserDialog.ShowDialog(new User() { CurrentPersoonId = 0 }, UsersGrid);
+        await editUserDialog.ShowDialog(new User(), UsersGrid);
     } 
 
     public async Task EditClick(ClickEventArgs args) 

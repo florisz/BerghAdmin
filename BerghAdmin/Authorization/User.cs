@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BerghAdmin.Authorization;
+
+// TO DO: find out if it is better to derive from IdentityUser<string>. Using a string as key might map better to
+//        the UserManager and IdentityUser from the Microsoft implementation
 public class User : IdentityUser<int>
 {
-    // reference to the persoon who is currently logged in as user
-    public int? CurrentPersoonId { get; set; }
     public int LoginCount { get; set; }
 
-    public string? Name { get; set; }
+    public string Name { get; set; }
 }

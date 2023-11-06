@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using BerghAdmin.Services.Evenementen;
 using NUnit.Framework;
+using System;
 
 namespace BerghAdmin.EFDataTests;
 
@@ -22,6 +23,8 @@ namespace BerghAdmin.EFDataTests;
 // I just copied the code from the application and made it work for me
 // I did not bother to make it work for you
 // !!! IMPORTANT !!!
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
 public class SingleThreadTests : SetupServicesAndContext
 {
 
@@ -44,7 +47,7 @@ public class SingleThreadTests : SetupServicesAndContext
     protected override void RegisterServices(ServiceCollection services)
     {
         services.AddScoped<IPersoonService, PersoonService>();
-        services.AddScoped<IEvenementService, EvenementService>();
+        services.AddScoped<IFietstochtenService, FietstochtenService>();
         services.AddScoped<IRolService, RolService>();
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
     }
@@ -71,50 +74,46 @@ public class SingleThreadTests : SetupServicesAndContext
         var persoonService = this.GetRequiredService<IPersoonService>();
         var persoon = persoonService.GetById(1);
         Assert.NotNull(persoon);
-        Assert.AreEqual(persoon.Voornaam, "Appie");
-        persoon.Achternaam = newAchternaam;
+        Assert.AreEqual(persoon?.Voornaam, "Appie");
+        if (persoon != null)
+        {
+            persoon.Achternaam = newAchternaam;
+        }
         try
         {
             await persoonService.SavePersoonAsync(persoon);
             persoon = persoonService.GetById(1);
-            // not really necessary but to avoid warnings
-            if (persoon != null)
-            {
-                Assert.AreEqual(persoon.Achternaam, newAchternaam);
-            }
-
+            Assert.AreEqual(persoon?.Achternaam, newAchternaam);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            var x = ex;
             throw;
         }   
     }
 
     [Test]
-    public async Task TestPersoonCanAddedToEvenementen()
+    public async Task TestPersoonCanAddedToFietstochten()
     {
         var persoonService = this.GetRequiredService<IPersoonService>();
-        var evenementService = this.GetRequiredService<IEvenementService>();
+        var fietstochtService = this.GetRequiredService<IFietstochtenService>();
         var persoon = persoonService.GetById(1);
         Assert.NotNull(persoon);
-        Assert.AreEqual(persoon.Voornaam, "Appie");
-        var fietsTocht = evenementService.GetById(1);
+        Assert.AreEqual(persoon?.Voornaam, "Appie");
+        var fietsTocht = fietstochtService.GetById(1);
         if (fietsTocht != null)
         {
-            await evenementService.AddDeelnemerAsync(fietsTocht, persoon);
+            await fietstochtService.AddDeelnemerAsync(fietsTocht, persoon);
         }
         try
         {
             await persoonService.SavePersoonAsync(persoon);
             persoon = persoonService.GetById(1);
             // check if fietsTocht is added to persoon
-            var participatesIn = persoon.FietsTochten.FirstOrDefault(fietsTocht => fietsTocht.Id == 1);
+            var participatesIn = persoon.Fietstochten.FirstOrDefault(fietsTocht => fietsTocht.Id == 1);
             Assert.NotNull(participatesIn);
         }
-        catch (Exception ex)
+        catch (Exception )
         {
-            var x = ex;
             throw;
         }
     }
@@ -142,9 +141,8 @@ public class SingleThreadTests : SetupServicesAndContext
             var rolIsAssigned = persoon.Rollen.FirstOrDefault(rol => rol.Id == (int) RolTypeEnum.Ambassadeur);
             Assert.NotNull(rolIsAssigned);
         }
-        catch (Exception ex)
+        catch (Exception )
         {
-            var x = ex;
             throw;
         }
     }
@@ -160,7 +158,7 @@ public class SingleThreadTests : SetupServicesAndContext
 
         var persoonService = this.GetRequiredService<IPersoonService>();
 
-        // first read all persons into a list including rollen and evenementen
+        // first read all persons into a list including rollen and fietstochten
         // data is untracked (see PersoonService, temp change)
         var personen = persoonService.GetPersonen();
 
@@ -177,9 +175,8 @@ public class SingleThreadTests : SetupServicesAndContext
             persoon = persoonService.GetById(1);
             Assert.AreEqual(persoon.Achternaam, newAchternaam1);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            var x = ex;
             throw;
         }
 
@@ -226,9 +223,8 @@ public class SingleThreadTests : SetupServicesAndContext
             persoon2 = persoonService2.GetById(2);
             Assert.AreEqual(persoon2.Achternaam, newAchternaam2);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            var x = ex;
             throw;
         }
 
@@ -239,7 +235,7 @@ public class SingleThreadTests : SetupServicesAndContext
     // This is usually caused by different threads concurrently using the same instance of DbContext.
     // For more information on how to avoid threading issues with DbContext, see...
     [Test]
-    public async Task TestUseTrackedAndUntrackedDataOn2ThreadsBut1Scope()
+    public void TestUseTrackedAndUntrackedDataOn2ThreadsBut1Scope()
     {
         // RESULT: this works fine because the context is the same for both threads
         
@@ -268,9 +264,8 @@ public class SingleThreadTests : SetupServicesAndContext
                 persoon = persoonService1.GetById(1);
                 Assert.AreEqual(persoon.Achternaam, newAchternaam1);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                var x = ex;
                 throw;
             }
         });
@@ -280,7 +275,7 @@ public class SingleThreadTests : SetupServicesAndContext
         {
             var persoonService2 = this.GetRequiredService<IPersoonService>();
 
-            // first read all persons into a list including rollen and evenementen
+            // first read all persons into a list including rollen and fietstochten
             // data is untracked (see PersoonService, temp change)
             var personen = persoonService2.GetPersonen();
 
@@ -300,7 +295,7 @@ public class SingleThreadTests : SetupServicesAndContext
     }
 
     [Test]
-    public async Task TestUseTrackedAndUntrackedDataOn2ThreadsAnd2Contexts()
+    public void TestUseTrackedAndUntrackedDataOn2ThreadsAnd2Contexts()
     {
         // create a new service lifetime scope and split the read and update threads
         // this is necessary because the service provider is disposed after each test
@@ -325,16 +320,18 @@ public class SingleThreadTests : SetupServicesAndContext
                 // now edit one person
                 var persoon = persoonService1.GetById(1);
                 Assert.NotNull(persoon);
-                Assert.AreEqual(persoon.Voornaam, "Appie");
-                persoon.Achternaam = newAchternaam;
+                Assert.AreEqual(persoon?.Voornaam, "Appie");
+                if (persoon != null)
+                {
+                    persoon.Achternaam = newAchternaam;
+                }
 
                 persoonService1.SavePersoonAsync(persoon).Wait();
                 persoon = persoonService1.GetById(1);
-                Assert.AreEqual(persoon.Achternaam, newAchternaam);
+                Assert.AreEqual(persoon?.Achternaam, newAchternaam);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                var x = ex;
                 throw;
             }
         });
@@ -344,7 +341,7 @@ public class SingleThreadTests : SetupServicesAndContext
         {
             var persoonService2 = serviceProvider2.GetRequiredService<IPersoonService>();
 
-            // first read all persons into a list including rollen and evenementen
+            // first read all persons into a list including rollen and fietstochten
             // data is untracked (see PersoonService, temp change)
             var personen = persoonService2.GetPersonen();
 
@@ -362,5 +359,7 @@ public class SingleThreadTests : SetupServicesAndContext
         readThread.Join();
         updateThread.Join();
     }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8604 // Possible null reference argument.
 
 }

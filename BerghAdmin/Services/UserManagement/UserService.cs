@@ -31,14 +31,17 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<User> GetUserAsync(string naam)
+    public async Task<User?> GetUserAsync(string naam)
         => await this._userManager.FindByNameAsync(naam);
 
     public IList<User> GetUsers()
-        =>_userManager.Users.ToList();
+        => _userManager.Users.ToList();
 
-    public async Task<IList<Claim>> GetUserClaimsAsync(string naam)
+    public async Task<IList<Claim>> GetUserClaimsAsync(string? naam)
     {
+        if (naam == null)
+            return new List<Claim>();
+
         var user = await GetUserAsync(naam);
         if (user == null)
             return new List<Claim>();
@@ -49,7 +52,7 @@ public class UserService : IUserService
     }
 
     public async Task<IdentityResult> InsertUserAsync(User user, string password)
-        => await InsertUserAsync(user, password, Array.Empty<Claim>(), null );
+        => await InsertUserAsync(user, password, Array.Empty<Claim>(), null);
 
     public async Task<IdentityResult> InsertUserAsync(User user, string password, Persoon? persoon)
         => await InsertUserAsync(user, password, Array.Empty<Claim>(), persoon);

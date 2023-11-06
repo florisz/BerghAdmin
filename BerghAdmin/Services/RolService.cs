@@ -1,4 +1,5 @@
 using BerghAdmin.DbContexts;
+using BerghAdmin.General;
 using BerghAdmin.Services.Betalingen;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -15,6 +16,16 @@ namespace BerghAdmin.Services
             _dbContext = dbContext;
             _logger = logger;
             logger.LogDebug($"RolService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
+        }
+
+        // code is only used once during seeding so it does not beed to be rock solid
+        public async Task AddRol(Rol rol)
+        {
+            _logger.LogDebug($"Entering add rol {rol.Beschrijving}");
+            _dbContext.Rollen?.Add(rol);
+            await _dbContext.SaveChangesAsync();
+
+            return;
         }
 
         public Rol GetRolById(RolTypeEnum id)

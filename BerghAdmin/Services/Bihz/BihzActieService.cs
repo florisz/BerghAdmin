@@ -2,7 +2,6 @@
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 using BerghAdmin.Services.Evenementen;
-using Microsoft.EntityFrameworkCore;
 
 namespace BerghAdmin.Services.Bihz;
 
@@ -11,13 +10,13 @@ public class BihzActieService : IBihzActieService
     private readonly ApplicationDbContext _dbContext;
     private readonly ILogger<BihzActieService> _logger;
     private readonly IPersoonService _persoonService;
-    private readonly IEvenementService _evenementService;
+    private readonly IFietstochtenService _fietstochtenService;
 
-    public BihzActieService(ApplicationDbContext dbContext, IPersoonService persoonService, IEvenementService evenementService, ILogger<BihzActieService> logger)
+    public BihzActieService(ApplicationDbContext dbContext, IPersoonService persoonService, IFietstochtenService fietstochtenService, ILogger<BihzActieService> logger)
     {
         _dbContext = dbContext;
         _persoonService = persoonService;
-        _evenementService = evenementService;
+        _fietstochtenService = fietstochtenService;
         _logger = logger;
     }
 
@@ -48,11 +47,11 @@ public class BihzActieService : IBihzActieService
             // Add this persoon as deelnemer of the fietstocht (= project in Kentaa)
             if (bihzActie.ProjectId != null)
             {
-                var evenement = _evenementService.GetByProjectId((int) bihzActie.ProjectId);
-                if (evenement != null)
+                var fietstocht = _fietstochtenService.GetByProjectId((int) bihzActie.ProjectId);
+                if (fietstocht != null)
                 {
-                    _logger.LogDebug("Add deelnemer {PersoonNaam} to evenement {EvenementNaam}", persoon.VolledigeNaam, evenement.Titel);
-                    await _evenementService.AddDeelnemerAsync(evenement, persoon);
+                    _logger.LogDebug("Add deelnemer {PersoonNaam} to fietstocht {EvenementNaam}", persoon.VolledigeNaam, fietstocht.Titel);
+                    await _fietstochtenService.AddDeelnemerAsync(fietstocht, persoon);
                 }
             }
         }

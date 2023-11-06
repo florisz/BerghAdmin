@@ -2,11 +2,12 @@
 
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
+@using BerghAdmin.Services
 @using BerghAdmin.Services.Evenementen
 
 @inject IJSRuntime jsRuntime
-@inject BerghAdmin.Services.IPersoonService persoonService
-@inject BerghAdmin.Services.Evenementen.IEvenementService evenementService
+@inject IPersoonService _persoonService
+@inject IFietstochtenService _fietstochtenService
 
 @inject NavigationManager NavigationManager
 @inject IJSRuntime jsRuntime
@@ -26,12 +27,12 @@
         Mode="EditMode.Dialog" 
         AllowEditOnDblClick="true">
     </GridEditSettings>
-    <GridEvents RowSelected="SelectFietsTocht" TValue="FietsTocht" />
+    <GridEvents RowSelected="SelectFietsTocht" TValue="Fietstocht" />
     <GridColumns>
-        <GridColumn Field=@nameof(FietsTocht.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true"></GridColumn>
-        <GridColumn Field=@nameof(FietsTocht.Titel) HeaderText="Titel" TextAlign="TextAlign.Left"  Width="110"></GridColumn>
-        <GridColumn Field=@nameof(FietsTocht.GeplandeDatum) HeaderText="Datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
-        <GridColumn Field=@nameof(FietsTocht.AantalDeelnemers) HeaderText="# deelnemers" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
+        <GridColumn Field=@nameof(Fietstocht.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true"></GridColumn>
+        <GridColumn Field=@nameof(Fietstocht.Titel) HeaderText="Titel" TextAlign="TextAlign.Left"  Width="110"></GridColumn>
+        <GridColumn Field=@nameof(Fietstocht.GeplandeDatum) HeaderText="Datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Fietstocht.AantalDeelnemers) HeaderText="# deelnemers" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
     </GridColumns>
 </SfGrid>
 
@@ -65,11 +66,11 @@
 @code
 {
     // Everything to handle persons
-    public IEnumerable<FietsTocht> FietsTochtList = new List<FietsTocht>();
+    public IEnumerable<Fietstocht> FietsTochtList = new List<Fietstocht>();
     public IEnumerable<Persoon> DeelnemerList { get; set; } = new List<Persoon>();
-    public FietsTocht SelectedFietsTocht { get; set; } = new();
+    public Fietstocht SelectedFietsTocht { get; set; } = new();
     SfGrid<Persoon> DeelnemersGrid = new();
-    SfGrid<FietsTocht> FietsTochtGrid = new();
+    SfGrid<Fietstocht> FietsTochtGrid = new();
 
     // Everything to handle the sow donaties dialog
     ShowDonatiesDialog showDonatiesDialog = new();
@@ -90,7 +91,7 @@
         RefreshList();
     }
 
-    public void SelectFietsTocht(RowSelectEventArgs<FietsTocht> args)
+    public void SelectFietsTocht(RowSelectEventArgs<Fietstocht> args)
     {
         SelectedFietsTocht = args.Data;
         DeelnemerList = SelectedFietsTocht
@@ -98,7 +99,7 @@
                             .OrderBy(d => d.VolledigeNaam);
     }
 
-    public void ActionCompletedHandler(ActionEventArgs<FietsTocht> args)
+    public void ActionCompletedHandler(ActionEventArgs<Fietstocht> args)
     {
         // Here you can customize your code
     }
@@ -120,14 +121,13 @@
         return Task.CompletedTask;
     }
 
-    private IEnumerable<FietsTocht> GetFietsTochten()
+    private IEnumerable<Fietstocht> GetFietsTochten()
     {
-        var fietsTochten = evenementService
-                    .GetAllFietsTochten()?
-                    .OrderByDescending(ft => ft.GeplandeDatum)
-                    .ToList<FietsTocht>();
+        var fietsTochten = _fietstochtenService
+                    .GetAll()?
+                    .OrderByDescending(ft => ft.GeplandeDatum);
 
-        return fietsTochten ?? Enumerable.Empty<FietsTocht>();
+        return fietsTochten ?? Enumerable.Empty<Fietstocht>();
     }
 
     // Everything to handle the email dialog
@@ -148,7 +148,7 @@
             if (persoon == null)
                 return;
 
-            await evenementService.DeleteDeelnemerAsync(SelectedFietsTocht, persoon);
+            await _fietstochtenService.DeleteDeelnemerAsync(SelectedFietsTocht, persoon);
             await RefreshList();
             await DeelnemersGrid.Refresh();
 

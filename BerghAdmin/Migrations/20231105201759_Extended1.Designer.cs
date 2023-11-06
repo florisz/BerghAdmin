@@ -11,15 +11,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231023193246_Initial")]
-    partial class Initial
+    [Migration("20231105201759_Extended1")]
+    partial class Extended1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.12")
+                .HasAnnotation("ProductVersion", "7.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("BerghAdmin.Authorization.User", b =>
@@ -34,9 +34,6 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("longtext");
-
-                    b.Property<int?>("CurrentPersoonId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -55,6 +52,7 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("NormalizedEmail")
@@ -238,39 +236,17 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("Adres")
                         .HasColumnType("longtext");
 
-                    b.Property<decimal?>("BedragToegezegd")
-                        .HasColumnType("decimal(65,30)");
-
-                    b.Property<DateTime?>("DatumAangebracht")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int?>("DebiteurNummer")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("EmailAdres")
                         .IsRequired()
                         .HasColumnType("varchar(95)");
 
-                    b.Property<string>("EmailAdresExtra")
-                        .HasColumnType("longtext");
-
                     b.Property<bool>("IsVerwijderd")
                         .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("KledingMaten")
-                        .HasColumnType("longtext");
 
                     b.Property<string>("Land")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Mobiel")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Nummer")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Opmerkingen")
@@ -282,9 +258,6 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("Postcode")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("SponsorNaam")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Telefoon")
                         .HasColumnType("longtext");
 
@@ -292,9 +265,7 @@ namespace BerghAdmin.Migrations
 
                     b.ToTable("Donateur");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Donateur");
-
-                    b.UseTphMappingStrategy();
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Donatie", b =>
@@ -333,28 +304,6 @@ namespace BerghAdmin.Migrations
                     b.ToTable("Donaties");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.Evenement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("GeplandeDatum")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int?>("KentaaProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Titel")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Evenementen");
-
-                    b.UseTptMappingStrategy();
-                });
-
             modelBuilder.Entity("BerghAdmin.Data.Factuur", b =>
                 {
                     b.Property<int>("Id")
@@ -362,6 +311,7 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("int");
 
                     b.Property<float?>("Bedrag")
+                        .HasPrecision(18, 2)
                         .HasColumnType("float");
 
                     b.Property<DateTime?>("Datum")
@@ -393,6 +343,57 @@ namespace BerghAdmin.Migrations
                     b.HasIndex("FactuurTekstId");
 
                     b.ToTable("Facturen");
+                });
+
+            modelBuilder.Entity("BerghAdmin.Data.Fietstocht", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("GeplandeDatum")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("KentaaProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Titel")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Fietstochten", null, t =>
+                        {
+                            t.Property("Id")
+                                .HasColumnName("FietstochtId");
+                        });
+                });
+
+            modelBuilder.Entity("BerghAdmin.Data.Golfdag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("GeplandeDatum")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("KentaaProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Locatie")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Titel")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Golfdagen", null, t =>
+                        {
+                            t.Property("Id")
+                                .HasColumnName("GolfdagId");
+                        });
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Kentaa.BihzActie", b =>
@@ -590,11 +591,11 @@ namespace BerghAdmin.Migrations
                     b.Property<DateTime>("EindDatum")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("EvenementId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ExterneReferentie")
                         .HasColumnType("longtext");
+
+                    b.Property<int?>("FietstochtId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Gesloten")
                         .HasColumnType("tinyint(1)");
@@ -753,19 +754,34 @@ namespace BerghAdmin.Migrations
                     b.ToTable("VerzondenMails");
                 });
 
-            modelBuilder.Entity("EvenementPersoon", b =>
+            modelBuilder.Entity("FietstochtPersoon", b =>
                 {
                     b.Property<int>("DeelnemersId")
                         .HasColumnType("int");
 
-                    b.Property<int>("FietsTochtenId")
+                    b.Property<int>("FietstochtenId")
                         .HasColumnType("int");
 
-                    b.HasKey("DeelnemersId", "FietsTochtenId");
+                    b.HasKey("DeelnemersId", "FietstochtenId");
 
-                    b.HasIndex("FietsTochtenId");
+                    b.HasIndex("FietstochtenId");
 
-                    b.ToTable("EvenementPersoon");
+                    b.ToTable("FietstochtPersoon");
+                });
+
+            modelBuilder.Entity("GolfdagPersoon", b =>
+                {
+                    b.Property<int>("DeelnemersId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GolfdagenId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DeelnemersId", "GolfdagenId");
+
+                    b.HasIndex("GolfdagenId");
+
+                    b.ToTable("GolfdagPersoon");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
@@ -894,26 +910,17 @@ namespace BerghAdmin.Migrations
                     b.ToTable("MailbccGeadresseerden", (string)null);
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.Organisatie", b =>
-                {
-                    b.HasBaseType("BerghAdmin.Data.Donateur");
-
-                    b.Property<int?>("ContactPersoonId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Naam")
-                        .HasColumnType("longtext");
-
-                    b.HasIndex("ContactPersoonId");
-
-                    b.HasDiscriminator().HasValue("Organisatie");
-                });
-
             modelBuilder.Entity("BerghAdmin.Data.Persoon", b =>
                 {
                     b.HasBaseType("BerghAdmin.Data.Donateur");
 
                     b.Property<string>("Achternaam")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("Buggy")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("EmailAdresExtra")
                         .HasColumnType("longtext");
 
                     b.Property<DateTime?>("GeboorteDatum")
@@ -922,8 +929,17 @@ namespace BerghAdmin.Migrations
                     b.Property<int>("Geslacht")
                         .HasColumnType("int");
 
+                    b.Property<string>("Handicap")
+                        .HasColumnType("longtext");
+
                     b.Property<bool>("IsReserve")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("KledingMaten")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Nummer")
+                        .HasColumnType("longtext");
 
                     b.Property<int?>("ProjectId")
                         .HasColumnType("int");
@@ -942,27 +958,67 @@ namespace BerghAdmin.Migrations
                     b.HasIndex("IsVerwijderd", "EmailAdres")
                         .IsUnique();
 
-                    b.HasDiscriminator().HasValue("Persoon");
+                    b.ToTable("Personen");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.FietsTocht", b =>
+            modelBuilder.Entity("BerghAdmin.Data.Sponsor", b =>
                 {
-                    b.HasBaseType("BerghAdmin.Data.Evenement");
+                    b.HasBaseType("BerghAdmin.Data.Donateur");
 
-                    b.ToTable("FietsTochten", (string)null);
+                    b.Property<int?>("CompagnonId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ContactPersoonId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("DebiteurNummer")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Naam")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasIndex("CompagnonId");
+
+                    b.HasIndex("ContactPersoonId");
+
+                    b.ToTable("Sponsoren");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.GolfDag", b =>
+            modelBuilder.Entity("BerghAdmin.Data.Ambassadeur", b =>
                 {
-                    b.HasBaseType("BerghAdmin.Data.Evenement");
+                    b.HasBaseType("BerghAdmin.Data.Sponsor");
 
-                    b.Property<string>("Locatie")
-                        .HasColumnType("longtext");
+                    b.Property<DateTime?>("DatumAangebracht")
+                        .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Omschrijving")
-                        .HasColumnType("longtext");
+                    b.Property<DateTime>("Fax")
+                        .HasColumnType("datetime(6)");
 
-                    b.ToTable("GolfDagen", (string)null);
+                    b.Property<int>("Pakket")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("ToegezegdBedrag")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("TotaalBedrag")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.ToTable("Ambassadeur", (string)null);
+                });
+
+            modelBuilder.Entity("BerghAdmin.Data.GolfdagSponsor", b =>
+                {
+                    b.HasBaseType("BerghAdmin.Data.Sponsor");
+
+                    b.Property<int?>("GolfdagId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("GolfdagId");
+
+                    b.ToTable("GolfdagSponsor", (string)null);
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Donatie", b =>
@@ -1024,7 +1080,7 @@ namespace BerghAdmin.Migrations
                     b.Navigation("Inhoud");
                 });
 
-            modelBuilder.Entity("EvenementPersoon", b =>
+            modelBuilder.Entity("FietstochtPersoon", b =>
                 {
                     b.HasOne("BerghAdmin.Data.Persoon", null)
                         .WithMany()
@@ -1032,9 +1088,24 @@ namespace BerghAdmin.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BerghAdmin.Data.Evenement", null)
+                    b.HasOne("BerghAdmin.Data.Fietstocht", null)
                         .WithMany()
-                        .HasForeignKey("FietsTochtenId")
+                        .HasForeignKey("FietstochtenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GolfdagPersoon", b =>
+                {
+                    b.HasOne("BerghAdmin.Data.Persoon", null)
+                        .WithMany()
+                        .HasForeignKey("DeelnemersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BerghAdmin.Data.Golfdag", null)
+                        .WithMany()
+                        .HasForeignKey("GolfdagenId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1126,17 +1197,14 @@ namespace BerghAdmin.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.Organisatie", b =>
-                {
-                    b.HasOne("BerghAdmin.Data.Persoon", "ContactPersoon")
-                        .WithMany()
-                        .HasForeignKey("ContactPersoonId");
-
-                    b.Navigation("ContactPersoon");
-                });
-
             modelBuilder.Entity("BerghAdmin.Data.Persoon", b =>
                 {
+                    b.HasOne("BerghAdmin.Data.Donateur", null)
+                        .WithOne()
+                        .HasForeignKey("BerghAdmin.Data.Persoon", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BerghAdmin.Data.Kentaa.BihzProject", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId");
@@ -1144,20 +1212,47 @@ namespace BerghAdmin.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.FietsTocht", b =>
+            modelBuilder.Entity("BerghAdmin.Data.Sponsor", b =>
                 {
-                    b.HasOne("BerghAdmin.Data.Evenement", null)
+                    b.HasOne("BerghAdmin.Data.Persoon", "Compagnon")
+                        .WithMany()
+                        .HasForeignKey("CompagnonId");
+
+                    b.HasOne("BerghAdmin.Data.Persoon", "ContactPersoon")
+                        .WithMany()
+                        .HasForeignKey("ContactPersoonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BerghAdmin.Data.Donateur", null)
                         .WithOne()
-                        .HasForeignKey("BerghAdmin.Data.FietsTocht", "Id")
+                        .HasForeignKey("BerghAdmin.Data.Sponsor", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Compagnon");
+
+                    b.Navigation("ContactPersoon");
+                });
+
+            modelBuilder.Entity("BerghAdmin.Data.Ambassadeur", b =>
+                {
+                    b.HasOne("BerghAdmin.Data.Sponsor", null)
+                        .WithOne()
+                        .HasForeignKey("BerghAdmin.Data.Ambassadeur", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.GolfDag", b =>
+            modelBuilder.Entity("BerghAdmin.Data.GolfdagSponsor", b =>
                 {
-                    b.HasOne("BerghAdmin.Data.Evenement", null)
+                    b.HasOne("BerghAdmin.Data.Golfdag", null)
+                        .WithMany("Sponsoren")
+                        .HasForeignKey("GolfdagId");
+
+                    b.HasOne("BerghAdmin.Data.Sponsor", null)
                         .WithOne()
-                        .HasForeignKey("BerghAdmin.Data.GolfDag", "Id")
+                        .HasForeignKey("BerghAdmin.Data.GolfdagSponsor", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1165,6 +1260,11 @@ namespace BerghAdmin.Migrations
             modelBuilder.Entity("BerghAdmin.Data.Donateur", b =>
                 {
                     b.Navigation("Donaties");
+                });
+
+            modelBuilder.Entity("BerghAdmin.Data.Golfdag", b =>
+                {
+                    b.Navigation("Sponsoren");
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Persoon", b =>

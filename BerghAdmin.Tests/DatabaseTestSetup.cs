@@ -49,7 +49,7 @@ namespace BerghAdmin.Tests
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicenseKey);
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args = null) =>
+        public static IHostBuilder CreateHostBuilder(string[]? args = null) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {

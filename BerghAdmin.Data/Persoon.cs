@@ -9,8 +9,8 @@ public class Persoon : Donateur
     {
         Geslacht = GeslachtEnum.Onbekend;
         Rollen = new HashSet<Rol>();
-        FietsTochten = new List<Evenement>();
-        EmailAdres = "";
+        Fietstochten = new List<Fietstocht>();
+        Golfdagen = new List<Golfdag>();
     }
 
     public GeslachtEnum Geslacht { get; set; }
@@ -19,20 +19,26 @@ public class Persoon : Donateur
     public string? Achternaam { get; set; }
     public string? Tussenvoegsel { get; set; }
     public DateTime? GeboorteDatum { get; set; }
+    public string? EmailAdresExtra { get; set; }
+    public string? KledingMaten { get; set; }
+    public string? Nummer { get; set; }
+    // twee velden alleen gebruiken voor golfers
+    public string? Handicap{ get; set; }
+    public bool Buggy { get; set; } = false;
+    //
     public HashSet<Rol> Rollen { get; set; } = new HashSet<Rol>();
     public ICollection<VerzondenMail> Geadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<VerzondenMail> ccGeadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<VerzondenMail> bccGeadresseerden { get; set; } = new List<VerzondenMail>();
-    public ICollection<Evenement> FietsTochten { get; set; } = new List<Evenement>();
-    [NotMapped]
-    public ICollection<Evenement> GolfDagen { get; set; } = new List<Evenement>();
+    public ICollection<Fietstocht> Fietstochten { get; set; } = new List<Fietstocht>();
+    public ICollection<Golfdag> Golfdagen { get; set; } = new List<Golfdag>();
     public BihzActie? BihzActie { get; set; }
     public BihzUser? BihzUser { get; set; }
     public BihzProject? Project { get; set; }
     public bool IsReserve { get; set; } = false;
 
     [NotMapped]
-    public int[] SelectedFietsTochten => FietsTochten.Select(f => f.Id).ToArray<int>();
+    public int[] SelectedFietsTochten => Fietstochten.Select(f => f.Id).ToArray<int>();
     [NotMapped]
     public int[] SelectedRollen => Rollen.Select(r => r.Id).ToArray<int>();
 
@@ -59,5 +65,13 @@ public class Persoon : Donateur
             Achternaam = "Onbekend",
             Voornaam = "Onbekend",
         };
-}
+    [NotMapped]
+    public IEnumerable<Fietstocht> GetFietstochten
+    {
+        get
+        {
+            return this.Fietstochten.OfType<Fietstocht>();
+        }
+    }
 
+}

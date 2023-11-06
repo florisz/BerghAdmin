@@ -5,32 +5,38 @@ dotnet ef migrations add <MigrationName>
 dotnet ef database update
 
 
-use BIHZ2021
-DROP TABLE __EFMigrationsHistory
-DROP TABLE AspNetUserClaims
-DROP TABLE AspNetUserLogins
-DROP TABLE AspNetUserTokens
-DROP TABLE Betalingen
-DROP TABLE BihzActies
-DROP TABLE BihzUsers
-DROP TABLE Donaties
-DROP TABLE EvenementPersoon
-DROP TABLE FietsTochten
-DROP TABLE GolfDagen
-DROP TABLE MailGeadresseerden
-DROP TABLE MailccGeadresseerden
-DROP TABLE MailbccGeadresseerden
-DROP TABLE PersoonRol
-DROP TABLE AspNetUsers
-DROP TABLE BihzDonaties
-DROP TABLE Facturen
-DROP TABLE VerzondenMails
-DROP TABLE Donateur
-DROP TABLE Rollen
-DROP TABLE Documenten
-DROP TABLE BihzProjects
-DROP TABLE Evenementen
-DROP TABLE Logs
+USE BIHZ2021;
+DROP TABLE __EFMigrationsHistory;
+DROP TABLE AspNetUserClaims;
+DROP TABLE AspNetUserLogins;
+DROP TABLE AspNetUserTokens;
+DROP TABLE Betalingen;
+DROP TABLE BihzActies;
+DROP TABLE BihzUsers;
+DROP TABLE Donaties;
+DROP TABLE EvenementPersoon;
+drop table fietstochtpersoon;
+drop table golfdagpersoon;
+DROP TABLE FietsTochten;
+DROP TABLE GolfDagSponsor;
+DROP TABLE GolfDagen;
+DROP TABLE MailGeadresseerden;
+DROP TABLE MailccGeadresseerden;
+DROP TABLE MailbccGeadresseerden;
+DROP TABLE Ambassadeur;
+DROP TABLE Sponsoren;
+DROP TABLE PersoonRol;
+DROP TABLE AspNetUsers;
+DROP TABLE BihzDonaties;
+DROP TABLE Facturen;
+DROP TABLE VerzondenMails;
+DROP TABLE Personen;
+DROP TABLE Donateur;
+DROP TABLE Rollen;
+DROP TABLE Documenten;
+DROP TABLE BihzProjects;
+DROP TABLE Evenementen;
+DROP TABLE Logs;
 
 /* clean to seed again */
 DELETE FROM Evenementen 

@@ -39,7 +39,6 @@ public class PersoonService : IPersoonService
 
         var persoon = _dbContext
                 .Personen?
-                .AsNoTracking()
                 .SingleOrDefault(p => p.BihzActie != null &&
                                         p.BihzActie.Id == actionId);
 
@@ -49,9 +48,6 @@ public class PersoonService : IPersoonService
     }
 
     public Persoon? GetById(int id)
-        => GetById(id, false);
-
-    public Persoon? GetById(int id, bool tracked = false)
     {
         Persoon? persoon;
 
@@ -60,22 +56,11 @@ public class PersoonService : IPersoonService
         // add try catch
         try
         {
-            if (tracked)
-            {
-                persoon = _dbContext
-                    .Personen?
-                    .Include(p => p.Rollen)
-                    .Include(e => e.FietsTochten)
-                    .SingleOrDefault(x => x.Id == id);
-            }
-            else
-            {
-                persoon = _dbContext
-                    .Personen?
-                    .Include(p => p.Rollen)
-                    .Include(e => e.FietsTochten)
-                    .SingleOrDefault(x => x.Id == id);
-            }
+            persoon = _dbContext
+                .Personen?
+                .Include(p => p.Rollen)
+                .Include(e => e.Fietstochten)
+                .SingleOrDefault(x => x.Id == id);
 
             _logger.LogDebug($"Persoon with naam {persoon?.VolledigeNaam} retrieved by id {id} was {((persoon == null) ? "NOT Ok" : "Ok")}");
 
@@ -94,7 +79,6 @@ public class PersoonService : IPersoonService
 
         var persoon = _dbContext
                 .Personen?
-                .AsNoTracking()
                 .Include(p => p.Rollen)
                 .SingleOrDefault(x => x.EmailAdres == emailAdres);
 
@@ -109,10 +93,9 @@ public class PersoonService : IPersoonService
 
         var personen = _dbContext
             .Personen?
-            .AsNoTracking()
             .Include(p => p.Rollen)
             .Include(p => p.Donaties)
-            .Include(p => p.FietsTochten)
+            .Include(p => p.Fietstochten)
         .ToList();
         _logger.LogDebug($"Get alle personen returned {((personen == null) ? 0 : personen.Count)} personen");
         return personen;
@@ -123,7 +106,6 @@ public class PersoonService : IPersoonService
 
         var personen = _dbContext
                 .Personen?
-                .AsNoTracking()
                 .Where(p => p.Rollen.Any(r => r.Id == Convert.ToInt32(RolTypeEnum.Fietser) || r.Id == Convert.ToInt32(RolTypeEnum.Begeleider)))
                 .OrderBy(p => p.Achternaam)
                 .ToList();

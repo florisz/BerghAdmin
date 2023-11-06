@@ -49,12 +49,16 @@
     {
         foreach (var file in args.Files)
         {
-            var memoryStream = new MemoryStream();
-            file.Stream.WriteTo(memoryStream);
-            memoryStream.Position = 0;
-            importerService.ImportData(memoryStream);
-            file.Stream.Close();
-            memoryStream.Close();
+            if (file.FileInfo.Size > 512000)
+            {
+                // TO DO: is het nodig om dit te ondervangen?
+                throw new Exception("File heeft meer dan 512K bytes");
+            }
+
+            // TO DO pass a File property to the importerService
+            var stream = file.File.OpenReadStream();
+            importerService.ImportData(stream);
+
         }
     }
 }

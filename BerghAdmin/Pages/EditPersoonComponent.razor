@@ -20,7 +20,7 @@
 @inject IServiceScopeFactory _scopeFactory
 @inject IPersoonService _persoonService
 @inject IRolService _rolService
-@inject IEvenementService _evenementService
+@inject IFietstochtenService _fietstochtenService
 @inject ILogger<EditPersoonComponent> _logger
 
 @attribute [Authorize(Policy = "IsAnyRole")]
@@ -176,9 +176,9 @@ else
                 <div class="form-group col-md-12">
                     <label class="col-form-label">Fietstochten:</label>
                     <SfListBox @ref="_fietsTochtenListBox"
-                               TValue="FietsTocht[]" 
+                               TValue="Fietstocht[]" 
                                DataSource="@_alleFietsTochtenArray" 
-                               TItem="FietsTocht"
+                               TItem="Fietstocht"
                                @bind-Value="_selectedFietsTochtenArray">
                         <ListBoxFieldSettings Text="Titel" Value="Id" />
                         <ListBoxSelectionSettings ShowCheckbox="true" 
@@ -212,11 +212,11 @@ else
     private Persoon _currentPersoon { get; set; } = new Persoon();
     private Rol[] _alleRollenArray = new Rol[] { };
     private Rol[] _selectedRollenArray = new Rol[] { };
-    private FietsTocht[] _alleFietsTochtenArray = new FietsTocht[] { };
-    private FietsTocht[] _selectedFietsTochtenArray = new FietsTocht[] { };
+    private Fietstocht[] _alleFietsTochtenArray = new Fietstocht[] { };
+    private Fietstocht[] _selectedFietsTochtenArray = new Fietstocht[] { };
     private bool IsNewPersoon() { return PersoonId == 0; }
-    SfListBox<Rol[], Rol> _rollenListBox;
-    SfListBox<FietsTocht[], FietsTocht> _fietsTochtenListBox; 
+    SfListBox<Rol[], Rol>? _rollenListBox;
+    SfListBox<Fietstocht[], Fietstocht>? _fietsTochtenListBox; 
     private Geslacht[] geslachtValues = GeslachtService.GetGeslachtValues();
     public string? headerText;
 
@@ -231,12 +231,14 @@ else
         }
         else
         {
-            _currentPersoon = _persoonService.GetById(PersoonId, true);
+            _currentPersoon = _persoonService.GetById(PersoonId);
+            if (_currentPersoon == null)
+                throw new ApplicationException($"Persoon met id {PersoonId} niet gevonden");
         }
         _alleRollenArray = _rolService.GetRollen().ToArray();
         _selectedRollenArray = _currentPersoon.Rollen.ToArray();
-        _alleFietsTochtenArray = _evenementService.GetAllFietsTochten().ToArray();
-        _selectedFietsTochtenArray = _currentPersoon.FietsTochten.OfType<FietsTocht>().ToArray();
+        _alleFietsTochtenArray = _fietstochtenService.GetAll()!.ToArray();
+        _selectedFietsTochtenArray = _currentPersoon.GetFietstochten.ToArray();
         headerText = IsNewPersoon() ? "Nieuwe persoon toevoegen" : "Wijzig persoon gegevens";
 
         _logger.LogDebug($"Initialize EditPersoonDialoog; threadid={Thread.CurrentThread.ManagedThreadId}");
@@ -255,7 +257,7 @@ else
         // Note: listboxes only support binding to arrays so this 'hack' is needed
         // TO DO: later change data types in arrays
         var fietsTochtenValues = _fietsTochtenListBox.GetDataByValue(_selectedFietsTochtenArray);
-        _currentPersoon.FietsTochten = new List<Evenement>(fietsTochtenValues);
+        _currentPersoon.Fietstochten = new List<Fietstocht>(fietsTochtenValues);
         var rollenValues = _rollenListBox.GetDataByValue(_selectedRollenArray);
         _currentPersoon.Rollen = new HashSet<Rol>(rollenValues);
 

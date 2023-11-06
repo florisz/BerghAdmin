@@ -12,7 +12,7 @@ namespace BerghAdmin.Services
         Document? GetDocumentById(int id);
         Document? GetDocumentByName(string name);
 
-        void SaveDocument(Document document);
-        void DeleteDocument(int id);    
+        Task SaveDocument(Document document);
+        Task DeleteDocument(int id);    
     }
 }

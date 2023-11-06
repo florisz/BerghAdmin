@@ -10,7 +10,7 @@
 @using BerghAdmin.Data
 
 @inject IPersoonService _persoonService
-@inject IEvenementService _evenementService
+@inject IFietstochtenService _fietstochtenService
 @inject IRolService _rolService
 
 @attribute [Authorize(Policy = "IsBeheerFietsers")]
@@ -46,12 +46,12 @@
     [Parameter]
     public bool IsVisible { get; set; } = false;
     SfGrid<Persoon> _personenGrid = new();
-    SfGrid<FietsTocht> _fietsTochtenGrid = new();
-    FietsTocht _currentFietsTocht = new();
+    SfGrid<Fietstocht> _fietsTochtenGrid = new();
+    Fietstocht _currentFietsTocht = new();
     List<Persoon> Deelnemers = new List<Persoon>();
     public int[] SelectedDeelnemerIds { get; set; } = Array.Empty<int>();
 
-    public void ShowDialog(FietsTocht fietsTocht, SfGrid<Persoon> personenGrid, SfGrid<FietsTocht> fietsTochtenGrid)
+    public void ShowDialog(Fietstocht fietsTocht, SfGrid<Persoon> personenGrid, SfGrid<Fietstocht> fietsTochtenGrid)
     {
         _currentFietsTocht = fietsTocht;
         _personenGrid = personenGrid;
@@ -77,7 +77,7 @@
 
         foreach (var deelnemerId in SelectedDeelnemerIds)
         {
-            await _evenementService.AddDeelnemerAsync(_currentFietsTocht, deelnemerId);
+            await _fietstochtenService.AddDeelnemerAsync(_currentFietsTocht, deelnemerId);
         }
         
         await _personenGrid.Refresh();

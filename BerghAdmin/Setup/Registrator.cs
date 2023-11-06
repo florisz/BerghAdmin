@@ -8,6 +8,7 @@ using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 using BerghAdmin.Services.Seeding;
+using BerghAdmin.Services.Sponsoren;
 using BerghAdmin.Services.UserManagement;
 using Mailjet.Client;
 
@@ -16,9 +17,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Caching.Memory;
 
 using Serilog;
 
@@ -138,7 +137,9 @@ public class Registrator
                 provider.GetRequiredService<ILogger<MailAttachmentsService>>());
         });
         _builder.Services.AddScoped<ISendMailService, SendMailService>();
-        _builder.Services.AddScoped<IEvenementService, EvenementService>();
+        _builder.Services.AddScoped<IFietstochtenService, FietstochtenService>();
+        _builder.Services.AddScoped<IGolfdagenService, GolfdagenService>();
+        _builder.Services.AddScoped<ISponsorService, SponsorService>();
         _builder.Services.AddScoped<IDonatieService, DonatieService>();
         _builder.Services.AddScoped<IUserService, UserService>();
         _builder.Services.AddScoped<IBihzUserService, BihzUserService>();
@@ -147,7 +148,7 @@ public class Registrator
         _builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
         _builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
 
-        string syncFusionLicenseKey = _builder.Configuration.GetValue<string>("SyncfusionConfiguration:LicenseKey");
+        var syncFusionLicenseKey = _builder.Configuration.GetValue<string>("SyncfusionConfiguration:LicenseKey");
         Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicenseKey);
 
         _builder.Services.AddSyncfusionBlazor();
@@ -183,8 +184,12 @@ public class Registrator
             //set BaseAddress, MediaType, UserAgent
             client.SetDefaultSettings();
 
-            string apiKey = _builder.Configuration["MailJetConfiguration:ApiKey"];
-            string apiSecret = _builder.Configuration["MailJetConfiguration:ApiSecret"];
+            string? apiKey = _builder.Configuration["MailJetConfiguration:ApiKey"];
+            string? apiSecret = _builder.Configuration["MailJetConfiguration:ApiSecret"];
+            if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
+            {
+                throw new ApplicationException("Secrets for MailJet access (ApiKey & ApiSecret) cannot be found in configuration");
+            }
             client.UseBasicAuthentication(apiKey, apiSecret);
         });
     }
@@ -221,12 +226,14 @@ public class Registrator
         app.UseAuthentication();
         app.UseAuthorization();
 
+#pragma warning disable ASP0014
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
             endpoints.MapBlazorHub();
             endpoints.MapFallbackToPage("/_Host");
         });
+#pragma warning restore ASP0014
 
         var handler = app.Services.GetRequiredService<EndpointHandler>();
         handler.CreateEndpoints(app);

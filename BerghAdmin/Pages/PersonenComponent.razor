@@ -17,7 +17,7 @@
 @inject NavigationManager _navigationManager
 @inject IPersoonService _persoonService
 @inject IRolService _rolService
-@inject IEvenementService _evenementService
+@inject IFietstochtenService _fietstochtenService
 @inject ILogger<PersonenComponent> _logger
 @inject UserManager<User> _userManager
 @inject NavigationManager _navigationManager
@@ -172,7 +172,7 @@
     [CascadingParameter]
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
 
-    private ErrorDialog errorDialog;
+    private ErrorDialog? errorDialog;
 
     private User? CurrentUser;
 
@@ -183,7 +183,7 @@
     public List<int> _selectedRollen = new();
     public List<Persoon> _personenList = new();
     public List<Rol> _rollenList = new();
-    public List<FietsTocht> _fietsTochtenList = new();
+    public List<Fietstocht> _fietsTochtenList = new();
     SfGrid<Persoon> _personenGrid = new();
 
     private void ValueRemovedHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args)
@@ -201,7 +201,7 @@
     // search in the grid functionaity
     public void OnInputSearchString(InputEventArgs args)
     {
-        this._personenGrid.Search(args.Value);
+        this._personenGrid.SearchAsync(args.Value);
     }
 
     // Everything to handle the email dialog
@@ -317,9 +317,9 @@
 
         _selectedRollen = RolContext.ToList<int>();
         _rollenList = GetRollen();
-        _fietsTochtenList = (_evenementService.GetAllFietsTochten() ?? Enumerable.Empty<FietsTocht>()).ToList();
+        _fietsTochtenList = (_fietstochtenService.GetAll() ?? Enumerable.Empty<Fietstocht>()).ToList();
 
-        RefreshList();
+        await RefreshList();
 
         if (_authenticationStateTask != null)
         {
@@ -333,22 +333,22 @@
         // Here you can customize your code
     }
 
-    private void onToonAllesChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    private async Task onToonAllesChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
     {
-        RefreshList();
+        await RefreshList();
     }
 
-    private void onToonVerwijderdChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    private async Task onToonVerwijderdChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
     {
-        RefreshList();
+        await RefreshList();
     }
 
-    private void onZonderReservesChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    private async Task onZonderReservesChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
     {
-        RefreshList();
+        await RefreshList();
     }
 
-    public Task RefreshList()
+    public async Task RefreshList()
     {
         // refresh with value from multiselect dropdown box
         if (!ToonAlles && (_selectedRollen == null || _selectedRollen.Count() == 0))
@@ -359,7 +359,7 @@
         {
             _personenList = GetPersonen(_selectedRollen).OrderBy(p => p.Achternaam).ToList<Persoon>();
         }
-        return Task.CompletedTask;
+        return;
     }
 
    private List<Persoon> GetPersonen(List<int> rolTypes)

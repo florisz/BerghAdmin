@@ -82,19 +82,22 @@
         this.IsVisible = false;
         BetalingenGrid.Refresh();
     }
-    
+
     private async Task OnChange(UploadChangeEventArgs args)
     {
         List<Betaling> betalingen = new List<Betaling>(); 
 
         foreach (var file in args.Files)
         {
-            var memoryStream = new MemoryStream();
-            file.Stream.WriteTo(memoryStream);
-            memoryStream.Position = 0;
-            betalingen = importerService.ImportBetalingen(memoryStream);
-            file.Stream.Close();
-            memoryStream.Close();
+            if (file.FileInfo.Size > 512000)
+            {
+                // TO DO: is het nodig om dit te ondervangen?
+                throw  new Exception("File heeft meer dan 512K bytes");
+            }
+            var stream = file.File.OpenReadStream();
+
+            // TO DO pass the File property to the importerService
+            betalingen = importerService.ImportBetalingen(stream);
         }
 
         foreach(var betaling in betalingen)

@@ -7,9 +7,9 @@ public class EFBetalingenRepository : IBetalingenRepository
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public EFBetalingenRepository(ApplicationDbContext _dbContext)
+    public EFBetalingenRepository(ApplicationDbContext dbContext)
     {
-        _dbContext = _dbContext;
+        _dbContext = dbContext;
     }
 
     public async Task AddAsync(Betaling betaling)

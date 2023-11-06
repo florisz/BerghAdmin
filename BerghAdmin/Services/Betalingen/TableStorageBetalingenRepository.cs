@@ -27,9 +27,10 @@ public class TableStorageBetalingenRepository : IBetalingenRepository
         // TODO: we should be checking this response
     }
 
-    public async Task UpdateAsync(Betaling betaling)
+    public Task UpdateAsync(Betaling betaling)
     {
-        // TOBEDONE
+        // TO DO implement when necessary
+        return Task.CompletedTask;
     }
 
     public Betaling? GetByVolgnummer(string volgNummer)

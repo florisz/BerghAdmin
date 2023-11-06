@@ -5,7 +5,7 @@ namespace BerghAdmin.General;
 
 public static class NavigationManagerExtensions
 {
-    public static bool TryGetQueryString<T>(this NavigationManager navManager, string key, out T value)
+    public static bool TryGetQueryString<T>(this NavigationManager navManager, string key, out T? value)
     {
         var uri = navManager.ToAbsoluteUri(navManager.Uri);
 
@@ -29,6 +29,9 @@ public static class NavigationManagerExtensions
                 return true;
             }
         }
+
+        // If we get here, the key doesn't exist
+        // how to prevent the possible null reference assignment?
 
         value = default;
         return false;
