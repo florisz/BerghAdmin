@@ -1,6 +1,7 @@
 ﻿using BerghAdmin.Data;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
+using Microsoft.EntityFrameworkCore;
 
 namespace BerghAdmin.Services.Sponsoren;
 
@@ -39,8 +40,15 @@ public class SponsorService : ISponsorService
 
     public Sponsor? GetByNaam(string naam)
     {
-        // TO DO get rid of this temporary fix
-        return new Sponsor() {  Naam = "xyz" };
+        _logger.LogDebug($"Get sponsor by naam {naam}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+
+        var sponsor = _dbContext
+                .Sponsoren?
+                .SingleOrDefault(s => s.Naam== naam);
+
+        _logger.LogDebug($"Sponsor (id={sponsor?.Id}) with naam {sponsor?.Naam} retrieved by emailadres {naam} was {((sponsor == null) ? "NOT Ok" : "Ok")}");
+
+        return sponsor;
     }
 
     public async Task<ErrorCodeEnum> SaveAsync(Sponsor sponsor)

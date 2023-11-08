@@ -1,7 +1,8 @@
-﻿using BerghAdmin.Data.Kentaa;
+﻿using BerghAdmin.Data;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace BerghAdmin.Services.Evenementen;
 
@@ -133,4 +134,55 @@ public class GolfdagenService : IGolfdagenService
         return await DeleteDeelnemerAsync(golfdag, persoon);
     }
 
+    public async Task<ErrorCodeEnum> AddSponsorAsync(Golfdag golfdag, GolfdagSponsor sponsor)
+    {
+        _logger.LogDebug($"Entering Add sponsor {sponsor.Naam} to {golfdag.Titel}");
+
+        if (golfdag == null) { throw new ApplicationException("parameter golfdag can not be null"); }
+        if (sponsor == null) { throw new ApplicationException("parameter sponsor can not be null"); }
+
+        if (golfdag.Sponsoren?.FirstOrDefault(p => p.Id == sponsor.Id) != null)
+        {
+            return ErrorCodeEnum.Conflict;
+        }
+
+        if (golfdag.Sponsoren== null)
+        {
+            golfdag.Sponsoren = new HashSet<GolfdagSponsor>();
+        }
+
+        golfdag.Sponsoren.Add(sponsor);
+
+        await _dbContext.SaveChangesAsync();
+
+        _logger.LogInformation($"Deelnemer added sponsor: {sponsor.Naam} to {golfdag.Titel}");
+        return ErrorCodeEnum.Ok;
+    }
+
+    public async Task<ErrorCodeEnum> AddSponsorAsync(Golfdag golfdag, int sponsorId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<ErrorCodeEnum> DeleteSponsorAsync(Golfdag golfdag, GolfdagSponsor sponsor)
+    {
+        if (golfdag == null) { throw new ApplicationException("parameter golfdag can not be null"); }
+        if (sponsor == null) { throw new ApplicationException("parameter sponsor can not be null"); }
+
+        if (golfdag.Sponsoren == null || golfdag.Sponsoren?.FirstOrDefault(p => p.Id == sponsor.Id) == null)
+        {
+            return ErrorCodeEnum.Ok;
+        }
+
+        golfdag.Sponsoren.Remove(sponsor);
+
+        await _dbContext.SaveChangesAsync();
+
+        return ErrorCodeEnum.Ok;
+    }
+
+    public async Task<ErrorCodeEnum> DeleteSponsorAsync(Golfdag golfdag, int sponsorId)
+    {
+        throw new NotImplementedException();
+    }
 }

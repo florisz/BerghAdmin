@@ -6,5 +6,5 @@ public class Ambassadeur : Sponsor
     public decimal? TotaalBedrag { get; set; }
     public DateTime? DatumAangebracht { get; set; }
     public PakketEnum Pakket { get; set; }
-    public DateTime Fax { get; set; }
+    public string? Fax { get; set; }
 }

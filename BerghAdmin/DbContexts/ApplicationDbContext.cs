@@ -87,7 +87,8 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .WithMany(p => p.Golfdagen);
         modelBuilder
             .Entity<Golfdag>()
-            .HasMany(g => g.Sponsoren);
+            .HasMany(g => g.Sponsoren)
+            .WithMany(s => s.GolfdagenGesponsored);
         // Evenementen - end
 
         // Ambassadeurs

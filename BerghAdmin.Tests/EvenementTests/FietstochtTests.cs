@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
-namespace BerghAdmin.Tests.FietstochtenTests
+namespace BerghAdmin.Tests.EvenementenTests
 {
     [TestFixture]
     public class FietstochtTests : DatabaseTestSetup
@@ -25,41 +25,41 @@ namespace BerghAdmin.Tests.FietstochtenTests
         [Test]
         public async Task GetByNameTest()
         {
-            const string fietsTochtNaam = "Fietstocht1";
+            const string fietstochtNaam = "Fietstocht1";
 
             var service = this.GetRequiredService<IFietstochtenService>();
-            await service.SaveAsync(new Fietstocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
-            var fietsTocht = service.GetByTitel(fietsTochtNaam);
+            await service.SaveAsync(new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
+            var fietstocht = service.GetByTitel(fietstochtNaam);
 
-            Assert.AreEqual(fietsTocht?.Titel, fietsTochtNaam);
+            Assert.AreEqual(fietstocht?.Titel, fietstochtNaam);
         }
 
         [Test]
         public async Task GetByIdTest()
         {
-            const string fietsTochtNaam = "Fietstocht2";
+            const string fietstochtNaam = "Fietstocht2";
 
             var service = this.GetRequiredService<IFietstochtenService>();
-            await service.SaveAsync(new Fietstocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
-            var fietsTocht = service.GetByTitel(fietsTochtNaam);
+            await service.SaveAsync(new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
+            var fietstocht = service.GetByTitel(fietstochtNaam);
 
-            Assert.IsNotNull(fietsTocht);
-            if (fietsTocht != null)
+            Assert.IsNotNull(fietstocht);
+            if (fietstocht != null)
             {
-                var fietsTochtById = service.GetById(fietsTocht.Id);
-                Assert.IsNotNull(fietsTochtById);
-                Assert.AreEqual(fietsTochtById!.Titel, fietsTochtNaam);
+                var fietstochtById = service.GetById(fietstocht.Id);
+                Assert.IsNotNull(fietstochtById);
+                Assert.AreEqual(fietstochtById!.Titel, fietstochtNaam);
             }
         }
 
         [Test]
         public async Task AddWithExistingName()
         {
-            const string fietsTochtNaam = "Fietstocht3";
+            const string fietstochtNaam = "Fietstocht3";
 
             var service = this.GetRequiredService<IFietstochtenService>();
-            await service.SaveAsync(new Fietstocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
-            var errorCode = await service.SaveAsync(new Fietstocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2023, 1, 1) });
+            await service.SaveAsync(new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
+            var errorCode = await service.SaveAsync(new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2023, 1, 1) });
 
             Assert.AreEqual(errorCode, ErrorCodeEnum.Conflict);
         }
@@ -67,19 +67,19 @@ namespace BerghAdmin.Tests.FietstochtenTests
         [Test]
         public async Task UpdateFietstocht()
         {
-            const string fietsTochtNaam = "Fietstocht4";
-            const string fietsTochtUpdatedNaam = "Fietstocht4.1";
+            const string fietstochtNaam = "Fietstocht4";
+            const string fietstochtUpdatedNaam = "Fietstocht4.1";
 
             var service = this.GetRequiredService<IFietstochtenService>();
-            var fietsTocht = new Fietstocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
-            await service.SaveAsync(fietsTocht);
+            var fietstocht = new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
+            await service.SaveAsync(fietstocht);
 
-            fietsTocht.Titel = fietsTochtUpdatedNaam;
-            await service.SaveAsync(fietsTocht);
+            fietstocht.Titel = fietstochtUpdatedNaam;
+            await service.SaveAsync(fietstocht);
 
-            var fietsTochtById = service.GetById(fietsTocht.Id);
-            Assert.IsNotNull(fietsTochtById);
-            Assert.AreEqual(fietsTochtById!.Titel, fietsTochtUpdatedNaam);
+            var fietstochtById = service.GetById(fietstocht.Id);
+            Assert.IsNotNull(fietstochtById);
+            Assert.AreEqual(fietstochtById!.Titel, fietstochtUpdatedNaam);
         }
 
         [Test]
@@ -88,13 +88,13 @@ namespace BerghAdmin.Tests.FietstochtenTests
             const int projectId = 42;
 
             var service = this.GetRequiredService<IFietstochtenService>();
-            var fietsTocht = new Fietstocht() { KentaaProjectId = projectId, GeplandeDatum = new DateTime(2022, 1, 1) };
-            await service.SaveAsync(fietsTocht);
+            var fietstocht = new Fietstocht() { KentaaProjectId = projectId, GeplandeDatum = new DateTime(2022, 1, 1) };
+            await service.SaveAsync(fietstocht);
 
             var bihzProject = new BihzProject() { Id = 1, ProjectId = projectId };
 
-            var fietsTochtByProject = service.GetByProject(bihzProject);
-            Assert.IsNotNull(fietsTochtByProject);
+            var fietstochtByProject = service.GetByProject(bihzProject);
+            Assert.IsNotNull(fietstochtByProject);
         }
 
         [Test]
@@ -103,13 +103,13 @@ namespace BerghAdmin.Tests.FietstochtenTests
             const string projectTitel = "Hitchhikers Galactic Cycling Tour";
 
             var service = this.GetRequiredService<IFietstochtenService>();
-            var fietsTocht = new Fietstocht() { Titel = projectTitel, GeplandeDatum = new DateTime(2022, 1, 1) };
-            await service.SaveAsync(fietsTocht);
+            var fietstocht = new Fietstocht() { Titel = projectTitel, GeplandeDatum = new DateTime(2022, 1, 1) };
+            await service.SaveAsync(fietstocht);
 
             var bihzProject = new BihzProject() { Id = 1, Titel = projectTitel };
 
-            var fietsTochtByProject = service.GetByProject(bihzProject);
-            Assert.IsNotNull(fietsTochtByProject);
+            var fietstochtByProject = service.GetByProject(bihzProject);
+            Assert.IsNotNull(fietstochtByProject);
         }
 
         [Test]
@@ -119,13 +119,13 @@ namespace BerghAdmin.Tests.FietstochtenTests
             const string projectTitel = "Hitchhikers Galactic Cycling Tour";
 
             var service = this.GetRequiredService<IFietstochtenService>();
-            var fietsTocht = new Fietstocht() { Titel = projectTitel, KentaaProjectId = projectId, GeplandeDatum = new DateTime(2022, 1, 1) };
-            await service.SaveAsync(fietsTocht);
+            var fietstocht = new Fietstocht() { Titel = projectTitel, KentaaProjectId = projectId, GeplandeDatum = new DateTime(2022, 1, 1) };
+            await service.SaveAsync(fietstocht);
 
             var bihzProject = new BihzProject() { Id = 1, ProjectId = projectId, Titel = projectTitel };
 
-            var fietsTochtByProject = service.GetByProject(bihzProject);
-            Assert.IsNotNull(fietsTochtByProject);
+            var fietstochtByProject = service.GetByProject(bihzProject);
+            Assert.IsNotNull(fietstochtByProject);
         }
 
         [Test]
@@ -136,96 +136,87 @@ namespace BerghAdmin.Tests.FietstochtenTests
             var strArray = new string[] { "aap", "noot", "mies" };
             foreach (var name in strArray)
             {
-                var fietsTocht = new Fietstocht() { Titel = name, GeplandeDatum = new DateTime(2022, 1, 1) };
-                await service.SaveAsync(fietsTocht);
+                var fietstocht = new Fietstocht() { Titel = name, GeplandeDatum = new DateTime(2022, 1, 1) };
+                await service.SaveAsync(fietstocht);
             }
 
-            //strArray = new string[] { "wim", "zus", "jet" };
-            //foreach (var name in strArray)
-            //{
-            //    var golfDag = new Golfdag() { Titel = name, GeplandeDatum = new DateTime(2022, 1, 1) };
-            //    await service.SaveAsync(golfDag);
-            //}
+            var fietstochten = service.GetAll();
 
-            var fietsTochten = service.GetAll();
-            //var golfDagen = service.GetAll<Golfdag>();
-
-            Assert.AreEqual(3, fietsTochten?.ToList().Count);
-            //Assert.AreEqual(3, golfDagen?.ToList().Count);
+            Assert.AreEqual(3, fietstochten?.ToList().Count);
         }
 
         [Test]
         public async Task AddPersoon()
         {
-            const string fietsTochtNaam = "Fietstocht4";
+            const string fietstochtNaam = "Fietstocht4";
 
             var service = this.GetRequiredService<IFietstochtenService>();
 
-            var fietsTocht = new Fietstocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
-            await service.SaveAsync(fietsTocht);
-            await service.AddDeelnemerAsync(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
+            var fietstocht = new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
+            await service.SaveAsync(fietstocht);
+            await service.AddDeelnemerAsync(fietstocht, new Persoon() { EmailAdres = "aap@noot.com" });
             service = null;
 
             var service2 = this.GetRequiredService<IFietstochtenService>();
-            var fietsTochtById = service2.GetById(fietsTocht.Id);
-            var persoon = fietsTochtById?.Deelnemers.FirstOrDefault();
-            var isDeelnemerVan = persoon?.Fietstochten?.FirstOrDefault(f => f.Id == fietsTocht.Id) != null;
+            var fietstochtById = service2.GetById(fietstocht.Id);
+            var persoon = fietstochtById?.Deelnemers.FirstOrDefault();
+            var isDeelnemerVan = persoon?.Fietstochten?.FirstOrDefault(f => f.Id == fietstocht.Id) != null;
 
-            Assert.IsNotNull(fietsTochtById);
-            Assert.AreEqual(1, fietsTochtById?.Deelnemers.Count);
+            Assert.IsNotNull(fietstochtById);
+            Assert.AreEqual(1, fietstochtById?.Deelnemers.Count);
             Assert.IsTrue(isDeelnemerVan);
         }
 
         [Test]
         public async Task DeletePersoon()
         {
-            const string fietsTochtNaam = "Fietstocht4";
+            const string fietstochtNaam = "Fietstocht4";
 
             var service = this.GetRequiredService<IFietstochtenService>();
 
-            var fietsTocht = new Fietstocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
-            await service.SaveAsync(fietsTocht);
-            await service.AddDeelnemerAsync(fietsTocht, new Persoon() { EmailAdres = "aap@noot.com" });
+            var fietstocht = new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
+            await service.SaveAsync(fietstocht);
+            await service.AddDeelnemerAsync(fietstocht, new Persoon() { EmailAdres = "aap@noot.com" });
             
             var service2 = this.GetRequiredService<IFietstochtenService>();
-            var fietsTochtById = service2.GetById(fietsTocht.Id);
-            var persoon = fietsTochtById?.Deelnemers.FirstOrDefault();
-            Assert.IsNotNull(fietsTochtById);
+            var fietstochtById = service2.GetById(fietstocht.Id);
+            var persoon = fietstochtById?.Deelnemers.FirstOrDefault();
+            Assert.IsNotNull(fietstochtById);
             Assert.IsNotNull(persoon);
 
             // try to delete an exisitng deelnemer from the fietstocht
-            var result = await service2.DeleteDeelnemerAsync(fietsTochtById!, persoon!);
+            var result = await service2.DeleteDeelnemerAsync(fietstochtById!, persoon!);
             Assert.AreEqual(ErrorCodeEnum.Ok, result);
-            Assert.AreEqual(0, fietsTochtById!.Deelnemers?.Count);
+            Assert.AreEqual(0, fietstochtById!.Deelnemers?.Count);
 
             // try to delete a non exisitng deelnemer from the fietstocht
-            result = await service2.DeleteDeelnemerAsync(fietsTochtById, persoon!);
+            result = await service2.DeleteDeelnemerAsync(fietstochtById, persoon!);
             Assert.AreEqual(ErrorCodeEnum.Ok, result);
         }
 
         [Test]
         public async Task DeletePersoonById()
         {
-            const string fietsTochtNaam = "Fietstocht4";
+            const string fietstochtNaam = "Fietstocht4";
 
             var service = this.GetRequiredService<IFietstochtenService>();
 
-            var fietsTocht = new Fietstocht() { Titel = fietsTochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
-            await service.SaveAsync(fietsTocht);
+            var fietstocht = new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
+            await service.SaveAsync(fietstocht);
             var persoon = new Persoon() { EmailAdres = "aap@noot.com" };
-            await service.AddDeelnemerAsync(fietsTocht, persoon);
+            await service.AddDeelnemerAsync(fietstocht, persoon);
 
             var service2 = this.GetRequiredService<IFietstochtenService>();
-            var fietsTochtById = service2.GetById(fietsTocht.Id);
-            Assert.IsNotNull(fietsTochtById);
+            var fietstochtById = service2.GetById(fietstocht.Id);
+            Assert.IsNotNull(fietstochtById);
 
             // try to delete an exisitng deelnemer from the fietstocht
-            var result = await service2.DeleteDeelnemerAsync(fietsTochtById!, persoon.Id);
+            var result = await service2.DeleteDeelnemerAsync(fietstochtById!, persoon.Id);
             Assert.AreEqual(ErrorCodeEnum.Ok, result);
-            Assert.AreEqual(0, fietsTochtById!.Deelnemers?.Count);
+            Assert.AreEqual(0, fietstochtById!.Deelnemers?.Count);
 
             // try to delete a non exisitng deelnemer from the fietstocht
-            result = await service2.DeleteDeelnemerAsync(fietsTochtById!, persoon);
+            result = await service2.DeleteDeelnemerAsync(fietstochtById!, persoon);
             Assert.AreEqual(ErrorCodeEnum.Ok, result);
         }
     }
