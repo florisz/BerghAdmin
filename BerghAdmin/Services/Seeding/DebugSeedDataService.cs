@@ -10,6 +10,7 @@ public class DebugSeedDataService : ISeedDataService
     private readonly SeedSettings _settings;
     private readonly IRolService _rolService;
     private readonly IFietstochtenService _fietstochtenService;
+    private readonly IGolfdagenService _golfdagenService;
     private readonly IPersoonService _persoonService;
     private readonly ISponsorService _sponsorService;
     private readonly IDocumentService _documentService;
@@ -17,6 +18,7 @@ public class DebugSeedDataService : ISeedDataService
     public DebugSeedDataService(
         IRolService rolService,
         IFietstochtenService fietstochtenService,
+        IGolfdagenService golfdagenService,
         IPersoonService persoonService,
         ISponsorService sponsorService,
         IDocumentService documentService,
@@ -25,6 +27,7 @@ public class DebugSeedDataService : ISeedDataService
         this._settings = settings.Value;
         this._rolService = rolService;
         this._fietstochtenService = fietstochtenService;
+        this._golfdagenService = golfdagenService;
         this._persoonService = persoonService;
         this._sponsorService = sponsorService;
         this._documentService = documentService;
@@ -42,6 +45,7 @@ public class DebugSeedDataService : ISeedDataService
         await InsertTestPersonen(rollen);
         await InsertFietstochten();
         await InsertSponsoren();
+        await InsertGolfdagen();
         await InsertDocumenten();
     }
 
@@ -370,36 +374,10 @@ public class DebugSeedDataService : ISeedDataService
         }
     }
 
-    private async Task InsertGolfdagen()
-    {
-        try
-        {
-
-            // add nieuwe golfdag
-            //var golfdag = new Golfdag()
-            //{
-            //    Id = 0,
-            //    GeplandeDatum = new DateTime(2023, 10, 11),
-            //    Titel = "Golfdag November 2023",
-            //    Locatie = "Golfbaan Borghees"
-            //};
-            //await this._fietstochtenService.SaveAsync(golfdag);
-
-            //// add golfdag deelnemers
-            //persoon = this._persoonService.GetByEmailAdres("chappie@aapnootmies.com");
-            //if (persoon != null)
-            //    golfdag.Deelnemers.Add(persoon);
-            //await this._fietstochtenService.SaveAsync(golfdag);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-    }
-
     private async Task InsertSponsoren()
     {
-        var persoon1 = this._persoonService.GetByEmailAdres("ddolsma @mail.com");
+        // assumption: InsertTestPersonen() has been called
+        var persoon1 = this._persoonService.GetByEmailAdres("ddolsma@mail.com");
         var persoon2 = this._persoonService.GetByEmailAdres("eevers@mail.com");
         var persoon3 = this._persoonService.GetByEmailAdres("ffranssen@mail.com");
 
@@ -427,6 +405,40 @@ public class DebugSeedDataService : ISeedDataService
             Mobiel = "06-12345678"
         };
         await this._sponsorService.SaveAsync<GolfdagSponsor>(sponsor);
+    }
+
+    private async Task InsertGolfdagen()
+    {
+        // assumption: InsertSponsoren() has been called
+        try
+        {
+            // add nieuwe golfdag
+            var golfdag = new Golfdag()
+            {
+                Id = 0,
+                GeplandeDatum = new DateTime(2023, 10, 11),
+                Titel = "Golfdag November 2023",
+                Locatie = "Golfbaan Borghees",
+
+            };
+            await this._golfdagenService.SaveAsync(golfdag);
+
+            // add golfdag sponsoren
+            var sponsor = this._sponsorService.GetByNaam<GolfdagSponsor>("Sponsor 1");
+            if (sponsor != null)
+                golfdag.Sponsoren.Add(sponsor);
+            await this._golfdagenService.SaveAsync(golfdag);
+
+            // add golfdag deelnemers
+            var persoon = this._persoonService.GetByEmailAdres("chappie@aapnootmies.com");
+            if (persoon != null)
+                golfdag.Deelnemers.Add(persoon);
+            await this._golfdagenService.SaveAsync(golfdag);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     private async Task InsertDocumenten()

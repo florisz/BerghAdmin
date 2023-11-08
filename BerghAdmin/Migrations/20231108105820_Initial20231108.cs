@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BerghAdmin.Migrations
 {
     /// <inheritdoc />
-    public partial class Extended1 : Migration
+    public partial class Initial20231108 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -791,7 +791,8 @@ namespace BerghAdmin.Migrations
                     TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
                     DatumAangebracht = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Pakket = table.Column<int>(type: "int", nullable: false),
-                    Fax = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    Fax = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -809,22 +810,41 @@ namespace BerghAdmin.Migrations
                 name: "GolfdagSponsor",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    GolfdagId = table.Column<int>(type: "int", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GolfdagSponsor", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GolfdagSponsor_Golfdagen_GolfdagId",
-                        column: x => x.GolfdagId,
-                        principalTable: "Golfdagen",
-                        principalColumn: "GolfdagId");
-                    table.ForeignKey(
                         name: "FK_GolfdagSponsor_Sponsoren_Id",
                         column: x => x.Id,
                         principalTable: "Sponsoren",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "GolfdagGolfdagSponsor",
+                columns: table => new
+                {
+                    GolfdagenGesponsoredId = table.Column<int>(type: "int", nullable: false),
+                    SponsorenId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GolfdagGolfdagSponsor", x => new { x.GolfdagenGesponsoredId, x.SponsorenId });
+                    table.ForeignKey(
+                        name: "FK_GolfdagGolfdagSponsor_GolfdagSponsor_SponsorenId",
+                        column: x => x.SponsorenId,
+                        principalTable: "GolfdagSponsor",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GolfdagGolfdagSponsor_Golfdagen_GolfdagenGesponsoredId",
+                        column: x => x.GolfdagenGesponsoredId,
+                        principalTable: "Golfdagen",
+                        principalColumn: "GolfdagId",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -917,14 +937,14 @@ namespace BerghAdmin.Migrations
                 column: "FietstochtenId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_GolfdagGolfdagSponsor_SponsorenId",
+                table: "GolfdagGolfdagSponsor",
+                column: "SponsorenId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GolfdagPersoon_GolfdagenId",
                 table: "GolfdagPersoon",
                 column: "GolfdagenId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GolfdagSponsor_GolfdagId",
-                table: "GolfdagSponsor",
-                column: "GolfdagId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MailbccGeadresseerden_bccGeadresseerdenId1",
@@ -998,10 +1018,10 @@ namespace BerghAdmin.Migrations
                 name: "FietstochtPersoon");
 
             migrationBuilder.DropTable(
-                name: "GolfdagPersoon");
+                name: "GolfdagGolfdagSponsor");
 
             migrationBuilder.DropTable(
-                name: "GolfdagSponsor");
+                name: "GolfdagPersoon");
 
             migrationBuilder.DropTable(
                 name: "MailbccGeadresseerden");
@@ -1028,10 +1048,10 @@ namespace BerghAdmin.Migrations
                 name: "Fietstochten");
 
             migrationBuilder.DropTable(
-                name: "Golfdagen");
+                name: "GolfdagSponsor");
 
             migrationBuilder.DropTable(
-                name: "Sponsoren");
+                name: "Golfdagen");
 
             migrationBuilder.DropTable(
                 name: "VerzondenMails");
@@ -1040,10 +1060,13 @@ namespace BerghAdmin.Migrations
                 name: "Rollen");
 
             migrationBuilder.DropTable(
-                name: "Personen");
+                name: "Sponsoren");
 
             migrationBuilder.DropTable(
                 name: "Documenten");
+
+            migrationBuilder.DropTable(
+                name: "Personen");
 
             migrationBuilder.DropTable(
                 name: "BihzProjects");

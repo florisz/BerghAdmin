@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231106185352_Extended2")]
-    partial class Extended2
+    [Migration("20231108105820_Initial20231108")]
+    partial class Initial20231108
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -771,13 +771,13 @@ namespace BerghAdmin.Migrations
 
             modelBuilder.Entity("GolfdagGolfdagSponsor", b =>
                 {
-                    b.Property<int>("HeeftGesponsoredId")
+                    b.Property<int>("GolfdagenGesponsoredId")
                         .HasColumnType("int");
 
                     b.Property<int>("SponsorenId")
                         .HasColumnType("int");
 
-                    b.HasKey("HeeftGesponsoredId", "SponsorenId");
+                    b.HasKey("GolfdagenGesponsoredId", "SponsorenId");
 
                     b.HasIndex("SponsorenId");
 
@@ -1007,8 +1007,8 @@ namespace BerghAdmin.Migrations
                     b.Property<DateTime?>("DatumAangebracht")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime>("Fax")
-                        .HasColumnType("datetime(6)");
+                    b.Property<string>("Fax")
+                        .HasColumnType("longtext");
 
                     b.Property<int>("Pakket")
                         .HasColumnType("int");
@@ -1109,7 +1109,7 @@ namespace BerghAdmin.Migrations
                 {
                     b.HasOne("BerghAdmin.Data.Golfdag", null)
                         .WithMany()
-                        .HasForeignKey("HeeftGesponsoredId")
+                        .HasForeignKey("GolfdagenGesponsoredId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
