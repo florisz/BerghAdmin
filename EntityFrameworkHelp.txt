@@ -53,3 +53,17 @@ DELETE FROM PersoonRol WHERE RollenId > 0;
 DELETE FROM Personen WHERE Id > 0;
 DELETE FROM AspNetUsers WHERE Id > 0;
 DELETE FROM Rollen WHERE Id > 0;
+
+/* overall insight in data in MySql database */
+SELECT *  FROM GolfdagSponsor;
+SELECT *  FROM Ambassadeur;
+SELECT *  FROM GolfdagPersoon;
+SELECT *  FROM GolfdagGolfdagSponsor;
+SELECT *  FROM GolfDagen;
+SELECT *  FROM FietsTochtPersoon;
+SELECT *  FROM FietsTochten;
+SELECT *  FROM Documenten;
+SELECT *  FROM PersoonRol;
+SELECT *  FROM Personen;
+SELECT *  FROM AspNetUsers;
+SELECT *  FROM Rollen;

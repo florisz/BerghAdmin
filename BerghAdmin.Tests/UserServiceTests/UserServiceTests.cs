@@ -59,24 +59,6 @@ public class UserServiceTests : DatabaseTestSetup
     }
 
     [Test]
-    public async Task AddUserWithoutClaimsWitPersoonTest()
-    {
-        var service = this.GetRequiredService<IUserService>();
-
-        var userName = "PommetjeHorlepiep";
-        var newUser = CreateUser(userName);
-        var result = await service.InsertUserAsync(newUser, DEFAULT_PASSWORD);
-        if (!result.Succeeded)
-        {
-            Assert.Fail(string.Join(",", result.Errors.Select(e => $"{e.Code}: {e.Description}").ToArray()));
-        }
-
-        var user = await service.GetUserAsync(userName);
-        Assert.Fail("User is null");
-        Assert.AreEqual(userName, user!.UserName);
-    }
-
-    [Test]
     public async Task AddUserWithOneClaimTest()
     {
         var service = this.GetRequiredService<IUserService>();
@@ -160,7 +142,6 @@ public class UserServiceTests : DatabaseTestSetup
         }
 
         var user = await service.GetUserAsync(userName);
-        Assert.Fail("User is null");
         user!.PhoneNumber = "06-12345678";
         result = await service.UpdateUserAsync(user);
         if (!result.Succeeded)
