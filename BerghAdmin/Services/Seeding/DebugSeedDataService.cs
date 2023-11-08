@@ -415,9 +415,9 @@ public class DebugSeedDataService : ISeedDataService
             ContactPersoon = persoon1!,
             Compagnon = persoon2
         };
-        await this._sponsorService.SaveAsync(ambassadeur);
+        await this._sponsorService.SaveAsync<Ambassadeur>(ambassadeur);
 
-        var sponsor = new Sponsor()
+        var sponsor = new GolfdagSponsor()
         {
             Id = 0,
             Naam = "Sponsor 1",
@@ -426,7 +426,7 @@ public class DebugSeedDataService : ISeedDataService
             DebiteurNummer = 1234,
             Mobiel = "06-12345678"
         };
-        await this._sponsorService.SaveAsync(sponsor);
+        await this._sponsorService.SaveAsync<GolfdagSponsor>(sponsor);
     }
 
     private async Task InsertDocumenten()

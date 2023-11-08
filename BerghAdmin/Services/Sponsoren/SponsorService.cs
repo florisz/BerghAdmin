@@ -31,19 +31,21 @@ public class SponsorService : ISponsorService
     public IEnumerable<GolfdagSponsor>? GetAllGolfdagSponsoren()
         => GetAll<GolfdagSponsor>();
 
-    public Sponsor? GetById(int id)
+    public T? GetById<T>(int id) where T : Sponsor
     {
         return _dbContext
             .Sponsoren?
+            .OfType<T>()
             .FirstOrDefault(s => s.Id == id);
     }
 
-    public Sponsor? GetByNaam(string naam)
+    public T? GetByNaam<T>(string naam) where T: Sponsor
     {
         _logger.LogDebug($"Get sponsor by naam {naam}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
 
         var sponsor = _dbContext
                 .Sponsoren?
+                .OfType<T>()
                 .SingleOrDefault(s => s.Naam== naam);
 
         _logger.LogDebug($"Sponsor (id={sponsor?.Id}) with naam {sponsor?.Naam} retrieved by emailadres {naam} was {((sponsor == null) ? "NOT Ok" : "Ok")}");
@@ -51,7 +53,7 @@ public class SponsorService : ISponsorService
         return sponsor;
     }
 
-    public async Task<ErrorCodeEnum> SaveAsync(Sponsor sponsor)
+    public async Task<ErrorCodeEnum> SaveAsync<T>(Sponsor sponsor) where T : Sponsor
     {
         _logger.LogDebug($"Entering save sponsor {sponsor.Naam}");
         if (sponsor == null)
@@ -61,7 +63,7 @@ public class SponsorService : ISponsorService
 
         if (sponsor.Id == 0)
         {
-            if (GetByNaam(sponsor.Naam) != null)
+            if (GetByNaam<T>(sponsor.Naam) != null)
             {
                 return ErrorCodeEnum.Conflict;
             }

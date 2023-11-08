@@ -1,14 +1,10 @@
-using NUnit.Framework;
-using System.Collections.Generic;
 using BerghAdmin.Data;
-using System.Linq;
-using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Logging;
 using BerghAdmin.Services.Sponsoren;
-using System.Drawing.Text;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using NUnit.Framework;
 
 namespace BerghAdmin.Tests.DomainTests
 {
@@ -29,9 +25,27 @@ namespace BerghAdmin.Tests.DomainTests
         }
 
         [Test]
-        public async Task TestSaveAndReadSimple()
+        public async Task TestSaveAndReadAmbassadeurSimple()
         {
             const string naamAmbassadeur = "Ambassadeur1";
+
+            var ambassadeur = new Ambassadeur
+            {
+                Id = 0,
+                Naam = naamAmbassadeur
+            };
+            var service = this.GetRequiredService<ISponsorService>();
+            await service.SaveAsync<Ambassadeur>(ambassadeur);
+            var ambassadeurRead = service.GetByNaam<Ambassadeur>(naamAmbassadeur) as Ambassadeur;
+
+            Assert.IsNotNull(ambassadeurRead);
+            Assert.AreEqual(naamAmbassadeur, ambassadeurRead!.Naam);
+        }
+
+        [Test]
+        public async Task TestSaveAndReadAmbassadeurAllFields()
+        {
+            const string naamAmbassadeur = "Ambassadeur2";
 
             var ambassadeur = new Ambassadeur
             {
@@ -55,11 +69,61 @@ namespace BerghAdmin.Tests.DomainTests
                 Fax = "080076543"
             };
             var service = this.GetRequiredService<ISponsorService>();
-            await service.SaveAsync(ambassadeur);
-            var ambassadeurRead = service.GetByNaam(naamAmbassadeur);
+            await service.SaveAsync<Ambassadeur>(ambassadeur);
+            var ambassadeurRead = service.GetByNaam<Ambassadeur>(naamAmbassadeur) as Ambassadeur;
 
             Assert.IsNotNull(ambassadeurRead);
             Assert.AreEqual(naamAmbassadeur, ambassadeurRead!.Naam);
+        }
+
+        [Test]
+        public async Task TestSaveAndReadGolfdagSponsorSimple()
+        {
+            const string naamGolfdagSponsor = "GolfdagSponsor1";
+
+            var golfdagSponsor = new GolfdagSponsor
+            {
+                Id = 0,
+                Naam = naamGolfdagSponsor
+            };
+            var service = this.GetRequiredService<ISponsorService>();
+            await service.SaveAsync<GolfdagSponsor>(golfdagSponsor);
+            var golfdagSponsorRead = service.GetByNaam<GolfdagSponsor>(naamGolfdagSponsor) as GolfdagSponsor;
+
+            Assert.IsNotNull(golfdagSponsorRead);
+            Assert.AreEqual(naamGolfdagSponsor, golfdagSponsorRead!.Naam);
+            Assert.AreEqual(0, golfdagSponsorRead!.GolfdagenGesponsored.Count);
+        }
+
+        [Test]
+        public async Task TestSaveAndReadGolfdagSponsorAllFields()
+        {
+            const string naamGolfdagSponsor = "GolfdagSponsor2";
+
+            var golfdagSponsor = new GolfdagSponsor
+            {
+                Id = 0,
+                Adres = "Adres",
+                EmailAdres = "Email",
+                Naam = naamGolfdagSponsor,
+                Postcode = "1234 AB",
+                Plaats = "Plaats",
+                Land = "Nederland",
+                Telefoon = "080076543",
+                Mobiel = "0612345678",
+                Opmerkingen = "Opmerkingen",
+                ContactPersoon = new Persoon() { EmailAdres = "aap@noot.com" },
+                Compagnon = new Persoon() { EmailAdres = "mies@wim.com" },
+                DebiteurNummer = 123456,
+                GolfdagenGesponsored = new List<Golfdag>() { new Golfdag() { Titel = "Golfdag1" } }
+            };
+            var service = this.GetRequiredService<ISponsorService>();
+            await service.SaveAsync<GolfdagSponsor>(golfdagSponsor);
+            var golfdagSponsorRead = service.GetByNaam<GolfdagSponsor>(naamGolfdagSponsor) as GolfdagSponsor;
+
+            Assert.IsNotNull(golfdagSponsorRead);
+            Assert.AreEqual(naamGolfdagSponsor, golfdagSponsorRead!.Naam);
+            Assert.AreEqual(1, golfdagSponsorRead!.GolfdagenGesponsored.Count);
         }
 
     }
