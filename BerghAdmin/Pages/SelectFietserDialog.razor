@@ -18,7 +18,6 @@
 <div id="SelectDeelenemersDialogTarget">
 
     <SfDialog Target="#SelectDeelenemersDialogTarget" Width="700px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
-        <DialogEvents OnOverlayClick="@OnOverlayclick" />
         <DialogTemplates>
             <Header>Selecteer één of meer deelnemers (fietsers/begeleiders)</Header>
             <Content>
@@ -79,21 +78,15 @@
         {
             await _fietstochtenService.AddDeelnemerAsync(_currentFietsTocht, deelnemerId);
         }
-        
+
         await _personenGrid.Refresh();
         await _fietsTochtenGrid.Refresh();
         DialogClose();
     }
 
-    private void onAfbrekenClick(MouseEventArgs args)
-    {
-        DialogClose();
-    }
+    private void onAfbrekenClick(MouseEventArgs args) => DialogClose();
 
-    private void OnOverlayclick(MouseEventArgs arg)
-    {
-        this.IsVisible = false;
-    }
+    private void OnOverlayclick(MouseEventArgs arg) => this.IsVisible = false;
 
     private void DialogClose()
     {
