@@ -162,13 +162,12 @@ else
                 <div class="form-group col-md-12">
                     <label class="col-form-label">Rollen:</label>
                     <SfListBox @ref="_rollenListBox"
-                               TValue="Rol[]" 
+                               TItem="RolListItem"
+                               TValue="RolListItem[]"
                                DataSource="@_alleRollenArray" 
-                               TItem="Rol"
                                @bind-Value="@_selectedRollenArray">
                         <ListBoxFieldSettings Text="Beschrijving" Value="Id" />
-                        <ListBoxSelectionSettings ShowCheckbox="true"
-                                                  Mode="Syncfusion.Blazor.DropDowns.SelectionMode.Multiple" />
+                        <ListBoxSelectionSettings ShowCheckbox="true" />
                     </SfListBox>
                 </div>
             </td>
@@ -176,13 +175,12 @@ else
                 <div class="form-group col-md-12">
                     <label class="col-form-label">Fietstochten:</label>
                     <SfListBox @ref="_fietsTochtenListBox"
-                               TValue="Fietstocht[]" 
-                               DataSource="@_alleFietsTochtenArray" 
-                               TItem="Fietstocht"
+                               TValue="FietstochtListItem[]"
+                               TItem="FietstochtListItem"
+                               DataSource="@_alleFietsTochtenArray"
                                @bind-Value="_selectedFietsTochtenArray">
                         <ListBoxFieldSettings Text="Titel" Value="Id" />
-                        <ListBoxSelectionSettings ShowCheckbox="true" 
-                                                  Mode="Syncfusion.Blazor.DropDowns.SelectionMode.Multiple" />
+                        <ListBoxSelectionSettings ShowCheckbox="true" />
                     </SfListBox>
                 </div>
             </td>
@@ -210,19 +208,20 @@ else
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
 
     private Persoon _currentPersoon { get; set; } = new Persoon();
-    private Rol[] _alleRollenArray = new Rol[] { };
-    private Rol[] _selectedRollenArray = new Rol[] { };
-    private Fietstocht[] _alleFietsTochtenArray = new Fietstocht[] { };
-    private Fietstocht[] _selectedFietsTochtenArray = new Fietstocht[] { };
+    private RolListItem[] _alleRollenArray = new RolListItem[] { };
+    private RolListItem[] _selectedRollenArray = new RolListItem[] { };
+    private FietstochtListItem[] _alleFietsTochtenArray = new FietstochtListItem[] { };
+    private FietstochtListItem[] _selectedFietsTochtenArray = new FietstochtListItem[] { };
     private bool IsNewPersoon() { return PersoonId == 0; }
-    SfListBox<Rol[], Rol>? _rollenListBox;
-    SfListBox<Fietstocht[], Fietstocht>? _fietsTochtenListBox; 
+    SfListBox<RolListItem[], RolListItem>? _rollenListBox;
+    SfListBox<FietstochtListItem[], FietstochtListItem>? _fietsTochtenListBox;
     private Geslacht[] geslachtValues = GeslachtService.GetGeslachtValues();
     public string? headerText;
 
 
     protected override void OnInitialized()
     {
+        _logger.LogDebug($"Start Initializing EditPersoonDialoog; threadid={Thread.CurrentThread.ManagedThreadId}");
         base.OnInitialized();
 
         if (IsNewPersoon())
@@ -235,10 +234,12 @@ else
             if (_currentPersoon == null)
                 throw new ApplicationException($"Persoon met id {PersoonId} niet gevonden");
         }
-        _alleRollenArray = _rolService.GetRollen().ToArray();
-        _selectedRollenArray = _currentPersoon.Rollen.ToArray();
-        _alleFietsTochtenArray = _fietstochtenService.GetAll()!.ToArray();
-        _selectedFietsTochtenArray = _currentPersoon.GetFietstochten.ToArray();
+
+        _alleRollenArray = _rolService.GetAlleRolListItems();
+        _selectedRollenArray = _currentPersoon.GetRolListItems();
+
+        _alleFietsTochtenArray = _fietstochtenService.GetAlleFietstochtListItems()!.ToArray();
+        _selectedFietsTochtenArray = _currentPersoon.GetFietstochtListItems();
         headerText = IsNewPersoon() ? "Nieuwe persoon toevoegen" : "Wijzig persoon gegevens";
 
         _logger.LogDebug($"Initialize EditPersoonDialoog; threadid={Thread.CurrentThread.ManagedThreadId}");
@@ -248,23 +249,17 @@ else
     {
         // TO DO: If edits were made, ask for confirmation
         _dbContext.UndoingChangesDbContextLevel();
-        _navigationManager.NavigateTo($"/Fietsers/Personen");
+        _navigationManager.NavigateTo($"/Fietsers/Fietsers");
     }
 
     private async Task OnDialogSaveAndClose()
     {
-        // Convert the arrays to typed data for the current persoon
-        // Note: listboxes only support binding to arrays so this 'hack' is needed
-        // TO DO: later change data types in arrays
-        var fietsTochtenValues = _fietsTochtenListBox.GetDataByValue(_selectedFietsTochtenArray);
-        _currentPersoon.Fietstochten = new List<Fietstocht>(fietsTochtenValues);
-        var rollenValues = _rollenListBox.GetDataByValue(_selectedRollenArray);
-        _currentPersoon.Rollen = new HashSet<Rol>(rollenValues);
-
+        _fietstochtenService.SetFietstochten(_currentPersoon, _fietsTochtenListBox!.GetDataByValue(_selectedFietsTochtenArray));
+        _persoonService.SetRollen(_currentPersoon, _rollenListBox!.GetDataByValue(_selectedRollenArray));
         await _persoonService.SavePersoonAsync(_currentPersoon);
         
         // go to previous page TO DO: depends on where we came from, to be fixed
-        _navigationManager.NavigateTo($"/Fietsers/Personen");
+        _navigationManager.NavigateTo($"/Fietsers/Fietsers");
     }
     
 }

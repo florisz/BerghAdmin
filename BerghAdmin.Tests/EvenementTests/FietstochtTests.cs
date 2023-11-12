@@ -211,7 +211,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             Assert.IsNotNull(fietstochtById);
 
             // try to delete an exisitng deelnemer from the fietstocht
-            var result = await service2.DeleteDeelnemerAsync(fietstochtById!, persoon.Id);
+            var result = await service2.DeleteDeelnemerAsync(fietstochtById!, persoon);
             Assert.AreEqual(ErrorCodeEnum.Ok, result);
             Assert.AreEqual(0, fietstochtById!.Deelnemers?.Count);
 

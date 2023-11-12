@@ -8,43 +8,38 @@ namespace BerghAdmin.Services.Evenementen;
 public class FietstochtenService : IFietstochtenService
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly IPersoonService _persoonService;
+    //private readonly IPersoonService _persoonService;
     private readonly ILogger<FietstochtenService> _logger;
 
-    public FietstochtenService(ApplicationDbContext dbContext, IPersoonService persoonService, ILogger<FietstochtenService> logger)
+    public FietstochtenService(ApplicationDbContext dbContext, ILogger<FietstochtenService> logger)
     {
         _dbContext = dbContext;
-        _persoonService = persoonService;
+        //_persoonService = persoonService;
         _logger = logger;
         logger.LogDebug($"FietstochtenService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
 }
 
     public IEnumerable<Fietstocht>? GetAll()
-    {
-        return _dbContext
+        => _dbContext
             .Fietstochten?
-            .Include(e => e.Deelnemers);
-    }
+            .Include(e => e.Deelnemers)
+            .ThenInclude(p => p.Rollen);
+
     public Fietstocht? GetById(int id)
-    {
-        return _dbContext
+        => _dbContext
             .Fietstochten?
             .FirstOrDefault(e => e.Id == id);
-    }
 
     public Fietstocht? GetByTitel(string? titel)
-    {
-        return _dbContext
+        =>_dbContext
             .Fietstochten?
             .FirstOrDefault(e => e.Titel == titel);
-    }
 
     public Fietstocht? GetByProjectId(int projectId)
-    {
-        return _dbContext
+        =>_dbContext
             .Fietstochten?
             .FirstOrDefault(e => e.KentaaProjectId == projectId);
-    }
+
     public Fietstocht? GetByProject(BihzProject project)
     {
         if (project == null)
@@ -112,19 +107,6 @@ public class FietstochtenService : IFietstochtenService
         return ErrorCodeEnum.Ok;
     }
 
-    public async Task<ErrorCodeEnum> AddDeelnemerAsync(Fietstocht fietstocht, int persoonId)
-    {
-        if (fietstocht == null) { throw new ApplicationException("parameter fietstocht can not be null"); }
-
-        var persoon = _persoonService.GetById(persoonId);
-        if (persoon == null)
-        {
-            return ErrorCodeEnum.NotFound;
-        }
-
-        return await AddDeelnemerAsync(fietstocht, persoon);
-    }
-
     public async Task<ErrorCodeEnum> DeleteDeelnemerAsync(Fietstocht fietstocht, Persoon persoon)
     {
         if (fietstocht == null) { throw new ApplicationException("parameter fietstocht can not be null"); }
@@ -142,17 +124,25 @@ public class FietstochtenService : IFietstochtenService
         return ErrorCodeEnum.Ok;
     }
 
-    public async Task<ErrorCodeEnum> DeleteDeelnemerAsync(Fietstocht fietstocht, int persoonId)
+    public FietstochtListItem[]? GetAlleFietstochtListItems()
     {
-        if (fietstocht == null) { throw new ApplicationException("parameter fietstocht can not be null"); }
-
-        var persoon = _persoonService.GetById(persoonId);
-        if (persoon == null)
-        {
-            return ErrorCodeEnum.NotFound;
-        }
-
-        return await DeleteDeelnemerAsync(fietstocht, persoon);
+        return _dbContext
+            .Fietstochten?
+            .Select(f => new FietstochtListItem { Id = f.Id, Titel = f.Titel })
+            .ToArray();
     }
 
+    public void SetFietstochten(Persoon persoon, List<FietstochtListItem> fietstochtListItems)
+    {
+        persoon.Fietstochten.Clear();
+        foreach (var fietstochtListItem in fietstochtListItems)
+        {
+            var fietstocht = GetById(fietstochtListItem.Id);
+            if (fietstocht == null)
+            {
+                throw new ApplicationException($"Fietstocht with id {fietstochtListItem.Id} does not exist");
+            }
+            persoon.Fietstochten.Add(fietstocht!);
+        }
+    }
 }

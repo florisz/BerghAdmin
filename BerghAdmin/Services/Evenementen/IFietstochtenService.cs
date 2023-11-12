@@ -12,7 +12,8 @@ public interface IFietstochtenService
     Fietstocht? GetByProjectId(int projectId);
     Fietstocht? GetByProject(BihzProject project);
     Task<ErrorCodeEnum> AddDeelnemerAsync(Fietstocht fietstocht, Persoon persoon);
-    Task<ErrorCodeEnum> AddDeelnemerAsync(Fietstocht fietstocht, int persoonId);
     Task<ErrorCodeEnum> DeleteDeelnemerAsync(Fietstocht fietstocht, Persoon persoon);
-    Task<ErrorCodeEnum> DeleteDeelnemerAsync(Fietstocht fietstocht, int persoonId);
+    FietstochtListItem[]? GetAlleFietstochtListItems();
+    void SetFietstochten(Persoon persoon, List<FietstochtListItem> fietstochtListItems);
+
 }

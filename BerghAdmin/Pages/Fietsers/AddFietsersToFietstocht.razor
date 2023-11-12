@@ -25,7 +25,7 @@
 
         if (!_navigationManager.TryGetQueryString<int>("fietstochtId", out _fietstochtId))
         {
-            // TO DO: We don't have a persoonId
+            // TO DO: We don't have a fietstochtId
             _navigationManager.NavigateTo("/Error");
         }
         _huidigeFietstocht = _fietstochtenService.GetById(_fietstochtId);

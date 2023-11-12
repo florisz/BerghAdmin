@@ -8,3 +8,9 @@ public class Rol
     public string MeervoudBeschrijving { get; set; }
     public HashSet<Persoon> Personen { get; set; }
 }
+
+public class RolListItem
+{
+    public int Id { get; set; }
+    public string Beschrijving { get; set; }
+}

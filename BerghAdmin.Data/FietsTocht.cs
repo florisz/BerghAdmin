@@ -8,3 +8,9 @@ public class Fietstocht : Evenement
     [NotMapped]
     public int AantalDeelnemers { get { return Deelnemers.Count; } }
 }
+
+public class FietstochtListItem
+{
+    public int Id { get; set; }
+    public string Titel { get; set; }
+}

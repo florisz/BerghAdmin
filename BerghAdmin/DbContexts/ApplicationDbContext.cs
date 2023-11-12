@@ -68,9 +68,6 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
         // Persoon - End
 
         // Evenementen
-        //modelBuilder
-        //    .Entity<Evenement>()
-        //    .UseTpcMappingStrategy();
         modelBuilder
             .Entity<Fietstocht>()
             .ToTable("Fietstochten", tb => tb.Property(ft => ft.Id).HasColumnName("FietstochtId"));

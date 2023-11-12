@@ -38,11 +38,6 @@ public class Persoon : Donateur
     public bool IsReserve { get; set; } = false;
 
     [NotMapped]
-    public int[] SelectedFietsTochten => Fietstochten.Select(f => f.Id).ToArray<int>();
-    [NotMapped]
-    public int[] SelectedRollen => Rollen.Select(r => r.Id).ToArray<int>();
-
-    [NotMapped]
     public string GetRollenAsString
         => string.Join(", ", Rollen.Select(r => r.Beschrijving));
 
@@ -65,13 +60,20 @@ public class Persoon : Donateur
             Achternaam = "Onbekend",
             Voornaam = "Onbekend",
         };
-    [NotMapped]
-    public IEnumerable<Fietstocht> GetFietstochten
-    {
-        get
-        {
-            return this.Fietstochten.OfType<Fietstocht>();
-        }
-    }
 
+    public FietstochtListItem[] GetFietstochtListItems()
+    {
+        return Fietstochten
+                .AsQueryable()
+                .Select(f => new FietstochtListItem { Id = f.Id, Titel = f.Titel! })
+                .ToArray();
+    }
+    
+    public RolListItem[] GetRolListItems()
+    {
+        return Rollen
+                .AsQueryable()
+                .Select(r => new RolListItem { Id = r.Id, Beschrijving = r.Beschrijving! })
+                .ToArray();
+    }
 }

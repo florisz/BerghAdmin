@@ -44,11 +44,7 @@
 
  <br />
 <div class='e-statustext'>Deelnemers aan fietstocht: <b>@_selectedFietsTocht.Titel</b></div>
-<SfGrid DataSource="@_huidigeDeelnemers" 
-        ContextMenuItems="@(new List<ContextMenuItemModel>() {
-                                new ContextMenuItemModel { Text = "Toevoegen deelnemers", Target = ".e-content", Id = "add-deelnemers" },
-                                new ContextMenuItemModel { Text = "Verwijder deelnemer", Target = ".e-content", Id = "delete-deelnemer" }
-                            })">
+<SfGrid DataSource="@_huidigeDeelnemers">
     <SfToolbar>
         <ToolbarItems>
             <ToolbarItem Text="Toevoegen deelnemers" PrefixIcon="e-icons e-circle-add" Align="ItemAlign.Left" OnClick="ToevoegenDeelnemers" />
@@ -65,7 +61,6 @@
         <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="70" />
         <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left"  Width="70" />
         <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left"  Width="120" />
-        <GridColumn Field=@nameof(Persoon.GetDonatieBedrag) HeaderText="Totaal" TextAlign="TextAlign.Left"  Width="50" />
         <GridColumn Field=@nameof(Persoon.GetRollenAsString) HeaderText="Rollen" TextAlign="TextAlign.Left"  Width="200" />
     </GridColumns>
 </SfGrid>

@@ -22,7 +22,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Serilog;
 
 using Syncfusion.Blazor;
-
+using Syncfusion.Blazor.Popups;
 using System.IO.Abstractions;
 
 namespace BerghAdmin;
@@ -151,6 +151,7 @@ public class Registrator
         var syncFusionLicenseKey = _builder.Configuration.GetValue<string>("SyncfusionConfiguration:LicenseKey");
         Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicenseKey);
 
+        _builder.Services.AddScoped<SfDialogService>();
         _builder.Services.AddSyncfusionBlazor();
         _builder.Services.AddSignalR(e =>
         {

@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.Extensions.Options
 @using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Popups
 @using Microsoft.AspNetCore.Components.Authorization
 
 @using BerghAdmin.Data
@@ -23,6 +24,7 @@
 @inject IJSRuntime jsRuntime
 @inject ISendMailService _sendMailService
 @inject IMailAttachmentsService _mailAttachmentsService;
+@inject SfDialogService DialogService
 
 @attribute [Authorize(Policy = "IsAnyRole")]
 
@@ -161,7 +163,6 @@
 </SfGrid>
 
 <SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
-<ErrorDialog @ref="errorDialog" />
 
 @code {
     [Parameter]
@@ -170,8 +171,6 @@
     public bool ToonAlles { get; set; } = false;
     [CascadingParameter]
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
-
-    private ErrorDialog? errorDialog;
 
     private User? CurrentUser;
 
@@ -288,11 +287,11 @@
         var selectedPersonen = await this._personenGrid.GetSelectedRecordsAsync();
         if (selectedPersonen.Count == 0)
         {
-            errorDialog.Show("Selecteer eerst een persoon.");
+            await DialogService.AlertAsync("Selecteer eerst een persoon.");
         }
         else if (selectedPersonen.Count > 1)
         {
-            errorDialog.Show("Er zijn meerdere personen geselecteerd. Selecteer eerst een persoon of gebruik de rechtermuisclick.");
+            await DialogService.AlertAsync("Er zijn meerdere personen geselecteerd. Selecteer eerst een persoon of gebruik de rechtermuisclick.");
         }
         else
         {

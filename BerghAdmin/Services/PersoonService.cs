@@ -1,20 +1,19 @@
-using BerghAdmin.Data;
 using BerghAdmin.DbContexts;
-using Microsoft.AspNetCore.Http.HttpResults;
+using BerghAdmin.Services.Evenementen;
 using Microsoft.EntityFrameworkCore;
-using SkiaSharp;
-using System;
 
 namespace BerghAdmin.Services;
 
 public class PersoonService : IPersoonService
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly IRolService _rolService;
     private readonly ILogger<PersoonService> _logger;
 
-    public PersoonService(ApplicationDbContext dbContext, ILogger<PersoonService> logger)
+    public PersoonService(ApplicationDbContext dbContext, IRolService rolService, IFietstochtenService fietstochtenService, ILogger<PersoonService> logger)
     {
         _dbContext = dbContext;
+        _rolService = rolService;
         _logger = logger;
         logger.LogDebug($"PersoonService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
     }
@@ -139,4 +138,22 @@ public class PersoonService : IPersoonService
 
         await _dbContext.SaveChangesAsync();
     }
+
+    //
+    // Helper function to set rollen based on the selection in a listbox
+    //
+    public void SetRollen(Persoon persoon, List<RolListItem> rolListItems)
+    {
+        persoon.Rollen.Clear();
+        foreach (var rolListItem in rolListItems)
+        {
+            var rol = _rolService.GetRolById((RolTypeEnum)rolListItem.Id);
+            if (rol == null)
+            {
+                throw new ApplicationException($"Rol with id {rolListItem.Id} does not exist");
+            }
+            persoon.Rollen.Add(rol!);
+        }
+    }
+
 }

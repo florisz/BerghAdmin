@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace BerghAdmin.Services
 {
     public interface IPersoonService
@@ -11,5 +9,6 @@ namespace BerghAdmin.Services
         Persoon? GetByEmailAdres(string emailAdres);
         Task SavePersoonAsync(Persoon persoon);
         Task DeletePersoonAsync(int id);
+        void SetRollen(Persoon persoon, List<RolListItem> rolListItems);
     }
 }
