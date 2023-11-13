@@ -1,5 +1,6 @@
 ﻿using BerghAdmin.Events;
 using Microsoft.AspNetCore.Components;
+using Syncfusion.Blazor.Popups;
 
 namespace BerghAdmin.Pages
 {
@@ -42,7 +43,7 @@ namespace BerghAdmin.Pages
             ShowDialog = false;
         }
 
-        public void OnOverlayclick()
+        public void OnOverlayModalClick(OverlayModalClickEventArgs args)
         {
             CloseDialog();
         }

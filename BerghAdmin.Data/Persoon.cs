@@ -77,3 +77,9 @@ public class Persoon : Donateur
                 .ToArray();
     }
 }
+
+public class PersoonListItem
+{
+    public int Id { get; set; }
+    public string VolledigeNaamEmail { get; set; } = "";
+}

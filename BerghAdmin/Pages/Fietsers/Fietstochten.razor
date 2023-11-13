@@ -3,6 +3,7 @@
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
 @using BerghAdmin.DbContexts;
+@using BerghAdmin.Events;
 @using BerghAdmin.General;
 @using BerghAdmin.Services
 @using BerghAdmin.Services.Evenementen
@@ -65,11 +66,14 @@
     </GridColumns>
 </SfGrid>
 
+<AddFietsersToFietstochtDialog @ref="_addFietsersDialog" OnFietsersAdded="OnFietsersAddedHandler" />
+
 @code
 {
     public IEnumerable<Fietstocht> _fietstochtenList = new List<Fietstocht>();
     public IEnumerable<Persoon> _huidigeDeelnemers { get; set; } = new List<Persoon>();
     public Fietstocht _selectedFietsTocht { get; set; } = new();
+    AddFietsersToFietstochtDialog _addFietsersDialog;
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -94,11 +98,11 @@
 
     // Everything to handle the context menu
     // Triggers when the item is selected
-    public async Task OnContextMenuClick(ContextMenuClickEventArgs<Persoon> args)
+    public void OnContextMenuClick(ContextMenuClickEventArgs<Persoon> args)
     {
         if (args.Item.Id == "add-deelnemers")
         {
-            return;
+            ToevoegenDeelnemers();
         }
         if (args.Item.Id == "verwijder-deelnemer")
         {
@@ -109,8 +113,27 @@
 
     private void ToevoegenDeelnemers()
     {
+        // maak lijst met personen (fietsers en begeleiders) die nog niet deelnemen aan deze fietstocht
+        var lijstPersonen = _persoonService
+                                .GetFietsersEnBegeleiders()
+                                .Where(p => !_selectedFietsTocht.Deelnemers.Any(d => d.Id == p.Id))
+                                .Select(p => new PersoonListItem() { Id = p.Id, VolledigeNaamEmail = p.VolledigeNaamMetRollen + " - email: " + p.EmailAdres })
+                                .ToArray();
+        _addFietsersDialog.DialogOpen(lijstPersonen);
+
         // open the edit dialog for a this new person
-        _navigationManager.NavigateTo($"/Fietsers/Fietstochten/ToevoegenFietsers?fietstochtId={_selectedFietsTocht.Id}");
+        //_navigationManager.NavigateTo($"/Fietsers/Fietstochten/ToevoegenFietsers?fietstochtId={_selectedFietsTocht.Id}");
+    }
+
+    private async void OnFietsersAddedHandler(FietsersAddedEventArgs eventArgs)
+    {
+        var toegevoegdeDeelnemers = eventArgs.Fietsers;
+        foreach (var deelnemer in toegevoegdeDeelnemers)
+        {
+            var persoon = _persoonService.GetById(deelnemer.Id);
+            await _fietstochtenService.AddDeelnemerAsync(_selectedFietsTocht, persoon!);
+        }
+        await RefreshList();
     }
 
     private void VerwijderDeelnemer()
@@ -120,7 +143,9 @@
 
     private Task RefreshList()
     {
-        _selectedFietsTocht = _fietstochtenList.ElementAt(0);
+        if (_selectedFietsTocht == null){
+            _selectedFietsTocht = _fietstochtenList.ElementAt(0);
+        }
         if (_selectedFietsTocht != null)
         {
             _huidigeDeelnemers = GetDeelnemers(_selectedFietsTocht);

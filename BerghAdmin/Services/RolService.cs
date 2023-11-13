@@ -49,8 +49,7 @@ public class RolService : IRolService
         }
 
         return rollen.ToList();
-    }
-    
+    }   
 
     public RolListItem[] GetAlleRolListItems()
         => GetRollen()

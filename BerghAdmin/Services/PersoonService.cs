@@ -86,7 +86,7 @@ public class PersoonService : IPersoonService
         return persoon;
     }
 
-    public List<Persoon>? GetPersonen()
+    public List<Persoon> GetPersonen()
     {
         _logger.LogDebug($"Get alle personen; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
 
@@ -97,9 +97,10 @@ public class PersoonService : IPersoonService
             .Include(p => p.Fietstochten)
         .ToList();
         _logger.LogDebug($"Get alle personen returned {((personen == null) ? 0 : personen.Count)} personen");
-        return personen;
+        return personen ?? new List<Persoon>();
     }
-    public List<Persoon>? GetFietsersEnBegeleiders()
+
+    public List<Persoon> GetFietsersEnBegeleiders()
     {
         _logger.LogDebug($"Get alle fietsers en begeleiders; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
 
@@ -111,7 +112,7 @@ public class PersoonService : IPersoonService
 
         _logger.LogDebug($"Get alle fietsers en begeleiders returned {((personen == null) ? 0 : personen.Count)} personen");
 
-        return personen;
+        return personen ?? new List<Persoon>();
     }
 
 

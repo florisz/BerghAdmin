@@ -16,7 +16,7 @@
 <div id="EditUserDialogTarget">
 
     <SfDialog Target="#EditUserDialogTarget" Width="1000px" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
-        <DialogEvents OnOverlayClick="@OnOverlayclick" />
+        <DialogEvents OnOverlayModalClick="@OnOverlayModalClick" />
         <DialogTemplates>
             <Header>@headerText</Header>
             <Content>
@@ -189,7 +189,7 @@
         }
     }
 
-    private void OnOverlayclick(MouseEventArgs arg)
+    private void OnOverlayModalClick(OverlayModalClickEventArgs args)
     {
         this.IsVisible = false;
     }
