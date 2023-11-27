@@ -106,7 +106,7 @@ public class Registrator
               );
         }
 
-        // Add services to the container.
+        // AddAsync services to the container.
         _builder.Services.AddRazorPages();
         _builder.Services.AddServerSideBlazor();
         _builder.Services.AddOptions();

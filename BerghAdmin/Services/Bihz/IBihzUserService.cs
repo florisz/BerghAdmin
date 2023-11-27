@@ -5,11 +5,11 @@ namespace BerghAdmin.Services.Bihz;
 
 public interface IBihzUserService
 {
-    void Add(BihzUser user);
-    void Add(IEnumerable<BihzUser> users);
-    bool Exist(BihzUser bihzUser);
-    IEnumerable<BihzUser>? GetAll();
-    BihzUser? GetById(int id);
-    BihzUser? GetByKentaaId(int kentaaId);
-    ErrorCodeEnum Save(BihzUser bihzUser);
+    Task AddAsync(BihzUser user);
+    Task AddAsync(IEnumerable<BihzUser> users);
+    Task<bool> ExistAsync(BihzUser bihzUser);
+    Task<List<BihzUser>?> GetAll();
+    Task<BihzUser?> GetById(int id);
+    Task<BihzUser?> GetByKentaaId(int kentaaId);
+    Task SaveAsync(BihzUser bihzUser);
 }

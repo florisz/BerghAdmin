@@ -89,7 +89,7 @@ public class DonatieService : IDonatieService
     
     public void Save(Donatie donatie)
     {
-        _logger.LogDebug("entering Save");
+        _logger.LogDebug("entering SaveAsync");
 
         if (donatie.Id == 0)
         {

@@ -68,7 +68,7 @@ public class GolfdagenService : IGolfdagenService
 
     public async Task<ErrorCodeEnum> AddDeelnemerAsync(Golfdag golfdag, Persoon persoon)
     {
-        _logger.LogDebug($"Entering Add deelnemer {persoon.VolledigeNaam} to {golfdag.Titel}");
+        _logger.LogDebug($"Entering AddAsync deelnemer {persoon.VolledigeNaam} to {golfdag.Titel}");
 
         if (golfdag == null) { throw new ApplicationException("parameter golfdag can not be null"); }
         if (persoon == null) { throw new ApplicationException("parameter persoon can not be null"); }
@@ -95,7 +95,7 @@ public class GolfdagenService : IGolfdagenService
     {
         if (golfdag == null) { throw new ApplicationException("parameter golfdag can not be null"); }
 
-        var persoon = _persoonService.GetById(persoonId);
+        var persoon = await _persoonService.GetById(persoonId);
         if (persoon == null)
         {
             return ErrorCodeEnum.NotFound;
@@ -125,7 +125,7 @@ public class GolfdagenService : IGolfdagenService
     {
         if (golfdag == null) { throw new ApplicationException("parameter golfdag can not be null"); }
 
-        var persoon = _persoonService.GetById(persoonId);
+        var persoon = await _persoonService.GetById(persoonId);
         if (persoon == null)
         {
             return ErrorCodeEnum.NotFound;
@@ -136,7 +136,7 @@ public class GolfdagenService : IGolfdagenService
 
     public async Task<ErrorCodeEnum> AddSponsorAsync(Golfdag golfdag, GolfdagSponsor sponsor)
     {
-        _logger.LogDebug($"Entering Add sponsor {sponsor.Naam} to {golfdag.Titel}");
+        _logger.LogDebug($"Entering AddAsync sponsor {sponsor.Naam} to {golfdag.Titel}");
 
         if (golfdag == null) { throw new ApplicationException("parameter golfdag can not be null"); }
         if (sponsor == null) { throw new ApplicationException("parameter sponsor can not be null"); }

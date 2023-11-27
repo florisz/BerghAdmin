@@ -68,14 +68,14 @@ public class MultiThreadingTests : SetupServicesAndContext
 
         // Persoon on thread 1
         var persoonService1 = serviceProvider1.GetRequiredService<IPersoonService>();
-        var persoon1 = persoonService1.GetByEmailAdres("appie@aapnootmies.com");
+        var persoon1 = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
         Assert.NotNull(persoon1);
         Assert.AreEqual(persoon1.Voornaam, "Appie");
         persoon1.Achternaam = newAchternaam1;
 
         // Persoon on thread 2
         var persoonService2 = serviceProvider2.GetRequiredService<IPersoonService>();
-        var persoon2 = persoonService2.GetByEmailAdres("bert@aapnootmies.com");
+        var persoon2 = await persoonService2.GetByEmailAdres("bert@aapnootmies.com");
         Assert.NotNull(persoon2);
         Assert.AreEqual(persoon2.Voornaam, "Bert");
         persoon2.Achternaam = newAchternaam2;
@@ -83,11 +83,11 @@ public class MultiThreadingTests : SetupServicesAndContext
         try
         {
             await persoonService1.SavePersoonAsync(persoon1);
-            persoon1 = persoonService1.GetByEmailAdres("appie@aapnootmies.com");
+            persoon1 = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
             Assert.AreEqual(persoon1.Achternaam, newAchternaam1);
 
             await persoonService2.SavePersoonAsync(persoon2);
-            persoon2 = persoonService2.GetByEmailAdres("bert@aapnootmies.com");
+            persoon2 = await persoonService2.GetByEmailAdres("bert@aapnootmies.com");
             Assert.AreEqual(persoon2.Achternaam, newAchternaam2);
         }
         catch (Exception)
@@ -102,7 +102,7 @@ public class MultiThreadingTests : SetupServicesAndContext
     // This is usually caused by different threads concurrently using the same instance of DbContext.
     // For more information on how to avoid threading issues with DbContext, see...
     [Test]
-    public void TestUseTrackedAndUntrackedDataOn2ThreadsBut1Scope()
+    public async Task TestUseTrackedAndUntrackedDataOn2ThreadsBut1Scope()
     {
         // RESULT: this works fine because the context is the same for both threads
         
@@ -113,7 +113,7 @@ public class MultiThreadingTests : SetupServicesAndContext
         const string newAchternaam1 = "Apenootxxx";
 
         // On the update thread we will try to update the data
-        var updateThread = new Thread(() =>
+        var updateThread = new Thread(async() =>
         {
             Thread.Sleep(1000);
             var persoonService1 = this.GetRequiredService<IPersoonService>();
@@ -122,13 +122,13 @@ public class MultiThreadingTests : SetupServicesAndContext
             try
             {
                 // now edit one person
-                var persoon = persoonService1.GetByEmailAdres("appie@aapnootmies.com");
+                var persoon = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
                 Assert.NotNull(persoon);
                 Assert.AreEqual(persoon.Voornaam, "Appie");
                 persoon.Achternaam = newAchternaam1;
 
-                persoonService1.SavePersoonAsync(persoon).Wait();
-                persoon = persoonService1.GetByEmailAdres("appie@aapnootmies.com");
+                await persoonService1.SavePersoonAsync(persoon);
+                persoon = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
                 Assert.AreEqual(persoon.Achternaam, newAchternaam1);
             }
             catch (Exception)
@@ -181,7 +181,7 @@ public class MultiThreadingTests : SetupServicesAndContext
         const string newAchternaam = "Apenootyyy";
 
         // On the update thread we will try to update the data
-        var updateThread = new Thread(() =>
+        var updateThread = new Thread(async() =>
         {
             Thread.Sleep(1000);
             // read untracked data first and then update one of the elements
@@ -191,7 +191,7 @@ public class MultiThreadingTests : SetupServicesAndContext
             try
             {
                 // now edit one person
-                var persoon = persoonService1.GetByEmailAdres("appie@aapnootmies.com");
+                var persoon = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
                 Assert.NotNull(persoon);
                 Assert.AreEqual(persoon?.Voornaam, "Appie");
                 if (persoon != null)
@@ -199,8 +199,8 @@ public class MultiThreadingTests : SetupServicesAndContext
                     persoon.Achternaam = newAchternaam;
                 }
 
-                persoonService1.SavePersoonAsync(persoon).Wait();
-                persoon = persoonService1.GetByEmailAdres("appie@aapnootmies.com");
+                await persoonService1.SavePersoonAsync(persoon);
+                persoon = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
                 Assert.AreEqual(persoon?.Achternaam, newAchternaam);
             }
             catch (Exception)

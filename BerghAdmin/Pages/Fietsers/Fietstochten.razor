@@ -1,4 +1,4 @@
-﻿@page "/Fietsers/Fietstochten"
+﻿@page "/Deelnemers/Fietstochten"
 
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
@@ -13,10 +13,10 @@
 @inject IPersoonService _persoonService
 @inject IFietstochtenService _fietstochtenService
 @inject NavigationManager _navigationManager
+@inject ILogger<Fietstochten> _logger
 
 @inject NavigationManager NavigationManager
 @inject IJSRuntime jsRuntime
-@inject ApplicationDbContext _dbContext
 
 @attribute [Authorize(Policy = "IsBeheerFietsers")]
 
@@ -66,28 +66,30 @@
     </GridColumns>
 </SfGrid>
 
-<AddFietsersToFietstochtDialog @ref="_addFietsersDialog" OnFietsersAdded="OnFietsersAddedHandler" />
+<AddDeelnemersToFietstochtDialog @ref="_addDeelnemersDialog" OnDeelnemersAdded="OnDeelnemersAddedHandler" />
 
 @code
 {
     public IEnumerable<Fietstocht> _fietstochtenList = new List<Fietstocht>();
     public IEnumerable<Persoon> _huidigeDeelnemers { get; set; } = new List<Persoon>();
     public Fietstocht _selectedFietsTocht { get; set; } = new();
-    AddFietsersToFietstochtDialog _addFietsersDialog;
+    AddDeelnemersToFietstochtDialog _addDeelnemersDialog;
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         await jsRuntime.InvokeAsync<object>("SetSideMenu", "fietser");
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
 
-        _fietstochtenList = GetFietsTochten();
+        _fietstochtenList = await GetFietsTochten();
         _selectedFietsTocht = _fietstochtenList.ElementAt(0);
 
-        RefreshList();
+        await RefreshList();
+
+        return;
     }
 
     public void SelectFietsTocht(RowSelectEventArgs<Fietstocht> args)
@@ -98,11 +100,11 @@
 
     // Everything to handle the context menu
     // Triggers when the item is selected
-    public void OnContextMenuClick(ContextMenuClickEventArgs<Persoon> args)
+    public async Task OnContextMenuClickAsync(ContextMenuClickEventArgs<Persoon> args)
     {
         if (args.Item.Id == "add-deelnemers")
         {
-            ToevoegenDeelnemers();
+            await ToevoegenDeelnemers();
         }
         if (args.Item.Id == "verwijder-deelnemer")
         {
@@ -111,29 +113,35 @@
         }
     }
 
-    private void ToevoegenDeelnemers()
+    private async Task ToevoegenDeelnemers()
     {
+        _logger.LogDebug($"Dialog Fietstochten.ToevoegenDeelnemer(); threadid={Thread.CurrentThread.ManagedThreadId}");
+
         // maak lijst met personen (fietsers en begeleiders) die nog niet deelnemen aan deze fietstocht
-        var lijstPersonen = _persoonService
-                                .GetFietsersEnBegeleiders()
-                                .Where(p => !_selectedFietsTocht.Deelnemers.Any(d => d.Id == p.Id))
-                                .Select(p => new PersoonListItem() { Id = p.Id, VolledigeNaamEmail = p.VolledigeNaamMetRollen + " - email: " + p.EmailAdres })
-                                .ToArray();
-        _addFietsersDialog.DialogOpen(lijstPersonen);
+        var lijstPersonen = await _persoonService
+                                .GetFietstochtDeelnemers();
+        lijstPersonen = lijstPersonen
+                            .Where(p => !_selectedFietsTocht.Deelnemers.Any(d => d.Id == p.Id))
+                            .ToArray();
+        var geselecteerdePersonen = new PersoonListItem[] { };
+        _addDeelnemersDialog.DialogOpen(lijstPersonen, geselecteerdePersonen);
 
         // open the edit dialog for a this new person
-        //_navigationManager.NavigateTo($"/Fietsers/Fietstochten/ToevoegenFietsers?fietstochtId={_selectedFietsTocht.Id}");
+        //_navigationManager.NavigateTo($"/Deelnemers/Fietstochten/ToevoegenFietsers?fietstochtId={_selectedFietsTocht.Id}");
     }
 
-    private async void OnFietsersAddedHandler(FietsersAddedEventArgs eventArgs)
+    private async void OnDeelnemersAddedHandler(DeelnemersAddedEventArgs eventArgs)
     {
-        var toegevoegdeDeelnemers = eventArgs.Fietsers;
+        _logger.LogDebug($"Dialog Fietstochten.OnDeelnemersAddedHandler(); threadid={Thread.CurrentThread.ManagedThreadId}");
+
+        var toegevoegdeDeelnemers = eventArgs.Deelnemers;
         foreach (var deelnemer in toegevoegdeDeelnemers)
         {
-            var persoon = _persoonService.GetById(deelnemer.Id);
+            var persoon = await _persoonService.GetById(deelnemer.Id);
             await _fietstochtenService.AddDeelnemerAsync(_selectedFietsTocht, persoon!);
         }
         await RefreshList();
+        StateHasChanged();
     }
 
     private void VerwijderDeelnemer()
@@ -154,13 +162,11 @@
         return Task.CompletedTask;
     }
 
-    private IEnumerable<Fietstocht> GetFietsTochten()
+    private async Task<IEnumerable<Fietstocht>> GetFietsTochten()
     {
-        var fietsTochten = _fietstochtenService
-                    .GetAll()?
-                    .OrderByDescending(ft => ft.GeplandeDatum);
+        var fietstochten = await _fietstochtenService.GetAll();
 
-        return fietsTochten ?? Enumerable.Empty<Fietstocht>();
+        return fietstochten.OrderByDescending(ft => ft.GeplandeDatum) ?? Enumerable.Empty<Fietstocht>();
     }
 
     private IEnumerable<Persoon> GetDeelnemers(Fietstocht fietstocht) =>

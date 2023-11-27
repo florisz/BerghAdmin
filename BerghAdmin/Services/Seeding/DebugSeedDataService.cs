@@ -352,18 +352,18 @@ public class DebugSeedDataService : ISeedDataService
             };
             await this._fietstochtenService.SaveAsync(fietstocht);
 
-            // Add deelnemers to fietstochten
-            var persoon = this._persoonService.GetByEmailAdres("appie@aapnootmies.com");
+            // AddAsync deelnemers to fietstochten
+            var persoon = await this._persoonService.GetByEmailAdres("appie@aapnootmies.com");
             if (persoon != null)
                 fietstocht.Deelnemers.Add(persoon);
             await this._fietstochtenService.SaveAsync(fietstocht);
 
-            persoon = this._persoonService.GetByEmailAdres("bert@aapnootmies.com");
+            persoon = await this._persoonService.GetByEmailAdres("bert@aapnootmies.com");
             if (persoon != null)
                 fietstocht.Deelnemers.Add(persoon);
             await this._fietstochtenService.SaveAsync(fietstocht);
 
-            persoon = this._persoonService.GetByEmailAdres("chappie@aapnootmies.com");
+            persoon = await this._persoonService.GetByEmailAdres("chappie@aapnootmies.com");
             if (persoon != null)
                 fietstocht.Deelnemers.Add(persoon);
             await this._fietstochtenService.SaveAsync(fietstocht);
@@ -377,9 +377,9 @@ public class DebugSeedDataService : ISeedDataService
     private async Task InsertSponsoren()
     {
         // assumption: InsertTestPersonen() has been called
-        var persoon1 = this._persoonService.GetByEmailAdres("ddolsma@mail.com");
-        var persoon2 = this._persoonService.GetByEmailAdres("eevers@mail.com");
-        var persoon3 = this._persoonService.GetByEmailAdres("ffranssen@mail.com");
+        var persoon1 = await this._persoonService.GetByEmailAdres("ddolsma@mail.com");
+        var persoon2 = await this._persoonService.GetByEmailAdres("eevers@mail.com");
+        var persoon3 = await this._persoonService.GetByEmailAdres("ffranssen@mail.com");
 
         // insert an Ambassadeur
         var ambassadeur = new Ambassadeur()
@@ -430,7 +430,7 @@ public class DebugSeedDataService : ISeedDataService
             await this._golfdagenService.SaveAsync(golfdag);
 
             // add golfdag deelnemers
-            var persoon = this._persoonService.GetByEmailAdres("chappie@aapnootmies.com");
+            var persoon = await this._persoonService.GetByEmailAdres("chappie@aapnootmies.com");
             if (persoon != null)
                 golfdag.Deelnemers.Add(persoon);
             await this._golfdagenService.SaveAsync(golfdag);

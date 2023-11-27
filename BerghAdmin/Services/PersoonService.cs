@@ -1,6 +1,7 @@
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services.Evenementen;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace BerghAdmin.Services;
 
@@ -32,7 +33,7 @@ public class PersoonService : IPersoonService
         }
     }
 
-    public Persoon? GetByActionId(int actionId)
+    public Task<Persoon?> GetByActionId(int actionId)
     {
         _logger.LogDebug($"Get persoon by action id:{actionId}");
 
@@ -41,12 +42,12 @@ public class PersoonService : IPersoonService
                 .SingleOrDefault(p => p.BihzActie != null &&
                                         p.BihzActie.Id == actionId);
 
-        _logger.LogDebug($"Persoon (id={persoon?.Id}) with naam {persoon?.VolledigeNaam} retrieved by actionId {actionId} was {((persoon == null)? "NOT Ok" : "Ok")}");
+        _logger.LogDebug($"Persoon (id={persoon?.Id}) with naam {persoon?.VolledigeNaam} retrieved by actionId {actionId} was {((persoon == null) ? "NOT Ok" : "Ok")}");
 
-        return persoon;
+        return Task.FromResult(persoon);
     }
 
-    public Persoon? GetById(int id)
+    public Task<Persoon?> GetById(int id)
     {
         Persoon? persoon;
 
@@ -63,7 +64,7 @@ public class PersoonService : IPersoonService
 
             _logger.LogDebug($"Persoon with naam {persoon?.VolledigeNaam} retrieved by id {id} was {((persoon == null) ? "NOT Ok" : "Ok")}");
 
-            return persoon;
+            return Task.FromResult(persoon);
         }
         catch (Exception ex)
         {
@@ -72,7 +73,7 @@ public class PersoonService : IPersoonService
         }
     }
 
-    public Persoon? GetByEmailAdres(string emailAdres)
+    public Task<Persoon?> GetByEmailAdres(string emailAdres)
     {
         _logger.LogDebug($"Get persoon by email adres {emailAdres}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
 
@@ -83,10 +84,10 @@ public class PersoonService : IPersoonService
 
         _logger.LogDebug($"Persoon (id={persoon?.Id}) with naam {persoon?.VolledigeNaam} retrieved by emailadres {emailAdres} was {((persoon == null) ? "NOT Ok" : "Ok")}");
 
-        return persoon;
+        return Task.FromResult(persoon);
     }
 
-    public List<Persoon> GetPersonen()
+    public Task<List<Persoon>> GetPersonen()
     {
         _logger.LogDebug($"Get alle personen; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
 
@@ -95,12 +96,14 @@ public class PersoonService : IPersoonService
             .Include(p => p.Rollen)
             .Include(p => p.Donaties)
             .Include(p => p.Fietstochten)
-        .ToList();
+            .ToList();
+
         _logger.LogDebug($"Get alle personen returned {((personen == null) ? 0 : personen.Count)} personen");
-        return personen ?? new List<Persoon>();
+        
+        return Task.FromResult(personen ?? new List<Persoon>());
     }
 
-    public List<Persoon> GetFietsersEnBegeleiders()
+    public Task<PersoonListItem[]> GetFietstochtDeelnemers()
     {
         _logger.LogDebug($"Get alle fietsers en begeleiders; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
 
@@ -108,17 +111,18 @@ public class PersoonService : IPersoonService
                 .Personen?
                 .Where(p => p.Rollen.Any(r => r.Id == Convert.ToInt32(RolTypeEnum.Fietser) || r.Id == Convert.ToInt32(RolTypeEnum.Begeleider)))
                 .OrderBy(p => p.Achternaam)
-                .ToList();
+                .Select(p => new PersoonListItem() { Id = p.Id, VolledigeNaamMetRollenEnEmail = p.VolledigeNaamMetRollenEnEmail })
+                .ToArray();
 
-        _logger.LogDebug($"Get alle fietsers en begeleiders returned {((personen == null) ? 0 : personen.Count)} personen");
+        _logger.LogDebug($"Get alle fietsers en begeleiders returned {((personen == null) ? 0 : personen.Count())} personen");
 
-        return personen ?? new List<Persoon>();
+        return Task.FromResult(personen ?? new PersoonListItem[] { });
     }
 
 
     public async Task SavePersoonAsync(Persoon persoon)
     {
-        _logger.LogDebug($"Save persoon with name {persoon.VolledigeNaam}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+        _logger.LogDebug($"SaveAsync persoon with name {persoon.VolledigeNaam}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
         var debugView = _dbContext.ChangeTracker.DebugView.LongView;
         if (persoon.Id == 0)
         {

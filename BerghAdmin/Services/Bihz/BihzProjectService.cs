@@ -20,7 +20,7 @@ public class BihzProjectService : IBihzProjectService
 
     public async Task AddAsync(BihzProject project)
     {
-        _logger.LogDebug($"Add BihzProject with KentaaId {project.ProjectId}");
+        _logger.LogDebug($"AddAsync BihzProject with KentaaId {project.ProjectId}");
 
         var bihzProject = MapChanges(GetByKentaaId(project.ProjectId), project);
 
@@ -28,7 +28,7 @@ public class BihzProjectService : IBihzProjectService
         {
             // Fietstocht has not been linked to a registered Kentaa project yet,
             // Link thru the title of the Kentaa project
-            var fietsTocht = _fietstochtenService.GetByProject(project);
+            var fietsTocht = await _fietstochtenService.GetByProject(project);
 
             if (fietsTocht == null)
             {

@@ -57,7 +57,7 @@ public class DocumentService : IDocumentService
 
     public async Task SaveDocument(Document document)
     {
-        _logger.LogDebug($"Save document merge {document.Name}");
+        _logger.LogDebug($"SaveAsync document merge {document.Name}");
 
         if (document.Id == 0) 
         {

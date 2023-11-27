@@ -1,9 +1,11 @@
-﻿@page "/add-fietsers-to-fietstocht-dialog"
+﻿@page "/add-deelnemers-to-fietstocht-dialog"
 
 @using BerghAdmin.Events
 @using Microsoft.AspNetCore.Components;
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Popups
+
+@inject ILogger<AddDeelnemersToFietstochtDialog> _logger
 
 @attribute [Authorize(Policy = "IsBeheerFietsers")]
 
@@ -14,11 +16,11 @@
         <Content>
             <EditForm Model="@_currentPersoon">
                 <SfListBox @ref="_personenListBox"
-                            TValue="PersoonListItem[]"
-                            TItem="PersoonListItem"
-                            DataSource="@_teSelecterenPersonenArray"
-                            @bind-Value="_geselecteerdePersonenArray">
-                    <ListBoxFieldSettings Text="VolledigeNaamEmail" Value="Id" />
+                           TValue="PersoonListItem[]"
+                           TItem="PersoonListItem"
+                            DataSource="@_teSelecterenPersonenList"
+                            @bind-Value="_geselecteerdePersonenList">
+                    <ListBoxFieldSettings Text="VolledigeNaamMetRollenEnEmail" Value="Id" />
                     <ListBoxSelectionSettings ShowCheckbox="true" />
                 </SfListBox>
             </EditForm>
@@ -32,18 +34,20 @@
 
 @code {
     [Parameter]
-    public EventCallback<FietsersAddedEventArgs> OnFietsersAdded { get; set; }
+    public EventCallback<DeelnemersAddedEventArgs> OnDeelnemersAdded { get; set; }
 
     SfListBox<PersoonListItem[], PersoonListItem>? _personenListBox;
-    private PersoonListItem[] _teSelecterenPersonenArray = new PersoonListItem[] { };
-    private PersoonListItem[] _geselecteerdePersonenArray = new PersoonListItem[] { };
+    private PersoonListItem[] _teSelecterenPersonenList = new PersoonListItem[] { };
+    private PersoonListItem[] _geselecteerdePersonenList = new PersoonListItem[] { };
     private PersoonListItem _currentPersoon = new();
 
     public bool IsVisible { get; set; } = false;
 
-    public void DialogOpen(PersoonListItem[] teSelecterenPersonen)
+    public void DialogOpen(PersoonListItem[] teSelecterenPersonen, PersoonListItem[] geselecteerdePersonen)
     {
-        _teSelecterenPersonenArray = teSelecterenPersonen;
+        _logger.LogDebug($"Dialog AddDeelnemersToFietstochtDialog open ; threadid={Thread.CurrentThread.ManagedThreadId}");
+        _teSelecterenPersonenList = teSelecterenPersonen;
+        _geselecteerdePersonenList = geselecteerdePersonen;
         IsVisible = true;
         StateHasChanged();
     }
@@ -55,9 +59,7 @@
 
     private async Task SaveAndClose()
     {
-        // temporary
-        var returnList = new Persoon[] { };
-        await OnFietsersAdded.InvokeAsync(new FietsersAddedEventArgs(_geselecteerdePersonenArray));
+        await OnDeelnemersAdded.InvokeAsync(new DeelnemersAddedEventArgs(_geselecteerdePersonenList));
 
         DialogClose();
     }

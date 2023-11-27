@@ -219,7 +219,7 @@ else
     public string? headerText;
 
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _logger.LogDebug($"Start Initializing EditPersoonDialoog; threadid={Thread.CurrentThread.ManagedThreadId}");
         base.OnInitialized();
@@ -230,7 +230,7 @@ else
         }
         else
         {
-            _currentPersoon = _persoonService.GetById(PersoonId);
+            _currentPersoon = await _persoonService.GetById(PersoonId);
             if (_currentPersoon == null)
                 throw new ApplicationException($"Persoon met id {PersoonId} niet gevonden");
         }
@@ -238,7 +238,7 @@ else
         _alleRollenArray = _rolService.GetAlleRolListItems();
         _selectedRollenArray = _currentPersoon.GetRolListItems();
 
-        _alleFietsTochtenArray = _fietstochtenService.GetAlleFietstochtListItems()!.ToArray();
+        _alleFietsTochtenArray = await _fietstochtenService.GetAlleFietstochtListItems();
         _selectedFietsTochtenArray = _currentPersoon.GetFietstochtListItems();
         headerText = IsNewPersoon() ? "Nieuwe persoon toevoegen" : "Wijzig persoon gegevens";
 
@@ -249,7 +249,7 @@ else
     {
         // TO DO: If edits were made, ask for confirmation
         _dbContext.UndoingChangesDbContextLevel();
-        _navigationManager.NavigateTo($"/Fietsers/Fietsers");
+        _navigationManager.NavigateTo($"/Deelnemers/Deelnemers");
     }
 
     private async Task OnDialogSaveAndClose()
@@ -259,7 +259,7 @@ else
         await _persoonService.SavePersoonAsync(_currentPersoon);
         
         // go to previous page TO DO: depends on where we came from, to be fixed
-        _navigationManager.NavigateTo($"/Fietsers/Fietsers");
+        _navigationManager.NavigateTo($"/Deelnemers/Deelnemers");
     }
     
 }

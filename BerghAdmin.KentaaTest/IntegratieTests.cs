@@ -7,6 +7,7 @@ using BerghAdmin.Services.Configuration;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Seeding;
+using BerghAdmin.Services.Sponsoren;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,6 +49,9 @@ namespace BerghAdmin.Tests.Kentaa
                 .Configure<SeedSettings>(databaseConfiguration.GetSection("Seeding"))
                 .AddScoped<ISeedDataService, DebugSeedDataService>()
                 .AddScoped<IFietstochtenService, FietstochtenService>()
+                .AddScoped<ISponsorService, SponsorService>()
+                .AddScoped<IDocumentService, DocumentService>()
+                .AddScoped<IGolfdagenService, GolfdagenService>()
                 .AddScoped<IDonatieService, DonatieService>()
                 .AddHttpClient()
                 .AddScoped<IKentaaInterfaceService, KentaaInterfaceService>()
@@ -125,9 +129,9 @@ namespace BerghAdmin.Tests.Kentaa
 
             await foreach (var user in users)
             {
-                _bihzUserService!.Add(user.Map());
+                await _bihzUserService!.AddAsync(user.Map());
             }
-            var bihzUsers = _bihzUserService!.GetAll();
+            var bihzUsers = await _bihzUserService!.GetAll();
 
             Assert.IsTrue(await users.CountAsync() == bihzUsers?.Count());
         }
@@ -150,7 +154,7 @@ namespace BerghAdmin.Tests.Kentaa
 
             await foreach (var donation in donations)
             {
-                _bihzDonatieService!.Add(donation.Map());
+                await _bihzDonatieService!.AddAsync(donation.Map());
             }
             var bihzDonaties = _bihzDonatieService!.GetAll();
 
@@ -164,14 +168,16 @@ namespace BerghAdmin.Tests.Kentaa
 
             // step 1: read all users and link to Personen
             var kentaaUsers = await _kentaaService!.GetKentaaResourcesByQuery<KM.Users, KM.User>(new KentaaFilter()).ToListAsync();
-            _bihzUserService!.Add(kentaaUsers.Select(ku => ku.Map()));
+            await _bihzUserService!.AddAsync(kentaaUsers.Select(ku => ku.Map()));
 
             // step 2: read projects and link to Fietstochten
             var kentaaProjects = _kentaaService.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(new KentaaFilter());
             await _bihzProjectService!.AddAsync(await kentaaProjects.Select(kp => kp.Map()).ToListAsync());
 
-            var fietsTochtNaam = "Fietstocht 2023";
-            if (_fietstochtenService!.GetByTitel(fietsTochtNaam) is not Fietstocht fietsTocht)
+            var fietsTochtNaam = "Hanzetocht 2023";
+            var tochten = await _fietstochtenService!.GetAll();
+            var tocht = await _fietstochtenService!.GetByTitel(fietsTochtNaam);
+            if (await _fietstochtenService!.GetByTitel(fietsTochtNaam) is not Fietstocht fietsTocht)
             {
                 Assert.Fail($"Fietstocht {fietsTochtNaam} bestaat niet");
                 return;
@@ -184,7 +190,7 @@ namespace BerghAdmin.Tests.Kentaa
             string[] emailAdresses = { "appie@aapnootmies.com", "bert@aapnootmies.com", "chappie@aapnootmies.com" };
             foreach (var emailAdress in emailAdresses)
             {
-                var persoon = _persoonService!.GetByEmailAdres(emailAdress);
+                var persoon = await _persoonService!.GetByEmailAdres(emailAdress);
 
                 // check if the link to action is set for the three configured test persons
                 Assert.IsNotNull(persoon, $"Persoon met email adres: -{emailAdress}- is niet bekend");
@@ -193,10 +199,10 @@ namespace BerghAdmin.Tests.Kentaa
 
             // step 4: read all donations, create Donatie if needed and link to Personen
             var kentaaDonations = _kentaaService.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(new KentaaFilter());
-            _bihzDonatieService!.Add(await kentaaDonations.Select(kd => kd.Map()).ToListAsync());
+            _bihzDonatieService!.AddAsync(await kentaaDonations.Select(kd => kd.Map()).ToListAsync());
 
             // check if persoon chappie has donaties
-            var chappie = _persoonService!.GetByEmailAdres("chappie@aapnootmies.com");
+            var chappie = await _persoonService!.GetByEmailAdres("chappie@aapnootmies.com");
             Assert.IsNotNull(chappie, "Persoon met email adres: -chappie@aapnootmies.com- is niet bekend");
             Assert.IsTrue(chappie?.BihzActie != null, "Persoon heeft geen gelinkte Action in Kentaa");
             Assert.True(chappie!.Donaties != null, "Geen Donaties voor test persoon Chappie");

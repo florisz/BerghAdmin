@@ -1,8 +1,5 @@
 ﻿using BerghAdmin.Data.Kentaa;
 using BerghAdmin.DbContexts;
-using BerghAdmin.General;
-
-using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 namespace BerghAdmin.Services.Bihz;
 
@@ -19,17 +16,17 @@ public class BihzUserService : IBihzUserService
         _logger = logger;
     }
 
-    public void Add(BihzUser user)
+    public async Task AddAsync(BihzUser user)
     {
-        _logger.LogDebug("Add BihzUser with KentaaId {UserId}", user.UserId);
+        _logger.LogDebug("AddAsync BihzUser with KentaaId {UserId}", user.UserId);
 
-        var bihzUser = MapChanges(GetByKentaaId(user.UserId), user);
+        var bihzUser = MapChanges(await GetByKentaaId(user.UserId), user);
 
         if (bihzUser.PersoonId == null)
         {
             // Persoon has not been linked to a registered Kentaa user yet,
             // link thru the email address of the Kentaa user
-            var persoon = _persoonService.GetByEmailAdres(bihzUser.Email ?? "no-email");
+            var persoon = await _persoonService.GetByEmailAdres(bihzUser.Email ?? "no-email");
             if (persoon == null)
             {
                 _logger.LogError("Kentaa user with id {UserId} can not be processed; reason: the corresponding persoon with email address {Email} is unknown.",
@@ -39,64 +36,59 @@ public class BihzUserService : IBihzUserService
             persoon.BihzUser = bihzUser;
             bihzUser.PersoonId = persoon.Id;
 
-            _persoonService.SavePersoonAsync(persoon);
+            await _persoonService.SavePersoonAsync(persoon);
         }
 
-        Save(bihzUser);
+        await SaveAsync(bihzUser);
         _logger.LogInformation("Kentaa user with id {UserId} successfully linked to persoon with id {PersoonId}", bihzUser.UserId, bihzUser.PersoonId);
     }
 
-    public void Add(IEnumerable<BihzUser> users)
+    public async Task AddAsync(IEnumerable<BihzUser> users)
     {
         foreach (var user in users)
         {
-            Add(user);
+            await AddAsync(user);
         }
     }
 
-    public bool Exist(BihzUser bihzUser)
-        => GetByKentaaId(bihzUser.Id) != null;
+    public async Task<bool> ExistAsync(BihzUser bihzUser)
+        => await GetByKentaaId(bihzUser.Id) != null;
 
-    public IEnumerable<BihzUser>? GetAll()
-        => _dbContext
-            .BihzUsers;
+    public Task<List<BihzUser>> GetAll()
+    { 
+        var bihzUsers = _dbContext
+                            .BihzUsers?
+                            .ToList();
 
-    public BihzUser? GetById(int id)
-       => _dbContext
+        return Task.FromResult(bihzUsers ?? new List<BihzUser>());
+    }
+
+    public Task<BihzUser?> GetById(int id)
+       => Task.FromResult(_dbContext
             .BihzUsers?
-            .SingleOrDefault(kd => kd.Id == id);
+            .SingleOrDefault(kd => kd.Id == id));
 
-    public BihzUser? GetByKentaaId(int kentaaId)
-        => _dbContext
+    public Task<BihzUser?> GetByKentaaId(int kentaaId)
+        => Task.FromResult(_dbContext
             .BihzUsers?
-            .SingleOrDefault(ka => ka.UserId == kentaaId);
+            .SingleOrDefault(ka => ka.UserId == kentaaId));
 
-    public ErrorCodeEnum Save(BihzUser bihzUser)
+    public async Task SaveAsync(BihzUser bihzUser)
     {
-        try
+        if (bihzUser.Id == 0)
         {
-            if (bihzUser.Id == 0)
-            {
-                _dbContext
-                    .BihzUsers?
-                    .Add(bihzUser);
-            }
-            else
-            {
-                _dbContext
-                    .BihzUsers?
-                    .Update(bihzUser);
-            }
-
-            _dbContext.SaveChanges();
+            _dbContext
+                .BihzUsers?
+                .Add(bihzUser);
         }
-        catch (Exception)
+        else
         {
-            // log exception
-            return ErrorCodeEnum.Conflict;
+            _dbContext
+                .BihzUsers?
+                .Update(bihzUser);
         }
 
-        return ErrorCodeEnum.Ok;
+        await _dbContext.SaveChangesAsync();
     }
 
     private BihzUser MapChanges(BihzUser? currentUser, BihzUser user)

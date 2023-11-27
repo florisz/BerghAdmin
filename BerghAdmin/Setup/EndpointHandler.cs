@@ -53,7 +53,7 @@ public class EndpointHandler
         if (ApiKeyMissing(req))
             return Results.Unauthorized();
 
-        service.Add(donation);
+        service.AddAsync(donation);
         return Results.Ok("Ik heb n Donation toegevoegd");
     }
 
@@ -71,7 +71,7 @@ public class EndpointHandler
         if (ApiKeyMissing(req))
             return Results.Unauthorized();
 
-        service.Add(user);
+        service.AddAsync(user);
         return Results.Ok("Ik heb n User toegevoegd");
     }
 

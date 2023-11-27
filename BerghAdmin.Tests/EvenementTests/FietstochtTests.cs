@@ -29,7 +29,7 @@ namespace BerghAdmin.Tests.EvenementenTests
 
             var service = this.GetRequiredService<IFietstochtenService>();
             await service.SaveAsync(new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
-            var fietstocht = service.GetByTitel(fietstochtNaam);
+            var fietstocht = await service.GetByTitel(fietstochtNaam);
 
             Assert.AreEqual(fietstocht?.Titel, fietstochtNaam);
         }
@@ -41,12 +41,12 @@ namespace BerghAdmin.Tests.EvenementenTests
 
             var service = this.GetRequiredService<IFietstochtenService>();
             await service.SaveAsync(new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
-            var fietstocht = service.GetByTitel(fietstochtNaam);
+            var fietstocht = await service.GetByTitel(fietstochtNaam);
 
             Assert.IsNotNull(fietstocht);
             if (fietstocht != null)
             {
-                var fietstochtById = service.GetById(fietstocht.Id);
+                var fietstochtById = await service.GetById(fietstocht.Id);
                 Assert.IsNotNull(fietstochtById);
                 Assert.AreEqual(fietstochtById!.Titel, fietstochtNaam);
             }
@@ -77,7 +77,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             fietstocht.Titel = fietstochtUpdatedNaam;
             await service.SaveAsync(fietstocht);
 
-            var fietstochtById = service.GetById(fietstocht.Id);
+            var fietstochtById = await service.GetById(fietstocht.Id);
             Assert.IsNotNull(fietstochtById);
             Assert.AreEqual(fietstochtById!.Titel, fietstochtUpdatedNaam);
         }
@@ -93,7 +93,7 @@ namespace BerghAdmin.Tests.EvenementenTests
 
             var bihzProject = new BihzProject() { Id = 1, ProjectId = projectId };
 
-            var fietstochtByProject = service.GetByProject(bihzProject);
+            var fietstochtByProject = await service.GetByProject(bihzProject);
             Assert.IsNotNull(fietstochtByProject);
         }
 
@@ -108,7 +108,7 @@ namespace BerghAdmin.Tests.EvenementenTests
 
             var bihzProject = new BihzProject() { Id = 1, Titel = projectTitel };
 
-            var fietstochtByProject = service.GetByProject(bihzProject);
+            var fietstochtByProject = await service.GetByProject(bihzProject);
             Assert.IsNotNull(fietstochtByProject);
         }
 
@@ -124,7 +124,7 @@ namespace BerghAdmin.Tests.EvenementenTests
 
             var bihzProject = new BihzProject() { Id = 1, ProjectId = projectId, Titel = projectTitel };
 
-            var fietstochtByProject = service.GetByProject(bihzProject);
+            var fietstochtByProject = await service.GetByProject(bihzProject);
             Assert.IsNotNull(fietstochtByProject);
         }
 
@@ -140,7 +140,7 @@ namespace BerghAdmin.Tests.EvenementenTests
                 await service.SaveAsync(fietstocht);
             }
 
-            var fietstochten = service.GetAll();
+            var fietstochten = await service.GetAll();
 
             Assert.AreEqual(3, fietstochten?.ToList().Count);
         }
@@ -158,7 +158,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             service = null;
 
             var service2 = this.GetRequiredService<IFietstochtenService>();
-            var fietstochtById = service2.GetById(fietstocht.Id);
+            var fietstochtById = await service2.GetById(fietstocht.Id);
             var persoon = fietstochtById?.Deelnemers.FirstOrDefault();
             var isDeelnemerVan = persoon?.Fietstochten?.FirstOrDefault(f => f.Id == fietstocht.Id) != null;
 
@@ -179,7 +179,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             await service.AddDeelnemerAsync(fietstocht, new Persoon() { EmailAdres = "aap@noot.com" });
             
             var service2 = this.GetRequiredService<IFietstochtenService>();
-            var fietstochtById = service2.GetById(fietstocht.Id);
+            var fietstochtById = await service2.GetById(fietstocht.Id);
             var persoon = fietstochtById?.Deelnemers.FirstOrDefault();
             Assert.IsNotNull(fietstochtById);
             Assert.IsNotNull(persoon);
@@ -207,7 +207,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             await service.AddDeelnemerAsync(fietstocht, persoon);
 
             var service2 = this.GetRequiredService<IFietstochtenService>();
-            var fietstochtById = service2.GetById(fietstocht.Id);
+            var fietstochtById = await  service2.GetById(fietstocht.Id);
             Assert.IsNotNull(fietstochtById);
 
             // try to delete an exisitng deelnemer from the fietstocht

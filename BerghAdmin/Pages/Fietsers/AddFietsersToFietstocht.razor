@@ -1,4 +1,4 @@
-﻿@page "/Fietsers/Fietstochten/ToevoegenFietsers"
+﻿@page "/Deelnemers/Fietstochten/ToevoegenFietsers"
 
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
@@ -19,7 +19,7 @@
     int _fietstochtId;
     Fietstocht? _huidigeFietstocht;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
 
@@ -28,7 +28,7 @@
             // TO DO: We don't have a fietstochtId
             _navigationManager.NavigateTo("/Error");
         }
-        _huidigeFietstocht = _fietstochtenService.GetById(_fietstochtId);
+        _huidigeFietstocht = await _fietstochtenService.GetById(_fietstochtId);
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)

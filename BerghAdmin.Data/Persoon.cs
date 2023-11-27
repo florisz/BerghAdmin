@@ -49,10 +49,13 @@ public class Persoon : Donateur
                                 Tussenvoegsel,
                                 Achternaam }
         );
-
     [NotMapped]
     public string VolledigeNaamMetRollen
          => $"{VolledigeNaam} ( {GetRollenAsString} )";
+
+    [NotMapped]
+    public string VolledigeNaamMetRollenEnEmail
+        => $"{VolledigeNaam} ({EmailAdres})";
 
     public static Persoon Empty
         => new Persoon()
@@ -81,5 +84,5 @@ public class Persoon : Donateur
 public class PersoonListItem
 {
     public int Id { get; set; }
-    public string VolledigeNaamEmail { get; set; } = "";
+    public string VolledigeNaamMetRollenEnEmail { get; set; } = "";
 }

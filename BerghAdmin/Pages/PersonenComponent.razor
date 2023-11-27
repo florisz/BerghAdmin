@@ -297,17 +297,17 @@
         {
             // open the edit dialog for the selected person
             var id = selectedPersonen.ElementAt(0).Id;
-            _navigationManager.NavigateTo($"/Fietsers/EditPersoon?persoonId={id}");
+            _navigationManager.NavigateTo($"/Deelnemers/EditPersoon?persoonId={id}");
         }
     }
 
     private void AddPersoon()
     {
         // open the edit dialog for a this new person
-        _navigationManager.NavigateTo($"/Fietsers/EditPersoon?persoonId=0");
+        _navigationManager.NavigateTo($"/Deelnemers/EditPersoon?persoonId=0");
     }
 
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
@@ -315,7 +315,7 @@
 
         _selectedRollen = RolContext.ToList<int>();
         _rollenList = GetRollen();
-        _fietsTochtenList = (_fietstochtenService.GetAll() ?? Enumerable.Empty<Fietstocht>()).ToList();
+        _fietsTochtenList = (await _fietstochtenService.GetAll() ?? Enumerable.Empty<Fietstocht>()).ToList();
 
         await RefreshList();
 
@@ -355,30 +355,26 @@
         }
         else
         {
-            _personenList = GetPersonen(_selectedRollen).OrderBy(p => p.Achternaam).ToList<Persoon>();
+            var personen = await GetPersonen(_selectedRollen);
+            _personenList = personen.OrderBy(p => p.Achternaam).ToList<Persoon>();
         }
         return;
     }
 
-   private List<Persoon> GetPersonen(List<int> rolTypes)
+    private async Task<List<Persoon>> GetPersonen(List<int> rolTypes)
     {
         var personen = new List<Persoon>();
 
         if (ToonAlles)
         {
+            personen = await _persoonService
+                            .GetPersonen();
+
             // also show persons with no role
-            if (ToonVerwijderd)
+            if (!ToonVerwijderd)
             {
-                personen = _persoonService
-                            .GetPersonen()!
-                            .ToList<Persoon>();
-            }
-            else
-            {
-                personen = _persoonService
-                            .GetPersonen()!
-                            .Where(p => !p.IsVerwijderd)
-                            .ToList<Persoon>();
+                personen = personen.Where(p => !p.IsVerwijderd).ToList();
+
             }
         }
         else
@@ -387,12 +383,11 @@
             var currentRollen = _rollenList
                                 .Where(r => rolTypes.Contains(r.Id))
                                 .ToList<Rol>();
-
-            personen = _persoonService
-                        .GetPersonen()!
-                        .Where(p => !p.IsVerwijderd)
-                        .Where(p => p.Rollen.FirstOrDefault(r => rolTypes.Contains(r.Id)) != null)
-                        .ToList<Persoon>();
+            personen = await _persoonService
+                            .GetPersonen()!;
+            personen = personen.Where(p => !p.IsVerwijderd)
+                            .Where(p => p.Rollen.FirstOrDefault(r => rolTypes.Contains(r.Id)) != null)
+                            .ToList<Persoon>();
             if (ZonderReserves)
             {
                 personen = personen
