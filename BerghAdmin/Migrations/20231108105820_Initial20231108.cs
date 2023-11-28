@@ -783,7 +783,7 @@ namespace BerghAdmin.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Ambassadeur",
+                name: "Contactpersoon",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
@@ -991,7 +991,7 @@ namespace BerghAdmin.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Ambassadeur");
+                name: "Contactpersoon");
 
             migrationBuilder.DropTable(
                 name: "AspNetUserClaims");

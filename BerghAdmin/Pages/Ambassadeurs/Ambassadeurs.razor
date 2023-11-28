@@ -1,5 +1,5 @@
 ﻿@page "/Ambassadeurs"
-@page "/Ambassadeurs/personen"
+@page "/Ambassadeurs/Overzicht"
 
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
@@ -8,13 +8,13 @@
 
 @attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
 
-<h3>Ambassadeurs</h3>
+<h3>Ambassadeurs - overzicht</h3>
 
 <PersonenComponent RolContext="@rolContext" />
 
 @code
 {
-    public int[] rolContext = new int[] { Convert.ToInt32(RolTypeEnum.Ambassadeur) };
+    public int[] rolContext = new int[] { Convert.ToInt32(RolTypeEnum.Contactpersoon) };
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {

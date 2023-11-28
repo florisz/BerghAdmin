@@ -26,7 +26,7 @@ namespace BerghAdmin.Tests.DomainTests
             var persoon = new Persoon { Id = 1, 
                                         Rollen = new HashSet<Rol> 
                                             { 
-                                                new Rol { Id = Convert.ToInt32(RolTypeEnum.Ambassadeur),Beschrijving = "Aap" } 
+                                                new Rol { Id = Convert.ToInt32(RolTypeEnum.Contactpersoon),Beschrijving = "Aap" } 
                                             } 
                                       };
             Assert.AreEqual("Aap", persoon.GetRollenAsString);
@@ -38,7 +38,7 @@ namespace BerghAdmin.Tests.DomainTests
             var persoon = new Persoon { Id = 1, 
                                         Rollen = new HashSet<Rol> 
                                             { 
-                                                new Rol { Id = Convert.ToInt32(RolTypeEnum.Ambassadeur), Beschrijving = "Aap" }, 
+                                                new Rol { Id = Convert.ToInt32(RolTypeEnum.Contactpersoon), Beschrijving = "Aap" }, 
                                                 new Rol { Id = Convert.ToInt32(RolTypeEnum.Fietser), Beschrijving = "Noot" }, 
                                                 new Rol { Id = Convert.ToInt32(RolTypeEnum.Golfer), Beschrijving = "Mies" }, 
                                             } 
@@ -51,7 +51,7 @@ namespace BerghAdmin.Tests.DomainTests
         [Test]
         public void TestNotARealTestButALambdaTest()
         {
-            var rol1 = new Rol { Id = Convert.ToInt32(RolTypeEnum.Ambassadeur), Beschrijving = "Ambassadeur" };
+            var rol1 = new Rol { Id = Convert.ToInt32(RolTypeEnum.Contactpersoon), Beschrijving = "Contactpersoon" };
             var rol2 = new Rol { Id = Convert.ToInt32(RolTypeEnum.Fietser), Beschrijving = "Fietser" };
             var rol3 = new Rol { Id = Convert.ToInt32(RolTypeEnum.Golfer), Beschrijving = "Golfer" };
             var rol4 = new Rol { Id = Convert.ToInt32(RolTypeEnum.Golfer), Beschrijving = "Vrijwilliger" };

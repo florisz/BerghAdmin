@@ -997,7 +997,7 @@ namespace BerghAdmin.Migrations
                     b.ToTable("Sponsoren");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.Ambassadeur", b =>
+            modelBuilder.Entity("BerghAdmin.Data.Contactpersoon", b =>
                 {
                     b.HasBaseType("BerghAdmin.Data.Sponsor");
 
@@ -1018,7 +1018,7 @@ namespace BerghAdmin.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("Ambassadeur", (string)null);
+                    b.ToTable("Contactpersoon", (string)null);
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.GolfdagSponsor", b =>
@@ -1257,11 +1257,11 @@ namespace BerghAdmin.Migrations
                     b.Navigation("ContactPersoon");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.Ambassadeur", b =>
+            modelBuilder.Entity("BerghAdmin.Data.Contactpersoon", b =>
                 {
                     b.HasOne("BerghAdmin.Data.Sponsor", null)
                         .WithOne()
-                        .HasForeignKey("BerghAdmin.Data.Ambassadeur", "Id")
+                        .HasForeignKey("BerghAdmin.Data.Contactpersoon", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

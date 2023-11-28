@@ -94,7 +94,7 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .HasOne(a => a.ContactPersoon);
         modelBuilder
             .Entity<Ambassadeur>()
-            .ToTable("Ambassadeur");
+            .ToTable("Contactpersoon");
         // Ambassadeurs - end
 
         // GolfdagSponsor 

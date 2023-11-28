@@ -11,8 +11,8 @@ namespace BerghAdmin.Services.Seeding
 
         public static async Task<Dictionary<RolTypeEnum, Rol>> InsertRollen(IRolService rolService)
         {
-            var rolAmbassadeur = new Rol { Id = Convert.ToInt32(RolTypeEnum.Ambassadeur), Beschrijving = "Ambassadeur", MeervoudBeschrijving = "Ambassadeurs" };
-            await rolService.AddRol(rolAmbassadeur);
+            var rolContactpersoon = new Rol { Id = Convert.ToInt32(RolTypeEnum.Contactpersoon), Beschrijving = "Contactpersoon", MeervoudBeschrijving = "Contactpersonen" };
+            await rolService.AddRol(rolContactpersoon);
 
             var rolBegeleider = new Rol { Id = Convert.ToInt32(RolTypeEnum.Begeleider), Beschrijving = "Begeleider", MeervoudBeschrijving = "Begeleiders" };
             await rolService.AddRol(rolBegeleider);
@@ -37,7 +37,7 @@ namespace BerghAdmin.Services.Seeding
 
             var rollen = new Dictionary<RolTypeEnum, Rol>
             {
-                { RolTypeEnum.Ambassadeur, rolAmbassadeur },
+                { RolTypeEnum.Contactpersoon, rolContactpersoon },
                 { RolTypeEnum.Begeleider, rolBegeleider },
                 { RolTypeEnum.CommissieLid, rolCommissieLid},
                 { RolTypeEnum.Golfer, rolGolfer },

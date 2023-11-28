@@ -101,7 +101,7 @@ public class DebugSeedDataService : ISeedDataService
             Plaats = "'Heerenberg'",
             Postcode = "4321 AB",
             Telefoon = "onbekend",
-            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.Ambassadeur] }
+            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.Contactpersoon] }
         };
         await _persoonService.SavePersoonAsync(persoon);
 
@@ -175,7 +175,7 @@ public class DebugSeedDataService : ISeedDataService
             Plaats = "Lengel",
             Postcode = "4321 AB",
             Telefoon = "onbekend",
-            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.Ambassadeur] }
+            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.Contactpersoon] }
         };
         await _persoonService.SavePersoonAsync(persoon);
 
@@ -193,7 +193,7 @@ public class DebugSeedDataService : ISeedDataService
             Plaats = "Oud Dijk",
             Postcode = "4321 AB",
             Telefoon = "onbekend",
-            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Golfer], rollen[RolTypeEnum.Ambassadeur] }
+            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Golfer], rollen[RolTypeEnum.Contactpersoon] }
         };
         await _persoonService.SavePersoonAsync(persoon);
 
@@ -211,7 +211,7 @@ public class DebugSeedDataService : ISeedDataService
             Plaats = "Azewijn",
             Postcode = "4321 AB",
             Telefoon = "onbekend",
-            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Golfer], rollen[RolTypeEnum.Ambassadeur] }
+            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Golfer], rollen[RolTypeEnum.Contactpersoon] }
         };
         await _persoonService.SavePersoonAsync(persoon);
 
@@ -229,7 +229,7 @@ public class DebugSeedDataService : ISeedDataService
             Plaats = "Braamt",
             Postcode = "4321 AB",
             Telefoon = "onbekend",
-            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Begeleider], rollen[RolTypeEnum.CommissieLid], rollen[RolTypeEnum.VriendVan], rollen[RolTypeEnum.Golfer], rollen[RolTypeEnum.Ambassadeur] }
+            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Begeleider], rollen[RolTypeEnum.CommissieLid], rollen[RolTypeEnum.VriendVan], rollen[RolTypeEnum.Golfer], rollen[RolTypeEnum.Contactpersoon] }
         };
         await _persoonService.SavePersoonAsync(persoon);
 
@@ -381,12 +381,12 @@ public class DebugSeedDataService : ISeedDataService
         var persoon2 = await this._persoonService.GetByEmailAdres("eevers@mail.com");
         var persoon3 = await this._persoonService.GetByEmailAdres("ffranssen@mail.com");
 
-        // insert an Ambassadeur
+        // insert an Contactpersoon
         var ambassadeur = new Ambassadeur()
         {
             Id = 0,
             DatumAangebracht = new DateTime(2015, 5, 9),
-            Naam = "Ambassadeur 1",
+            Naam = "Contactpersoon 1",
             Pakket = PakketEnum.Ambassadeur,
             ToegezegdBedrag = 1000,
             TotaalBedrag = 1000, 
