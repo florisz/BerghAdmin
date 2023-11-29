@@ -197,9 +197,9 @@
     }
 
     // search in the grid functionaity
-    public void OnInputSearchString(InputEventArgs args)
+    public async Task OnInputSearchString(InputEventArgs args)
     {
-        this._personenGrid.SearchAsync(args.Value);
+        await this._personenGrid.SearchAsync(args.Value);
     }
 
     // Everything to handle the email dialog

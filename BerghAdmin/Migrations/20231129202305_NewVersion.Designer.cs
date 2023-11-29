@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231108105820_Initial20231108")]
-    partial class Initial20231108
+    [Migration("20231129202305_NewVersion")]
+    partial class NewVersion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1000,7 +1000,7 @@ namespace BerghAdmin.Migrations
                     b.ToTable("Sponsoren");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.Contactpersoon", b =>
+            modelBuilder.Entity("BerghAdmin.Data.Ambassadeur", b =>
                 {
                     b.HasBaseType("BerghAdmin.Data.Sponsor");
 
@@ -1021,7 +1021,7 @@ namespace BerghAdmin.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.ToTable("Contactpersoon", (string)null);
+                    b.ToTable("Ambassadeur", (string)null);
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.GolfdagSponsor", b =>
@@ -1260,11 +1260,11 @@ namespace BerghAdmin.Migrations
                     b.Navigation("ContactPersoon");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.Contactpersoon", b =>
+            modelBuilder.Entity("BerghAdmin.Data.Ambassadeur", b =>
                 {
                     b.HasOne("BerghAdmin.Data.Sponsor", null)
                         .WithOne()
-                        .HasForeignKey("BerghAdmin.Data.Contactpersoon", "Id")
+                        .HasForeignKey("BerghAdmin.Data.Ambassadeur", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

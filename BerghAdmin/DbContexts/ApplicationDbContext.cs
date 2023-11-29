@@ -23,6 +23,8 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
     public DbSet<Fietstocht>? Fietstochten { get; set; }
     public DbSet<Golfdag>? Golfdagen { get; set; }
     public DbSet<Sponsor>? Sponsoren{ get; set; }
+    public DbSet<Ambassadeur>? Ambassadeurs{ get; set; }
+    public DbSet<GolfdagSponsor>? GolfdagSponsoren { get; set; }
     public DbSet<BihzActie>? BihzActies { get; set; }
     public DbSet<BihzDonatie>? BihzDonaties { get; set; }
     public DbSet<BihzProject>? BihzProjects { get; set; }
@@ -94,7 +96,7 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .HasOne(a => a.ContactPersoon);
         modelBuilder
             .Entity<Ambassadeur>()
-            .ToTable("Contactpersoon");
+            .ToTable("Ambassadeur");
         // Ambassadeurs - end
 
         // GolfdagSponsor 

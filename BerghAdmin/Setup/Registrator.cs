@@ -140,6 +140,7 @@ public class Registrator
         _builder.Services.AddScoped<IFietstochtenService, FietstochtenService>();
         _builder.Services.AddScoped<IGolfdagenService, GolfdagenService>();
         _builder.Services.AddScoped<ISponsorService, SponsorService>();
+        _builder.Services.AddScoped<IAmbassadeurService, AmbassadeurService>();
         _builder.Services.AddScoped<IDonatieService, DonatieService>();
         _builder.Services.AddScoped<IUserService, UserService>();
         _builder.Services.AddScoped<IBihzUserService, BihzUserService>();

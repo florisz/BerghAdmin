@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BerghAdmin.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial20231108 : Migration
+    public partial class NewVersion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -783,7 +783,7 @@ namespace BerghAdmin.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Contactpersoon",
+                name: "Ambassadeur",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
@@ -991,7 +991,7 @@ namespace BerghAdmin.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Contactpersoon");
+                name: "Ambassadeur");
 
             migrationBuilder.DropTable(
                 name: "AspNetUserClaims");

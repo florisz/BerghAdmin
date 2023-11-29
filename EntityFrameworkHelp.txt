@@ -6,8 +6,8 @@ dotnet ef database update
 
 
 USE BIHZ2021;
-DROP TABLE __EFMigrationsHistory;
-DROP TABLE GolfdagPersoon;
+show tables;
+drop table golfdagpersoon;
 DROP TABLE GolfdagGolfdagSponsor;
 DROP TABLE GolfdagSponsor;
 DROP TABLE GolfDagen;
@@ -20,10 +20,8 @@ DROP TABLE MailccGeadresseerden;
 DROP TABLE MailbccGeadresseerden;
 DROP TABLE Ambassadeur;
 DROP TABLE Sponsoren;
-DROP TABLE MailGeadresseerden;
-DROP TABLE MailccGeadresseerden;
-DROP TABLE MailbccGeadresseerden;
 DROP TABLE VerzondenMails;
+DROP TABLE ContactPersoon;
 DROP TABLE PersoonRol;
 DROP TABLE Personen;
 DROP TABLE AspNetUserLogins;

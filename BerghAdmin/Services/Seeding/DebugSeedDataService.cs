@@ -1,4 +1,3 @@
-using BerghAdmin.DbContexts;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Sponsoren;
 using Microsoft.Extensions.Options;
@@ -13,6 +12,7 @@ public class DebugSeedDataService : ISeedDataService
     private readonly IGolfdagenService _golfdagenService;
     private readonly IPersoonService _persoonService;
     private readonly ISponsorService _sponsorService;
+    private readonly IAmbassadeurService _ambassadeurService;
     private readonly IDocumentService _documentService;
 
     public DebugSeedDataService(
@@ -21,16 +21,19 @@ public class DebugSeedDataService : ISeedDataService
         IGolfdagenService golfdagenService,
         IPersoonService persoonService,
         ISponsorService sponsorService,
+        IAmbassadeurService ambassadeurService,
         IDocumentService documentService,
         IOptions<SeedSettings> settings)
     {
-        this._settings = settings.Value;
-        this._rolService = rolService;
-        this._fietstochtenService = fietstochtenService;
-        this._golfdagenService = golfdagenService;
-        this._persoonService = persoonService;
-        this._sponsorService = sponsorService;
-        this._documentService = documentService;
+        _settings = settings.Value;
+        _rolService = rolService;
+        _fietstochtenService = fietstochtenService;
+        _golfdagenService = golfdagenService;
+        _persoonService = persoonService;
+        // TO DO: omzetten naar Golfdagsponsor service
+        _sponsorService = sponsorService;
+        _ambassadeurService = ambassadeurService;
+        _documentService = documentService;
     }
 
     public async Task SeedInitialData()
@@ -335,14 +338,14 @@ public class DebugSeedDataService : ISeedDataService
                 GeplandeDatum = new DateTime(2015, 5, 9),
                 Titel = "Klaver Vier Tocht 2015"
             };
-            await this._fietstochtenService.SaveAsync(fietstocht);
+            await _fietstochtenService.SaveAsync(fietstocht);
             fietstocht = new Fietstocht()
             {
                 Id = 0,
                 GeplandeDatum = new DateTime(2019, 5, 24),
                 Titel = "Bergh-Leipzig-Bergh 2019"
             };
-            await this._fietstochtenService.SaveAsync(fietstocht);
+            await _fietstochtenService.SaveAsync(fietstocht);
             fietstocht = new Fietstocht()
             {
                 Id = 0,
@@ -350,23 +353,23 @@ public class DebugSeedDataService : ISeedDataService
                 Titel = "Hanzetocht 2023",
                 KentaaProjectId = 17805
             };
-            await this._fietstochtenService.SaveAsync(fietstocht);
+            await _fietstochtenService.SaveAsync(fietstocht);
 
             // AddAsync deelnemers to fietstochten
-            var persoon = await this._persoonService.GetByEmailAdres("appie@aapnootmies.com");
+            var persoon = await _persoonService.GetByEmailAdres("appie@aapnootmies.com");
             if (persoon != null)
                 fietstocht.Deelnemers.Add(persoon);
-            await this._fietstochtenService.SaveAsync(fietstocht);
+            await _fietstochtenService.SaveAsync(fietstocht);
 
-            persoon = await this._persoonService.GetByEmailAdres("bert@aapnootmies.com");
+            persoon = await _persoonService.GetByEmailAdres("bert@aapnootmies.com");
             if (persoon != null)
                 fietstocht.Deelnemers.Add(persoon);
-            await this._fietstochtenService.SaveAsync(fietstocht);
+            await _fietstochtenService.SaveAsync(fietstocht);
 
-            persoon = await this._persoonService.GetByEmailAdres("chappie@aapnootmies.com");
+            persoon = await _persoonService.GetByEmailAdres("chappie@aapnootmies.com");
             if (persoon != null)
                 fietstocht.Deelnemers.Add(persoon);
-            await this._fietstochtenService.SaveAsync(fietstocht);
+            await _fietstochtenService.SaveAsync(fietstocht);
         }
         catch (Exception ex)
         {
@@ -377,34 +380,83 @@ public class DebugSeedDataService : ISeedDataService
     private async Task InsertSponsoren()
     {
         // assumption: InsertTestPersonen() has been called
-        var persoon1 = await this._persoonService.GetByEmailAdres("ddolsma@mail.com");
-        var persoon2 = await this._persoonService.GetByEmailAdres("eevers@mail.com");
-        var persoon3 = await this._persoonService.GetByEmailAdres("ffranssen@mail.com");
+        var persoon1 = await _persoonService.GetByEmailAdres("ddolsma@mail.com");
+        var persoon2 = await _persoonService.GetByEmailAdres("eevers@mail.com");
+        var persoon3 = await _persoonService.GetByEmailAdres("ffranssen@mail.com");
 
-        // insert an Contactpersoon
+        // insert an Ambassadeur
         var ambassadeur = new Ambassadeur()
         {
             Id = 0,
             DatumAangebracht = new DateTime(2015, 5, 9),
-            Naam = "Contactpersoon 1",
+            Naam = "De Gulle Gever",
             Pakket = PakketEnum.Ambassadeur,
-            ToegezegdBedrag = 1000,
-            TotaalBedrag = 1000, 
+            ToegezegdBedrag = 2000,
+            TotaalBedrag = 16000, 
             ContactPersoon = persoon1!,
             Compagnon = persoon2
         };
-        await this._sponsorService.SaveAsync<Ambassadeur>(ambassadeur);
+        await _ambassadeurService.SaveAsync(ambassadeur);
 
+        // insert an Ambassadeur
+        ambassadeur = new Ambassadeur()
+        {
+            Id = 0,
+            DatumAangebracht = new DateTime(2020, 2, 23),
+            Naam = "De Uitdeler",
+            Pakket = PakketEnum.Ambassadeur,
+            ToegezegdBedrag = 2000,
+            TotaalBedrag = 6000,
+            ContactPersoon = persoon2!
+        };
+        await _ambassadeurService.SaveAsync(ambassadeur);
+
+        // insert an Ambassadeur
+        ambassadeur = new Ambassadeur()
+        {
+            Id = 0,
+            DatumAangebracht = new DateTime(2003, 10, 30),
+            Naam = "Meer is Beter",
+            Pakket = PakketEnum.Ambassadeur,
+            ToegezegdBedrag = 2000,
+            TotaalBedrag = 40000,
+            ContactPersoon = persoon3!
+        };
+        await _ambassadeurService.SaveAsync(ambassadeur);
+
+        // insert a GolfdagSponsor
         var sponsor = new GolfdagSponsor()
         {
             Id = 0,
-            Naam = "Sponsor 1",
-            ContactPersoon = persoon3!,
-            Opmerkingen = "Opmerkingen bij sponsor 1",
+            Naam = "Mepgraag",
+            ContactPersoon = persoon1!,
+            Opmerkingen = "Voorzichtig",
             DebiteurNummer = 1234,
             Mobiel = "06-12345678"
         };
-        await this._sponsorService.SaveAsync<GolfdagSponsor>(sponsor);
+        await _sponsorService.SaveAsync<GolfdagSponsor>(sponsor);
+        // insert a GolfdagSponsor
+        sponsor = new GolfdagSponsor()
+        {
+            Id = 0,
+            Naam = "In de put",
+            ContactPersoon = persoon2!,
+            Opmerkingen = "Niet vrolijk",
+            DebiteurNummer = 5678,
+            Mobiel = "06-12345678"
+        };
+        await _sponsorService.SaveAsync<GolfdagSponsor>(sponsor);
+        // insert a GolfdagSponsor
+        sponsor = new GolfdagSponsor()
+        {
+            Id = 0,
+            Naam = "Holeinone",
+            ContactPersoon = persoon3!,
+            Opmerkingen = "Raak!",
+            DebiteurNummer = 9012,
+            Mobiel = "06-12345678"
+        };
+        await _sponsorService.SaveAsync<GolfdagSponsor>(sponsor);
     }
 
     private async Task InsertGolfdagen()
@@ -421,19 +473,19 @@ public class DebugSeedDataService : ISeedDataService
                 Locatie = "Golfbaan Borghees",
 
             };
-            await this._golfdagenService.SaveAsync(golfdag);
+            await _golfdagenService.SaveAsync(golfdag);
 
             // add golfdag sponsoren
-            var sponsor = this._sponsorService.GetByNaam<GolfdagSponsor>("Sponsor 1");
+            var sponsor = await _sponsorService.GetByNaam<GolfdagSponsor>("Sponsor 1");
             if (sponsor != null)
                 golfdag.Sponsoren.Add(sponsor);
-            await this._golfdagenService.SaveAsync(golfdag);
+            await _golfdagenService.SaveAsync(golfdag);
 
             // add golfdag deelnemers
-            var persoon = await this._persoonService.GetByEmailAdres("chappie@aapnootmies.com");
+            var persoon = await _persoonService.GetByEmailAdres("chappie@aapnootmies.com");
             if (persoon != null)
                 golfdag.Deelnemers.Add(persoon);
-            await this._golfdagenService.SaveAsync(golfdag);
+            await _golfdagenService.SaveAsync(golfdag);
         }
         catch (Exception ex)
         {
