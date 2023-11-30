@@ -1,5 +1,5 @@
 ﻿using BerghAdmin.Events;
-using BerghAdmin.Pages;
+using BerghAdmin.Pages.Mail;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 

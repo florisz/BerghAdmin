@@ -104,13 +104,13 @@ public class DebugSeedDataService : ISeedDataService
             Plaats = "'Heerenberg'",
             Postcode = "4321 AB",
             Telefoon = "onbekend",
-            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.Contactpersoon] }
+            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.Fietser], rollen[RolTypeEnum.MailingAbonnee] }
         };
         await _persoonService.SavePersoonAsync(persoon);
 
         persoon = new Persoon
         {
-            Voorletters = "BD.",
+            Voorletters = "B.D.",
             Voornaam = "Dorien",
             Achternaam = "Dolsma",
             Adres = "Straat 4",
@@ -121,9 +121,9 @@ public class DebugSeedDataService : ISeedDataService
             Mobiel = "06-12345678",
             Plaats = "Nieuw Dijk",
             Postcode = "4321 AB",
-            Telefoon = "onbekend",
+            Telefoon = "0314-123456",
             IsVerwijderd = true,
-            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.CommissieLid], rollen[RolTypeEnum.VriendVan], rollen[RolTypeEnum.MailingAbonnee] }
+            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.CommissieLid], rollen[RolTypeEnum.VriendVan], rollen[RolTypeEnum.Contactpersoon] }
         };
         await _persoonService.SavePersoonAsync(persoon);
 
@@ -140,9 +140,9 @@ public class DebugSeedDataService : ISeedDataService
             Mobiel = "06-12345678",
             Plaats = "Beek",
             Postcode = "4321 AB",
-            Telefoon = "onbekend",
+            Telefoon = "0314-123456",
             IsReserve = true,
-            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.CommissieLid], rollen[RolTypeEnum.VriendVan], rollen[RolTypeEnum.MailingAbonnee] }
+            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.CommissieLid], rollen[RolTypeEnum.VriendVan], rollen[RolTypeEnum.Contactpersoon] }
         };
         await _persoonService.SavePersoonAsync(persoon);
 
@@ -159,8 +159,8 @@ public class DebugSeedDataService : ISeedDataService
             Mobiel = "06-12345678",
             Plaats = "Kilder",
             Postcode = "4321 AB",
-            Telefoon = "onbekend",
-            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.VriendVan], rollen[RolTypeEnum.MailingAbonnee], rollen[RolTypeEnum.Golfer] }
+            Telefoon = "0314-123456",
+            Rollen = new HashSet<Rol>() { rollen[RolTypeEnum.VriendVan], rollen[RolTypeEnum.Contactpersoon], rollen[RolTypeEnum.Golfer] }
         };
         await _persoonService.SavePersoonAsync(persoon);
 

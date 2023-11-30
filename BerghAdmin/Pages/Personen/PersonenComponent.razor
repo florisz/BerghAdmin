@@ -11,6 +11,7 @@
 
 @using BerghAdmin.Data
 @using BerghAdmin.Pages
+@using BerghAdmin.Pages.Mail
 @using BerghAdmin.Services
 @using BerghAdmin.Services.Evenementen
 @using System.Security.Claims
@@ -297,14 +298,14 @@
         {
             // open the edit dialog for the selected person
             var id = selectedPersonen.ElementAt(0).Id;
-            _navigationManager.NavigateTo($"/Deelnemers/EditPersoon?persoonId={id}");
+            _navigationManager.NavigateTo($"/Personen/EditPersoon?persoonId={id}");
         }
     }
 
     private void AddPersoon()
     {
         // open the edit dialog for a this new person
-        _navigationManager.NavigateTo($"/Deelnemers/EditPersoon?persoonId=0");
+        _navigationManager.NavigateTo($"/Personen/EditPersoon?persoonId=0");
     }
 
     protected override async Task OnInitializedAsync()
@@ -358,6 +359,7 @@
             var personen = await GetPersonen(_selectedRollen);
             _personenList = personen.OrderBy(p => p.Achternaam).ToList<Persoon>();
         }
+        await _personenGrid.AutoFitColumnsAsync();
         return;
     }
 

@@ -5,7 +5,7 @@ using Syncfusion.Blazor.Inputs;
 using Syncfusion.Blazor.Popups;
 using Syncfusion.Blazor.RichTextEditor;
 
-namespace BerghAdmin.Pages;
+namespace BerghAdmin.Pages.Mail;
 
 public partial class SendMailDialog
 {

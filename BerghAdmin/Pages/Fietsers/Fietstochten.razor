@@ -1,4 +1,4 @@
-﻿@page "/Deelnemers/Fietstochten"
+﻿@page "/Fietsers/Fietstochten"
 
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
@@ -125,9 +125,6 @@
                             .ToArray();
         var geselecteerdePersonen = new PersoonListItem[] { };
         _addDeelnemersDialog.DialogOpen(lijstPersonen, geselecteerdePersonen);
-
-        // open the edit dialog for a this new person
-        //_navigationManager.NavigateTo($"/Deelnemers/Fietstochten/ToevoegenFietsers?fietstochtId={_selectedFietsTocht.Id}");
     }
 
     private async void OnDeelnemersAddedHandler(DeelnemersAddedEventArgs eventArgs)

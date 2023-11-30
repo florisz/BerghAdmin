@@ -1,4 +1,4 @@
-﻿@page "/Deelnemers/EditPersoon"
+﻿@page "/Personen/EditPersoon"
 
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
@@ -9,6 +9,9 @@
 @inject NavigationManager _navManager
 @inject IJSRuntime jsRuntime
 
+@*
+    TO DO: deze autorisatie moet nog worden aangepast
+*@
 @attribute [Authorize(Policy = "IsBeheerFietsers")]
 
 <EditPersoonComponent PersoonId="@_persoonId"/>

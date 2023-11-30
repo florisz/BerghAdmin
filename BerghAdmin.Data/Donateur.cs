@@ -26,5 +26,8 @@ namespace BerghAdmin.Data
         [NotMapped]
         public decimal? GetDonatieBedrag
             => Donaties.Sum(d => d.Bedrag);
+        [NotMapped]
+        public string VolledigeAdres
+            => string.Join(" ", new string?[] { Adres, Postcode, Plaats, Land });
     }
 }

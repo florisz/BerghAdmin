@@ -1,13 +1,14 @@
-﻿@page "/Deelnemers/Deelnemers"
+﻿@page "/Fietsers/Deelnemers"
 
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
+@using BerghAdmin.Pages.Personen
 
 @inject IJSRuntime jsRuntime
 
 @attribute [Authorize(Policy = "IsBeheerFietsers")]
 
-<h3>Fietsers</h3>
+<h3>Deelnemers aan fietstochten</h3>
 
 <PersonenComponent RolContext="@rolContext" />
 

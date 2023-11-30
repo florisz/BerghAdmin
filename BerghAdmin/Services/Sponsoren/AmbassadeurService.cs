@@ -1,6 +1,7 @@
 ﻿using BerghAdmin.Data;
 using BerghAdmin.DbContexts;
 using BerghAdmin.General;
+using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.EntityFrameworkCore;
 
 namespace BerghAdmin.Services.Sponsoren;
@@ -19,13 +20,14 @@ public class AmbassadeurService : IAmbassadeurService
 
     public Task<IEnumerable<Ambassadeur>?> GetAll()
     {
-        return Task.FromResult((IEnumerable<Ambassadeur>?)_dbContext.Ambassadeurs);
+        return Task.FromResult((IEnumerable<Ambassadeur>?)_dbContext.Ambassadeurs?.Include(a => a.ContactPersoon));
     }
 
     public Task<Ambassadeur?> GetById(int id)
     {
         return Task.FromResult(_dbContext
             .Ambassadeurs?
+            .Include(a => a.ContactPersoon)
             .FirstOrDefault(s => s.Id == id));
     }
 
@@ -35,6 +37,7 @@ public class AmbassadeurService : IAmbassadeurService
 
         var ambassadeur = _dbContext
                 .Ambassadeurs?
+                .Include(a => a.ContactPersoon)
                 .SingleOrDefault(s => s.Naam == naam);
 
         _logger.LogDebug($"Sponsor (id={ambassadeur?.Id}) with naam {ambassadeur?.Naam} retrieved by naam {naam} was {((ambassadeur == null) ? "NOT Ok" : "Ok")}");

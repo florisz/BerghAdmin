@@ -4,12 +4,14 @@
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
 @using BerghAdmin.Events
+@using BerghAdmin.Pages.Mail
+@using BerghAdmin.Pages.Personen
 @using BerghAdmin.Services.Sponsoren;
 
 @using Microsoft.AspNetCore.Identity
 
 @inject IJSRuntime jsRuntime
-@inject ILogger<PersonenComponent> _logger
+@inject ILogger<Ambassadeurs> _logger
 @inject NavigationManager _navigationManager
 @inject IJSRuntime jsRuntime
 @inject ISendMailService _sendMailService
@@ -74,16 +76,16 @@
     <GridColumns>
         <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
         <GridColumn Field=@nameof(Ambassadeur.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true" Visible="false" />
-        <GridColumn Field=@nameof(Ambassadeur.Naam) HeaderText="Naam" TextAlign="TextAlign.Left" Width="110" />
-        <GridColumn Field=@nameof(Ambassadeur.DatumAangebracht) HeaderText="Sinds" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="80" />
-        <GridColumn Field=@nameof(Ambassadeur.ToegezegdBedrag) HeaderText="Toegezegd" TextAlign="TextAlign.Left" Width="80" />
-        <GridColumn Field=@nameof(Ambassadeur.TotaalBedrag) HeaderText="Totaal" TextAlign="TextAlign.Left" Width="80" />
-        <GridColumn Field=@nameof(Ambassadeur.Adres) HeaderText="Adres" TextAlign="TextAlign.Left" Width="100" />
-        <GridColumn Field=@nameof(Ambassadeur.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left" Width="70" />
-        <GridColumn Field=@nameof(Ambassadeur.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left" Width="120" />
-        <GridColumn Field=@nameof(Ambassadeur.ContactPersoon.VolledigeNaam) HeaderText="Contact Naam" TextAlign="TextAlign.Left" Width="140" />
-        <GridColumn Field=@nameof(Ambassadeur.ContactPersoon.Telefoon) HeaderText="Contact Telefoon" TextAlign="TextAlign.Left" Width="80" />
-        <GridColumn Field=@nameof(Ambassadeur.IsVerwijderd) HeaderText="Status" FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })" Width="150">
+        <GridColumn Field=@nameof(Ambassadeur.Naam) HeaderText="Naam" TextAlign="TextAlign.Left" Width="100" />
+        <GridColumn Field=@nameof(Ambassadeur.DatumAangebracht) HeaderText="Sinds" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="60" />
+        <GridColumn Field=@nameof(Ambassadeur.ToegezegdBedrag) HeaderText="Toegezegd" TextAlign="TextAlign.Left" Width="60" />
+        <GridColumn Field=@nameof(Ambassadeur.TotaalBedrag) HeaderText="Totaal" TextAlign="TextAlign.Left" Width="60" />
+        <GridColumn Field=@nameof(Ambassadeur.VolledigeAdres) HeaderText="Adres" TextAlign="TextAlign.Left" Width="170" />
+        <GridColumn Field=@nameof(Ambassadeur.Telefoon) HeaderText="Telefoon" TextAlign="TextAlign.Left" Width="80" />
+        <GridColumn Field=@nameof(Ambassadeur.ContactPersoonVolledigeNaam) HeaderText="Contact Naam" TextAlign="TextAlign.Left" Width="120" />
+        <GridColumn Field=@nameof(Ambassadeur.ContactPersoonEmailAdres) HeaderText="Contact Email" TextAlign="TextAlign.Left" Width="120" />
+        <GridColumn Field=@nameof(Ambassadeur.ContactPersoonTelefoon) HeaderText="Contact Telefoon" TextAlign="TextAlign.Left" Width="120" />
+        <GridColumn Field=@nameof(Ambassadeur.IsVerwijderd) HeaderText="Status" FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })" Width="90">
             <Template>
                 @{
                     var ambassadeur = (Ambassadeur)context;
@@ -142,6 +144,7 @@
         _ambassadeursList = ambassadeurs
                                 .OrderBy(p => p.Naam)
                                 .ToList<Ambassadeur>();
+        await _ambassadeursGrid.AutoFitColumnsAsync();                                
     }
 
     private async Task<List<Ambassadeur>> GetAmbassadeurs()
@@ -211,7 +214,7 @@
             // open the edit dialog for the selected person
             var id = selectedAmbassadeurs.ElementAt(0).Id;
             // TO DO ambassadeur!!
-            _navigationManager.NavigateTo($"/Deelnemers/EditPersoon?persoonId={id}");
+            _navigationManager.NavigateTo($"/Fietsers/EditPersoon?persoonId={id}");
         }
     }
 
