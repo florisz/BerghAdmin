@@ -204,6 +204,9 @@ else
 @code {
     [Parameter]
     public int PersoonId { get; set; }
+    [Parameter]
+    public string? ReturnUrl { get; set; }
+    
     [CascadingParameter]
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
 
@@ -250,7 +253,7 @@ else
         // TO DO: If edits were made, ask for confirmation
         _dbContext.UndoingChangesDbContextLevel();
         // go to previous page TO DO: depends on where we came from, to be fixed
-        _navigationManager.NavigateTo($"/Fietsers/Deelnemers");
+        _navigationManager.NavigateTo(ReturnUrl);
     }
 
     private async Task OnDialogSaveAndClose()
@@ -260,7 +263,7 @@ else
         await _persoonService.SavePersoonAsync(_currentPersoon);
         
         // go to previous page TO DO: depends on where we came from, to be fixed
-        _navigationManager.NavigateTo($"/Fietsers/Deelnemers");
+        _navigationManager.NavigateTo(ReturnUrl);
     }
     
 }

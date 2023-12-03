@@ -5,35 +5,15 @@ namespace BerghAdmin.General;
 
 public static class NavigationManagerExtensions
 {
-    public static bool TryGetQueryString<T>(this NavigationManager navManager, string key, out T? value)
+    public static string CreateUrlEditPersoon(this NavigationManager navigationManager, int persoonId)
     {
-        var uri = navManager.ToAbsoluteUri(navManager.Uri);
-
-        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue(key, out var valueFromQueryString))
-        {
-            if (typeof(T) == typeof(int) && int.TryParse(valueFromQueryString, out var valueAsInt))
-            {
-                value = (T)(object)valueAsInt;
-                return true;
-            }
-
-            if (typeof(T) == typeof(string))
-            {
-                value = (T)(object)valueFromQueryString.ToString();
-                return true;
-            }
-
-            if (typeof(T) == typeof(decimal) && decimal.TryParse(valueFromQueryString, out var valueAsDecimal))
-            {
-                value = (T)(object)valueAsDecimal;
-                return true;
-            }
-        }
-
-        // If we get here, the key doesn't exist
-        // how to prevent the possible null reference assignment?
-
-        value = default;
-        return false;
+        var id = persoonId.ToString();
+        var baseUri = navigationManager.BaseUri;
+        var queryParameters = new Dictionary<string, string?> 
+                                    { 
+                                        { "PersoonId", id }, 
+                                        { "ReturnUrl", navigationManager.Uri } 
+                                    };
+        return QueryHelpers.AddQueryString($"{baseUri}Personen/EditPersoon", queryParameters);
     }
 }

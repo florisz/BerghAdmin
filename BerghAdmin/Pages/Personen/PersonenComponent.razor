@@ -4,17 +4,20 @@
 @using BerghAdmin.Authorization;
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities;
 @using Microsoft.Extensions.Options
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.Popups
 @using Microsoft.AspNetCore.Components.Authorization
 
 @using BerghAdmin.Data
+@using BerghAdmin.General
 @using BerghAdmin.Pages
 @using BerghAdmin.Pages.Mail
 @using BerghAdmin.Services
 @using BerghAdmin.Services.Evenementen
 @using System.Security.Claims
+@using System.Collections.ObjectModel;
 
 @inject IPersoonService _persoonService
 @inject IRolService _rolService
@@ -297,8 +300,8 @@
         else
         {
             // open the edit dialog for the selected person
-            var id = selectedPersonen.ElementAt(0).Id;
-            _navigationManager.NavigateTo($"/Personen/EditPersoon?persoonId={id}");
+            var url = _navigationManager.CreateUrlEditPersoon(selectedPersonen.ElementAt(0).Id);
+            _navigationManager.NavigateTo(url);
         }
     }
 

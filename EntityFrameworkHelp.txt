@@ -21,7 +21,7 @@ DROP TABLE MailbccGeadresseerden;
 DROP TABLE Ambassadeur;
 DROP TABLE Sponsoren;
 DROP TABLE VerzondenMails;
-DROP TABLE ContactPersoon;
+DROP TABLE Ambassadeur;
 DROP TABLE PersoonRol;
 DROP TABLE Personen;
 DROP TABLE AspNetUserLogins;
@@ -51,10 +51,11 @@ DELETE FROM PersoonRol WHERE RollenId > 0;
 DELETE FROM Personen WHERE Id > 0;
 DELETE FROM AspNetUsers WHERE Id > 0;
 DELETE FROM Rollen WHERE Id > 0;
+DELETE FROM sponsoren WHERE Id > 0;
 
 /* overall insight in data in MySql database */
+SHOW TABLES;
 SELECT *  FROM GolfdagSponsor;
-SELECT *  FROM Ambassadeur;
 SELECT *  FROM GolfdagPersoon;
 SELECT *  FROM GolfdagGolfdagSponsor;
 SELECT *  FROM GolfDagen;
@@ -65,3 +66,8 @@ SELECT *  FROM PersoonRol;
 SELECT *  FROM Personen;
 SELECT *  FROM AspNetUsers;
 SELECT *  FROM Rollen;
+SELECT *  FROM Sponsoren;
+SELECT *  FROM Donateur;
+SELECT * FROM Ambassadeur;
+
+

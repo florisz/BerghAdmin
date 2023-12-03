@@ -6,7 +6,7 @@
 
 @using Microsoft.AspNetCore.WebUtilities
 
-@inject NavigationManager _navManager
+@inject NavigationManager _navigationManager
 @inject IJSRuntime jsRuntime
 
 @*
@@ -14,11 +14,16 @@
 *@
 @attribute [Authorize(Policy = "IsBeheerFietsers")]
 
-<EditPersoonComponent PersoonId="@_persoonId"/>
+<EditPersoonComponent PersoonId="@PersoonId" ReturnUrl="@ReturnUrl"/>
 
 @code
 {
-    int _persoonId;
+    [Parameter]
+    [SupplyParameterFromQuery(Name ="PersoonId")]
+    public int PersoonId { get; set; }
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "ReturnUrl")]
+    public string? ReturnUrl { get; set; }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -28,12 +33,6 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-
-        if (!_navManager.TryGetQueryString<int>("persoonId", out _persoonId))
-        {
-            // TO DO: We don't have a persoonId
-            _navManager.NavigateTo("/Error");
-        }
     }
 
 
