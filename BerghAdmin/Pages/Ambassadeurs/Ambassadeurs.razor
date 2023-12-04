@@ -4,6 +4,7 @@
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
 @using BerghAdmin.Events
+@using BerghAdmin.General
 @using BerghAdmin.Pages.Mail
 @using BerghAdmin.Pages.Personen
 @using BerghAdmin.Services.Sponsoren;
@@ -106,6 +107,8 @@
         </GridColumn>
     </GridColumns>
 </SfGrid>
+
+<SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
 
 @code
 {
@@ -211,17 +214,15 @@
         }
         else
         {
-            // open the edit dialog for the selected person
-            var id = selectedAmbassadeurs.ElementAt(0).Id;
-            // TO DO ambassadeur!!
-            _navigationManager.NavigateTo($"/Fietsers/EditPersoon?persoonId={id}");
+            var url = _navigationManager.CreateUrlWithContext(selectedAmbassadeurs.ElementAt(0).Id, "/Ambassadeurs/EditAmbassadeur");
+            _navigationManager.NavigateTo(url);
         }
     }
 
     private void AddAmbassadeur()
     {
-        // open the edit dialog for a this new person
-        _navigationManager.NavigateTo($"/Ambassadeurs/EditAmbassadeur?ambassadeurId=0");
+        var url = _navigationManager.CreateUrlWithContext(0, "/Ambassadeurs/EditAmbassadeur");
+        _navigationManager.NavigateTo(url);
     }
 
     private async void ShowSendMailDialog()
@@ -279,10 +280,10 @@
     {
         var emailAddressesList = new List<MailAddress>();
         var selectedAmbassadeursWithMailAddress = (await this._ambassadeursGrid.GetSelectedRecordsAsync())
-            .Where(p => !string.IsNullOrWhiteSpace(p.EmailAdres));
+            .Where(p => !string.IsNullOrWhiteSpace(p.ContactPersoon.EmailAdres));
         foreach (var ambassadeur in selectedAmbassadeursWithMailAddress)
         {
-            emailAddressesList.Add(new(ambassadeur.EmailAdres, ambassadeur.Naam, ambassadeur.Id));
+            emailAddressesList.Add(new(ambassadeur.ContactPersoon.EmailAdres, ambassadeur.ContactPersoon.VolledigeNaam, ambassadeur.ContactPersoon.Id));
         }
         return emailAddressesList;
     }

@@ -1,4 +1,4 @@
-﻿@page "/Personen/EditPersoon"
+﻿@page "/Ambassadeurs/EditAmbassadeur"
 
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
@@ -9,12 +9,9 @@
 @inject NavigationManager _navigationManager
 @inject IJSRuntime jsRuntime
 
-@*
-    TO DO: deze autorisatie moet nog worden aangepast
-*@
-@attribute [Authorize(Policy = "IsBeheerFietsers")]
+@attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
 
-<EditPersoonComponent Id="@Id" ReturnUrl="@ReturnUrl"/>
+<EditAmbassadeurComponent Id="@Id" ReturnUrl="@ReturnUrl"/>
 
 @code
 {
@@ -27,7 +24,7 @@
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        await jsRuntime.InvokeAsync<object>("SetSideMenu", "fietser");
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "ambassadeur");
     }
 
     protected override void OnInitialized()

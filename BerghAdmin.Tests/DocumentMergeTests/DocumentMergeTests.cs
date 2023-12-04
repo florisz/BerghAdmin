@@ -34,6 +34,12 @@ public class DocumentMergeTests : DatabaseTestSetup
             Name = "TestTemplate3",
             FilePath = $"./DocumentMergeTests/TestDocumenten/TestTemplate3.docx"
         },
+        new TestDocument()
+        {
+            Id = 4,
+            Name = "TestTemplate4",
+            FilePath = $"./DocumentMergeTests/TestDocumenten/AmbassadeurFactuurTemplate.docx"
+        }
     };
 
     protected override void RegisterServices(ServiceCollection services)
@@ -86,23 +92,7 @@ public class DocumentMergeTests : DatabaseTestSetup
     }
 
     [Test]
-    public void TestMergeTemplate3Document()
-    {
-        var mergeService = this.GetRequiredService<IDocumentMergeService>();
-        var template = mergeService.GetMergeTemplateById(3);
-        Assert.NotNull(template);
-        Assert.AreEqual(template!.Name, "TestTemplate3");
-        var mergeDictionary = new Dictionary<string, string>
-        {
-            ["MergeField1"] = "MergeField1.Value"
-        };
-
-        MergeDocument(mergeService, template, mergeDictionary);
-    }
-
-
-    [Test]
-    public void TestMergeTemplate4Document()
+    public void TestMergeTemplate2Document()
     {
         var mergeService = this.GetRequiredService<IDocumentMergeService>();
         var template = mergeService.GetMergeTemplateById(2);
@@ -119,6 +109,50 @@ public class DocumentMergeTests : DatabaseTestSetup
             { "Plaatsnaam", "Pieterbuuren" },
             { "HuidigeDatum", "24 juli 2021" },
             { "Sponsorbedrag", "€ 2.000,-" },
+        };
+
+        MergeDocument(mergeService, template, mergeDictionary);
+    }
+
+    [Test]
+    public void TestMergeTemplate3Document()
+    {
+        var mergeService = this.GetRequiredService<IDocumentMergeService>();
+        var template = mergeService.GetMergeTemplateById(3);
+        Assert.NotNull(template);
+        Assert.AreEqual(template!.Name, "TestTemplate3");
+        var mergeDictionary = new Dictionary<string, string>
+        {
+            ["MergeField1"] = "MergeField1.Value"
+        };
+
+        MergeDocument(mergeService, template, mergeDictionary);
+    }
+
+    [Test]
+    public void TestMergeAmbassadeurFactuurTemplateDocument()
+    {
+        var mergeService = this.GetRequiredService<IDocumentMergeService>();
+        var template = mergeService.GetMergeTemplateById(4);
+
+        Assert.NotNull(template);
+        Assert.AreEqual(template!.Name, "TestTemplate4");
+
+        var mergeDictionary = new Dictionary<string, string>
+        {
+            { "AmbassadeurNaam", "Royal Fassin B.V." },
+            { "ContactpersoonAanhef", "de heer" },
+            { "ContactpersoonVoornaam", "Thomas" },
+            { "ContactpersoonAchternaam", "Fassin" },
+            { "AmbassadeurAdres", "Ulenpasweg 8" },
+            { "AmbassadeurPostcode", "7041 GB" },
+            { "AmbassadeurWoonplaats", "'s Heerenberg" },
+            { "Dagtekening", "25 oktober 2023" },
+            { "FactuurNummer", "202300752" },
+            { "DebiteurNummer", "00172" },
+            { "HuidigeDatum", "24 juli 2021" },
+            { "FactuurBedrag", "€ 5.000,-" },
+            { "FactuurTotaalBedrag", "€ 5.000,-" },
         };
 
         MergeDocument(mergeService, template, mergeDictionary);

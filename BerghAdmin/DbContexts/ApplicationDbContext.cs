@@ -19,7 +19,6 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
     public DbSet<Betaling>? Betalingen { get; set; }
     public DbSet<VerzondenMail>? VerzondenMails { get; set; }
     public DbSet<Donatie>? Donaties { get; set; }
-    //public DbSet<Evenement>? Evenementen { get; set; }
     public DbSet<Fietstocht>? Fietstochten { get; set; }
     public DbSet<Golfdag>? Golfdagen { get; set; }
     public DbSet<Sponsor>? Sponsoren{ get; set; }

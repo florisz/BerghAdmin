@@ -5,15 +5,14 @@ namespace BerghAdmin.General;
 
 public static class NavigationManagerExtensions
 {
-    public static string CreateUrlEditPersoon(this NavigationManager navigationManager, int persoonId)
+    public static string CreateUrlWithContext(this NavigationManager navigationManager, int id, string url)
     {
-        var id = persoonId.ToString();
         var baseUri = navigationManager.BaseUri;
         var queryParameters = new Dictionary<string, string?> 
                                     { 
-                                        { "PersoonId", id }, 
+                                        { "Id", id.ToString() }, 
                                         { "ReturnUrl", navigationManager.Uri } 
                                     };
-        return QueryHelpers.AddQueryString($"{baseUri}Personen/EditPersoon", queryParameters);
+        return QueryHelpers.AddQueryString($"{baseUri}{url}", queryParameters);
     }
 }

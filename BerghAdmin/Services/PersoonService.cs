@@ -11,7 +11,7 @@ public class PersoonService : IPersoonService
     private readonly IRolService _rolService;
     private readonly ILogger<PersoonService> _logger;
 
-    public PersoonService(ApplicationDbContext dbContext, IRolService rolService, IFietstochtenService fietstochtenService, ILogger<PersoonService> logger)
+    public PersoonService(ApplicationDbContext dbContext, IRolService rolService, ILogger<PersoonService> logger)
     {
         _dbContext = dbContext;
         _rolService = rolService;
@@ -115,6 +115,23 @@ public class PersoonService : IPersoonService
                 .ToArray();
 
         _logger.LogDebug($"Get alle fietsers en begeleiders returned {((personen == null) ? 0 : personen.Count())} personen");
+
+        return Task.FromResult(personen ?? new PersoonListItem[] { });
+    }
+
+    // TO DO : merge with GetFietstochtDeelnemers
+    public Task<PersoonListItem[]> GetContactPersonen()
+    {
+        _logger.LogDebug($"Get alle contactpersonen; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+
+        var personen = _dbContext
+                .Personen?
+                .Where(p => p.Rollen.Any(r => r.Id == Convert.ToInt32(RolTypeEnum.Contactpersoon)))
+                .OrderBy(p => p.Achternaam)
+                .Select(p => new PersoonListItem() { Id = p.Id, VolledigeNaamMetRollenEnEmail = p.VolledigeNaamMetRollenEnEmail })
+                .ToArray();
+
+        _logger.LogDebug($"Get alle contactpersonen returned {((personen == null) ? 0 : personen.Count())} personen");
 
         return Task.FromResult(personen ?? new PersoonListItem[] { });
     }

@@ -37,6 +37,9 @@
 	  <None Update="BetalingenTests\TestRaboBetalingenBestand.csv">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <None Update="DocumentMergeTests\TestDocumenten\AmbassadeurFactuurTemplate.docx">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="DocumentMergeTests\TestDocumenten\TemplateFactuurSponsor.docx">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>

@@ -17,6 +17,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             services
                 .AddScoped<IGolfdagenService, GolfdagenService>()
                 .AddScoped<IPersoonService, PersoonService>()
+                .AddScoped<IRolService, RolService>()
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
         }
 

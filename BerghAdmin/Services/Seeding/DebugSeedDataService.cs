@@ -504,7 +504,16 @@ public class DebugSeedDataService : ISeedDataService
             Content = File.ReadAllBytes($"{_settings.DocumentBasePath}/TemplateFactuurSponsor.docx"),
             Owner = "Henk"
         };
-
+        await _documentService.SaveDocument(document);
+        document = new Document
+        {
+            Name = "Ambassadeur Factuur Template",
+            ContentType = ContentTypeEnum.Word,
+            IsMergeTemplate = true,
+            TemplateType = TemplateTypeEnum.Ambassadeur,
+            Content = File.ReadAllBytes($"{_settings.DocumentBasePath}/AmbassadeurFactuurTemplate.docx"),
+            Owner = "Wilbert"
+        };
         await _documentService.SaveDocument(document);
     }
 

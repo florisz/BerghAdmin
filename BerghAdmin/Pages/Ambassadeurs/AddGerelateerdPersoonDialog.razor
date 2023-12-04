@@ -1,53 +1,53 @@
-﻿@page "/add-deelnemers-to-fietstocht-dialog"
+﻿@page "/selecteer-contact-compagnon-persoon-dialog"
 
 @using BerghAdmin.Events
 @using Microsoft.AspNetCore.Components;
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Popups
 
-@inject ILogger<AddDeelnemersToFietstochtDialog> _logger
+@inject ILogger<AddGerelateerdPersoonDialog> _logger
 
-@attribute [Authorize(Policy = "IsBeheerFietsers")]
+@attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
 
 <SfDialog Width="500" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
     <DialogEvents OnOverlayModalClick="@OnOverlayModalClick" Opened="@Opened" />
     <DialogTemplates>
-        <Header> Selecteer toe te voegen fietsers </Header>
+        <Header>Selecteer persoon als: @PersoonType </Header>
         <Content>
             <EditForm Model="@_currentPersoon">
                 <SfListBox @ref="_personenListBox"
                            TValue="PersoonListItem[]"
                            TItem="PersoonListItem"
-                            DataSource="@_teSelecterenPersonenList"
-                            @bind-Value="_geselecteerdePersonenList">
+                           DataSource="@_teSelecterenPersonenList"
+                           @bind-Value="_geselecteerdPersonen">
                     <ListBoxFieldSettings Text="VolledigeNaamMetRollenEnEmail" Value="Id" />
-                    <ListBoxSelectionSettings ShowCheckbox="true" />
                 </SfListBox>
             </EditForm>
         </Content>
     </DialogTemplates>
     <DialogButtons>
-        <DialogButton Content="Opslaan en sluiten" IsPrimary="true" OnClick="@SaveAndClose" />
+        <DialogButton Content="Selecteren en sluiten" IsPrimary="true" OnClick="@SaveAndClose" />
         <DialogButton Content="Afbreken" IsPrimary="false" OnClick="@DialogClose" />
     </DialogButtons>
 </SfDialog>
 
 @code {
     [Parameter]
-    public EventCallback<DeelnemersAddedEventArgs> OnDeelnemersAdded { get; set; }
+    public EventCallback<GerelateerdPersoonAddedEventArgs> OnGerelateerdPersoonAdded { get; set; }
 
     SfListBox<PersoonListItem[], PersoonListItem>? _personenListBox;
     private PersoonListItem[] _teSelecterenPersonenList = new PersoonListItem[] { };
-    private PersoonListItem[] _geselecteerdePersonenList = new PersoonListItem[] { };
+    private PersoonListItem[] _geselecteerdPersonen = new PersoonListItem[] { };
     private PersoonListItem _currentPersoon = new();
+    private string PersoonType = "";
 
     public bool IsVisible { get; set; } = false;
 
-    public void DialogOpen(PersoonListItem[] teSelecterenPersonen, PersoonListItem[] geselecteerdePersonen)
+    public void DialogOpen(PersoonListItem[] teSelecterenPersonen, string persoonType)
     {
-        _logger.LogDebug($"Dialog AddDeelnemersToFietstochtDialog open ; threadid={Thread.CurrentThread.ManagedThreadId}");
+        _logger.LogDebug($"Dialog AddGerelateerdPersoonDialog open; threadid={Thread.CurrentThread.ManagedThreadId}");
         _teSelecterenPersonenList = teSelecterenPersonen;
-        _geselecteerdePersonenList = geselecteerdePersonen;
+        PersoonType = persoonType;
         IsVisible = true;
         StateHasChanged();
     }
@@ -59,7 +59,8 @@
 
     private async Task SaveAndClose()
     {
-        await OnDeelnemersAdded.InvokeAsync(new DeelnemersAddedEventArgs(_geselecteerdePersonenList));
+        // TO DO what if no persoon was selected?
+        await OnGerelateerdPersoonAdded.InvokeAsync(new GerelateerdPersoonAddedEventArgs(_geselecteerdPersonen[0], PersoonType));
 
         DialogClose();
     }

@@ -4,6 +4,7 @@ namespace BerghAdmin.Services
     {
         Task<List<Persoon>> GetPersonen();
         Task<PersoonListItem[]> GetFietstochtDeelnemers();
+        Task<PersoonListItem[]> GetContactPersonen();
         Task<Persoon?> GetByActionId(int actionId);
         Task<Persoon?> GetById(int id);
         Task<Persoon?> GetByEmailAdres(string emailAdres);

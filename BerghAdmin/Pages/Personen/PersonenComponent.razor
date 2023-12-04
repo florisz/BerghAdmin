@@ -300,7 +300,7 @@
         else
         {
             // open the edit dialog for the selected person
-            var url = _navigationManager.CreateUrlEditPersoon(selectedPersonen.ElementAt(0).Id);
+            var url = _navigationManager.CreateUrlWithContext(selectedPersonen.ElementAt(0).Id, "Personen/EditPersoon");
             _navigationManager.NavigateTo(url);
         }
     }
@@ -308,7 +308,8 @@
     private void AddPersoon()
     {
         // open the edit dialog for a this new person
-        _navigationManager.NavigateTo($"/Personen/EditPersoon?persoonId=0");
+        var url = _navigationManager.CreateUrlWithContext(0, "Personen/EditPersoon");
+        _navigationManager.NavigateTo(url);
     }
 
     protected override async Task OnInitializedAsync()

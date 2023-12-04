@@ -1,0 +1,235 @@
+﻿@using BerghAdmin.Data
+@using BerghAdmin.DbContexts;
+@using BerghAdmin.Events;
+@using BerghAdmin.General;
+@using BerghAdmin.Pages
+@using BerghAdmin.Services.Sponsoren
+
+@using Microsoft.EntityFrameworkCore;
+
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Cards
+
+@using System.Collections;
+@using System.Collections.Generic
+@using System.Linq
+@using System.Security.Claims
+
+
+@inject NavigationManager _navigationManager
+@inject ApplicationDbContext _dbContext
+@inject IAmbassadeurService _ambassadeurService
+@inject IPersoonService _persoonService
+@inject IRolService _rolService
+@inject ILogger<EditAmbassadeurComponent> _logger
+
+@attribute [Authorize(Policy = "IsAnyRole")]
+
+@if (IsNewAmbassadeur())
+{
+    <h3>Nieuwe Ambassadeur toevoegen</h3>
+}
+else
+{
+    <h3>Wijzig Ambassadeur gegevens</h3>
+}
+
+<EditForm Model="@_currentAmbassadeur">
+    <DataAnnotationsValidator />
+    <div class="form-group row">
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Naam:</label>
+            <SfTextBox @bind-Value="@_currentAmbassadeur.Naam" />
+        </div>
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Ambassadeur vanaf:</label>
+            <SfDatePicker @bind-Value="@_currentAmbassadeur!.DatumAangebracht" />
+        </div>
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Toegezegd bedrag:</label>
+            <SfNumericTextBox @bind-Value="@_currentAmbassadeur.ToegezegdBedrag" Decimals="2" TValue="decimal?" Currency="€" Format="C2" ShowSpinButton=false />
+        </div>
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Totaal bedrag:</label>
+            <label class="col-form-label">@_currentAmbassadeur.GetDonatieBedrag.ToString()</label>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Adres:</label>
+            <SfTextBox @bind-Value="@_currentAmbassadeur!.Adres" />
+        </div>
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Postcode:</label>
+            <SfTextBox @bind-Value="@_currentAmbassadeur.Postcode" />
+        </div>
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Woonplaats:</label>
+            <SfTextBox @bind-Value="@_currentAmbassadeur.Plaats" />
+        </div>
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Land:</label>
+            <SfTextBox @bind-Value="@_currentAmbassadeur.Land" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Debiteurnummer:</label>
+            <SfNumericTextBox @bind-Value="@_currentAmbassadeur.DebiteurNummer" TValue="int?" Min="0" Max="100000" Decimals="0" Format="######" ShowSpinButton=false />
+        </div>
+
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Is Verwijderd:</label>
+            <SfCheckBox TChecked="bool" @bind-Checked="@_currentAmbassadeur.IsVerwijderd" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="form-group col-lg-6">
+            <label class="col-form-label">Contactpersoon</label>
+            <SfButton Type="button" CssClass="e-outline large-margin" IsToggle="true" IsPrimary="true" Content="Wijzigen" OnClick="@OnWijzigenContactPersoon" />
+        </div>
+        <div class="form-group col-lg-6">
+            <label class="col-form-label">Compagnon</label>
+            <SfButton Type="button" CssClass="e-outline large-margin" IsToggle="true" IsPrimary="true" Content="Wijzigen" OnClick="@OnWijzigenCompagnon" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="form-group col-lg-6">
+            <label class="col-form-text">@_currentAmbassadeur!.ContactPersoonVolledigeNaam</label>
+            <br/>
+            <label class="col-form-text">@_currentAmbassadeur!.ContactPersoonTelefoon</label>
+            <br />
+            <label class="col-form-text">@_currentAmbassadeur!.ContactPersoonEmailAdres</label>
+        </div>
+        <div class="form-group col-lg-6">
+            <label class="col-form-text">@_currentAmbassadeur!.CompagnonVolledigeNaam</label>
+            <br />
+            <label class="col-form-text">@_currentAmbassadeur!.CompagnonTelefoon</label>
+            <br />
+            <label class="col-form-text">@_currentAmbassadeur!.CompagnonEmailAdres</label>
+        </div>
+    </div>
+    @*
+    <ToolbarItem Text="Wijzigen contactpersoon" PrefixIcon="e-icons e-circle-add" Align="ItemAlign.Left" OnClick="WijzigenContactpersoon" />
+    *@
+
+    <div class="form-group row">
+        <SfButton Type="button" CssClass="e-outline large-margin" IsToggle="true" IsPrimary="true" Content="Opslaan en sluiten" OnClick="@OnDialogSaveAndClose" />
+        <SfButton Type="button" CssClass="e-outline large-margin" IsToggle="false " IsPrimary="false" Content="Afbreken zonder opslaan" OnClick="@OnDialogClose" />
+    </div>
+</EditForm>
+
+<AddGerelateerdPersoonDialog @ref="_addGerelateerdPersoonDialog" OnGerelateerdPersoonAdded="OnGerelateerdPersoonAddedHandler" />
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public string? ReturnUrl { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? _authenticationStateTask { get; set; }
+
+    private Ambassadeur _currentAmbassadeur { get; set; } = new Ambassadeur();
+    private bool IsNewAmbassadeur() { return Id == 0; }
+    AddGerelateerdPersoonDialog _addGerelateerdPersoonDialog;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _logger.LogDebug($"Start Initializing EditPersoonDialoog; threadid={Thread.CurrentThread.ManagedThreadId}");
+        base.OnInitialized();
+
+        if (IsNewAmbassadeur())
+        {
+            _currentAmbassadeur = new Ambassadeur();
+        }
+        else
+        {
+            _currentAmbassadeur = await _ambassadeurService.GetById(Id);
+            if (_currentAmbassadeur == null)
+                throw new ApplicationException($"Ambassadeur met id {Id} niet gevonden");
+        }
+
+        _logger.LogDebug($"Initialize EditAmbassadeurDialoog; threadid={Thread.CurrentThread.ManagedThreadId}");
+    }
+
+    private void OnDialogClose()
+    {
+        // TO DO: If edits were made, ask for confirmation
+        _dbContext.UndoingChangesDbContextLevel();
+        _navigationManager.NavigateTo(ReturnUrl!);
+    }
+
+    private async Task OnDialogSaveAndClose()
+    {
+        await _ambassadeurService.SaveAsync(_currentAmbassadeur!);
+        _navigationManager.NavigateTo(ReturnUrl!);
+    }
+
+    private async Task OnWijzigenContactPersoon()
+    {
+        _logger.LogDebug($"Dialog Edit Ambassadeur, change ContactPersoon(); threadid={Thread.CurrentThread.ManagedThreadId}");
+
+        // maak lijst met personen met rol contactpersoon
+        var lijstPersonen = await _persoonService
+                                .GetContactPersonen();
+
+        _addGerelateerdPersoonDialog.DialogOpen(lijstPersonen, "Contactpersoon");
+    }
+
+    private async Task OnWijzigenCompagnon()
+    {
+        _logger.LogDebug($"Dialog Edit Ambassadeur, change Compagnon(); threadid={Thread.CurrentThread.ManagedThreadId}");
+
+        // maak lijst met personen met rol contactpersoon
+        var lijstPersonen = await _persoonService
+                                .GetContactPersonen();
+
+        _addGerelateerdPersoonDialog.DialogOpen(lijstPersonen, "Compagnon");
+    }
+
+    private async void OnGerelateerdPersoonAddedHandler(GerelateerdPersoonAddedEventArgs eventArgs)
+    {
+        _logger.LogDebug($"Dialog Fietstochten.OnDeelnemersAddedHandler(); threadid={Thread.CurrentThread.ManagedThreadId}");
+
+        var gerelateerdPersoon = eventArgs.GerelateerdPersoon;
+        var persoonType = eventArgs.PersoonType;
+        if (gerelateerdPersoon != null)
+        {
+            var persoon = await _persoonService.GetById(gerelateerdPersoon.Id);
+            if (persoonType == "Contactpersoon")
+                _currentAmbassadeur.ContactPersoon = persoon!;
+            else
+                _currentAmbassadeur.Compagnon = persoon;
+        }
+        StateHasChanged();
+    }
+}
+
+<style>
+    .col-form-label {
+        padding-top: 1px;
+        padding-bottom: 1px;
+        color: #8d7f7f;
+    }
+
+    .col-form-text {
+        padding-top: 1px;
+        padding-bottom: 1px;
+        color: #8d7f7f;
+        text-indent: 10px;
+    }
+
+    .e-listbox-wrapper:not(.e-list-template) .e-list-item, .e-listbox-wrapper .e-list-nrt, .e-listbox-wrapper .e-selectall-parent, .e-listbox-container:not(.e-list-template) .e-list-item, .e-listbox-container .e-list-nrt, .e-listbox-container .e-selectall-parent {
+        height: 25px;
+        line-height: 1.5;
+        padding: 1px 16px 1px 16px;
+        position: relative;
+    }
+    .large-margin {
+        margin: 6px;
+    }
+</style>

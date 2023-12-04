@@ -187,7 +187,7 @@ else
             <td valign="top">
                 <div class="form-group col-md-12">
                     <label class="col-form-label">Kentaa donatiebedrag:</label>
-                    <SfTextBox Value="@_currentPersoon.GetDonatieBedrag.ToString()" TValue="decimal?"></SfTextBox>
+                    <SfNumericTextBox Value="@_currentPersoon.GetDonatieBedrag" Decimals="2" Format="C8" />
                 </div>
             </td>
         </tr>
@@ -203,7 +203,7 @@ else
 
 @code {
     [Parameter]
-    public int PersoonId { get; set; }
+    public int Id { get; set; }
     [Parameter]
     public string? ReturnUrl { get; set; }
     
@@ -215,7 +215,7 @@ else
     private RolListItem[] _selectedRollenArray = new RolListItem[] { };
     private FietstochtListItem[] _alleFietsTochtenArray = new FietstochtListItem[] { };
     private FietstochtListItem[] _selectedFietsTochtenArray = new FietstochtListItem[] { };
-    private bool IsNewPersoon() { return PersoonId == 0; }
+    private bool IsNewPersoon() { return Id == 0; }
     SfListBox<RolListItem[], RolListItem>? _rollenListBox;
     SfListBox<FietstochtListItem[], FietstochtListItem>? _fietsTochtenListBox;
     private Geslacht[] geslachtValues = GeslachtService.GetGeslachtValues();
@@ -233,9 +233,9 @@ else
         }
         else
         {
-            _currentPersoon = await _persoonService.GetById(PersoonId);
+            _currentPersoon = await _persoonService.GetById(Id);
             if (_currentPersoon == null)
-                throw new ApplicationException($"Persoon met id {PersoonId} niet gevonden");
+                throw new ApplicationException($"Persoon met id {Id} niet gevonden");
         }
 
         _alleRollenArray = _rolService.GetAlleRolListItems();
@@ -243,7 +243,6 @@ else
 
         _alleFietsTochtenArray = await _fietstochtenService.GetAlleFietstochtListItems();
         _selectedFietsTochtenArray = _currentPersoon.GetFietstochtListItems();
-        headerText = IsNewPersoon() ? "Nieuwe persoon toevoegen" : "Wijzig persoon gegevens";
 
         _logger.LogDebug($"Initialize EditPersoonDialoog; threadid={Thread.CurrentThread.ManagedThreadId}");
     }
