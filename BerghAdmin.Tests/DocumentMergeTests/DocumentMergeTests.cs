@@ -1,13 +1,13 @@
 using NUnit.Framework;
 
 using BerghAdmin.DbContexts;
-using BerghAdmin.Services;
 using BerghAdmin.Data;
 using BerghAdmin.Tests;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using BerghAdmin.Services.Documenten;
 
 namespace BerghAdmin.DocumentMergeTests;
 
@@ -190,7 +190,7 @@ public class DocumentMergeTests : DatabaseTestSetup
             {
                 Id = testDocument.Id,
                 Name = testDocument.Name,
-                ContentType = ContentTypeEnum.Word,
+                DocumentType = DocumentTypeEnum.Word,
                 Content = content,
                 IsMergeTemplate = true,
                 Owner = "Test"

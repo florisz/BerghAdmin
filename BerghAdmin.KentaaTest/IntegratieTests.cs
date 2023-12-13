@@ -4,6 +4,7 @@ using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
 using BerghAdmin.Services.Bihz;
 using BerghAdmin.Services.Configuration;
+using BerghAdmin.Services.Documenten;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Seeding;

@@ -4,6 +4,7 @@ using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services.Betalingen;
 using BerghAdmin.Services.Bihz;
+using BerghAdmin.Services.Documenten;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;

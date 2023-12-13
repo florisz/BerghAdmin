@@ -3,7 +3,7 @@ using BerghAdmin.ApplicationServices.DocIO;
 using Syncfusion.DocIO;
 using Syncfusion.DocIO.DLS;
 
-namespace BerghAdmin.Services;
+namespace BerghAdmin.Services.Documenten;
 
 public class DocumentMergeService : IDocumentMergeService
 {
@@ -28,8 +28,8 @@ public class DocumentMergeService : IDocumentMergeService
         {
             return null;
         }
-            
-        if (! doc.IsMergeTemplate)
+
+        if (!doc.IsMergeTemplate)
         {
             throw new ArgumentException($"document with name {doc.Name} is not a mergetemplate");
         }
@@ -52,9 +52,9 @@ public class DocumentMergeService : IDocumentMergeService
         _logger.LogDebug("Entering document merge {mergefields}", mergeFields);
 
         var inputStream = new MemoryStream(template.Content);
-            
-        var fieldNames = mergeFields.Keys.ToArray<string>();
-        var fieldValues = mergeFields.Values.ToArray<string>();
+
+        var fieldNames = mergeFields.Keys.ToArray();
+        var fieldValues = mergeFields.Values.ToArray();
 
         var wordDocument = new WordDocument(inputStream, FormatType.Docx);
         wordDocument.MailMerge.Execute(fieldNames, fieldValues);
@@ -74,7 +74,7 @@ public class DocumentMergeService : IDocumentMergeService
 
     public IEnumerable<string> GetMergeFieldsFor(Document document)
     {
-        if (document.ContentType != ContentTypeEnum.Word)
+        if (document.DocumentType != DocumentTypeEnum.Word)
         {
             throw new ApplicationException($"Document with name {document.Name} is not a Word document.");
         }

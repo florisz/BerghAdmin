@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace BerghAdmin.Services
+namespace BerghAdmin.Services.Documenten
 {
     public interface IPdfConverter
     {

@@ -1,3 +1,4 @@
+using BerghAdmin.Services.Documenten;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Sponsoren;
 using Microsoft.Extensions.Options;
@@ -498,20 +499,24 @@ public class DebugSeedDataService : ISeedDataService
         var document = new Document
         {
             Name = "Sponsor Factuur",
-            ContentType = ContentTypeEnum.Word,
             IsMergeTemplate = true,
+            ContentType = ContentTypeEnum.Template,
+            DocumentType = DocumentTypeEnum.Word,
             TemplateType = TemplateTypeEnum.Ambassadeur,
             Content = File.ReadAllBytes($"{_settings.DocumentBasePath}/TemplateFactuurSponsor.docx"),
+            Created = DateTime.Now,
             Owner = "Henk"
         };
         await _documentService.SaveDocument(document);
         document = new Document
         {
             Name = "Ambassadeur Factuur Template",
-            ContentType = ContentTypeEnum.Word,
             IsMergeTemplate = true,
+            ContentType = ContentTypeEnum.Template,
+            DocumentType = DocumentTypeEnum.Word,
             TemplateType = TemplateTypeEnum.Ambassadeur,
             Content = File.ReadAllBytes($"{_settings.DocumentBasePath}/AmbassadeurFactuurTemplate.docx"),
+            Created = DateTime.Now,
             Owner = "Wilbert"
         };
         await _documentService.SaveDocument(document);

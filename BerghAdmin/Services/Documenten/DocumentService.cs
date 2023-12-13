@@ -1,8 +1,6 @@
 using BerghAdmin.DbContexts;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 
-namespace BerghAdmin.Services;
+namespace BerghAdmin.Services.Documenten;
 
 public class DocumentService : IDocumentService
 {
@@ -29,7 +27,7 @@ public class DocumentService : IDocumentService
                     .Documenten?
                     .Find(id);
 
-        var result = (doc == null) ? "NOT Ok" : "Ok";
+        var result = doc == null ? "NOT Ok" : "Ok";
         _logger.LogInformation($"Get document with id {id} was {result}");
 
         return doc;
@@ -49,9 +47,9 @@ public class DocumentService : IDocumentService
     {
         var templates = _dbContext
                     .Documenten?
-                    .Where(d => d.TemplateType != TemplateTypeEnum.None)
-                    .ToList<Document>();
-                        
+                    .Where(d => d.ContentType == ContentTypeEnum.Template)
+                    .ToList();
+
         return templates;
     }
 
@@ -59,13 +57,13 @@ public class DocumentService : IDocumentService
     {
         _logger.LogDebug($"SaveAsync document merge {document.Name}");
 
-        if (document.Id == 0) 
+        if (document.Id == 0)
         {
             _dbContext.Documenten?.Add(document);
             _logger.LogInformation($"Document {document.Name} added");
         }
         else
-        { 
+        {
             _dbContext.Documenten?.Update(document);
             _logger.LogInformation($"Document {document.Name} updated");
         }

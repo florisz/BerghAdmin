@@ -3,7 +3,7 @@ using Syncfusion.DocIORenderer;
 using Syncfusion.OfficeChart;
 using Syncfusion.Pdf;
 
-namespace BerghAdmin.Services;
+namespace BerghAdmin.Services.Documenten;
 
 public class PdfConverter : IPdfConverter
 {
@@ -13,12 +13,12 @@ public class PdfConverter : IPdfConverter
     {
         // Loads file stream into Word document
         WordDocument wordDocument = new(inputStream, Syncfusion.DocIO.FormatType.Automatic);
-            
+
         // Instantiation of DocIORenderer for Word to PDF conversion
         DocIORenderer render = new();
 
         // Sets Chart rendering Options.
-        render.Settings.ChartRenderingOptions.ImageFormat =  ExportImageFormat.Jpeg;
+        render.Settings.ChartRenderingOptions.ImageFormat = ExportImageFormat.Jpeg;
 
         // Converts Word document into PDF document
         PdfDocument pdfDocument = render.ConvertToPDF(wordDocument);
@@ -32,6 +32,6 @@ public class PdfConverter : IPdfConverter
         pdfDocument.Save(outputStream);
         pdfDocument.Close();
 
-        return outputStream;        
+        return outputStream;
     }
 }

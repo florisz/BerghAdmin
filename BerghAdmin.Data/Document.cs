@@ -3,6 +3,13 @@ namespace BerghAdmin.Data;
 
 public enum ContentTypeEnum
 {
+    Factuur,
+    Template,
+    VerzondenEmail
+}
+
+public enum DocumentTypeEnum
+{
     Word,
     Excel,
     Html,
@@ -10,7 +17,7 @@ public enum ContentTypeEnum
     Text,
     Pdf
 }
-    
+
 public enum TemplateTypeEnum
 {
     Ambassadeur,
@@ -24,7 +31,10 @@ public class Document
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    public DateTime? Created { get; set; }
+    public string? CreatedBy { get; set; }
     public ContentTypeEnum ContentType { get; set; }
+    public DocumentTypeEnum DocumentType { get; set; }
     public TemplateTypeEnum TemplateType { get; set;}
     public byte[] Content { get; set; }
     public bool IsMergeTemplate { get; set; }

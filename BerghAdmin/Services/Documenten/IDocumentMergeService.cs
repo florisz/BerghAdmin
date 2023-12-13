@@ -1,4 +1,4 @@
-namespace BerghAdmin.Services;
+namespace BerghAdmin.Services.Documenten;
 
 public interface IDocumentMergeService
 {

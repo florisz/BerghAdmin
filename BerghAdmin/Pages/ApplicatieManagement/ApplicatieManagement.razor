@@ -7,10 +7,11 @@
 @using Syncfusion.Blazor.Inputs
 @using BerghAdmin.Data
 @using BerghAdmin.Pages.Personen
+@using BerghAdmin.Services.Import
 @using System.IO
 
 @inject IJSRuntime jsRuntime
-@inject BerghAdmin.Services.Import.IDataImporterService importerService 
+@inject IDataImporterService importerService 
 
 @attribute [Authorize(Policy = "IsAdministrator")]
 
@@ -54,7 +55,6 @@
             // TO DO pass a File property to the importerService
             var stream = file.File.OpenReadStream();
             importerService.ImportData(stream);
-
         }
     }
 }
