@@ -39,7 +39,6 @@ public class DebugSeedDataService : ISeedDataService
 
     public async Task SeedInitialData()
     {
-        await InsertDocumenten();
         if (SeedHelper.DatabaseHasData(_rolService))
         {
             return;
@@ -47,10 +46,10 @@ public class DebugSeedDataService : ISeedDataService
 
         var rollen = await SeedHelper.InsertRollen(_rolService);
 
-        await InsertTestPersonen(rollen);
+        //await InsertTestPersonen(rollen);
         await InsertFietstochten();
-        await InsertSponsoren();
-        await InsertGolfdagen();
+        //await InsertSponsoren();
+        //await InsertGolfdagen();
         await InsertDocumenten();
     }
 

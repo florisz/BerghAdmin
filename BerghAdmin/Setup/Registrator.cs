@@ -173,7 +173,8 @@ public class Registrator
 #else
         _builder.Services.AddDbContextFactory<ApplicationDbContext>(
                     options => options
-                            .UseMySql(GetDatabaseConnectionString(_builder), serverVersion, option));
+                            .UseMySql(GetDatabaseConnectionString(_builder), serverVersion, option)
+                            .EnableDetailedErrors(true));
 #endif
         _builder.Services.AddDbContext<ApplicationDbContext>(
             options => options.UseMySql(GetDatabaseConnectionString(_builder), serverVersion, option), 
