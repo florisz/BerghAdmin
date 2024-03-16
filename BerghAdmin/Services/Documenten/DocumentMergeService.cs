@@ -37,9 +37,20 @@ public class DocumentMergeService : IDocumentMergeService
         return doc;
     }
 
-    public Document GetMergeTemplateByName(string name)
+    public Document? GetMergeTemplateByName(string name)
     {
-        throw new NotImplementedException();
+        var doc = _documentService.GetDocumentByName(name);
+        if (doc == null)
+        {
+            return null;
+        }
+
+        if (!doc.IsMergeTemplate)
+        {
+            throw new ArgumentException($"document with name {doc.Name} is not a mergetemplate");
+        }
+
+        return doc;
     }
 
     public List<Document> GetMergeTemplates()

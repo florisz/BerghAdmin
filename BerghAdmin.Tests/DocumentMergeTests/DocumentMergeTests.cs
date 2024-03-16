@@ -77,9 +77,9 @@ public class DocumentMergeTests : DatabaseTestSetup
     public void TestHasDocumentMergeFields()
     {
         var service = this.GetRequiredService<IDocumentMergeService>();
-        var template = service.GetMergeTemplateById(2);
+        var template = service.GetMergeTemplateById(4);
         Assert.NotNull(template);
-        Assert.AreEqual(template!.Name, "TestTemplate2");
+        Assert.AreEqual(template!.Name, "TestTemplate4");
         var mergeFields = service.GetMergeFieldsFor(template).ToArray();
         Assert.Contains("Bedrijfsnaam", mergeFields);
         Assert.Contains("NaamAanhef", mergeFields);

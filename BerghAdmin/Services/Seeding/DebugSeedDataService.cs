@@ -39,6 +39,7 @@ public class DebugSeedDataService : ISeedDataService
 
     public async Task SeedInitialData()
     {
+        await InsertDocumenten();
         if (SeedHelper.DatabaseHasData(_rolService))
         {
             return;

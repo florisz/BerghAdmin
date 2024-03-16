@@ -128,6 +128,7 @@ public class Registrator
         _builder.Services.AddTransient<ISeedUsersService, ReleaseSeedUsersService>();
         _builder.Services.AddScoped<IDocumentService, DocumentService>();
         _builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
+        _builder.Services.AddScoped<IPdfConverter, PdfConverter>();
         _builder.Services.AddScoped<IDataImporterService, DataImporterService>();
         _builder.Services.AddScoped<IFileSystem, FileSystem>();
         _builder.Services.AddScoped<IMailAttachmentsService>((provider) =>

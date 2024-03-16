@@ -21,7 +21,7 @@ public class DocumentService : IDocumentService
 
     public Document? GetDocumentById(int id)
     {
-        _logger.LogDebug($"Get document {id}");
+        _logger.LogDebug($"Get document with id: {id}");
 
         var doc = _dbContext
                     .Documenten?
@@ -35,9 +35,18 @@ public class DocumentService : IDocumentService
 
     public Document? GetDocumentByName(string name)
     {
-        throw new NotImplementedException();
-    }
+        _logger.LogDebug($"Get document with name: {name}");
 
+        var doc = _dbContext
+                    .Documenten?
+                    .FirstOrDefault(d => d.Name == name);
+
+        var result = doc == null ? "NOT Ok" : "Ok";
+        _logger.LogInformation($"Get document with name {name} was {result}");
+
+        return doc;
+    }
+    
     public IEnumerable<Document> GetDocuments()
     {
         throw new NotImplementedException();

@@ -7,7 +7,8 @@
 @using BerghAdmin.General
 @using BerghAdmin.Pages.Mail
 @using BerghAdmin.Pages.Personen
-@using BerghAdmin.Services.Sponsoren;
+@using BerghAdmin.Services.Sponsoren
+@using BerghAdmin.Services.Documenten
 
 @using Microsoft.AspNetCore.Identity
 
@@ -20,6 +21,9 @@
 @inject SfDialogService DialogService
 @inject UserManager<User> _userManager
 @inject IAmbassadeurService _ambassadeurService
+@inject IDocumentService _documentService
+@inject IDocumentMergeService _mergeService
+@inject IPdfConverter _pdfConverter
 
 @attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
 
@@ -58,11 +62,12 @@
     </GridEditSettings>
     <SfToolbar>
         <ToolbarItems>
-            <ToolbarItem Text="Wijzig" TooltipText="Wijzig ambassadeur" PrefixIcon="e-icons e-edit" Align="ItemAlign.Left" OnClick="EditAmbassadeur" />
             <ToolbarItem Text="Toevoegen" TooltipText="Toevoegen ambassadeur" PrefixIcon="e-icons e-circle-add" Align="ItemAlign.Left" OnClick="AddAmbassadeur" />
+            <ToolbarItem Text="Wijzig" TooltipText="Wijzig ambassadeur" PrefixIcon="e-icons e-edit" Align="ItemAlign.Left" OnClick="EditAmbassadeur" />
             <ToolbarItem Text="Email" TooltipText="Stuur email" PrefixIcon="e-icons e-send" Align="ItemAlign.Left" OnClick="ShowSendMailDialog" />
-            <ToolbarItem Text="Kopieer" TooltipText="Kopieer email adressen" PrefixIcon="e-icons e-copy" Align="ItemAlign.Left" OnClick="CopySelectedEmailAddressesAsync" />
+            <ToolbarItem Text="Kopieer emailadres(sen)" TooltipText="Kopieer email adressen" PrefixIcon="e-icons e-copy" Align="ItemAlign.Left" OnClick="CopySelectedEmailAddressesAsync" />
             <ToolbarItem Text="Export" TooltipText="Export naar excel" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ExportToExcelAsync" />
+            <ToolbarItem Text="Factuur" TooltipText="Maak factuur voor deze ambassadeur" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="MaakFactuurAsync" />
             <ToolbarItem Type="ItemType.Input" Align="Syncfusion.Blazor.Navigations.ItemAlign.Right">
                 <Template>
                     <SfTextBox Placeholder="Type tekst om te zoeken" Input="OnInputSearchString"></SfTextBox>
@@ -256,6 +261,46 @@
             };
         await this._ambassadeursGrid.ExportToExcelAsync(exportProperties);
         await jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
+    }
+
+    private async Task MaakFactuurAsync()
+    {
+        var template = _mergeService.GetMergeTemplateByName("Ambassadeur Factuur Template");
+        //var mergeFields = _mergeService.GetMergeFieldsFor(template).ToArray();
+        //var stream = _mergeService.Merge(template, fieldValues);
+        var mergeDictionary = new Dictionary<string, string>
+        {
+            { "AmbassadeurNaam", "Royal Fassin B.V." },
+            { "ContactpersoonAanhef", "de heer" },
+            { "ContactpersoonVoornaam", "Thomas" },
+            { "ContactpersoonAchternaam", "Fassin" },
+            { "AmbassadeurAdres", "Ulenpasweg 8" },
+            { "AmbassadeurPostcode", "7041 GB" },
+            { "AmbassadeurWoonplaats", "'s Heerenberg" },
+            { "Dagtekening", "25 oktober 2023" },
+            { "FactuurNummer", "202300752" },
+            { "DebiteurNummer", "00172" },
+            { "HuidigeDatum", "24 juli 2021" },
+            { "FactuurBedrag", "€ 5.000,-" },
+            { "FactuurTotaalBedrag", "€ 5.000,-" },
+        };
+
+        File.WriteAllBytes($"c:/tmp/AmbassadeursTemplate.docx", template.Content);
+
+        var mergedStream = _mergeService.Merge(template, mergeDictionary);
+        using FileStream outputFileStream = new($"c:/tmp/{template.Name}.docx", FileMode.Create);
+        mergedStream.Position = 0;
+        mergedStream.CopyTo(outputFileStream);
+
+        outputFileStream.Position = 0;
+        var pdfStream = _pdfConverter.ConvertWordToPdf(outputFileStream);
+        var pdfOutputStream = new FileStream($"c:/tmp/{template.Name}.pdf", FileMode.Create);
+
+        pdfStream.Position = 0;
+        pdfStream.CopyTo(pdfOutputStream);
+        pdfStream.Close();
+        pdfOutputStream.Close();
+
     }
 
     private async void OnMailMessageConfigured(MailMessageConfiguredEventArgs eventArgs)
