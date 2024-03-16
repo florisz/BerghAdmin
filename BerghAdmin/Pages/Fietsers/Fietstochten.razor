@@ -1,0 +1,173 @@
+﻿@page "/Fietsers/Fietstochten"
+
+@using BerghAdmin.Authorization
+@using BerghAdmin.Data
+@using BerghAdmin.DbContexts;
+@using BerghAdmin.Events;
+@using BerghAdmin.General;
+@using BerghAdmin.Services
+@using BerghAdmin.Services.Evenementen
+@using Syncfusion.Blazor.Popups
+
+@inject IJSRuntime jsRuntime
+@inject IPersoonService _persoonService
+@inject IFietstochtenService _fietstochtenService
+@inject NavigationManager _navigationManager
+@inject ILogger<Fietstochten> _logger
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime jsRuntime
+
+@attribute [Authorize(Policy = "IsBeheerFietsers")]
+
+<h3>Fietstochten</h3>
+
+@*
+    The grid showing all fietstochten
+*@
+<SfGrid DataSource="@_fietstochtenList" SelectedRowIndex=0>
+    <GridEditSettings 
+        AllowAdding="true" 
+        AllowDeleting="true" 
+        AllowEditing="true" 
+        Mode="EditMode.Dialog" 
+        AllowEditOnDblClick="true">
+    </GridEditSettings>
+    <GridEvents RowSelected="SelectFietsTocht" TValue="Fietstocht" />
+    <GridColumns>
+        <GridColumn Field=@nameof(Fietstocht.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true"></GridColumn>
+        <GridColumn Field=@nameof(Fietstocht.Titel) HeaderText="Titel" TextAlign="TextAlign.Left"  Width="110"></GridColumn>
+        <GridColumn Field=@nameof(Fietstocht.GeplandeDatum) HeaderText="Datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Fietstocht.AantalDeelnemers) HeaderText="# deelnemers" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
+    </GridColumns>
+</SfGrid>
+<br />
+
+ <br />
+<div class='e-statustext'>Deelnemers aan fietstocht: <b>@_selectedFietsTocht.Titel</b></div>
+<SfGrid DataSource="@_huidigeDeelnemers">
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Text="Toevoegen deelnemers" PrefixIcon="e-icons e-circle-add" Align="ItemAlign.Left" OnClick="ToevoegenDeelnemers" />
+            <ToolbarItem Text="Verwijder deelnemer" PrefixIcon="e-icons e-delete" Align="ItemAlign.Left" OnClick="VerwijderDeelnemer" />
+        </ToolbarItems>
+    </SfToolbar>
+    <GridSortSettings>
+        <GridSortColumns>
+            <GridSortColumn Field="VolledigeNaam" Direction="SortDirection.Ascending"></GridSortColumn>
+        </GridSortColumns>
+    </GridSortSettings>
+    <GridColumns>
+        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left"  Width="110" />
+        <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="70" />
+        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left"  Width="70" />
+        <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left"  Width="120" />
+        <GridColumn Field=@nameof(Persoon.GetRollenAsString) HeaderText="Rollen" TextAlign="TextAlign.Left"  Width="200" />
+    </GridColumns>
+</SfGrid>
+
+<AddDeelnemersToFietstochtDialog @ref="_addDeelnemersDialog" OnDeelnemersAdded="OnDeelnemersAddedHandler" />
+
+@code
+{
+    public IEnumerable<Fietstocht> _fietstochtenList = new List<Fietstocht>();
+    public IEnumerable<Persoon> _huidigeDeelnemers { get; set; } = new List<Persoon>();
+    public Fietstocht _selectedFietsTocht { get; set; } = new();
+    AddDeelnemersToFietstochtDialog _addDeelnemersDialog;
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "fietser");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _fietstochtenList = await GetFietsTochten();
+        _selectedFietsTocht = _fietstochtenList.ElementAt(0);
+
+        await RefreshList();
+
+        return;
+    }
+
+    public void SelectFietsTocht(RowSelectEventArgs<Fietstocht> args)
+    {
+        _selectedFietsTocht = args.Data;
+        _huidigeDeelnemers = GetDeelnemers(_selectedFietsTocht);
+    }
+
+    // Everything to handle the context menu
+    // Triggers when the item is selected
+    public async Task OnContextMenuClickAsync(ContextMenuClickEventArgs<Persoon> args)
+    {
+        if (args.Item.Id == "add-deelnemers")
+        {
+            await ToevoegenDeelnemers();
+        }
+        if (args.Item.Id == "verwijder-deelnemer")
+        {
+            var persoon = args.RowInfo.RowData as Persoon;
+            return;
+        }
+    }
+
+    private async Task ToevoegenDeelnemers()
+    {
+        _logger.LogDebug($"Dialog Fietstochten.ToevoegenDeelnemer(); threadid={Thread.CurrentThread.ManagedThreadId}");
+
+        // maak lijst met personen (fietsers en begeleiders) die nog niet deelnemen aan deze fietstocht
+        var lijstPersonen = await _persoonService
+                                .GetFietstochtDeelnemers();
+        lijstPersonen = lijstPersonen
+                            .Where(p => !_selectedFietsTocht.Deelnemers.Any(d => d.Id == p.Id))
+                            .ToArray();
+        var geselecteerdePersonen = new PersoonListItem[] { };
+        _addDeelnemersDialog.DialogOpen(lijstPersonen, geselecteerdePersonen);
+    }
+
+    private async void OnDeelnemersAddedHandler(DeelnemersAddedEventArgs eventArgs)
+    {
+        _logger.LogDebug($"Dialog Fietstochten.OnDeelnemersAddedHandler(); threadid={Thread.CurrentThread.ManagedThreadId}");
+
+        var toegevoegdeDeelnemers = eventArgs.Deelnemers;
+        foreach (var deelnemer in toegevoegdeDeelnemers)
+        {
+            var persoon = await _persoonService.GetById(deelnemer.Id);
+            await _fietstochtenService.AddDeelnemerAsync(_selectedFietsTocht, persoon!);
+        }
+        await RefreshList();
+        StateHasChanged();
+    }
+
+    private void VerwijderDeelnemer()
+    {
+        // TODO: code to verwijder deelnemer, first ask confirmation        
+    }
+
+    private Task RefreshList()
+    {
+        if (_selectedFietsTocht == null){
+            _selectedFietsTocht = _fietstochtenList.ElementAt(0);
+        }
+        if (_selectedFietsTocht != null)
+        {
+            _huidigeDeelnemers = GetDeelnemers(_selectedFietsTocht);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private async Task<IEnumerable<Fietstocht>> GetFietsTochten()
+    {
+        var fietstochten = await _fietstochtenService.GetAll();
+
+        return fietstochten.OrderByDescending(ft => ft.GeplandeDatum) ?? Enumerable.Empty<Fietstocht>();
+    }
+
+    private IEnumerable<Persoon> GetDeelnemers(Fietstocht fietstocht) =>
+        fietstocht
+            .Deelnemers
+            .OrderBy(d => d.VolledigeNaam);
+}

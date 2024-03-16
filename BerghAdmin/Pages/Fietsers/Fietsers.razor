@@ -1,0 +1,23 @@
+﻿@page "/Fietsers/Deelnemers"
+
+@using BerghAdmin.Authorization
+@using BerghAdmin.Data
+@using BerghAdmin.Pages.Personen
+
+@inject IJSRuntime jsRuntime
+
+@attribute [Authorize(Policy = "IsBeheerFietsers")]
+
+<h3>Deelnemers aan fietstochten</h3>
+
+<PersonenComponent RolContext="@rolContext" />
+
+@code
+{
+    public int[] rolContext = new int[] { Convert.ToInt32(RolTypeEnum.Fietser), Convert.ToInt32(RolTypeEnum.Begeleider), Convert.ToInt32(RolTypeEnum.Vrijwilliger) };
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "fietser");
+    }
+}

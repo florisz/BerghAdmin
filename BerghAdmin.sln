@@ -45,7 +45,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{
 		Pipelines\release-bergh-components.yml = Pipelines\release-bergh-components.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BerghAdmin.UITests", "BerghAdmin.UITests\BerghAdmin.UITests.csproj", "{A3F95547-43F1-4B63-B30F-E0365BE40986}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BerghAdmin.UITests", "BerghAdmin.UITests\BerghAdmin.UITests.csproj", "{A3F95547-43F1-4B63-B30F-E0365BE40986}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

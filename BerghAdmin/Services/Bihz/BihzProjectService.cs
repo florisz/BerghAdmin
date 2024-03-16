@@ -8,51 +8,50 @@ namespace BerghAdmin.Services.Bihz;
 public class BihzProjectService : IBihzProjectService
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly IEvenementService _evenementService;
+    private readonly IFietstochtenService _fietstochtenService;
     private readonly ILogger<BihzProjectService> _logger;
 
-    public BihzProjectService(ApplicationDbContext context, IEvenementService evenementService, ILogger<BihzProjectService> logger)
+    public BihzProjectService(ApplicationDbContext context, IFietstochtenService fietstochtenService, ILogger<BihzProjectService> logger)
     {
         _dbContext = context;
-        _evenementService = evenementService;
+        _fietstochtenService = fietstochtenService;
         _logger = logger;
     }
 
-    public void Add(BihzProject project)
+    public async Task AddAsync(BihzProject project)
     {
-        _logger.LogDebug("Add BihzProject with KentaaId {ProjectId}", project.ProjectId);
+        _logger.LogDebug($"AddAsync BihzProject with KentaaId {project.ProjectId}");
 
         var bihzProject = MapChanges(GetByKentaaId(project.ProjectId), project);
 
-        if (bihzProject.EvenementId == null)
+        if (bihzProject.FietstochtId == null)
         {
-            // Evenement (fietstocht) has not been linked to a registered Kentaa project yet,
+            // Fietstocht has not been linked to a registered Kentaa project yet,
             // Link thru the title of the Kentaa project
-            var evenement = _evenementService.GetByProject(project);
+            var fietsTocht = await _fietstochtenService.GetByProject(project);
 
-            if (evenement == null)
+            if (fietsTocht == null)
             {
-                _logger.LogError("Kentaa project with id {ProjectId} can not be processed; reason: the corresponding evenement with title {Titel} is unknown.",
-                        project.ProjectId, project.Titel);
+                _logger.LogError($"Kentaa project with id {project.ProjectId} can not be processed; reason: the corresponding fietstocht with title {project.Titel} is unknown.");
                 return;
             }
-            bihzProject.EvenementId = evenement.Id;
+            bihzProject.FietstochtId = fietsTocht.Id;
 
-            evenement.KentaaProjectId = bihzProject.ProjectId;
-            _evenementService.Save(evenement).Wait();
+            fietsTocht.KentaaProjectId = bihzProject.ProjectId;
+            await _fietstochtenService.SaveAsync(fietsTocht);
             
-            _logger.LogInformation("Kentaa project with id {ProjectId} successfully saved and linked to evenement with id {EvenementId}", bihzProject.ProjectId, bihzProject.EvenementId);
+            _logger.LogInformation($"Kentaa project with id {bihzProject.ProjectId} successfully saved and linked to fietstocht with id {bihzProject.FietstochtId}");
         }
 
         Save(bihzProject);
-        _logger.LogInformation("Values from Kentaa project with id {ProjectId} successfully saved to evenement with id {EvenementId}", bihzProject.ProjectId, bihzProject.EvenementId);
+        _logger.LogInformation($"Values from Kentaa project with id {bihzProject.ProjectId} successfully saved to evenement with id {bihzProject.FietstochtId}");
     }
 
-    public void Add(IEnumerable<BihzProject> projects)
+    public async Task AddAsync(IEnumerable<BihzProject> projects)
     {
         foreach (var project in projects)
         {
-            Add(project);
+            await AddAsync(project);
         }
     }
 

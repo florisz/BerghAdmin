@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace BerghAdmin.Tests.BetalingenTests
 {
     [TestFixture]
-    public class BetalingenTests : DatabasedTests
+    public class BetalingenTests : DatabaseTestSetup
     {
         private IBetalingenService? _betalingenService;
         private IBetalingenImporterService? _betalingenImporterService;
@@ -34,10 +34,10 @@ namespace BerghAdmin.Tests.BetalingenTests
                 .AddScoped<IBihzDonatieService, BihzDonatieService>()
                 .AddScoped<IBihzProjectService, BihzProjectService>()
                 .AddScoped<IBihzUserService, BihzUserService>()
-                .AddScoped<IEvenementService, EvenementService>()
+                .AddScoped<IFietstochtenService, FietstochtenService>()
                 .AddScoped<IRolService, RolService>()
                 .AddScoped<IPersoonService, PersoonService>()
-                .AddScoped<IEvenementService, EvenementService>()
+                .AddScoped<IFietstochtenService, FietstochtenService>()
                 .AddScoped<IDonatieService, DonatieService>()
                 .AddHttpClient()
                 .AddScoped<IKentaaInterfaceService, KentaaInterfaceService>()
@@ -73,7 +73,7 @@ namespace BerghAdmin.Tests.BetalingenTests
         }
 
         [Test]
-        public void TestImportRaboBetalingenBestand()
+        public async Task TestImportRaboBetalingenBestand()
         {
             using FileStream fs = File.OpenRead("BetalingenTests/TestRaboBetalingenBestand.csv");
             var betalingen = _betalingenImporterService!.ImportBetalingen(fs);
@@ -82,7 +82,7 @@ namespace BerghAdmin.Tests.BetalingenTests
             {
                 if (_betalingenService!.GetByVolgnummer(betaling.Volgnummer) == null)
                 {
-                    _betalingenService.Save(betaling);
+                    await _betalingenService.SaveAsync(betaling);
                 }
             }
 

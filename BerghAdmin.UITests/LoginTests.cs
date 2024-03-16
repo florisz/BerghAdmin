@@ -38,6 +38,6 @@ public class LoginTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Beheer Fietsers" }).ClickAsync();
 
         // Find title
-        var title = Page.GetByText("Fietsers", new() { Exact = true });
+        var title = Page.GetByText("Fietstochten", new() { Exact = true });
     }
 }

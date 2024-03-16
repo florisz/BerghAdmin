@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BerghAdmin.Data
@@ -8,30 +7,27 @@ namespace BerghAdmin.Data
         public Donateur()
         {
             Donaties = new List<Donatie>();
-            EmailAdres = "someone@mail.com";
+            EmailAdres = "";
         }
 
         public int Id { get; set; }
-        public int? DebiteurNummer { get; set; }
+        public string EmailAdres { get; set; }
         public bool IsVerwijderd { get; set; } = false;
-        public string? SponsorNaam { get; set; }
         public string? Adres { get; set; }
         public string? Postcode  { get; set; }
         public string? Plaats  { get; set; }
         public string? Land  { get; set; }
         public string? Telefoon { get; set; }
         public string? Mobiel { get; set; }
-        public string EmailAdres { get; set; }
-        public string? EmailAdresExtra { get; set; }
-        public decimal? BedragToegezegd { get; set; }
-        public DateTime? DatumAangebracht { get; set; }
         public string? Opmerkingen {  get; set; }
-        public string? KledingMaten {  get; set; }
-        public string? Nummer {  get; set; }
+
         public IEnumerable<Donatie> Donaties { get; set; }
 
         [NotMapped]
         public decimal? GetDonatieBedrag
             => Donaties.Sum(d => d.Bedrag);
+        [NotMapped]
+        public string VolledigeAdres
+            => string.Join(" ", new string?[] { Adres, Postcode, Plaats, Land });
     }
 }

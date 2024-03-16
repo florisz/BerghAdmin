@@ -1,0 +1,79 @@
+﻿@page "/selecteer-contact-compagnon-persoon-dialog"
+
+@using BerghAdmin.Events
+@using Microsoft.AspNetCore.Components;
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+
+@inject ILogger<AddGerelateerdPersoonDialog> _logger
+
+@attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
+
+<SfDialog Width="500" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+    <DialogEvents OnOverlayModalClick="@OnOverlayModalClick" Opened="@Opened" />
+    <DialogTemplates>
+        <Header>Selecteer persoon als: @PersoonType </Header>
+        <Content>
+            <EditForm Model="@_currentPersoon">
+                <SfListBox @ref="_personenListBox"
+                           TValue="PersoonListItem[]"
+                           TItem="PersoonListItem"
+                           DataSource="@_teSelecterenPersonenList"
+                           @bind-Value="_geselecteerdPersonen">
+                    <ListBoxFieldSettings Text="VolledigeNaamMetRollenEnEmail" Value="Id" />
+                </SfListBox>
+            </EditForm>
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Selecteren en sluiten" IsPrimary="true" OnClick="@SaveAndClose" />
+        <DialogButton Content="Afbreken" IsPrimary="false" OnClick="@DialogClose" />
+    </DialogButtons>
+</SfDialog>
+
+@code {
+    [Parameter]
+    public EventCallback<GerelateerdPersoonAddedEventArgs> OnGerelateerdPersoonAdded { get; set; }
+
+    SfListBox<PersoonListItem[], PersoonListItem>? _personenListBox;
+    private PersoonListItem[] _teSelecterenPersonenList = new PersoonListItem[] { };
+    private PersoonListItem[] _geselecteerdPersonen = new PersoonListItem[] { };
+    private PersoonListItem _currentPersoon = new();
+    private string PersoonType = "";
+
+    public bool IsVisible { get; set; } = false;
+
+    public void DialogOpen(PersoonListItem[] teSelecterenPersonen, string persoonType)
+    {
+        _logger.LogDebug($"Dialog AddGerelateerdPersoonDialog open; threadid={Thread.CurrentThread.ManagedThreadId}");
+        _teSelecterenPersonenList = teSelecterenPersonen;
+        PersoonType = persoonType;
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    private async Task Opened(Syncfusion.Blazor.Popups.OpenEventArgs args)
+    {
+        args.PreventFocus = true;
+    }
+
+    private async Task SaveAndClose()
+    {
+        // TO DO what if no persoon was selected?
+        await OnGerelateerdPersoonAdded.InvokeAsync(new GerelateerdPersoonAddedEventArgs(_geselecteerdPersonen[0], PersoonType));
+
+        DialogClose();
+    }
+
+    private void DialogClose()
+    {
+        IsVisible = false;
+        StateHasChanged();
+    }
+
+    private void OnOverlayModalClick(OverlayModalClickEventArgs args)
+    {
+        DialogClose();
+    }
+
+}

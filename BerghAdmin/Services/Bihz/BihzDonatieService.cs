@@ -29,11 +29,11 @@ public class BihzDonatieService : IBihzDonatieService
     }
 
 
-    public void Add(BihzDonatie donatie)
+    public async Task AddAsync(BihzDonatie donatie)
     {
         Persoon? persoon = null;
 
-        _logger.LogDebug("Entering Add BihzDonatie with KentaaId {donatieId}", donatie.DonationId);
+        _logger.LogDebug("Entering AddAsync BihzDonatie with KentaaId {donatieId}", donatie.DonationId);
 
         var bihzDonatie = MapChanges(GetByKentaaId(donatie.DonationId), donatie);
 
@@ -54,7 +54,7 @@ public class BihzDonatieService : IBihzDonatieService
                             donatie.DonationId, bihzActie.Id);
                 }
 
-                persoon = _persoonService.GetById((int?)bihzActie.PersoonId ?? throw new ArgumentException("Cannot get Persoon with ID=null"));
+                persoon = await _persoonService.GetById((int?)bihzActie.PersoonId ?? throw new ArgumentException("Cannot get Persoon with ID=null"));
                 if (persoon == null)
                 {
                     _logger.LogWarning("Kentaa donatie with id {DonationId} can not be processed succesfully; reason: donatie is linked to an unknown persoon with id {PersoonId}.",
@@ -69,7 +69,7 @@ public class BihzDonatieService : IBihzDonatieService
 
         _donatieService.ProcessBihzDonatie(bihzDonatie, persoon);
 
-        Save(bihzDonatie);
+        await SaveAsync(bihzDonatie);
         _logger.LogInformation("Kentaa donatie with id {DonationId} successfully linked to persoon with id {PersoonId}", bihzDonatie.DonationId, bihzDonatie.PersoonId);
     }
 
@@ -81,11 +81,11 @@ public class BihzDonatieService : IBihzDonatieService
         return currentDonatie.UpdateFrom(donatie);
     }
 
-    public void Add(IEnumerable<BihzDonatie> donaties)
+    public async Task AddAsync(IEnumerable<BihzDonatie> donaties)
     {
         foreach (var donatie in donaties)
         {
-            Add(donatie);
+            await AddAsync(donatie);
         }
     }
 
@@ -106,32 +106,22 @@ public class BihzDonatieService : IBihzDonatieService
             .BihzDonaties?
             .SingleOrDefault(kd => kd.DonationId == kentaaId);
 
-    public ErrorCodeEnum Save(BihzDonatie donatie)
+    public async Task SaveAsync(BihzDonatie donatie)
     {
-        try
+        if (donatie.Id == 0)
         {
-            if (donatie.Id == 0)
-            {
-                _dbContext
-                    .BihzDonaties?
-                    .Add(donatie);
-            }
-            else
-            {
-                _dbContext
-                    .BihzDonaties?
-                    .Update(donatie);
-            }
-
-            _dbContext.SaveChanges();
+            _dbContext
+                .BihzDonaties?
+                .Add(donatie);
         }
-        catch (Exception)
+        else
         {
-            // log exception
-            return ErrorCodeEnum.Conflict;
+            _dbContext
+                .BihzDonaties?
+                .Update(donatie);
         }
 
-        return ErrorCodeEnum.Ok;
+        await _dbContext.SaveChangesAsync();
     }
 
 }

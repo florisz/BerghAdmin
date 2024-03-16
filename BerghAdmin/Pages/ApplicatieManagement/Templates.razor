@@ -1,0 +1,146 @@
+@page "/ApplicatieManagement/templates"
+
+@using BerghAdmin.Data
+@using BerghAdmin.General
+@using BerghAdmin.Services.Documenten
+@using BerghAdmin.Services.Import
+
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Grids
+
+@inject IJSRuntime jsRuntime
+@inject IDataImporterService _importerService
+@inject IDocumentService _documentService
+@inject SfDialogService _dialogService
+@inject NavigationManager _navigationManager
+
+@attribute [Authorize(Policy = "IsAdministrator")]
+
+<div class="form-group" >
+    <p hidden="@ShowUploadPanel">
+        <SfUploader ID="UploadFiles" AllowedExtensions=".docx" MaxFileSize="3000000">
+            <UploaderEvents ValueChange="OnUpload"></UploaderEvents>
+        </SfUploader>
+    </p>
+</div>
+
+
+<SfGrid @ref="@_templatesGrid" DataSource="@_templates" AllowPaging="true">
+    <GridEditSettings 
+        AllowAdding="true" 
+        AllowDeleting="true" 
+        AllowEditing="true" 
+        Mode="EditMode.Dialog" 
+        AllowEditOnDblClick="true">
+    </GridEditSettings>
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Text="Download" TooltipText="Template lokaal downloaden" PrefixIcon="e-icons e-edit" Align="ItemAlign.Left" OnClick="DownloadTemplate" />
+            <ToolbarItem Text="Upload" TooltipText="Nieuwe/gewijzigde template uploaden" PrefixIcon="e-icons e-circle-add" Align="ItemAlign.Left" OnClick="UploadTemplate" />
+            <ToolbarItem Text="Bekijk velden" TooltipText="Bekijk merge velden" PrefixIcon="e-icons e-send" Align="ItemAlign.Left" OnClick="ShowInterface" />
+        </ToolbarItems>
+    </SfToolbar>
+    <GridColumns>
+        <GridColumn Field=@nameof(Document.Id) HeaderText="Id" IsPrimaryKey="true" TextAlign="TextAlign.Left"  Width="30"></GridColumn>
+        <GridColumn Field=@nameof(Document.Name) HeaderText="Naam" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
+        <GridColumn Field=@nameof(Document.ContentType) HeaderText="Soort" Width="80"></GridColumn>
+        <GridColumn Field=@nameof(Document.Owner) HeaderText="Eigenaar" Format="d" Type="ColumnType.String" TextAlign="TextAlign.Left"  Width="130"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+@code{
+    SfGrid<Document> _templatesGrid = new();
+    public List<Document> _templates = new List<Document>();
+
+    private bool ShowUploadPanel { get; set; } = true;
+    private Document SelectedTemplate { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        _templates = GetTemplates();
+        await _templatesGrid.AutoFitColumnsAsync();
+    }
+
+    private  List<Document> GetTemplates()
+    {
+        var templates = _documentService
+                    .GetMergeTemplates();
+
+        if (templates == null)
+        {
+            templates = new List<Document>();
+        }
+        return templates.ToList();
+    }
+
+    private async Task DownloadTemplate()
+    {
+        // get selected template first
+        var selectedTemplates = await this._templatesGrid.GetSelectedRecordsAsync();
+        if (selectedTemplates.Count != 1)
+        {
+            await _dialogService.AlertAsync("Selecteer eerst een (1) template.");
+        }
+        else
+        {
+            // open the download dialog for the selected template
+            var url = _navigationManager.CreateUrlWithContext(selectedTemplates.ElementAt(0).Id, "/ApplicatieManagement/templates/download");
+            _navigationManager.NavigateTo(url);
+        }
+    }
+
+    private async Task UploadTemplate()
+    {
+        // get selected template first
+        var selectedTemplates = await this._templatesGrid.GetSelectedRecordsAsync();
+        if (selectedTemplates.Count != 1)
+        {
+            await _dialogService.AlertAsync("Selecteer eerst een (1) template.");
+        }
+        else
+        {
+            ShowUploadPanel = !ShowUploadPanel;
+            SelectedTemplate = selectedTemplates.ElementAt(0);
+        }
+    }
+
+    private async Task ShowInterface()
+    {
+    }
+
+    private async Task OnUpload(UploadChangeEventArgs args)
+    {
+        foreach (var file in args.Files)
+        {
+            if (file.FileInfo.Size > 30000000)
+            {
+                // TO DO: is het nodig om dit te ondervangen?
+                throw new Exception("File heeft meer dan 3Mb bytes");
+            }
+
+            SelectedTemplate.Content = await StreamToByteArray(file.File);
+            SelectedTemplate.Created = DateTime.Now;
+            _documentService.SaveDocument(SelectedTemplate);
+        }
+    }
+
+    public async Task<byte[]> StreamToByteArray(IBrowserFile file)
+    {
+        byte[] result;
+        try
+        {
+            using (var stream = file.OpenReadStream(file.Size))
+            {
+                result = new byte[stream.Length];
+                await stream.ReadAsync(result, 0, (int)stream.Length);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+        
+        return result;
+    }
+}

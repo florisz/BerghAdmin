@@ -5,11 +5,11 @@ namespace BerghAdmin.Services.Bihz;
 
 public interface IBihzDonatieService
 {
-    void Add(BihzDonatie donation);
-    void Add(IEnumerable<BihzDonatie> donations);
+    Task AddAsync(BihzDonatie donatie);
+    Task AddAsync(IEnumerable<BihzDonatie> donaties);
     bool Exist(BihzDonatie bihzDonatie);
     IEnumerable<BihzDonatie>? GetAll();
     BihzDonatie? GetById(int id);             // internal id
     BihzDonatie? GetByKentaaId(int kentaaId); // id as identified by kentaa 
-    ErrorCodeEnum Save(BihzDonatie bihzDonatie);
+    Task SaveAsync(BihzDonatie bihzDonatie);
 }

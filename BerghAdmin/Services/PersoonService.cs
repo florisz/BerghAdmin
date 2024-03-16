@@ -1,130 +1,181 @@
 using BerghAdmin.DbContexts;
+using BerghAdmin.Services.Evenementen;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace BerghAdmin.Services;
 
 public class PersoonService : IPersoonService
 {
     private readonly ApplicationDbContext _dbContext;
+    private readonly IRolService _rolService;
     private readonly ILogger<PersoonService> _logger;
 
-    public PersoonService(ApplicationDbContext context, ILogger<PersoonService> logger)
+    public PersoonService(ApplicationDbContext dbContext, IRolService rolService, ILogger<PersoonService> logger)
     {
-        _dbContext = context;
+        _dbContext = dbContext;
+        _rolService = rolService;
         _logger = logger;
+        logger.LogDebug($"PersoonService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
     }
 
-    public void DeletePersoon(int id)
+    public async Task DeletePersoonAsync(int id)
     {
-        _logger.LogDebug("Delete persoon {persoonId}", id);
+        _logger.LogDebug($"Delete persoon with id:{id}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
 
         var persoon = _dbContext.Personen?.FirstOrDefault(x => x.Id == id);
         if (persoon != null)
         {
             _dbContext.Personen?.Remove(persoon);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
-            _logger.LogInformation("Persoon with naam {volledigeNaam} deleted", persoon.VolledigeNaam);
+            _logger.LogDebug($"Persoon with naam {persoon.VolledigeNaam} deleted");
         }
     }
 
-    public Persoon? GetByActionId(int actionId)
+    public Task<Persoon?> GetByActionId(int actionId)
     {
-        _logger.LogDebug("Get persoon by action id {actionId}", actionId);
-
-        var persoon = _dbContext
-                        .Personen?
-                        .SingleOrDefault(p => p.BihzActie != null &&
-                                              p.BihzActie.Id == actionId);
-
-        _logger.LogInformation("Persoon (id={PersoonId}) with naam {volledigeNaam} retrieved by actionId {actionId} was {result}", 
-                persoon?.Id, persoon?.VolledigeNaam, actionId, persoon == null ? "NOT Ok" : "Ok");
-
-        return persoon;
-    }
-
-    public Persoon? GetById(int id)
-    {
-        _logger.LogDebug("Get persoon by id {Id}", id);
+        _logger.LogDebug($"Get persoon by action id:{actionId}");
 
         var persoon = _dbContext
                 .Personen?
-                .Include(p => p.Rollen)
-                .SingleOrDefault(x => x.Id == id);
+                .SingleOrDefault(p => p.BihzActie != null &&
+                                        p.BihzActie.Id == actionId);
 
-        _logger.LogInformation("Persoon with naam {volledigeNaam} retrieved by id {id} was {result}",
-                persoon?.VolledigeNaam, id, persoon == null ? "NOT Ok" : "Ok");
+        _logger.LogDebug($"Persoon (id={persoon?.Id}) with naam {persoon?.VolledigeNaam} retrieved by actionId {actionId} was {((persoon == null) ? "NOT Ok" : "Ok")}");
 
-        return persoon;
+        return Task.FromResult(persoon);
     }
 
-    public Persoon? GetByEmailAdres(string emailAdres)
+    public Task<Persoon?> GetById(int id)
     {
-        _logger.LogDebug("Get persoon by email adres {emailAdres}", emailAdres);
+        Persoon? persoon;
+
+        _logger.LogDebug($"Get persoon by id {id}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+
+        // add try catch
+        try
+        {
+            persoon = _dbContext
+                .Personen?
+                .Include(p => p.Rollen)
+                .Include(e => e.Fietstochten)
+                .SingleOrDefault(x => x.Id == id);
+
+            _logger.LogDebug($"Persoon with naam {persoon?.VolledigeNaam} retrieved by id {id} was {((persoon == null) ? "NOT Ok" : "Ok")}");
+
+            return Task.FromResult(persoon);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error retrieving persoon with id {id}");
+            throw;
+        }
+    }
+
+    public Task<Persoon?> GetByEmailAdres(string emailAdres)
+    {
+        _logger.LogDebug($"Get persoon by email adres {emailAdres}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
 
         var persoon = _dbContext
                 .Personen?
                 .Include(p => p.Rollen)
                 .SingleOrDefault(x => x.EmailAdres == emailAdres);
 
-        _logger.LogInformation("Persoon (id={PersoonId}) with naam {volledigeNaam} retrieved by emailadres {emailAdres} was {result}",
-                persoon?.Id, persoon?.VolledigeNaam, emailAdres, persoon == null ? "NOT Ok" : "Ok");
+        _logger.LogDebug($"Persoon (id={persoon?.Id}) with naam {persoon?.VolledigeNaam} retrieved by emailadres {emailAdres} was {((persoon == null) ? "NOT Ok" : "Ok")}");
 
-        return persoon;
+        return Task.FromResult(persoon);
     }
 
-    public List<Persoon>? GetPersonen()
+    public Task<List<Persoon>> GetPersonen()
     {
-        _logger.LogDebug("Get alle personen");
+        _logger.LogDebug($"Get alle personen; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
 
         var personen = _dbContext
             .Personen?
             .Include(p => p.Rollen)
             .Include(p => p.Donaties)
-            .Include(p => p.IsDeelnemerVan)
+            .Include(p => p.Fietstochten)
             .ToList();
 
-        _logger.LogInformation("Get alle personen returned {count} results", personen == null? 0 : personen.Count);
-
-        return personen;
+        _logger.LogDebug($"Get alle personen returned {((personen == null) ? 0 : personen.Count)} personen");
+        
+        return Task.FromResult(personen ?? new List<Persoon>());
     }
 
-    public List<Persoon>? GetFietsersEnBegeleiders()
+    public Task<PersoonListItem[]> GetFietstochtDeelnemers()
     {
-        _logger.LogDebug("Get alle fietsers en begeleiders");
+        _logger.LogDebug($"Get alle fietsers en begeleiders; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
 
         var personen = _dbContext
                 .Personen?
-                .Where(p => p.Rollen.Any(r => r.Id == RolTypeEnum.Fietser || r.Id == RolTypeEnum.Begeleider))
+                .Where(p => p.Rollen.Any(r => r.Id == Convert.ToInt32(RolTypeEnum.Fietser) || r.Id == Convert.ToInt32(RolTypeEnum.Begeleider)))
                 .OrderBy(p => p.Achternaam)
-                .ToList();
+                .Select(p => new PersoonListItem() { Id = p.Id, VolledigeNaamMetRollenEnEmail = p.VolledigeNaamMetRollenEnEmail })
+                .ToArray();
 
-        _logger.LogInformation("Get alle fietsers en begeleiders returned {count} results", personen == null ? 0 : personen.Count);
+        _logger.LogDebug($"Get alle fietsers en begeleiders returned {((personen == null) ? 0 : personen.Count())} personen");
 
-        return personen;
+        return Task.FromResult(personen ?? new PersoonListItem[] { });
     }
 
-    public void SavePersoon(Persoon persoon)
+    // TO DO : merge with GetFietstochtDeelnemers
+    public Task<PersoonListItem[]> GetContactPersonen()
     {
-        _logger.LogDebug("Save persoon with name {volledigeNaam}", persoon.VolledigeNaam);
+        _logger.LogDebug($"Get alle contactpersonen; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
 
-        if (persoon.Id == 0) 
+        var personen = _dbContext
+                .Personen?
+                .Where(p => p.Rollen.Any(r => r.Id == Convert.ToInt32(RolTypeEnum.Contactpersoon)))
+                .OrderBy(p => p.Achternaam)
+                .Select(p => new PersoonListItem() { Id = p.Id, VolledigeNaamMetRollenEnEmail = p.VolledigeNaamMetRollenEnEmail })
+                .ToArray();
+
+        _logger.LogDebug($"Get alle contactpersonen returned {((personen == null) ? 0 : personen.Count())} personen");
+
+        return Task.FromResult(personen ?? new PersoonListItem[] { });
+    }
+
+
+    public async Task SavePersoonAsync(Persoon persoon)
+    {
+        _logger.LogDebug($"SaveAsync persoon with name {persoon.VolledigeNaam}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+        var debugView = _dbContext.ChangeTracker.DebugView.LongView;
+        if (persoon.Id == 0)
         {
             _dbContext
                 .Personen?
                 .Add(persoon);
 
-            _logger.LogInformation("Persoon with naam {volledigeNaam} was added", persoon.VolledigeNaam);
+            _logger.LogInformation($"Persoon with naam {persoon.VolledigeNaam} was added");
         }
         else
-        { 
+        {
             _dbContext
                 .Personen?
                 .Update(persoon);
 
-            _logger.LogInformation("Persoon with naam {volledigeNaam} was updated", persoon.VolledigeNaam);
+            _logger.LogInformation($"Persoon with naam {persoon.VolledigeNaam} was updated");
         }
-        _dbContext.SaveChanges();
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    //
+    // Helper function to set rollen based on the selection in a listbox
+    //
+    public void SetRollen(Persoon persoon, List<RolListItem> rolListItems)
+    {
+        persoon.Rollen.Clear();
+        foreach (var rolListItem in rolListItems)
+        {
+            var rol = _rolService.GetRolById((RolTypeEnum)rolListItem.Id);
+            if (rol == null)
+            {
+                throw new ApplicationException($"Rol with id {rolListItem.Id} does not exist");
+            }
+            persoon.Rollen.Add(rol!);
+        }
     }
 
 }

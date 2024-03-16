@@ -1,0 +1,21 @@
+﻿@page "/Ambassadeurs/Facturen"
+
+@using BerghAdmin.Authorization
+@using BerghAdmin.Data
+@using BerghAdmin.Pages.Personen
+
+@inject IJSRuntime jsRuntime
+
+@attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
+
+<h3>Facturen - Ambassadeurs</h3>
+
+@code
+{
+    public int[] rolContext = new int[] { Convert.ToInt32(RolTypeEnum.Contactpersoon) };
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "ambassadeur");
+    }
+}

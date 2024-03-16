@@ -1,0 +1,385 @@
+﻿@page "/Ambassadeurs"
+@page "/Ambassadeurs/Overzicht"
+
+@using BerghAdmin.Authorization
+@using BerghAdmin.Data
+@using BerghAdmin.Events
+@using BerghAdmin.General
+@using BerghAdmin.Pages.Mail
+@using BerghAdmin.Pages.Personen
+@using BerghAdmin.Services.Sponsoren
+@using BerghAdmin.Services.Documenten
+
+@using Microsoft.AspNetCore.Identity
+
+@inject IJSRuntime jsRuntime
+@inject ILogger<Ambassadeurs> _logger
+@inject NavigationManager _navigationManager
+@inject IJSRuntime jsRuntime
+@inject ISendMailService _sendMailService
+@inject IMailAttachmentsService _mailAttachmentsService;
+@inject SfDialogService DialogService
+@inject UserManager<User> _userManager
+@inject IAmbassadeurService _ambassadeurService
+@inject IDocumentService _documentService
+@inject IDocumentMergeService _mergeService
+@inject IPdfConverter _pdfConverter
+
+@attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
+
+<h3>Ambassadeurs - overzicht</h3>
+
+<div class="responsive-align">
+    <div class="row">
+        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
+            <label class="col-form-label">Inclusief Verwijderd</label>
+            <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
+        </div>
+    </div>
+</div>
+
+@*
+    The grid showing all persons
+*@
+<SfGrid @ref="@_ambassadeursGrid"
+        DataSource="@_ambassadeursList"
+        AllowPaging="true"
+        AllowResizing="true"
+        AllowSelection="true"
+        AllowExcelExport="true"
+        ShowColumnMenu="true"
+        ContextMenuItems="@(new List<ContextMenuItemModel>() {
+                                new ContextMenuItemModel { Text = "Toevoegen ambassadeur", Target = ".e-content", Id = "add-ambassadeur" },
+                                new ContextMenuItemModel { Text = "Wijzig ambassadeur", Target = ".e-content", Id = "edit-ambassadeur" },
+                                new ContextMenuItemModel { Text = "Stuur ambassadeur", Target = ".e-content", Id = "send-email" },
+                                new ContextMenuItemModel { Text = "Kopieer emailadres(sen)", Target = ".e-content", Id = "copy-emailaddresses" },
+                            })">
+    <GridEditSettings AllowAdding="true"
+                      AllowDeleting="true"
+                      AllowEditing="true"
+                      Mode="EditMode.Dialog"
+                      AllowEditOnDblClick="false">
+    </GridEditSettings>
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Text="Toevoegen" TooltipText="Toevoegen ambassadeur" PrefixIcon="e-icons e-circle-add" Align="ItemAlign.Left" OnClick="AddAmbassadeur" />
+            <ToolbarItem Text="Wijzig" TooltipText="Wijzig ambassadeur" PrefixIcon="e-icons e-edit" Align="ItemAlign.Left" OnClick="EditAmbassadeur" />
+            <ToolbarItem Text="Email" TooltipText="Stuur email" PrefixIcon="e-icons e-send" Align="ItemAlign.Left" OnClick="ShowSendMailDialog" />
+            <ToolbarItem Text="Kopieer emailadres(sen)" TooltipText="Kopieer email adressen" PrefixIcon="e-icons e-copy" Align="ItemAlign.Left" OnClick="CopySelectedEmailAddressesAsync" />
+            <ToolbarItem Text="Export" TooltipText="Export naar excel" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ExportToExcelAsync" />
+            <ToolbarItem Text="Factuur" TooltipText="Maak factuur voor deze ambassadeur" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="MaakFactuurAsync" />
+            <ToolbarItem Type="ItemType.Input" Align="Syncfusion.Blazor.Navigations.ItemAlign.Right">
+                <Template>
+                    <SfTextBox Placeholder="Type tekst om te zoeken" Input="OnInputSearchString"></SfTextBox>
+                    <span class="e-search-icon e-icons"></span>
+                </Template>
+            </ToolbarItem>
+        </ToolbarItems>
+    </SfToolbar>
+    <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple" PersistSelection="true"></GridSelectionSettings>
+    <GridEvents ContextMenuItemClicked="OnContextMenuClick" TValue="Ambassadeur" />
+
+    <GridColumns>
+        <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
+        <GridColumn Field=@nameof(Ambassadeur.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true" Visible="false" />
+        <GridColumn Field=@nameof(Ambassadeur.Naam) HeaderText="Naam" TextAlign="TextAlign.Left" Width="100" />
+        <GridColumn Field=@nameof(Ambassadeur.DatumAangebracht) HeaderText="Sinds" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="60" />
+        <GridColumn Field=@nameof(Ambassadeur.ToegezegdBedrag) HeaderText="Toegezegd" TextAlign="TextAlign.Left" Width="60" />
+        <GridColumn Field=@nameof(Ambassadeur.TotaalBedrag) HeaderText="Totaal" TextAlign="TextAlign.Left" Width="60" />
+        <GridColumn Field=@nameof(Ambassadeur.VolledigeAdres) HeaderText="Adres" TextAlign="TextAlign.Left" Width="170" />
+        <GridColumn Field=@nameof(Ambassadeur.Telefoon) HeaderText="Telefoon" TextAlign="TextAlign.Left" Width="80" />
+        <GridColumn Field=@nameof(Ambassadeur.ContactPersoonVolledigeNaam) HeaderText="Contact Naam" TextAlign="TextAlign.Left" Width="120" />
+        <GridColumn Field=@nameof(Ambassadeur.ContactPersoonEmailAdres) HeaderText="Contact Email" TextAlign="TextAlign.Left" Width="120" />
+        <GridColumn Field=@nameof(Ambassadeur.ContactPersoonTelefoon) HeaderText="Contact Telefoon" TextAlign="TextAlign.Left" Width="120" />
+        <GridColumn Field=@nameof(Ambassadeur.IsVerwijderd) HeaderText="Status" FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })" Width="90">
+            <Template>
+                @{
+                    var ambassadeur = (Ambassadeur)context;
+                    if (!ambassadeur.IsVerwijderd)
+                    {
+                        <div class="statustemp e-activecolor">
+                            <span class="statustxt e-activecolor">Actief</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="statustemp e-inactivecolor">
+                            <span class="statustxt e-inactivecolor">Inactief</span>
+                        </div>
+                    }
+                }
+            </Template>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>
+
+<SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
+
+@code
+{
+    [CascadingParameter]
+    private Task<AuthenticationState>? _authenticationStateTask { get; set; }
+
+    SfGrid<Ambassadeur> _ambassadeursGrid = new();
+    public List<Ambassadeur> _ambassadeursList = new();
+    SendMailDialog sendMailDialog = new();
+    private User? CurrentUser;
+    private bool ToonVerwijderd { get; set; } = false;
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "ambassadeur");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _logger.LogDebug($"Ambassadeur page initialized; threadid={Thread.CurrentThread.ManagedThreadId}");
+
+        await RefreshList();
+
+        if (_authenticationStateTask != null)
+        {
+            var authenticationState = await _authenticationStateTask;
+            CurrentUser = await _userManager.GetUserAsync(authenticationState?.User);
+        }
+    }
+
+    public async Task RefreshList()
+    {
+        var ambassadeurs = await GetAmbassadeurs();
+        _ambassadeursList = ambassadeurs
+                                .OrderBy(p => p.Naam)
+                                .ToList<Ambassadeur>();
+        await _ambassadeursGrid.AutoFitColumnsAsync();                                
+    }
+
+    private async Task<List<Ambassadeur>> GetAmbassadeurs()
+    {
+        var ambassadeurs = await _ambassadeurService.GetAll();
+        if (ambassadeurs != null)
+        {
+            if (ToonVerwijderd)
+            {
+                return ambassadeurs.ToList();
+            }
+            else
+            {
+                return ambassadeurs.Where(p => p.IsVerwijderd == false).ToList();
+            }
+        }
+        return new List<Ambassadeur>();
+    }
+
+    // search in the grid functionaity
+    public async Task OnInputSearchString(InputEventArgs args)
+    {
+        await this._ambassadeursGrid.SearchAsync(args.Value);
+    }
+
+    // Everything to handle the context menu
+    // Triggers when the item is selected
+    public async Task OnContextMenuClick(ContextMenuClickEventArgs<Ambassadeur> args)
+    {
+        if (args.Item.Id == "edit-ambassadeur")
+        {
+            var ambassadeur = args.RowInfo.RowData as Ambassadeur;
+            await EditAmbassadeur();
+            return;
+        }
+        if (args.Item.Id == "add-ambassadeur")
+        {
+            AddAmbassadeur();
+            return;
+        }
+        if (args.Item.Id == "send-email")
+        {
+            ShowSendMailDialog();
+            return;
+        }
+        if (args.Item.Id == "copy-emailaddresses")
+        {
+            await CopySelectedEmailAddressesAsync();
+            return;
+        }
+    }
+
+    private async Task EditAmbassadeur()
+    {
+        // get selected personen first
+        var selectedAmbassadeurs = await this._ambassadeursGrid.GetSelectedRecordsAsync();
+        if (selectedAmbassadeurs.Count == 0)
+        {
+            await DialogService.AlertAsync("Selecteer eerst een ambassadeur.");
+        }
+        else if (selectedAmbassadeurs.Count > 1)
+        {
+            await DialogService.AlertAsync("Er zijn meerdere ambassadeurs geselecteerd. Selecteer eerst een ambassadeur of gebruik de rechtermuisclick.");
+        }
+        else
+        {
+            var url = _navigationManager.CreateUrlWithContext(selectedAmbassadeurs.ElementAt(0).Id, "/Ambassadeurs/EditAmbassadeur");
+            _navigationManager.NavigateTo(url);
+        }
+    }
+
+    private void AddAmbassadeur()
+    {
+        var url = _navigationManager.CreateUrlWithContext(0, "/Ambassadeurs/EditAmbassadeur");
+        _navigationManager.NavigateTo(url);
+    }
+
+    private async void ShowSendMailDialog()
+    {
+        if (string.IsNullOrWhiteSpace(CurrentUser?.Email))
+        {
+            return;
+        }
+
+        List<MailAddress> selectedAddresses = await GetSelectedEmailAddresses();
+        MailMessage message = new()
+            {
+                From = new MailAddress(CurrentUser.Email, CurrentUser.Name),
+                To = selectedAddresses
+            };
+        sendMailDialog.DialogOpen(message);
+    }
+
+    private async Task onToonVerwijderdChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        await RefreshList();
+    }
+
+    // export to excel
+    private async Task ExportToExcelAsync()
+    {
+        string fileName = $"ambassadeurs_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+        ExcelExportProperties exportProperties = new()
+            {
+                FileName = fileName
+            };
+        await this._ambassadeursGrid.ExportToExcelAsync(exportProperties);
+        await jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
+    }
+
+    private async Task MaakFactuurAsync()
+    {
+        var template = _mergeService.GetMergeTemplateByName("Ambassadeur Factuur Template");
+        //var mergeFields = _mergeService.GetMergeFieldsFor(template).ToArray();
+        //var stream = _mergeService.Merge(template, fieldValues);
+        var mergeDictionary = new Dictionary<string, string>
+        {
+            { "AmbassadeurNaam", "Royal Fassin B.V." },
+            { "ContactpersoonAanhef", "de heer" },
+            { "ContactpersoonVoornaam", "Thomas" },
+            { "ContactpersoonAchternaam", "Fassin" },
+            { "AmbassadeurAdres", "Ulenpasweg 8" },
+            { "AmbassadeurPostcode", "7041 GB" },
+            { "AmbassadeurWoonplaats", "'s Heerenberg" },
+            { "Dagtekening", "25 oktober 2023" },
+            { "FactuurNummer", "202300752" },
+            { "DebiteurNummer", "00172" },
+            { "HuidigeDatum", "24 juli 2021" },
+            { "FactuurBedrag", "€ 5.000,-" },
+            { "FactuurTotaalBedrag", "€ 5.000,-" },
+        };
+
+        File.WriteAllBytes($"c:/tmp/AmbassadeursTemplate.docx", template.Content);
+
+        var mergedStream = _mergeService.Merge(template, mergeDictionary);
+        using FileStream outputFileStream = new($"c:/tmp/{template.Name}.docx", FileMode.Create);
+        mergedStream.Position = 0;
+        mergedStream.CopyTo(outputFileStream);
+
+        outputFileStream.Position = 0;
+        var pdfStream = _pdfConverter.ConvertWordToPdf(outputFileStream);
+        var pdfOutputStream = new FileStream($"c:/tmp/{template.Name}.pdf", FileMode.Create);
+
+        pdfStream.Position = 0;
+        pdfStream.CopyTo(pdfOutputStream);
+        pdfStream.Close();
+        pdfOutputStream.Close();
+
+    }
+
+    private async void OnMailMessageConfigured(MailMessageConfiguredEventArgs eventArgs)
+    {
+        var message = eventArgs.Message;
+
+        // Replace all content ids with inlined attachments
+        _mailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(message);
+
+        bool isSandboxMode = false; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
+        await _sendMailService.SendMail(message, isSandboxMode);
+    }
+
+    private async Task CopySelectedEmailAddressesAsync()
+    {
+        List<MailAddress> selectedAddresses = await GetSelectedEmailAddresses();
+        string emailAddresses = string.Join(';', selectedAddresses.Select(a => a.Address));
+        await jsRuntime.InvokeVoidAsync("clipboardApi.copyTextToClipboard", emailAddresses, $"Emailaddressen naar klembord gekopieerd.");
+    }
+
+    private async Task<List<MailAddress>> GetSelectedEmailAddresses()
+    {
+        var emailAddressesList = new List<MailAddress>();
+        var selectedAmbassadeursWithMailAddress = (await this._ambassadeursGrid.GetSelectedRecordsAsync())
+            .Where(p => !string.IsNullOrWhiteSpace(p.ContactPersoon.EmailAdres));
+        foreach (var ambassadeur in selectedAmbassadeursWithMailAddress)
+        {
+            emailAddressesList.Add(new(ambassadeur.ContactPersoon.EmailAdres, ambassadeur.ContactPersoon.VolledigeNaam, ambassadeur.ContactPersoon.Id));
+        }
+        return emailAddressesList;
+    }
+}
+<style>
+    .statustemp {
+        position: relative;
+        height: 19px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+        .statustemp.e-inactivecolor {
+            background-color: #ffd7cc;
+            width: 64px;
+        }
+
+        .statustemp.e-activecolor {
+            background-color: #ccffcc;
+            width: 57px;
+            cursor: pointer;
+        }
+
+        .statustemp.e-activereservecolor {
+            background-color: #fffecc;
+            width: 107px;
+            cursor: pointer;
+        }
+
+    td.e-rowcell {
+        cursor: pointer;
+    }
+
+        td.e-rowcell .statustxt.e-inactivecolor {
+            color: #e60000;
+            position: relative;
+            top: 0px;
+        }
+
+        td.e-rowcell .statustxt.e-activecolor {
+            color: #00cc00;
+            position: relative;
+            top: 0px;
+        }
+
+        td.e-rowcell .reservediv.reserve {
+            color: #900C3F;
+        }
+
+        td.e-rowcell .reservediv.no-reserve {
+            color: #166344;
+        }
+
+</style>

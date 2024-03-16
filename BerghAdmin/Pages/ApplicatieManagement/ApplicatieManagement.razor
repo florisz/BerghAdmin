@@ -1,0 +1,60 @@
+@page "/ApplicatieManagement"
+@page "/ApplicatieManagement/personen"
+
+@using BerghAdmin.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
+@using BerghAdmin.Data
+@using BerghAdmin.Pages.Personen
+@using BerghAdmin.Services.Import
+@using System.IO
+
+@inject IJSRuntime jsRuntime
+@inject IDataImporterService importerService 
+
+@attribute [Authorize(Policy = "IsAdministrator")]
+
+<h3>Applicatie Management</h3>
+
+<PersonenComponent RolContext="@rolContext" ToonAlles="true" />
+<br/>
+
+<div class="form-group">
+    <SfUploader ID="UploadFiles">
+        <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+    </SfUploader>
+</div>
+
+@code
+{
+    public int[] rolContext = new int[] { };
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "applicatiemanagement");
+    }
+
+    private bool IsVisible { get; set; } = false;
+
+    private void OpenDialog()
+    {
+        this.IsVisible = true;
+    }
+
+    private void OnChange(UploadChangeEventArgs args)
+    {
+        foreach (var file in args.Files)
+        {
+            if (file.FileInfo.Size > 512000)
+            {
+                // TO DO: is het nodig om dit te ondervangen?
+                throw new Exception("File heeft meer dan 512K bytes");
+            }
+
+            // TO DO pass a File property to the importerService
+            var stream = file.File.OpenReadStream();
+            importerService.ImportData(stream);
+        }
+    }
+}

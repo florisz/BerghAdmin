@@ -7,22 +7,22 @@ namespace BerghAdmin.Services.Bihz;
 
 public class BihzActieService : IBihzActieService
 {
-    private readonly ApplicationDbContext dbContext;
+    private readonly ApplicationDbContext _dbContext;
     private readonly ILogger<BihzActieService> _logger;
     private readonly IPersoonService _persoonService;
-    private readonly IEvenementService _evenementService;
+    private readonly IFietstochtenService _fietstochtenService;
 
-    public BihzActieService(ApplicationDbContext context, IPersoonService persoonService, IEvenementService evenementService, ILogger<BihzActieService> logger)
+    public BihzActieService(ApplicationDbContext dbContext, IPersoonService persoonService, IFietstochtenService fietstochtenService, ILogger<BihzActieService> logger)
     {
-        this.dbContext = context;
-        this._persoonService = persoonService;
-        this._evenementService = evenementService;
-        this._logger = logger;
+        _dbContext = dbContext;
+        _persoonService = persoonService;
+        _fietstochtenService = fietstochtenService;
+        _logger = logger;
     }
 
-    public void Add(BihzActie actie)
+    public async Task AddAsync(BihzActie actie)
     {
-        _logger.LogDebug("Entering Add BihzActie with KentaaId {KentaaActionId}", actie.ActionId);
+        _logger.LogDebug("Entering AddAsync BihzActie with KentaaId {KentaaActionId}", actie.ActionId);
 
         var bihzActie = MapChanges(GetByKentaaId(actie.ActionId), actie);
 
@@ -30,7 +30,7 @@ public class BihzActieService : IBihzActieService
         {
             // Persoon has not been linked to a registered Kentaa action yet,
             // Link thru the email address of the Kentaa action
-            var persoon = _persoonService.GetByEmailAdres(bihzActie.Email ?? "no-email");
+            var persoon = await _persoonService.GetByEmailAdres(bihzActie.Email ?? "no-email");
 
             if (persoon == null)
             {
@@ -42,21 +42,21 @@ public class BihzActieService : IBihzActieService
             persoon.BihzActie = bihzActie;
             bihzActie.PersoonId = persoon.Id;
 
-            _persoonService.SavePersoon(persoon);
+            await _persoonService.SavePersoonAsync(persoon);
 
-            // Add this persoon as deelnemer of the fietstocht (= project in Kentaa)
+            // AddAsync this persoon as deelnemer of the fietstocht (= project in Kentaa)
             if (bihzActie.ProjectId != null)
             {
-                var evenement = _evenementService.GetByProjectId((int) bihzActie.ProjectId);
-                if (evenement != null)
+                var fietstocht = await _fietstochtenService.GetByProjectId((int) bihzActie.ProjectId);
+                if (fietstocht != null)
                 {
-                    _logger.LogDebug("Add deelnemer {PersoonNaam} to evenement {EvenementNaam}", persoon.VolledigeNaam, evenement.Titel);
-                    _evenementService.AddDeelnemer(evenement, persoon).Wait();
+                    _logger.LogDebug("AddAsync deelnemer {PersoonNaam} to fietstocht {EvenementNaam}", persoon.VolledigeNaam, fietstocht.Titel);
+                    await _fietstochtenService.AddDeelnemerAsync(fietstocht, persoon);
                 }
             }
         }
 
-        Save(bihzActie);
+        await SaveAsync(bihzActie);
         _logger.LogInformation("Kentaa actie with id {ActionId} successfully linked to persoon with id {PersoonId}", bihzActie.ActionId, bihzActie.PersoonId);
     }
 
@@ -68,11 +68,11 @@ public class BihzActieService : IBihzActieService
         return currentActie.UpdateFrom(newActie);
     }
 
-    public void Add(IEnumerable<BihzActie> actions)
+    public async Task AddAsync(IEnumerable<BihzActie> actions)
     {
         foreach (var action in actions)
         {
-            Add(action);
+            await AddAsync(action);
         }
     }
 
@@ -80,41 +80,47 @@ public class BihzActieService : IBihzActieService
         => GetByKentaaId(bihzActie.ActionId) != null;
 
     public IEnumerable<BihzActie>? GetAll()
-        => dbContext
+    {
+        return _dbContext
             .BihzActies;
+    }
 
     public BihzActie? GetById(int id)
-       => dbContext
+    {
+        return _dbContext
             .BihzActies?
             .SingleOrDefault(kd => kd.Id == id);
+    }
 
     public BihzActie? GetByKentaaId(int kentaaId)
-        => dbContext
+    {
+        return _dbContext
             .BihzActies?
             .SingleOrDefault(ka => ka.ActionId == kentaaId);
+    }
 
-    public ErrorCodeEnum Save(BihzActie bihzActie)
+    public async Task<ErrorCodeEnum> SaveAsync(BihzActie bihzActie)
     {
         try
         {
             if (bihzActie.Id == 0)
             {
-                dbContext
+                _dbContext
                     .BihzActies?
                     .Add(bihzActie);
             }
             else
             {
-                dbContext
+                _dbContext
                     .BihzActies?
                     .Update(bihzActie);
             }
 
-            dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
         catch (Exception)
         {
-            // log exception
+            // TOBEDONE log exception
             return ErrorCodeEnum.Conflict;
         }
 

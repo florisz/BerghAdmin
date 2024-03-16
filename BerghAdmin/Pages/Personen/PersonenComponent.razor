@@ -1,0 +1,482 @@
+﻿@using System.Linq;
+@using System.Security.Claims
+@using System.Collections.ObjectModel;
+
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities;
+@using Microsoft.Extensions.Options
+
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Popups
+
+@using BerghAdmin.Authorization;
+@using BerghAdmin.Data
+@using BerghAdmin.Events
+@using BerghAdmin.General
+@using BerghAdmin.Pages
+@using BerghAdmin.Pages.Mail
+@using BerghAdmin.Services
+@using BerghAdmin.Services.Configuration
+@using BerghAdmin.Services.Evenementen
+
+@inject IPersoonService _persoonService
+@inject IRolService _rolService
+@inject IFietstochtenService _fietstochtenService
+@inject ILogger<PersonenComponent> _logger
+@inject UserManager<User> _userManager
+@inject NavigationManager _navigationManager
+@inject IJSRuntime jsRuntime
+@inject ISendMailService _sendMailService
+@inject IMailAttachmentsService _mailAttachmentsService;
+@inject SfDialogService DialogService
+
+@attribute [Authorize(Policy = "IsAnyRole")]
+
+<div class="responsive-align">
+    <div class="row">
+        <div class="col-xs-6 col-sm-6 col-lg-6 col-md-6 search-item">
+            <label class="col-form-label">Overzicht van:</label>
+            <SfMultiSelect 
+                    TValue="int[]" 
+                            TItem="Rol"
+                            ClosePopupOnSelect="false"
+                            @bind-Value="@RolContext"
+                            Placeholder="e.g Contactpersoon, Fietser, Golfer"
+                            Mode="VisualMode.Box"
+                            DataSource="@_rollenList"
+                            Width="700px"
+                            ShowDropDownIcon="true"
+                            ModelType="typeof(Rol)" >
+                <MultiSelectFieldSettings Value="Id" Text="Beschrijving"></MultiSelectFieldSettings>
+                <MultiSelectTemplates TItem="Rol">
+                    <ItemTemplate>
+                        @{
+                            var contextValue = (context as Rol);
+                            bool isChecked = RolContext != null ? RolContext.Contains(contextValue.Id) : false;
+
+                            <span>
+                                <SfCheckBox TChecked="bool" @bind-checked="@isChecked"></SfCheckBox>
+                                @contextValue.Beschrijving
+                            </span>
+                        }
+                    </ItemTemplate>
+                </MultiSelectTemplates>
+                <MultiSelectEvents 
+                    TItem="Rol" TValue="int[]">
+                </MultiSelectEvents>
+            </SfMultiSelect>
+        </div>
+    </div>
+    @* <AuthorizeView Policy="IsAdministrator"> *@
+    <div class="row">
+        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
+            <label class="col-form-label">Toon alle rollen</label>
+                <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
+        </div>
+        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
+            <label class="col-form-label">Inclusief Verwijderd</label>
+            <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
+        </div>
+        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
+            <label class="col-form-label">Zonder Reserves</label>
+            <SfCheckBox TChecked="bool" @bind-Checked="@ZonderReserves" @onchange="onZonderReservesChange" />
+        </div>
+    </div>
+</div>
+
+    @* </AuthorizeView> *@
+<br />
+@*
+    The grid showing all persons
+*@
+<SfGrid @ref="@_personenGrid"
+        DataSource="@_personenList"
+        AllowPaging="true"
+        AllowResizing="true"
+        AllowSelection="true"
+        AllowExcelExport="true" 
+        ShowColumnMenu="true"
+        ContextMenuItems="@(new List<ContextMenuItemModel>() {
+                                new ContextMenuItemModel { Text = "Toevoegen persoon", Target = ".e-content", Id = "add-persoon" },
+                                new ContextMenuItemModel { Text = "Wijzig persoon", Target = ".e-content", Id = "edit-persoon" },
+                                new ContextMenuItemModel { Text = "Stuur email", Target = ".e-content", Id = "send-email" },
+                                new ContextMenuItemModel { Text = "Kopieer emailadres(sen)", Target = ".e-content", Id = "copy-emailaddresses" },
+                            })">
+    <GridEditSettings 
+        AllowAdding="true" 
+        AllowDeleting="true"
+        AllowEditing="true"
+        Mode="EditMode.Dialog"
+        AllowEditOnDblClick="false">
+    </GridEditSettings>
+    <SfToolbar>
+        <ToolbarItems>
+            <ToolbarItem Text="Wijzig" TooltipText="Wijzig persoon" PrefixIcon="e-icons e-edit" Align="ItemAlign.Left" OnClick="EditPersoon" />
+            <ToolbarItem Text="Toevoegen" TooltipText="Toevoegen persoon" PrefixIcon="e-icons e-circle-add" Align="ItemAlign.Left" OnClick="AddPersoon" />
+            <ToolbarItem Text="Email" TooltipText="Stuur email" PrefixIcon="e-icons e-send" Align="ItemAlign.Left" OnClick="ShowSendMailDialog" />
+            <ToolbarItem Text="Kopieer" TooltipText="Kopieer email adressen" PrefixIcon="e-icons e-copy" Align="ItemAlign.Left" OnClick="CopySelectedEmailAddressesAsync" />
+            <ToolbarItem Text="Export" TooltipText="Export naar excel" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ExportToExcelAsync" />
+            <ToolbarItem Type="ItemType.Input" Align="Syncfusion.Blazor.Navigations.ItemAlign.Right">
+                <Template>
+                    <SfTextBox Placeholder="Enter values to search" Input="OnInputSearchString"></SfTextBox>
+                    <span class="e-search-icon e-icons"></span>
+                </Template>
+            </ToolbarItem>
+        </ToolbarItems>
+    </SfToolbar>
+    <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple" PersistSelection="true"></GridSelectionSettings>
+    <GridEvents ContextMenuItemClicked="OnContextMenuClick" TValue="Persoon" />
+
+    <GridColumns>
+        <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true" Visible="false" />
+        <GridColumn Field=@nameof(Persoon.VolledigeNaam) HeaderText="Naam" TextAlign="TextAlign.Left" Width="110" />
+        <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left" Width="70"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left" Width="120"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.GetRollenAsString) HeaderText="Rollen" TextAlign="TextAlign.Left" Width="200"></GridColumn>
+        <GridColumn Field=@nameof(Persoon.IsVerwijderd) HeaderText="Status" FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })" Width="150">
+            <Template>
+                @{
+                    var persoon = (Persoon)context;
+                    if (!persoon.IsVerwijderd)
+                    {
+                        if (!persoon.IsReserve)
+                        {
+                            <div class="statustemp e-activecolor">
+                                <span class="statustxt e-activecolor">Actief</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="statustemp e-activereservecolor">
+                                <span class="statustxt e-activecolor">Actief (reserve)</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="statustemp e-inactivecolor">
+                            <span class="statustxt e-inactivecolor">Inactief</span>
+                        </div>
+                    }
+                }
+            </Template>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>
+
+<SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
+
+@code {
+    [Parameter]
+    public int[] RolContext { get; set; } = Array.Empty<int>();
+    [Parameter]
+    public bool ToonAlles { get; set; } = false;
+    [CascadingParameter]
+    private Task<AuthenticationState>? _authenticationStateTask { get; set; }
+
+    private User? CurrentUser;
+
+    private bool ToonVerwijderd { get; set; } = false;
+    private bool ZonderReserves { get; set; } = false;
+
+    // Everything to handle persons
+    public List<int> _selectedRollen = new();
+    public List<Persoon> _personenList = new();
+    public List<Rol> _rollenList = new();
+    public List<Fietstocht> _fietsTochtenList = new();
+    SfGrid<Persoon> _personenGrid = new();
+
+    private void ValueRemovedHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args)
+    {
+        _selectedRollen.Remove(args.ItemData.Id);
+        RefreshList();
+    }
+
+    private void OnValueSelectHandler(Syncfusion.Blazor.DropDowns.SelectEventArgs<Rol> args)
+    {
+        _selectedRollen.Add(args.ItemData.Id);
+        RefreshList();
+    }
+
+    // search in the grid functionaity
+    public async Task OnInputSearchString(InputEventArgs args)
+    {
+        await this._personenGrid.SearchAsync(args.Value);
+    }
+
+    // Everything to handle the email dialog
+    SendMailDialog sendMailDialog;
+    private async void ShowSendMailDialog()
+    {
+        if (string.IsNullOrWhiteSpace(CurrentUser?.Email))
+        {
+            return;
+        }
+
+        List<MailAddress> selectedAddresses = await GetSelectedEmailAddresses();
+        MailMessage message = new()
+            {
+                From = new MailAddress(CurrentUser.Email, CurrentUser.Name),
+                To = selectedAddresses
+            };
+        sendMailDialog.DialogOpen(message);
+    }
+
+    private async Task CopySelectedEmailAddressesAsync()
+    {
+        List<MailAddress> selectedAddresses = await GetSelectedEmailAddresses();
+        string emailAddresses = string.Join(';', selectedAddresses.Select(a => a.Address));
+        await jsRuntime.InvokeVoidAsync("clipboardApi.copyTextToClipboard", emailAddresses, $"Emailaddressen naar klembord gekopieerd.");
+    }
+
+    private async Task<List<MailAddress>> GetSelectedEmailAddresses()
+    {
+        var emailAddressesList = new List<MailAddress>();
+        var selectedPersonenWithMailAddress = (await this._personenGrid.GetSelectedRecordsAsync())
+            .Where(p => !string.IsNullOrWhiteSpace(p.EmailAdres));
+        foreach (var persoon in selectedPersonenWithMailAddress)
+        {
+            emailAddressesList.Add(new(persoon.EmailAdres, persoon.VolledigeNaam, persoon.Id));
+        }
+        return emailAddressesList;
+    }
+
+    // export to excel
+    private async Task ExportToExcelAsync()
+    {
+        string typeName = RolContext.Any()
+            ? RolContext.First().ToString()
+            : "Personen";
+        string fileName = $"{typeName}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+        ExcelExportProperties exportProperties = new()
+        {
+            FileName = fileName
+        };
+        await this._personenGrid.ExportToExcelAsync(exportProperties);
+        await jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
+    }
+
+    // Everything to handle the context menu
+    // Triggers when the item is selected
+    public async Task OnContextMenuClick(ContextMenuClickEventArgs<Persoon> args)
+    {
+        if (args.Item.Id == "edit-persoon")
+        {
+            var persoon = args.RowInfo.RowData as Persoon;
+            await EditPersoon();
+            return;
+        }
+        if (args.Item.Id == "add-persoon")
+        {
+            AddPersoon();
+            return;
+        }
+        if (args.Item.Id == "send-email")
+        {
+            ShowSendMailDialog();
+            return;
+        }
+        if (args.Item.Id == "copy-emailaddresses")
+        {
+            await CopySelectedEmailAddressesAsync();
+            return;
+        }
+    }
+
+    private async Task EditPersoon()
+    {
+        // get selected personen first
+        var selectedPersonen = await this._personenGrid.GetSelectedRecordsAsync();
+        if (selectedPersonen.Count == 0)
+        {
+            await DialogService.AlertAsync("Selecteer eerst een persoon.");
+        }
+        else if (selectedPersonen.Count > 1)
+        {
+            await DialogService.AlertAsync("Er zijn meerdere personen geselecteerd. Selecteer eerst een persoon of gebruik de rechtermuisclick.");
+        }
+        else
+        {
+            // open the edit dialog for the selected person
+            var url = _navigationManager.CreateUrlWithContext(selectedPersonen.ElementAt(0).Id, "Personen/EditPersoon");
+            _navigationManager.NavigateTo(url);
+        }
+    }
+
+    private void AddPersoon()
+    {
+        // open the edit dialog for a this new person
+        var url = _navigationManager.CreateUrlWithContext(0, "Personen/EditPersoon");
+        _navigationManager.NavigateTo(url);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _logger.LogDebug($"PersonenComponent initialized; threadid={Thread.CurrentThread.ManagedThreadId}");
+
+        _selectedRollen = RolContext.ToList<int>();
+        _rollenList = GetRollen();
+        _fietsTochtenList = (await _fietstochtenService.GetAll() ?? Enumerable.Empty<Fietstocht>()).ToList();
+
+        await RefreshList();
+
+        if (_authenticationStateTask != null)
+        {
+            var authenticationState = await _authenticationStateTask;
+            CurrentUser = await _userManager.GetUserAsync(authenticationState?.User);
+        }
+    }
+
+    public void ActionCompletedHandler(ActionEventArgs<Persoon> args)
+    {
+        // Here you can customize your code
+    }
+
+    private async Task onToonAllesChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        await RefreshList();
+    }
+
+    private async Task onToonVerwijderdChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        await RefreshList();
+    }
+
+    private async Task onZonderReservesChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        await RefreshList();
+    }
+
+    public async Task RefreshList()
+    {
+        // refresh with value from multiselect dropdown box
+        if (!ToonAlles && (_selectedRollen == null || _selectedRollen.Count() == 0))
+        {
+            _personenList = new List<Persoon>();
+        }
+        else
+        {
+            var personen = await GetPersonen(_selectedRollen);
+            _personenList = personen.OrderBy(p => p.Achternaam).ToList<Persoon>();
+        }
+        await _personenGrid.AutoFitColumnsAsync();
+        return;
+    }
+
+    private async Task<List<Persoon>> GetPersonen(List<int> rolTypes)
+    {
+        var personen = new List<Persoon>();
+
+        if (ToonAlles)
+        {
+            personen = await _persoonService
+                            .GetPersonen();
+
+            // also show persons with no role
+            if (!ToonVerwijderd)
+            {
+                personen = personen.Where(p => !p.IsVerwijderd).ToList();
+
+            }
+        }
+        else
+        {
+            // select persons with specified rol only
+            var currentRollen = _rollenList
+                                .Where(r => rolTypes.Contains(r.Id))
+                                .ToList<Rol>();
+            personen = await _persoonService
+                            .GetPersonen()!;
+            personen = personen.Where(p => !p.IsVerwijderd)
+                            .Where(p => p.Rollen.FirstOrDefault(r => rolTypes.Contains(r.Id)) != null)
+                            .ToList<Persoon>();
+            if (ZonderReserves)
+            {
+                personen = personen
+                        .Where(p => p.IsReserve == false)
+                        .ToList<Persoon>();
+            }
+        }
+
+        return personen;
+    }
+
+    private List<Rol> GetRollen()
+    {
+        // TODO
+        // Get list of all rollen based on enum
+        var rollenList = _rolService
+                        .GetRollen()
+                        .OrderBy(r => r.Beschrijving)
+                        .ToList<Rol>();
+        return rollenList;
+    }
+
+    private async void OnMailMessageConfigured(MailMessageConfiguredEventArgs eventArgs)
+    {
+        var message = eventArgs.Message;
+
+        // Replace all content ids with inlined attachments
+        _mailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(message);
+
+        bool isSandboxMode = false; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
+        await _sendMailService.SendMail(message, isSandboxMode);
+    }
+
+}
+<style>
+    .statustemp {
+        position: relative;
+        height: 19px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+        .statustemp.e-inactivecolor {
+            background-color: #ffd7cc;
+            width: 64px;
+        }
+
+        .statustemp.e-activecolor {
+            background-color: #ccffcc;
+            width: 57px;
+            cursor: pointer;
+        }
+
+    .statustemp.e-activereservecolor {
+        background-color: #fffecc;
+        width: 107px;
+        cursor: pointer;
+    }
+
+    td.e-rowcell {
+        cursor: pointer;
+    }
+
+        td.e-rowcell .statustxt.e-inactivecolor {
+            color: #e60000;
+            position: relative;
+            top: 0px;
+        }
+
+        td.e-rowcell .statustxt.e-activecolor {
+            color: #00cc00;
+            position: relative;
+            top: 0px;
+        }
+
+        td.e-rowcell .reservediv.reserve {
+            color: #900C3F;
+        }
+
+        td.e-rowcell .reservediv.no-reserve {
+            color: #166344;
+        }
+
+</style>

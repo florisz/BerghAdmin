@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace BerghAdmin.Tests.UserServiceTests;
 
 [TestFixture]
-public class UserServiceTests : DatabasedTests
+public class UserServiceTests : DatabaseTestSetup
 {
     private const string DEFAULT_PASSWORD = "Qwerty@123";
 
@@ -46,7 +46,7 @@ public class UserServiceTests : DatabasedTests
         var service = this.GetRequiredService<IUserService>();
 
         var userName = "PommetjeHorlepiep";
-        var newUser = CreateUser(userName, null);
+        var newUser = CreateUser(userName);
         var result = await service.InsertUserAsync(newUser, DEFAULT_PASSWORD);
         if (!result.Succeeded)
         {
@@ -54,27 +54,8 @@ public class UserServiceTests : DatabasedTests
         }
 
         var user = await service.GetUserAsync(userName);
-        Assert.IsNotNull(user);
-        Assert.AreEqual(userName, user.UserName);
-    }
-
-    [Test]
-    public async Task AddUserWithoutClaimsWitPersoonTest()
-    {
-        var service = this.GetRequiredService<IUserService>();
-
-        var userName = "PommetjeHorlepiep";
-        var newUser = CreateUser(userName, 42);
-        var result = await service.InsertUserAsync(newUser, DEFAULT_PASSWORD);
-        if (!result.Succeeded)
-        {
-            Assert.Fail(string.Join(",", result.Errors.Select(e => $"{e.Code}: {e.Description}").ToArray()));
-        }
-
-        var user = await service.GetUserAsync(userName);
-        Assert.IsNotNull(user);
-        Assert.AreEqual(userName, user.UserName);
-        Assert.AreEqual(42, user.CurrentPersoonId);
+        Assert.IsNotNull(user); 
+        Assert.AreEqual(userName, user!.UserName);
     }
 
     [Test]
@@ -84,7 +65,7 @@ public class UserServiceTests : DatabasedTests
 
         var claims = new Claim[] { AdministratorPolicyHandler.Claim };
         var userName = "PommetjeHorlepiep";
-        var newUser = CreateUser(userName, null);
+        var newUser = CreateUser(userName);
         var result = await service.InsertUserAsync(newUser, DEFAULT_PASSWORD, claims);
         if (!result.Succeeded)
         {
@@ -107,7 +88,7 @@ public class UserServiceTests : DatabasedTests
 
         var claims = new Claim[] { AdministratorPolicyHandler.Claim, BeheerSecretariaatPolicyHandler.Claim };
         var userName = "PommetjeHorlepiep";
-        var newUser = CreateUser(userName, null);
+        var newUser = CreateUser(userName);
         var result = await service.InsertUserAsync(newUser, DEFAULT_PASSWORD, claims);
         if (!result.Succeeded)
         {
@@ -133,7 +114,7 @@ public class UserServiceTests : DatabasedTests
         var userName = "PommetjeHorlepiep";
         for (var i = 1; i <= 5; i++)
         {
-            var newUser = CreateUser($"{userName}{i}", null);
+            var newUser = CreateUser($"{userName}{i}");
             var result = await service.InsertUserAsync(newUser, DEFAULT_PASSWORD);
             if (!result.Succeeded)
             {
@@ -144,7 +125,7 @@ public class UserServiceTests : DatabasedTests
         var users = service.GetUsers();
         Assert.IsNotNull(users);
         Assert.AreEqual(5, users.Count);
-        Assert.IsTrue(users.All(u => u.UserName.StartsWith(userName)));
+        Assert.IsTrue(users.All(u => u.UserName != null && u.UserName.StartsWith(userName)));
     }
 
     [Test]
@@ -153,7 +134,7 @@ public class UserServiceTests : DatabasedTests
         var service = this.GetRequiredService<IUserService>();
 
         var userName = "PommetjeHorlepiep";
-        var newUser = CreateUser(userName, null);
+        var newUser = CreateUser(userName);
         var result = await service.InsertUserAsync(newUser, DEFAULT_PASSWORD);
         if (!result.Succeeded)
         {
@@ -161,18 +142,15 @@ public class UserServiceTests : DatabasedTests
         }
 
         var user = await service.GetUserAsync(userName);
-        Assert.IsNotNull(user);
-
-        user.PhoneNumber = "06-12345678";
+        user!.PhoneNumber = "06-12345678";
         result = await service.UpdateUserAsync(user);
         if (!result.Succeeded)
         {
             Assert.Fail(string.Join(",", result.Errors.Select(e => $"{e.Code}: {e.Description}").ToArray()));
         }
-
         var updatedUser = await service.GetUserAsync(userName);
         Assert.IsNotNull(updatedUser);
-        Assert.AreEqual(updatedUser.PhoneNumber, "06-12345678");
+        Assert.AreEqual(updatedUser!.PhoneNumber, "06-12345678");
     }
 
     [Test]
@@ -181,7 +159,7 @@ public class UserServiceTests : DatabasedTests
         var service = this.GetRequiredService<IUserService>();
 
         var userName = "PommetjeHorlepiep";
-        var newUser = CreateUser(userName, null);
+        var newUser = CreateUser(userName);
         var result = await service.InsertUserAsync(newUser, DEFAULT_PASSWORD);
         if (!result.Succeeded)
         {
@@ -192,7 +170,7 @@ public class UserServiceTests : DatabasedTests
         Assert.IsNotNull(user);
 
         var newPassword = "NewP@ssword#123";
-        result = await service.UpdateUserPasswordAsync(user, newPassword);
+        result = await service.UpdateUserPasswordAsync(user!, newPassword);
         if (!result.Succeeded)
         {
             Assert.Fail(string.Join(",", result.Errors.Select(e => $"{e.Code}: {e.Description}").ToArray()));
@@ -200,7 +178,7 @@ public class UserServiceTests : DatabasedTests
 
         var updatedUser = await service.GetUserAsync(userName);
         Assert.IsNotNull(updatedUser);
-        Assert.IsFalse(string.IsNullOrEmpty(updatedUser.PasswordHash));
+        Assert.IsFalse(string.IsNullOrEmpty(updatedUser!.PasswordHash));
     }
 
     [Test]
@@ -210,7 +188,7 @@ public class UserServiceTests : DatabasedTests
 
         var claims = new Claim[] { AdministratorPolicyHandler.Claim };
         var userName = "PommetjeHorlepiep";
-        var newUser = CreateUser(userName, null);
+        var newUser = CreateUser(userName);
         var result = await service.InsertUserAsync(newUser, DEFAULT_PASSWORD, claims);
         if (!result.Succeeded)
         {
@@ -221,7 +199,7 @@ public class UserServiceTests : DatabasedTests
         Assert.IsNotNull(user);
 
         var newClaims = new Claim[] { BeheerSecretariaatPolicyHandler.Claim, BeheerGolfersPolicyHandler.Claim };
-        result = await service.UpdateUserAsync(user, newClaims);
+        result = await service.UpdateUserAsync(user!, newClaims);
         if (!result.Succeeded)
         {
             Assert.Fail(string.Join(",", result.Errors.Select(e => $"{e.Code}: {e.Description}").ToArray()));
@@ -238,11 +216,10 @@ public class UserServiceTests : DatabasedTests
         Assert.AreEqual("beheergolfers", updatedClaims[1].Value);
     }
 
-    private User CreateUser(string naam, int? persoonId)
+    private User CreateUser(string naam)
     {
         var user = new User
         {
-            CurrentPersoonId = (persoonId == null) ? null : persoonId,
             Name = naam,
             UserName = naam,
             Email = $"{naam}@berghinhetzadel.nl",

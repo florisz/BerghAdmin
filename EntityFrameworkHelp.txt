@@ -5,36 +5,69 @@ dotnet ef migrations add <MigrationName>
 dotnet ef database update
 
 
-use BIHZ2021
-DROP TABLE __EFMigrationsHistory
-DROP TABLE AspNetUserClaims
-DROP TABLE AspNetUserLogins
-DROP TABLE AspNetUserTokens
-DROP TABLE Betalingen
-DROP TABLE BihzActies
-DROP TABLE BihzUsers
-DROP TABLE Donaties
-DROP TABLE EvenementPersoon
-DROP TABLE FietsTochten
-DROP TABLE GolfDagen
-DROP TABLE MailGeadresseerden
-DROP TABLE MailccGeadresseerden
-DROP TABLE MailbccGeadresseerden
-DROP TABLE PersoonRol
-DROP TABLE AspNetUsers
-DROP TABLE BihzDonaties
-DROP TABLE Facturen
-DROP TABLE VerzondenMails
-DROP TABLE Donateur
-DROP TABLE Rollen
-DROP TABLE Documenten
-DROP TABLE BihzProjects
-DROP TABLE Evenementen
-DROP TABLE Logs
+USE BIHZ2021;
+show tables;
+drop table golfdagpersoon;
+DROP TABLE GolfdagGolfdagSponsor;
+DROP TABLE GolfdagSponsor;
+DROP TABLE GolfDagen;
+DROP TABLE FietsTochtPersoon;
+DROP TABLE FietsTochten;
+DROP TABLE BihzActies;
+DROP TABLE BihzUsers;
+DROP TABLE MailGeadresseerden;
+DROP TABLE MailccGeadresseerden;
+DROP TABLE MailbccGeadresseerden;
+DROP TABLE Ambassadeur;
+DROP TABLE Sponsoren;
+DROP TABLE VerzondenMails;
+DROP TABLE Ambassadeur;
+DROP TABLE PersoonRol;
+DROP TABLE Personen;
+DROP TABLE AspNetUserLogins;
+DROP TABLE AspNetUserClaims;
+DROP TABLE AspNetUserTokens;
+DROP TABLE AspNetUsers;
+DROP TABLE Donaties;
+DROP TABLE Facturen;
+DROP TABLE BihzDonaties;
+DROP TABLE BihzProjects;
+DROP TABLE Facturen;
+DROP TABLE Donateur;
+DROP TABLE Betalingen;
+DROP TABLE Documenten;
+DROP TABLE Rollen;
 
 /* clean to seed again */
-DELETE FROM Evenementen 
-DELETE FROM Documenten 
-DELETE FROM Donateur
-DELETE FROM AspNetUsers
-DELETE FROM Rollen
+DELETE FROM GolfdagSponsor WHERE Id > 0;
+DELETE FROM Ambassadeur WHERE Id > 0;
+DELETE FROM GolfdagPersoon WHERE GolfdagenId > 0;
+DELETE FROM GolfdagGolfdagSponsor WHERE GolfdagenGesponsoredId > 0;
+DELETE FROM GolfDagen WHERE GolfdagId > 0;
+DELETE FROM FietsTochtPersoon WHERE DeelnemersId > 0;
+DELETE FROM FietsTochten WHERE FietstochtId > 0;
+DELETE FROM Documenten WHERE Id > 0;
+DELETE FROM PersoonRol WHERE RollenId > 0;
+DELETE FROM Personen WHERE Id > 0;
+DELETE FROM AspNetUsers WHERE Id > 0;
+DELETE FROM Rollen WHERE Id > 0;
+DELETE FROM sponsoren WHERE Id > 0;
+
+/* overall insight in data in MySql database */
+SHOW TABLES;
+SELECT *  FROM GolfdagSponsor;
+SELECT *  FROM GolfdagPersoon;
+SELECT *  FROM GolfdagGolfdagSponsor;
+SELECT *  FROM GolfDagen;
+SELECT *  FROM FietsTochtPersoon;
+SELECT *  FROM FietsTochten;
+SELECT *  FROM Documenten;
+SELECT *  FROM PersoonRol;
+SELECT *  FROM Personen;
+SELECT *  FROM AspNetUsers;
+SELECT *  FROM Rollen;
+SELECT *  FROM Sponsoren;
+SELECT *  FROM Donateur;
+SELECT * FROM Ambassadeur;
+
+

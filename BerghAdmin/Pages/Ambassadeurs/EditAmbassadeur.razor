@@ -1,0 +1,34 @@
+﻿@page "/Ambassadeurs/EditAmbassadeur"
+
+@using BerghAdmin.Authorization
+@using BerghAdmin.Data
+@using BerghAdmin.General
+
+@using Microsoft.AspNetCore.WebUtilities
+
+@inject NavigationManager _navigationManager
+@inject IJSRuntime jsRuntime
+
+@attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
+
+<EditAmbassadeurComponent Id="@Id" ReturnUrl="@ReturnUrl"/>
+
+@code
+{
+    [Parameter]
+    [SupplyParameterFromQuery(Name ="Id")]
+    public int Id { get; set; }
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "ReturnUrl")]
+    public string? ReturnUrl { get; set; }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "ambassadeur");
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+}

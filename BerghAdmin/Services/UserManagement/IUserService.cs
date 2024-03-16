@@ -7,7 +7,7 @@ namespace BerghAdmin.Services.UserManagement;
 public interface IUserService
 {
     Task DeleteUserAsync(string naam);
-    Task<User> GetUserAsync(string naam);
+    Task<User?> GetUserAsync(string naam);
     IList<User> GetUsers();
     IDictionary<string, Claim> GetClaims();
     Task<IList<Claim>> GetUserClaimsAsync(string naam);

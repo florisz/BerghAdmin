@@ -1,204 +1,208 @@
-== Introduction
+== Introductie
 
-== README
-* get the code at https://github.com/florisz/BerghAdmin/settings/access
-* SQL Server
-** install a SQL server on your local (or antoher accessible) machine
-** create a database with name 'BIHZ2021' with a user/password with read/write permissions 
-(can actually be any name but this one is most convenient)
-** install latest entity framework client tools; see https://docs.microsoft.com/en-us/ef/core/cli/dotnet +
-just calling 'dotnet tool install --global dotnet-ef' will do the job
-* Secrets
-** get secrets file from another developer (is not in the repo)
-** store secrets file in solution directory (keep calm, git will not synchronize it to other repos)
-** load secrets into your private secret store with ./SetSecrets.ps1
-** change the "DatabaseConfiguration:ConnectionString" with your own specific value 
-(use the values you've chosen above and one of the commands below)
-** run 'dotnet ef database update' from the command line (this should create an empty database)
-* Source code
-** start Visual studio and load the solution file
-** Open the 'Test Explorer' window and run all unit tests (this should give you a safe feeling)
-** debug/run the default project (should be BerghAdmin)
+== Domein overzicht
 
-Help with setting secrets in local store:
-[source, powershell]
-----
-dotnet user-secrets clear --project ./BerghAdmin
-dotnet user-secrets list --project ./BerghAdmin
-dotnet user-secrets remove "sectie:setting" --project ./BerghAdmin
-dotnet user-secrets add "sectie:setting" --project ./BerghAdmin
-----
+=== Achtergrond
 
-== Domain overview
+BerghAdmin zal worden gebruikt door de backoffice mensen van de goede doelen
+organisatie Bergh in het Zadel (BIHZ). Met behulp van vele donateurs zamelt Bergh in het Zadel
+geld in voor kankerbestrijding of zoals de slogan luidt: "tijd kopen voor kankerpatiënten".
 
-=== Business background
+Bergh in het Zadel is momenteel actief in: 
 
-BerghAdmin will be used by the backoffice people of the charity
-organization Bergh in het Zadel (BIHZ). With the aid of many donors BIHZ
-collects money to fight cancer or as the slogan says: "to buy time for cancer
-patients".
+* het onderhouden van ambassadeurs die jaarlijks doneren
+* het organiseren van een vierjaarlijkse fietstocht om geld in te zamelen
+* het organiseren van meerdere golfevenementen per jaar om geld in te zamelen.
 
-BIHZ is currently active in: 
+Daarnaast wordt geld ingezameld voor ad-hoc evenementen en doneren mensen en organisaties af en toe geld.
 
-* maintaining a group of Ambassadors which donate every year
-* organizing a cycle tour every four year to raise money
-* organizing multiple golfevents every year also to raise money
+Om dit te accommoderen is (geautomatiseerde) ondersteuning nodig voor alle administratieve functies. In de 
+volgende paragraaf worden de meest voorkomende taken genoemd.
+De BerghAdmin applicatie is bedoeld om deze ondersteuning te leveren aan alle vrijwilligers in 
+administratieve rollen. Gericht op het vrijmaken van hun tijd voor andere leukere dingen, het realiseren van
+één centrale consistente administratie en voldoen aan wetgeving (financieel en AVG-proof).
 
-Next to this money is raised to ad-hoc events and people and organizations donate money
-occasionaly.
 
-To accomodate this (automated) support is needed for all administrative roles. In the 
-next paragraph the most common tasks are mentioned.
-The BerghAdmin application is meant to deliver this support to all volunteers in 
-administrative roles. Focused at freeing up their time for other more fun stuff, achieving
-one central consistent administration and conform to legislation (financially and AVG proof).
-
+== Analyse
 === Context
-Functionally the domain for BerghAdmin is:
+Functioneel gezien is het domein voor BerghAdmin:
 
 [[UseCaseModel, Use case model]]
 .Context diagram BerghAdmin 
 image::UseCaseModel.png[]
 
-For each of the four subdomains (Ambassadeurs, Fietstochten, Golfdagen and Fiancien) specific
-support is needed to manage the subdomain. However there is generic support in: 
-creating/sending emails, creating/sending invoices and the (central) administration of
-all people connected to the BIHZ-organization.
+Voor elk van de vier subdomeinen (Ambassadeurs, Fietstochten, Golfdagen en Financiën) is specifieke
+ondersteuning nodig om het subdomein te beheren. Er is generieke ondersteuning voor 
+het maken/versturen van e-mails, het maken/versturen van facturen en de (centrale) administratie van
+alle mensen die verbonden zijn aan de Bergh in het Zadel-organisatie.
 
-For the handling (administration, payment and invoicing) of mainly small gifts BIHZ relies on the
-Kentaa service offering. With Kentaa, donors can define their own donate page thru which 
-money is raised for BIHZ. On regular intervals (a Timer) the BerghAdmin system will read
-the Kenta information and link it to the appropriate persons in the administration. This will
-enable a smooth financial management of all incoming gifts.
+Voor de afhandeling (administratie, betaling en facturatie) van voornamelijk kleine giften vertrouwt Bergh in het Zadel op Kentaa. Met Kentaa kunnen donateurs hun eigen doneerpagina definiëren waarmee 
+geld wordt ingezameld voor Bergh in het Zadel. Op gezette tijden leest het BerghAdmin systeem
+Kentaa-informatie en koppelt deze aan de juiste personen in de administratie.
 
-== Analysis
+=== Functionele scenario's
+De functionele scenario's zijn beschreven in de volgende paragrafen. De scenario's zijn:
 
-Functionalities
+* Beheer van personen +
+** Het beheer van alle personen die verbonden zijn aan Bergh in het Zadel.
+** Wordt met name uitgevoerd door de secretaris.
+* Beheer van Ambassadeurs +
+** Bijhouden van de gegevens van Ambassadeurs en contactpersonen van Ambassadeurs.
+** Verzorgen van de jaarlijks terugkerende facturatie van Ambassadeurs en de opvolging hiervan.
+** Controle of de binnenkomende betaling correct gematched kunnen worden met de factuur.
+* Beheer van Fietstochten +
+** Bijhouden van de gegevens van deelnemers aan de fietstochten.
+** (Eventueel) controle op de verwerking in Kentaa.
+* Beheer van Golfdagen +
+** Vastleggen van nieuwe golfdagen.
+** Bijhouden van de gegevens van sponsors en deelnemers aan de golfdagen.
+** Planning maken van golfdagen obv de verzamelde inschrijvingen.
+** Facturatie obv deelname aan de golfdagen.
+** Opvolging van de ontvangen betalingen en het matchen met de facturen.
 
-* central donateurs mgmt
-* fietstochten
-* connection Kentaa
-* golfdagen
-* facturen (ambassadeurs)
-* email sending
-* history
-
-==  Design
-=== Structure
-The high level class model for the application:
+=== Structuur
+Het gegevens model voor de applicatie:
 
 [[BerghAdminClassModel, BerghAdmin class model]]
-.High level class model BerghAdmin 
+.class model BerghAdmin 
 image::BerghAdminClassModel.png[]
 
-Kentaa is a separate organization which is handling gifts and
-collecting money from a large group of donateurs. Mainly for the money
-earned by cyclists but also other 'projects' are handled with the aid
-of this service. Kentaa stores its information in the following structure:
+Uitleg structuur:
+
+*  *Persoon* +
+Centraal in het domein staat de *Persoon*. Een individueel *Persoon* kan geen *Sponsor* zijn. 
+Een *Persoon* kan wel verbonden zijn aan *Sponser*, bijvoorbeeld als contactpersoon. 
+Een *Persoon* kan ook *Donateur* zijn, bijvoorbeeld in de rol van fietser. 
+Een *Persoon* kan ook een vrijwilliger zijn in de rol van commissielid of begeleider. 
+Tenslotte kan een *Persoon* ook een VriendVan of een MailingAbonne zijn.
+In welke rol of rollen een *Persoon* zich bevindt wordt bepaald door relatie tussen *Rol* en *Persoon*.
+* *Sponsor* +
+Een *Sponsor* is een bedrijf, organisatie of individu die Bergh in het Zadel sponsort. Een *Sponsor* is dus 
+niet hetzelfde als een *Persoon* maar kan wel verbonden zijn aan een *Persoon* (zie hierboven).
+In de huidige opzet is een *Sponsor* een *Ambassadeur* of *GolfdagSponsor*.
+* *Donatie* +
+Een *Donatie* is een gift van een *Donateur* aan Bergh in het Zadel. Een *Donatie* kan eenmalig zijn of periodiek.
+*Donaties* worden altijd gekoppeld aan een *Donateur* (*Sponsor* of *Persoon*) en (via de *Donateur*) 
+aan een *Evenement*. In het geval van een *Ambassadeur* is er geen *Evenement* vereist omdat een *Ambassadeur* een
+jaarlijks terugkerende *Donatie* doet. Uiteindelijk betekent dit dat het waarom van een *Donatie* altijd 
+inzichtelijk is.
+* *Factuur* +
+Een *Donatie* kan resulteren in een *Factuur*. Dit is het geval als de *Donatie* een gift is van een *Ambassadeur* of
+een *GolfDagSponsor*. Voor alle giften die via Kentaa binnenkomen wordt door Kentaa een factuur gemaakt die
+buiten de scope van dit systeem valt. De betaling van de *Factuur* wordt gemonitored en moet uiteindelijk gematched worden 
+met de *Factuur* zodat de financiële afhandeling van deze donaties correct verloopt.
+* *Document*
+In de afhandeling van *Donaties* of de organisatie van *Evenementen* kunnen documenten worden gemaakt. Deze documenten 
+zijn veelal brieven of e-mails die naar *Donateurs* of *Sponsors* worden gestuurd. De inhoud van deze documenten vaak
+gebaseerd op een *Template* waarbij de gegevens ingevuld moeten worden. Het is de bedoeling dat dit systeem hier
+de geautomatiseerde ondersteuning voor gaat bieden. 
+
+
+==  Ontwerp
+
+=== Koppeling Kentaa
+De koppeling met Kentaa is een ietwat 'vreemde eend' in de BerghAdmin applicatie. In dit document is beschreven
+hoe het opgezet is maar de werkelijke implementatie is niet gebruikt ten tijde van de laatste tocht (Hanzetocht 2023).
+Er moet nog besloten worden of deze koppeling nog verder door ontwikkeld wordt. Voor nu is het een werkende opzet voor
+fietstochten en in de toekomst kan het gebruikt worden en/of uitgebreid worden voor andere evenementen.
+
+Kentaa is een aparte organisatie die giften verwerkt en
+geld inzamelt van een grote groep donateurs van Bergh in het Zadel. Voornamelijk voor het geld
+verdiend door fietsers, maar ook andere 'projecten' worden afgehandeld met behulp
+van deze dienst. Kentaa slaat zijn informatie op in de volgende structuur:
 
 [[KentaaDataModel, Kentaa data model]]
 .Data model Kentaa 
 image::KentaaDataModel.png[]
 
-=== Scenario's
+==== Scenario's
 
 [sidebar]
-Look at the Integration test 'FullKentaaIntegrationTest' in the BerghAdmin.Tests project for an 
-overview of the described mechanism and dependencies.
+Kijk naar de Integratietest 'FullKentaaIntegrationTest' in het project BerghAdmin.Tests voor een 
+overzicht van het beschreven mechanisme en de afhankelijkheden.
 
-Design of the scenario how to read in the Kenta information. As can be seen from the class
-model Kentaa stores its information in 5 seperate entities (classes).  The Site class in
-Kentaa corresponds to BIHZ and is therefore irrelevant to BerghAdmin. The following table
-shows the correspondence between the Kentaa and the BerghAdmin classes:
+Ontwerp van het scenario hoe de Kentaa-informatie ingelezen moet worden. Zoals te zien is in het class
+model slaat Kentaa zijn informatie op in 5 afzonderlijke entiteiten (klassen).  De Site class in
+Kentaa komt overeen met Bergh in het Zadel en is dus niet relevant voor BerghAdmin. De volgende tabel
+toont de overeenkomst tussen de Kentaa- en BerghAdmin-classes:
 
 [cols="1,1,2"]
 |===
-| Kentaa class | Bihz class | Data is linked to
+| Kentaa class | Bihz class | Data is gelinked aan
 
-| User | BihzUser | Persoon, based on email address stored in BihzUser
-| Project | BihzProject | Evenement, based on title stored in BihzProject
-| Action | BihzAction | Persoon, based on email address stored in BihzAction
-| Donation | BihzDonatie | Step 1: link to Persoon via the ActionId in the BihzDonatie +
-Step2: add/update the Donatie via the BihzDonatie.Id
+| User | BihzUser | Persoon, gebaseerd op email address in BihzUser
+| Project | BihzProject | Evenement, gebaseerd op title in BihzProject
+| Action | BihzAction | Persoon, gebaseerd op email address in BihzAction
+| Donation | BihzDonatie | Stap 1: link naar Persoon via het ActionId in de BihzDonatie +
+Stap2: add/update de Donatie via de BihzDonatie.Id
 |===
 
+De Kentaa class wordt regelmatig opgehaald uit de Kentaa API door een Azure funtion en gemapt naar de
+Bihz class. De inhoud van de Bihz class wordt naar één van de 4 corresponderende endpoints gestuurd van de  
+BerghAdmin webapplicatie. Bij ontvangst wordt de inkomende verwerkt zoals beschreven in de tabel
+hierboven.
 
-The Kentaa class is regularly retrieved from the Kentaa API by an Azure funtion and mapped to the
-Bihz class. The content of the Bihz class is sent to one of the 4 corresponding endpoints of the  
-BerghAdmin web application. When received the incoming is processed as described in the table
-above.
-
-This illustrated with:
-
+Dit wordt geïllustreerd met:
 [[KentaaReadApiSequence, Kentaa Api usage]]
 .Kentaa Api read sequence 
 image::KentaaInleesSequence.png[]
 
-To handle all incoming data in the BerghAdmin Api, four endpoints have been created. one
-for each of the data types received from the Kentaa function. The following paragraphs will
-show this
+Om alle inkomende data in de BerghAdmin Api af te handelen zijn er vier endpoints aangemaakt. Eén voor elk van de gegevenstypen die van de Kentaa-functie worden ontvangen. De volgende paragrafen
+dit laten zien.
+===== Projects
+Elk binnenkomend project moet worden gekoppeld aan een evenement. De titel van het
+binnenkomend project moet overeenkomen met de (unieke) titel van het evenement. 
 
-==== Projects
-Any incoming project must be mapped to an evenement. It is required the title of the
-incoming project must match the (unique) title of the evenement.
-This is shown in:
+Dit wordt weergegeven in:
 
 [[KentaaVerwerkProjectSequence, Handle incoming Kentaa projects]]
-.Handle incoming Kentaa Projects sequence 
+.Afhandelen inkomende Kentaa Projecten 
 image::KentaaVerwerkProjectSequence.png[]
 
-==== Acties
-An actie in Kentaa corresponds to the webpage of a user. With this page the user is collecting
-money for Bergh in het Zadel. 
-Any incoming actie must therefore be mapped to a persoon. It is required the email address of the
-incoming actie must match the (unique primary) email address of the persoon.
-This is shown in:
+===== Acties
+Een actie in Kentaa komt overeen met de webpagina van een gebruiker. Met deze pagina zamelt de gebruiker
+geld in voor Bergh in het Zadel. 
+Elke binnenkomende actie moet daarom worden gekoppeld aan een persoon. Vereist is dat het e-mailadres van de
+actie moet overeenkomen met het (unieke primaire) e-mailadres van de persoon.
+
+Dit wordt weergegeven in:
 
 [[KentaaVerwerkActieSequence, Handle incoming Kentaa acties]]
-.Handle incoming Kentaa Acties sequence 
+.Afhandelen inkomende Kentaa Acties  
 image::KentaaVerwerkActieSequence.png[]
 
-==== Users
-Incoming users are treated pretty similar as Acites (see previous paragraph). This is because
-each user is linked to a Persoon also. 
-Any incoming user must be mapped to a persoon. It is required the email address of the
-incoming user must match the (unique primary) email address of the persoon.
-This is shown in:
+===== Users
+Inkomende gebruikers worden net zo behandeld als Acties (zie vorige paragraaf). Dit komt omdat
+elke gebruiker ook gekoppeld is aan een Persoon. 
+Elke inkomende gebruiker moet worden gekoppeld aan een persoon. Het e-mailadres van de
+binnenkomende gebruiker moet overeenkomen met het (unieke primaire) e-mailadres van de persoon.
+
+Dit wordt weergegeven in:
 
 [[KentaaVerwerkUserSequence, Handle incoming Kentaa users]]
-.Handle incoming Kentaa Users sequence 
+.Afhandelen inkomendeKentaa Users 
 image::KentaaVerwerkUserSequence.png[]
 
-==== Donaties
-Incoming donaties are treated slightly different than the previous three types. This is
-mainly because donaties in Kentaa are linked to acties while each donatie in the BIHZ domain must
-be linked to a persoon.
-This results in the following design:
+===== Donaties
+Inkomende donaties worden iets anders behandeld dan de vorige drie soorten. Dit komt
+voornamelijk omdat donaties in Kentaa gekoppeld zijn aan acties, terwijl elke donatie in het domein Bergh in het Zadel aan een persoon moet worden gekoppeld.
+
+Dit resulteert in de volgende opzet:
 
 [[KentaaVerwerkDonatieSequence, Handle incoming Kentaa donaties]]
-.Handle incoming Kentaa Donaties sequence 
+.Afhandelen inkomende Kentaa Donaties 
 image::KentaaVerwerkDonatieSequence.png[]
 
-==  Infrastructure
-picture with:
+== Deployment/Provisioning
+Plaatje met:
 
-* webapp @Digital Ocean
+* Azure webapps, functions, storage (MySql), secrets
 * Kentaa
 * Rabobank (CSV downloads)
-* SQL Server MijnServer
-* Azure function
 * Mailjet
 * Syncfusion
 
-==
-Linux installation
-
-future?
-
-* Nginx:
-https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-in-ubuntu-16-04
-* Host ASP.NET Core on Linux with Nginx
-https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-6.0
+== Links
 * Host and deploy Blazor Server
 https://docs.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/server?view=aspnetcore-6.0#linux-with-nginx
 * ASP.NET Core SignalR hosting and scaling

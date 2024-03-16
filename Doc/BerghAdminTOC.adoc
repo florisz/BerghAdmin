@@ -1,10 +1,10 @@
 // asciidoc settings for EN (English)
 // ==================================
-:toc-title: table of contents
+:toc-title: Inhoudsopgave
 
 :imagesdir: ./images
 
-= BerghAdmin - Documentation
+= BerghAdmin - Documentatie
 // toc-title definition MUST follow document title without blank line!
 :toc:
 
@@ -12,7 +12,7 @@
 image:Logo-BIHZ.jpg[Logo-BIHZ.jpg, 140, 140]
 [.text-left]
 
-Generated on: {localdatetime}
+Gegenereerd op: {localdatetime}
 
 // horizontal line
 ***

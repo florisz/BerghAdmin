@@ -3,20 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BerghAdmin.Data;
 
-public enum GeslachtEnum
-{
-    Onbekend,
-    Man,
-    Vrouw
-}
-
 public class Persoon : Donateur
 {
     public Persoon() : base()
     {
         Geslacht = GeslachtEnum.Onbekend;
         Rollen = new HashSet<Rol>();
-        EmailAdres = "";
+        Fietstochten = new List<Fietstocht>();
+        Golfdagen = new List<Golfdag>();
     }
 
     public GeslachtEnum Geslacht { get; set; }
@@ -25,11 +19,19 @@ public class Persoon : Donateur
     public string? Achternaam { get; set; }
     public string? Tussenvoegsel { get; set; }
     public DateTime? GeboorteDatum { get; set; }
-    public HashSet<Rol> Rollen { get; set; } = new();
+    public string? EmailAdresExtra { get; set; }
+    public string? KledingMaten { get; set; }
+    public string? Nummer { get; set; }
+    // twee velden alleen gebruiken voor golfers
+    public string? Handicap{ get; set; }
+    public bool Buggy { get; set; } = false;
+    //
+    public HashSet<Rol> Rollen { get; set; } = new HashSet<Rol>();
     public ICollection<VerzondenMail> Geadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<VerzondenMail> ccGeadresseerden { get; set; } = new List<VerzondenMail>();
     public ICollection<VerzondenMail> bccGeadresseerden { get; set; } = new List<VerzondenMail>();
-    public ICollection<Evenement> IsDeelnemerVan { get; set; } = new List<Evenement>();
+    public ICollection<Fietstocht> Fietstochten { get; set; } = new List<Fietstocht>();
+    public ICollection<Golfdag> Golfdagen { get; set; } = new List<Golfdag>();
     public BihzActie? BihzActie { get; set; }
     public BihzUser? BihzUser { get; set; }
     public BihzProject? Project { get; set; }
@@ -47,10 +49,13 @@ public class Persoon : Donateur
                                 Tussenvoegsel,
                                 Achternaam }
         );
-
     [NotMapped]
     public string VolledigeNaamMetRollen
          => $"{VolledigeNaam} ( {GetRollenAsString} )";
+
+    [NotMapped]
+    public string VolledigeNaamMetRollenEnEmail
+        => $"{VolledigeNaam} ({EmailAdres})";
 
     public static Persoon Empty
         => new Persoon()
@@ -58,5 +63,26 @@ public class Persoon : Donateur
             Achternaam = "Onbekend",
             Voornaam = "Onbekend",
         };
+
+    public FietstochtListItem[] GetFietstochtListItems()
+    {
+        return Fietstochten
+                .AsQueryable()
+                .Select(f => new FietstochtListItem { Id = f.Id, Titel = f.Titel! })
+                .ToArray();
+    }
+    
+    public RolListItem[] GetRolListItems()
+    {
+        return Rollen
+                .AsQueryable()
+                .Select(r => new RolListItem { Id = r.Id, Beschrijving = r.Beschrijving! })
+                .ToArray();
+    }
 }
 
+public class PersoonListItem
+{
+    public int Id { get; set; }
+    public string VolledigeNaamMetRollenEnEmail { get; set; } = "";
+}

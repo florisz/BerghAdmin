@@ -2,12 +2,14 @@ namespace BerghAdmin.Services
 {
     public interface IPersoonService
     {
-        List<Persoon>? GetPersonen();
-        List<Persoon>? GetFietsersEnBegeleiders();
-        Persoon? GetByActionId(int actionId);
-        Persoon? GetById(int id);
-        Persoon? GetByEmailAdres(string emailAdres);
-        void SavePersoon(Persoon persoon);
-        void DeletePersoon(int id);
+        Task<List<Persoon>> GetPersonen();
+        Task<PersoonListItem[]> GetFietstochtDeelnemers();
+        Task<PersoonListItem[]> GetContactPersonen();
+        Task<Persoon?> GetByActionId(int actionId);
+        Task<Persoon?> GetById(int id);
+        Task<Persoon?> GetByEmailAdres(string emailAdres);
+        Task SavePersoonAsync(Persoon persoon);
+        Task DeletePersoonAsync(int id);
+        void SetRollen(Persoon persoon, List<RolListItem> rolListItems);
     }
 }

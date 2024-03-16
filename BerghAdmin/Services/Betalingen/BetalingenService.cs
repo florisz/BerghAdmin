@@ -13,18 +13,18 @@ public class BetalingenService : IBetalingenService
         _logger = logger;
     }
 
-    public void Save(Betaling betaling)
+    public async Task SaveAsync(Betaling betaling)
     {
-        _logger.LogDebug("Save betaling with volg nummer: {Volgnummer}", betaling.Volgnummer);
+        _logger.LogDebug("SaveAsync betaling with volg nummer: {Volgnummer}", betaling.Volgnummer);
 
         if (betaling.Id == 0)
         {
-            repo.Add(betaling);
+            await repo.AddAsync(betaling);
             _logger.LogInformation("Betaling {Betaling} is added", betaling);
         }
         else
         {
-            repo.Update(betaling);
+            await repo.UpdateAsync(betaling);
             _logger.LogInformation("Betaling {Betaling} is updated", betaling);
         }
     }

@@ -25,7 +25,7 @@ public class EndpointHandler
             ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
         }).AllowAnonymous();
         app.MapPost("/actions",
-            (BihzActie action, IBihzActieService service, HttpRequest req) => HandleNewAction(action, service, req))
+            (BihzActie action, IBihzActieService service, HttpRequest req) => HandleNewActionAsync(action, service, req))
             .AllowAnonymous();
         app.MapPost("/donations",
             (BihzDonatie donation, IBihzDonatieService service, HttpRequest req) => HandleNewDonatie(donation, service, req))
@@ -38,12 +38,13 @@ public class EndpointHandler
             .AllowAnonymous();
     }
 
-    public IResult HandleNewAction(BihzActie action, IBihzActieService service, HttpRequest req)
+    public async Task<IResult> HandleNewActionAsync(BihzActie action, IBihzActieService service, HttpRequest req)
     {
         if (ApiKeyMissing(req))
             return Results.Unauthorized();
 
-        service.Add(action);
+        await service.AddAsync(action);
+        
         return Results.Ok("Ik heb n Action toegevoegd");
     }
 
@@ -52,7 +53,7 @@ public class EndpointHandler
         if (ApiKeyMissing(req))
             return Results.Unauthorized();
 
-        service.Add(donation);
+        service.AddAsync(donation);
         return Results.Ok("Ik heb n Donation toegevoegd");
     }
 
@@ -61,7 +62,7 @@ public class EndpointHandler
         if (ApiKeyMissing(req))
             return Results.Unauthorized();
 
-        service.Add(project);
+        service.AddAsync(project);
         return Results.Ok("Ik heb n Project toegevoegd");
     }
 
@@ -70,7 +71,7 @@ public class EndpointHandler
         if (ApiKeyMissing(req))
             return Results.Unauthorized();
 
-        service.Add(user);
+        service.AddAsync(user);
         return Results.Ok("Ik heb n User toegevoegd");
     }
 

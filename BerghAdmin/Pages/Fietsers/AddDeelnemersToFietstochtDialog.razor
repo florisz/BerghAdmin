@@ -1,0 +1,78 @@
+﻿@page "/add-deelnemers-to-fietstocht-dialog"
+
+@using BerghAdmin.Events
+@using Microsoft.AspNetCore.Components;
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+
+@inject ILogger<AddDeelnemersToFietstochtDialog> _logger
+
+@attribute [Authorize(Policy = "IsBeheerFietsers")]
+
+<SfDialog Width="500" IsModal="true" ShowCloseIcon="true" @bind-Visible="@IsVisible">
+    <DialogEvents OnOverlayModalClick="@OnOverlayModalClick" Opened="@Opened" />
+    <DialogTemplates>
+        <Header> Selecteer toe te voegen fietsers </Header>
+        <Content>
+            <EditForm Model="@_currentPersoon">
+                <SfListBox @ref="_personenListBox"
+                           TValue="PersoonListItem[]"
+                           TItem="PersoonListItem"
+                            DataSource="@_teSelecterenPersonenList"
+                            @bind-Value="_geselecteerdePersonenList">
+                    <ListBoxFieldSettings Text="VolledigeNaamMetRollenEnEmail" Value="Id" />
+                    <ListBoxSelectionSettings ShowCheckbox="true" />
+                </SfListBox>
+            </EditForm>
+        </Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Opslaan en sluiten" IsPrimary="true" OnClick="@SaveAndClose" />
+        <DialogButton Content="Afbreken" IsPrimary="false" OnClick="@DialogClose" />
+    </DialogButtons>
+</SfDialog>
+
+@code {
+    [Parameter]
+    public EventCallback<DeelnemersAddedEventArgs> OnDeelnemersAdded { get; set; }
+
+    SfListBox<PersoonListItem[], PersoonListItem>? _personenListBox;
+    private PersoonListItem[] _teSelecterenPersonenList = new PersoonListItem[] { };
+    private PersoonListItem[] _geselecteerdePersonenList = new PersoonListItem[] { };
+    private PersoonListItem _currentPersoon = new();
+
+    public bool IsVisible { get; set; } = false;
+
+    public void DialogOpen(PersoonListItem[] teSelecterenPersonen, PersoonListItem[] geselecteerdePersonen)
+    {
+        _logger.LogDebug($"Dialog AddDeelnemersToFietstochtDialog open ; threadid={Thread.CurrentThread.ManagedThreadId}");
+        _teSelecterenPersonenList = teSelecterenPersonen;
+        _geselecteerdePersonenList = geselecteerdePersonen;
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    private async Task Opened(Syncfusion.Blazor.Popups.OpenEventArgs args)
+    {
+        args.PreventFocus = true;
+    }
+
+    private async Task SaveAndClose()
+    {
+        await OnDeelnemersAdded.InvokeAsync(new DeelnemersAddedEventArgs(_geselecteerdePersonenList));
+
+        DialogClose();
+    }
+
+    private void DialogClose()
+    {
+        IsVisible = false;
+        StateHasChanged();
+    }
+
+    private void OnOverlayModalClick(OverlayModalClickEventArgs args)
+    {
+        DialogClose();
+    }
+
+}

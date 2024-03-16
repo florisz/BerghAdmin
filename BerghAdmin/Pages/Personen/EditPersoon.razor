@@ -1,0 +1,37 @@
+﻿@page "/Personen/EditPersoon"
+
+@using BerghAdmin.Authorization
+@using BerghAdmin.Data
+@using BerghAdmin.General
+
+@using Microsoft.AspNetCore.WebUtilities
+
+@inject NavigationManager _navigationManager
+@inject IJSRuntime jsRuntime
+
+@*
+    TO DO: deze autorisatie moet nog worden aangepast
+*@
+@attribute [Authorize(Policy = "IsBeheerFietsers")]
+
+<EditPersoonComponent Id="@Id" ReturnUrl="@ReturnUrl"/>
+
+@code
+{
+    [Parameter]
+    [SupplyParameterFromQuery(Name ="Id")]
+    public int Id { get; set; }
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "ReturnUrl")]
+    public string? ReturnUrl { get; set; }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "fietser");
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+}

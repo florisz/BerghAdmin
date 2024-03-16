@@ -49,7 +49,6 @@ public class ReleaseSeedUsersService : ISeedUsersService
     {
         var user = new User
         {
-            CurrentPersoonId = null,
             Name = naam,
             UserName = $"{naam}@berghinhetzadel.nl",
             Email = $"{naam}@berghinhetzadel.nl",

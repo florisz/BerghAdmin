@@ -26,7 +26,7 @@ namespace BerghAdmin.Tests.DomainTests
             var persoon = new Persoon { Id = 1, 
                                         Rollen = new HashSet<Rol> 
                                             { 
-                                                new Rol { Id = RolTypeEnum.Ambassadeur,Beschrijving = "Aap" } 
+                                                new Rol { Id = Convert.ToInt32(RolTypeEnum.Contactpersoon),Beschrijving = "Aap" } 
                                             } 
                                       };
             Assert.AreEqual("Aap", persoon.GetRollenAsString);
@@ -38,9 +38,9 @@ namespace BerghAdmin.Tests.DomainTests
             var persoon = new Persoon { Id = 1, 
                                         Rollen = new HashSet<Rol> 
                                             { 
-                                                new Rol { Id = RolTypeEnum.Ambassadeur, Beschrijving = "Aap" }, 
-                                                new Rol { Id = RolTypeEnum.Fietser, Beschrijving = "Noot" }, 
-                                                new Rol { Id = RolTypeEnum.Golfer, Beschrijving = "Mies" }, 
+                                                new Rol { Id = Convert.ToInt32(RolTypeEnum.Contactpersoon), Beschrijving = "Aap" }, 
+                                                new Rol { Id = Convert.ToInt32(RolTypeEnum.Fietser), Beschrijving = "Noot" }, 
+                                                new Rol { Id = Convert.ToInt32(RolTypeEnum.Golfer), Beschrijving = "Mies" }, 
                                             } 
                                       };
             Assert.AreEqual("Aap, Noot, Mies", persoon.GetRollenAsString);
@@ -51,10 +51,10 @@ namespace BerghAdmin.Tests.DomainTests
         [Test]
         public void TestNotARealTestButALambdaTest()
         {
-            var rol1 = new Rol { Id = RolTypeEnum.Ambassadeur, Beschrijving = "Ambassadeur" };
-            var rol2 = new Rol { Id = RolTypeEnum.Fietser, Beschrijving = "Fietser" };
-            var rol3 = new Rol { Id = RolTypeEnum.Golfer, Beschrijving = "Golfer" };
-            var rol4 = new Rol { Id = RolTypeEnum.Golfer, Beschrijving = "Vrijwilliger" };
+            var rol1 = new Rol { Id = Convert.ToInt32(RolTypeEnum.Contactpersoon), Beschrijving = "Contactpersoon" };
+            var rol2 = new Rol { Id = Convert.ToInt32(RolTypeEnum.Fietser), Beschrijving = "Fietser" };
+            var rol3 = new Rol { Id = Convert.ToInt32(RolTypeEnum.Golfer), Beschrijving = "Golfer" };
+            var rol4 = new Rol { Id = Convert.ToInt32(RolTypeEnum.Golfer), Beschrijving = "Vrijwilliger" };
             var persoon1 = new Persoon { Id = 1, Rollen = new HashSet<Rol> { rol1, rol2, rol3, rol4 } };
             var persoon2 = new Persoon { Id = 2, Rollen = new HashSet<Rol> { rol2, rol4 } };
             var persoon3 = new Persoon { Id = 3, Rollen = new HashSet<Rol> { rol3, rol4 } };

@@ -4,10 +4,12 @@ using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services.Betalingen;
 using BerghAdmin.Services.Bihz;
+using BerghAdmin.Services.Documenten;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Import;
 using BerghAdmin.Services.Seeding;
+using BerghAdmin.Services.Sponsoren;
 using BerghAdmin.Services.UserManagement;
 using Mailjet.Client;
 
@@ -16,29 +18,29 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 using Serilog;
 
 using Syncfusion.Blazor;
-
+using Syncfusion.Blazor.Popups;
 using System.IO.Abstractions;
 
 namespace BerghAdmin;
 
 public class Registrator
 {
-    private WebApplicationBuilder builder;
-    private WebApplication? app = null;
+    private WebApplicationBuilder _builder;
+    private WebApplication? _app = null;
 
     public Registrator(WebApplicationBuilder builder)
     {
-        this.builder = builder;
+        this._builder = builder;
     }
 
     public void RegisterAuthorization()
     {
-        var services = this.builder.Services;
+        var services = this._builder.Services;
         services
             .AddDefaultIdentity<User>(options =>
             {
@@ -95,78 +97,104 @@ public class Registrator
             throw new ArgumentNullException("ASPNETCORE_ENVIRONMENT");
 
         //builder.Configuration.AddUserSecrets<SendMailService>();
-        builder.Configuration.AddUserSecrets<Program>();
+        _builder.Configuration.AddUserSecrets<Program>();
         if (env != "Development")
         {
             var vaultName = Environment.GetEnvironmentVariable("VaultName");
-            builder.Configuration.AddAzureKeyVault(
+            _builder.Configuration.AddAzureKeyVault(
               new Uri($"https://{vaultName}.vault.azure.net"),
               new DefaultAzureCredential()
               );
         }
 
-        // Add services to the container.
-        builder.Services.AddRazorPages();
-        builder.Services.AddServerSideBlazor();
-        builder.Services.AddOptions();
-        builder.Services.AddHttpClient();
-        builder.Services.Configure<SeedSettings>(builder.Configuration.GetSection("Seeding"));
-        builder.Services.Configure<ApiConfiguration>(builder.Configuration.GetSection("ApiConfiguration"));
-        builder.Services.AddSingleton<EndpointHandler>();
-        builder.Services.AddScoped<IBetalingenRepository, EFBetalingenRepository>();
-        builder.Services.AddScoped<IBetalingenService, BetalingenService>();
-        builder.Services.AddScoped<IBetalingenImporterService, BetalingenImporterService>();
-        builder.Services.AddScoped<IPersoonService, PersoonService>();
-        builder.Services.AddScoped<IRolService, RolService>();
+        // AddAsync services to the container.
+        _builder.Services.AddRazorPages();
+        _builder.Services.AddServerSideBlazor();
+        _builder.Services.AddOptions();
+        _builder.Services.AddHttpClient();
+        _builder.Services.Configure<SeedSettings>(_builder.Configuration.GetSection("Seeding"));
+        _builder.Services.Configure<ApiConfiguration>(_builder.Configuration.GetSection("ApiConfiguration"));
+        _builder.Services.AddSingleton<EndpointHandler>();
+        _builder.Services.AddScoped<IBetalingenRepository, EFBetalingenRepository>();
+        _builder.Services.AddScoped<IBetalingenService, BetalingenService>();
+        _builder.Services.AddScoped<IBetalingenImporterService, BetalingenImporterService>();
+        _builder.Services.AddScoped<IPersoonService, PersoonService>();
+        _builder.Services.AddScoped<IRolService, RolService>();
 #if (DEBUG)
-        builder.Services.AddTransient<ISeedDataService, DebugSeedDataService>();
+        _builder.Services.AddTransient<ISeedDataService, DebugSeedDataService>();
 #elif (RELEASE)
-        builder.Services.AddTransient<ISeedDataService, ReleaseSeedDataService>();
+        _builder.Services.AddTransient<ISeedDataService, ReleaseSeedDataService>();
 #endif
-        builder.Services.AddTransient<ISeedUsersService, ReleaseSeedUsersService>();
-        builder.Services.AddScoped<IDocumentService, DocumentService>();
-        builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
-        builder.Services.AddScoped<IDataImporterService, DataImporterService>();
-        builder.Services.AddScoped<IFileSystem, FileSystem>();
-        builder.Services.AddScoped<IMailAttachmentsService>((provider) =>
+        _builder.Services.AddTransient<ISeedUsersService, ReleaseSeedUsersService>();
+        _builder.Services.AddScoped<IDocumentService, DocumentService>();
+        _builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
+        _builder.Services.AddScoped<IPdfConverter, PdfConverter>();
+        _builder.Services.AddScoped<IDataImporterService, DataImporterService>();
+        _builder.Services.AddScoped<IFileSystem, FileSystem>();
+        _builder.Services.AddScoped<IMailAttachmentsService>((provider) =>
         {
-            var rootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+            var rootPath = Path.Combine(_builder.Environment.ContentRootPath, "wwwroot");
             return new MailAttachmentsService(rootPath,
                 provider.GetRequiredService<IFileSystem>(),
                 provider.GetRequiredService<ILogger<MailAttachmentsService>>());
         });
-        builder.Services.AddScoped<ISendMailService, SendMailService>();
-        builder.Services.AddScoped<IEvenementService, EvenementService>();
-        builder.Services.AddScoped<IDonatieService, DonatieService>();
-        builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddScoped<IBihzUserService, BihzUserService>();
-        builder.Services.AddScoped<IBihzActieService, BihzActieService>();
-        builder.Services.AddScoped<IBihzProjectService, BihzProjectService>();
-        builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
-        builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
+        _builder.Services.AddScoped<ISendMailService, SendMailService>();
+        _builder.Services.AddScoped<IFietstochtenService, FietstochtenService>();
+        _builder.Services.AddScoped<IGolfdagenService, GolfdagenService>();
+        _builder.Services.AddScoped<ISponsorService, SponsorService>();
+        _builder.Services.AddScoped<IAmbassadeurService, AmbassadeurService>();
+        _builder.Services.AddScoped<IDonatieService, DonatieService>();
+        _builder.Services.AddScoped<IUserService, UserService>();
+        _builder.Services.AddScoped<IBihzUserService, BihzUserService>();
+        _builder.Services.AddScoped<IBihzActieService, BihzActieService>();
+        _builder.Services.AddScoped<IBihzProjectService, BihzProjectService>();
+        _builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
+        _builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
 
-        string syncFusionLicenseKey = builder.Configuration.GetValue<string>("SyncfusionConfiguration:LicenseKey");
+        var syncFusionLicenseKey = _builder.Configuration.GetValue<string>("SyncfusionConfiguration:LicenseKey");
         Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicenseKey);
 
-        builder.Services.AddSyncfusionBlazor();
-        builder.Services.AddSignalR(e =>
+        _builder.Services.AddScoped<SfDialogService>();
+        _builder.Services.AddSyncfusionBlazor();
+        _builder.Services.AddSignalR(e =>
         {
             e.MaximumReceiveMessageSize = 10240000;
         });
-        builder.Services.AddDbContext<ApplicationDbContext>(
-            options => options.UseMySql(GetDatabaseConnectionString(builder), ServerVersion.Parse("5.7"), po => po.EnableRetryOnFailure()));
 
-        builder.Services.AddHealthChecks()
+        var serverVersion = ServerVersion.Parse("5.7");
+        Action<MySqlDbContextOptionsBuilder> option = o => o.EnableRetryOnFailure();
+
+#if DEBUG
+        _builder.Services.AddDbContextFactory<ApplicationDbContext>(
+                    options => options
+                            .UseMySql(GetDatabaseConnectionString(_builder), serverVersion, option)
+                            .EnableSensitiveDataLogging(true)
+                            .EnableDetailedErrors(true));
+#else
+        _builder.Services.AddDbContextFactory<ApplicationDbContext>(
+                    options => options
+                            .UseMySql(GetDatabaseConnectionString(_builder), serverVersion, option)
+                            .EnableDetailedErrors(true));
+#endif
+        _builder.Services.AddDbContext<ApplicationDbContext>(
+            options => options.UseMySql(GetDatabaseConnectionString(_builder), serverVersion, option), 
+                    optionsLifetime : ServiceLifetime.Singleton);
+
+        _builder.Services.AddHealthChecks()
             .AddDbContextCheck<ApplicationDbContext>();
 
         // Configure Mailjet client.
-        builder.Services.AddHttpClient<IMailjetClient, MailjetClient>(client =>
+        _builder.Services.AddHttpClient<IMailjetClient, MailjetClient>(client =>
         {
             //set BaseAddress, MediaType, UserAgent
             client.SetDefaultSettings();
 
-            string apiKey = builder.Configuration["MailJetConfiguration:ApiKey"];
-            string apiSecret = builder.Configuration["MailJetConfiguration:ApiSecret"];
+            string? apiKey = _builder.Configuration["MailJetConfiguration:ApiKey"];
+            string? apiSecret = _builder.Configuration["MailJetConfiguration:ApiSecret"];
+            if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
+            {
+                throw new ApplicationException("Secrets for MailJet access (ApiKey & ApiSecret) cannot be found in configuration");
+            }
             client.UseBasicAuthentication(apiKey, apiSecret);
         });
     }
@@ -203,12 +231,14 @@ public class Registrator
         app.UseAuthentication();
         app.UseAuthorization();
 
+#pragma warning disable ASP0014
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
             endpoints.MapBlazorHub();
             endpoints.MapFallbackToPage("/_Host");
         });
+#pragma warning restore ASP0014
 
         var handler = app.Services.GetRequiredService<EndpointHandler>();
         handler.CreateEndpoints(app);
@@ -255,5 +285,5 @@ public class Registrator
     }
 
     private WebApplication GetApp()
-        => app ??= this.builder.Build();
+        => _app ??= this._builder.Build();
 }

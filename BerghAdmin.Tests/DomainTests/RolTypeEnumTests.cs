@@ -14,7 +14,7 @@ namespace BerghAdmin.Tests.DomainTests
         {
         }        
 
-        [TestCase(1, RolTypeEnum.Ambassadeur)]
+        [TestCase(1, RolTypeEnum.Contactpersoon)]
         [TestCase(2, RolTypeEnum.Begeleider)]
         [TestCase(3, RolTypeEnum.CommissieLid)]
         [TestCase(4, RolTypeEnum.Contactpersoon)]
