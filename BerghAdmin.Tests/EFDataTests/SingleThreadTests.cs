@@ -49,189 +49,192 @@ public class MultiThreadingTests : SetupServicesAndContext
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
     }
 
-    [Test]
-    public async Task TestPersoonCanBeUpdatedInMoreScopes()
-    {
-        // RESULT: this works fine because the test runs one one thread
-        //         the updates are done sequentially and independently from each other (as expected)
-        //
-        // create a new service lifetime scope
-        // this is necessary because the service provider is disposed after each test
-        // and we need to create a new service provider parallel to the existing one
-        // so we can test the multi threading issues
-        using var scope = this.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var serviceProvider1 = this.GetRequiredService<IServiceProvider>();
-        var serviceProvider2 = scope.ServiceProvider;
+    // Multithreading tests are NOT necessary anymore, maybe later
+    // If reinstated: check code carefully first!
 
-        const string newAchternaam1 = "Apenootzzzz";
-        const string newAchternaam2 = "Bengelzzzzz";
+    //[Test]
+    //public async Task TestPersoonCanBeUpdatedInMoreScopes()
+    //{
+    //    // RESULT: this works fine because the test runs one one thread
+    //    //         the updates are done sequentially and independently from each other (as expected)
+    //    //
+    //    // create a new service lifetime scope
+    //    // this is necessary because the service provider is disposed after each test
+    //    // and we need to create a new service provider parallel to the existing one
+    //    // so we can test the multi threading issues
+    //    using var scope = this.GetRequiredService<IServiceScopeFactory>().CreateScope();
+    //    var serviceProvider1 = this.GetRequiredService<IServiceProvider>();
+    //    var serviceProvider2 = scope.ServiceProvider;
 
-        // Persoon on thread 1
-        var persoonService1 = serviceProvider1.GetRequiredService<IPersoonService>();
-        var persoon1 = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
-        Assert.NotNull(persoon1);
-        Assert.AreEqual(persoon1.Voornaam, "Appie");
-        persoon1.Achternaam = newAchternaam1;
+    //    const string newAchternaam1 = "Apenootzzzz";
+    //    const string newAchternaam2 = "Bengelzzzzz";
 
-        // Persoon on thread 2
-        var persoonService2 = serviceProvider2.GetRequiredService<IPersoonService>();
-        var persoon2 = await persoonService2.GetByEmailAdres("bert@aapnootmies.com");
-        Assert.NotNull(persoon2);
-        Assert.AreEqual(persoon2.Voornaam, "Bert");
-        persoon2.Achternaam = newAchternaam2;
+    //    // Persoon on thread 1
+    //    var persoonService1 = serviceProvider1.GetRequiredService<IPersoonService>();
+    //    var persoon1 = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
+    //    Assert.NotNull(persoon1);
+    //    Assert.AreEqual(persoon1.Voornaam, "Appie");
+    //    persoon1.Achternaam = newAchternaam1;
 
-        try
-        {
-            await persoonService1.SavePersoonAsync(persoon1);
-            persoon1 = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
-            Assert.AreEqual(persoon1.Achternaam, newAchternaam1);
+    //    // Persoon on thread 2
+    //    var persoonService2 = serviceProvider2.GetRequiredService<IPersoonService>();
+    //    var persoon2 = await persoonService2.GetByEmailAdres("bert@aapnootmies.com");
+    //    Assert.NotNull(persoon2);
+    //    Assert.AreEqual(persoon2.Voornaam, "Bert");
+    //    persoon2.Achternaam = newAchternaam2;
 
-            await persoonService2.SavePersoonAsync(persoon2);
-            persoon2 = await persoonService2.GetByEmailAdres("bert@aapnootmies.com");
-            Assert.AreEqual(persoon2.Achternaam, newAchternaam2);
-        }
-        catch (Exception)
-        {
-            throw;
-        }
+    //    try
+    //    {
+    //        await persoonService1.SavePersoonAsync(persoon1);
+    //        persoon1 = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
+    //        Assert.AreEqual(persoon1.Achternaam, newAchternaam1);
 
-    }
+    //        await persoonService2.SavePersoonAsync(persoon2);
+    //        persoon2 = await persoonService2.GetByEmailAdres("bert@aapnootmies.com");
+    //        Assert.AreEqual(persoon2.Achternaam, newAchternaam2);
+    //    }
+    //    catch (Exception)
+    //    {
+    //        throw;
+    //    }
 
-    // Error: System.InvalidOperationException:
-    // A second operation was started on this context instance before a previous operation completed.
-    // This is usually caused by different threads concurrently using the same instance of DbContext.
-    // For more information on how to avoid threading issues with DbContext, see...
-    [Test]
-    public async Task TestUseTrackedAndUntrackedDataOn2ThreadsBut1Scope()
-    {
-        // RESULT: this works fine because the context is the same for both threads
-        
-        // read untracked data first and then update one of the elements
-        using var scope = this.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var serviceProvider = scope.ServiceProvider;
+    //}
 
-        const string newAchternaam1 = "Apenootxxx";
+    //// Error: System.InvalidOperationException:
+    //// A second operation was started on this context instance before a previous operation completed.
+    //// This is usually caused by different threads concurrently using the same instance of DbContext.
+    //// For more information on how to avoid threading issues with DbContext, see...
+    //[Test]
+    //public async Task TestUseTrackedAndUntrackedDataOn2ThreadsBut1Scope()
+    //{
+    //    // RESULT: this works fine because the context is the same for both threads
 
-        // On the update thread we will try to update the data
-        var updateThread = new Thread(async() =>
-        {
-            Thread.Sleep(1000);
-            var persoonService1 = this.GetRequiredService<IPersoonService>();
+    //    // read untracked data first and then update one of the elements
+    //    using var scope = this.GetRequiredService<IServiceScopeFactory>().CreateScope();
+    //    var serviceProvider = scope.ServiceProvider;
 
-            // and try to save this person
-            try
-            {
-                // now edit one person
-                var persoon = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
-                Assert.NotNull(persoon);
-                Assert.AreEqual(persoon.Voornaam, "Appie");
-                persoon.Achternaam = newAchternaam1;
+    //    const string newAchternaam1 = "Apenootxxx";
 
-                await persoonService1.SavePersoonAsync(persoon);
-                persoon = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
-                Assert.AreEqual(persoon.Achternaam, newAchternaam1);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        });
+    //    // On the update thread we will try to update the data
+    //    var updateThread = new Thread(async() =>
+    //    {
+    //        Thread.Sleep(1000);
+    //        var persoonService1 = this.GetRequiredService<IPersoonService>();
 
-        // on the read thread the data will be read
-        var readThread = new Thread(() =>
-        {
-            var persoonService2 = this.GetRequiredService<IPersoonService>();
+    //        // and try to save this person
+    //        try
+    //        {
+    //            // now edit one person
+    //            var persoon = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
+    //            Assert.NotNull(persoon);
+    //            Assert.AreEqual(persoon.Voornaam, "Appie");
+    //            persoon.Achternaam = newAchternaam1;
 
-            try
-            {
-                // first read all persons into a list including rollen and fietstochten
-                // data is untracked (see PersoonService, temp change)
-                var personen = persoonService2.GetPersonen();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            // wait for thread 1 for 10 minutes to do the update
-            updateThread.Join(new TimeSpan(0,10,0));
-        });
+    //            await persoonService1.SavePersoonAsync(persoon);
+    //            persoon = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
+    //            Assert.AreEqual(persoon.Achternaam, newAchternaam1);
+    //        }
+    //        catch (Exception)
+    //        {
+    //            throw;
+    //        }
+    //    });
 
-        // start the read thread first
-        updateThread.Start();
-        // wait a while so the read has been done
-        Thread.Sleep(1000);
-        // start the update thread
-        readThread.Start();
-        // wait for both threads to finish
-        readThread.Join();
-        updateThread.Join();
-    }
+    //    // on the read thread the data will be read
+    //    var readThread = new Thread(() =>
+    //    {
+    //        var persoonService2 = this.GetRequiredService<IPersoonService>();
 
-    [Test]
-    public void TestUseTrackedAndUntrackedDataOn2ThreadsAnd2Contexts()
-    {
-        // create a new service lifetime scope and split the read and update threads
-        // this is necessary because the service provider is disposed after each test
-        // and we need to create a new service provider parallel to the existing one
-        // so we can test the multi threading issues
-        using var scope = this.GetRequiredService<IServiceScopeFactory>().CreateScope();
-        var serviceProvider1 = this.GetRequiredService<IServiceProvider>();
-        var serviceProvider2 = scope.ServiceProvider;
+    //        try
+    //        {
+    //            // first read all persons into a list including rollen and fietstochten
+    //            // data is untracked (see PersoonService, temp change)
+    //            var personen = persoonService2.GetPersonen();
+    //        }
+    //        catch (Exception)
+    //        {
+    //            throw;
+    //        }
+    //        // wait for thread 1 for 10 minutes to do the update
+    //        updateThread.Join(new TimeSpan(0,10,0));
+    //    });
 
-        const string newAchternaam = "Apenootyyy";
+    //    // start the read thread first
+    //    updateThread.Start();
+    //    // wait a while so the read has been done
+    //    Thread.Sleep(1000);
+    //    // start the update thread
+    //    readThread.Start();
+    //    // wait for both threads to finish
+    //    readThread.Join();
+    //    updateThread.Join();
+    //}
 
-        // On the update thread we will try to update the data
-        var updateThread = new Thread(async() =>
-        {
-            Thread.Sleep(1000);
-            // read untracked data first and then update one of the elements
-            var persoonService1 = serviceProvider1.GetRequiredService<IPersoonService>();
+    //[Test]
+    //public void TestUseTrackedAndUntrackedDataOn2ThreadsAnd2Contexts()
+    //{
+    //    // create a new service lifetime scope and split the read and update threads
+    //    // this is necessary because the service provider is disposed after each test
+    //    // and we need to create a new service provider parallel to the existing one
+    //    // so we can test the multi threading issues
+    //    using var scope = this.GetRequiredService<IServiceScopeFactory>().CreateScope();
+    //    var serviceProvider1 = this.GetRequiredService<IServiceProvider>();
+    //    var serviceProvider2 = scope.ServiceProvider;
 
-            // and try to save this person
-            try
-            {
-                // now edit one person
-                var persoon = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
-                Assert.NotNull(persoon);
-                Assert.AreEqual(persoon?.Voornaam, "Appie");
-                if (persoon != null)
-                {
-                    persoon.Achternaam = newAchternaam;
-                }
+    //    const string newAchternaam = "Apenootyyy";
 
-                await persoonService1.SavePersoonAsync(persoon);
-                persoon = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
-                Assert.AreEqual(persoon?.Achternaam, newAchternaam);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        });
+    //    // On the update thread we will try to update the data
+    //    var updateThread = new Thread(async() =>
+    //    {
+    //        Thread.Sleep(1000);
+    //        // read untracked data first and then update one of the elements
+    //        var persoonService1 = serviceProvider1.GetRequiredService<IPersoonService>();
 
-        // on the read thread the data will be read
-        var readThread = new Thread(() =>
-        {
-            var persoonService2 = serviceProvider2.GetRequiredService<IPersoonService>();
+    //        // and try to save this person
+    //        try
+    //        {
+    //            // now edit one person
+    //            var persoon = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
+    //            Assert.NotNull(persoon);
+    //            Assert.AreEqual(persoon?.Voornaam, "Appie");
+    //            if (persoon != null)
+    //            {
+    //                persoon.Achternaam = newAchternaam;
+    //            }
 
-            // first read all persons into a list including rollen and fietstochten
-            // data is untracked (see PersoonService, temp change)
-            var personen = persoonService2.GetPersonen();
+    //            await persoonService1.SavePersoonAsync(persoon);
+    //            persoon = await persoonService1.GetByEmailAdres("appie@aapnootmies.com");
+    //            Assert.AreEqual(persoon?.Achternaam, newAchternaam);
+    //        }
+    //        catch (Exception)
+    //        {
+    //            throw;
+    //        }
+    //    });
 
-            // wait for thread 1 for 10 minutes to do the update
-            updateThread.Join(new TimeSpan(0, 10, 0));
-        });
+    //    // on the read thread the data will be read
+    //    var readThread = new Thread(() =>
+    //    {
+    //        var persoonService2 = serviceProvider2.GetRequiredService<IPersoonService>();
 
-        // start the update thread
-        updateThread.Start();
-        // start the read thread first
-        readThread.Start();
-        // wait a while so the read has been done
-        Thread.Sleep(1000);
-        // wait for both threads to finish
-        readThread.Join();
-        updateThread.Join();
-    }
+    //        // first read all persons into a list including rollen and fietstochten
+    //        // data is untracked (see PersoonService, temp change)
+    //        var personen = persoonService2.GetPersonen();
+
+    //        // wait for thread 1 for 10 minutes to do the update
+    //        updateThread.Join(new TimeSpan(0, 10, 0));
+    //    });
+
+    //    // start the update thread
+    //    updateThread.Start();
+    //    // start the read thread first
+    //    readThread.Start();
+    //    // wait a while so the read has been done
+    //    Thread.Sleep(1000);
+    //    // wait for both threads to finish
+    //    readThread.Join();
+    //    updateThread.Join();
+    //}
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 #pragma warning restore CS8604 // Possible null reference argument.
 

@@ -46,10 +46,10 @@ public class DebugSeedDataService : ISeedDataService
 
         var rollen = await SeedHelper.InsertRollen(_rolService);
 
-        //await InsertTestPersonen(rollen);
+        await InsertTestPersonen(rollen);
         await InsertFietstochten();
-        //await InsertSponsoren();
-        //await InsertGolfdagen();
+        await InsertSponsoren();
+        await InsertGolfdagen();
         await InsertDocumenten();
     }
 

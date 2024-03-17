@@ -16,6 +16,8 @@ namespace BerghAdmin.Tests.DomainTests
             services
                 .AddScoped<ISponsorService, SponsorService>()
                 .AddScoped<IPersoonService, PersoonService>()
+                .AddScoped<IAmbassadeurService, AmbassadeurService>()
+                .AddScoped<IRolService, RolService>()
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
         }
 

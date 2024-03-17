@@ -81,13 +81,13 @@ public class DocumentMergeTests : DatabaseTestSetup
         Assert.NotNull(template);
         Assert.AreEqual(template!.Name, "TestTemplate4");
         var mergeFields = service.GetMergeFieldsFor(template).ToArray();
-        Assert.Contains("Bedrijfsnaam", mergeFields);
-        Assert.Contains("NaamAanhef", mergeFields);
-        Assert.Contains("StraatEnNummer", mergeFields);
-        Assert.Contains("Plaatsnaam", mergeFields);
-        Assert.Contains("Postcode", mergeFields);
-        Assert.Contains("HuidigeDatum", mergeFields);
-        Assert.Contains("SponsorBedrag", mergeFields);
+        Assert.Contains("AmbassadeurNaam", mergeFields);
+        Assert.Contains("ContactpersoonAanhef", mergeFields);
+        Assert.Contains("AmbassadeurAdres", mergeFields);
+        Assert.Contains("AmbassadeurWoonplaats", mergeFields);
+        Assert.Contains("AmbassadeurPostcode", mergeFields);
+        Assert.Contains("Dagtekening", mergeFields);
+        Assert.Contains("FactuurBedrag", mergeFields);
         Assert.Pass();
     }
 
