@@ -26,7 +26,7 @@ steps:
     appType: 'webAppLinux'
     WebAppName: 'bergh-${{ parameters.targetEnvironment }}-admin-webapp'
     packageForLinux: '$(System.ArtifactsDirectory)/**/BerghAdmin.zip'
-    RuntimeStack: 'DOTNETCORE|6.0'
+    RuntimeStack: 'DOTNETCORE|8.0'
 
 - task: AzureRmWebAppDeployment@4
   displayName: Deploy Bergh Monitor site
@@ -37,7 +37,7 @@ steps:
     appType: 'webAppLinux'
     WebAppName: 'bergh-${{ parameters.targetEnvironment }}-monitor-webapp'
     packageForLinux: '$(System.ArtifactsDirectory)/**/BerghMonitor.Web.zip'
-    RuntimeStack: 'DOTNETCORE|6.0'
+    RuntimeStack: 'DOTNETCORE|8.0'
 
 - task: AzureFunctionApp@1
   displayName: Deploy Kentaa Function

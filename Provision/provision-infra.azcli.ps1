@@ -62,7 +62,7 @@ $webappId = az webapp create `
     --name $webapp `
     --resource-group $rg `
     --plan $plan `
-    --runtime '"dotnetcore|7.0"' `
+    --runtime '"dotnetcore|8.0"' `
     --assign-identity [system] `
     --query identity.principalId 
 
@@ -89,7 +89,7 @@ $monitorId = az webapp create `
     --name $webmonitor `
     --resource-group $rg `
     --plan $plan `
-    --runtime '"dotnetcore|7.0"' `
+    --runtime '"dotnetcore|8.0"' `
     --assign-identity [system] `
     --query identity.principalId
 
