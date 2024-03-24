@@ -8,15 +8,18 @@ public class ReleaseSeedDataService : ISeedDataService
     private readonly ApplicationDbContext _dbContext;
     private readonly IRolService _rolService;
     private readonly IFietstochtenService _fietstochtenService;
+    private readonly IMagazineService _magazineService;
 
     public ReleaseSeedDataService(
         ApplicationDbContext dbContext,
         IRolService rolService,
-        IFietstochtenService fietstochtenService)
+        IFietstochtenService fietstochtenService,
+        IMagazineService magazineService)
     {
         this._dbContext = dbContext;
         this._rolService = rolService;
         this._fietstochtenService = fietstochtenService;
+        _magazineService = magazineService;
     }
 
     public async Task SeedInitialData()
@@ -27,7 +30,7 @@ public class ReleaseSeedDataService : ISeedDataService
         }
 
         await SeedHelper.InsertRollen(_rolService);
-
+        await SeedHelper.InsertMagazineJaren(_magazineService);
         await InsertFietstochten();
     }
     private async Task InsertFietstochten()

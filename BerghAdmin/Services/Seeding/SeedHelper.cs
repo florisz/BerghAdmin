@@ -53,7 +53,7 @@ namespace BerghAdmin.Services.Seeding
             return rollen;
         }
 
-        public static async Task InsertJaarMagazines(IMagazineService magazineService)
+        internal static async Task InsertMagazineJaren(IMagazineService magazineService)
         {
             await magazineService.DeleteAll();
 
@@ -75,6 +75,6 @@ namespace BerghAdmin.Services.Seeding
             await magazineService.AddMagazine(new MagazineJaar { Id = 16, Jaar = "2027" });
             await magazineService.AddMagazine(new MagazineJaar { Id = 17, Jaar = "2028" });
             await magazineService.AddMagazine(new MagazineJaar { Id = 18, Jaar = "2029" });
-        }  
+        }
     }
 }

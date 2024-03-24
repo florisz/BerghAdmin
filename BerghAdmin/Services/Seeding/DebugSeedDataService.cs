@@ -15,6 +15,7 @@ public class DebugSeedDataService : ISeedDataService
     private readonly ISponsorService _sponsorService;
     private readonly IAmbassadeurService _ambassadeurService;
     private readonly IDocumentService _documentService;
+    private readonly IMagazineService _magazineService;
 
     public DebugSeedDataService(
         IRolService rolService,
@@ -24,6 +25,7 @@ public class DebugSeedDataService : ISeedDataService
         ISponsorService sponsorService,
         IAmbassadeurService ambassadeurService,
         IDocumentService documentService,
+        IMagazineService magazineService,
         IOptions<SeedSettings> settings)
     {
         _settings = settings.Value;
@@ -35,6 +37,7 @@ public class DebugSeedDataService : ISeedDataService
         _sponsorService = sponsorService;
         _ambassadeurService = ambassadeurService;
         _documentService = documentService;
+        _magazineService = magazineService;
     }
 
     public async Task SeedInitialData()
@@ -45,12 +48,12 @@ public class DebugSeedDataService : ISeedDataService
         }
 
         var rollen = await SeedHelper.InsertRollen(_rolService);
-
+        await SeedHelper.InsertMagazineJaren(_magazineService);
         //await InsertTestPersonen(rollen);
         await InsertFietstochten();
         //await InsertSponsoren();
         //await InsertGolfdagen();
-        //await InsertDocumenten();
+        await InsertDocumenten();
     }
 
     private async Task InsertTestPersonen(Dictionary<RolTypeEnum, Rol> rollen)
