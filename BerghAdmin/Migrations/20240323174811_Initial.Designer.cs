@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BerghAdmin.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231212070445_Migration1")]
-    partial class Migration1
+    [Migration("20240323174811_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -721,6 +721,26 @@ namespace BerghAdmin.Migrations
                     b.ToTable("BihzUsers");
                 });
 
+            modelBuilder.Entity("BerghAdmin.Data.MagazineJaar", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AmbassadeurId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Jaar")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AmbassadeurId");
+
+                    b.ToTable("MagazineJaren");
+                });
+
             modelBuilder.Entity("BerghAdmin.Data.Rol", b =>
                 {
                     b.Property<int>("Id")
@@ -991,11 +1011,15 @@ namespace BerghAdmin.Migrations
                     b.Property<int?>("CompagnonId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ContactPersoonId")
+                    b.Property<int?>("ContactPersoon1Id")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DebiteurNummer")
+                    b.Property<int?>("ContactPersoon2Id")
                         .HasColumnType("int");
+
+                    b.Property<string>("DebiteurNummer")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Naam")
                         .IsRequired()
@@ -1003,7 +1027,9 @@ namespace BerghAdmin.Migrations
 
                     b.HasIndex("CompagnonId");
 
-                    b.HasIndex("ContactPersoonId");
+                    b.HasIndex("ContactPersoon1Id");
+
+                    b.HasIndex("ContactPersoon2Id");
 
                     b.ToTable("Sponsoren");
                 });
@@ -1012,14 +1038,35 @@ namespace BerghAdmin.Migrations
                 {
                     b.HasBaseType("BerghAdmin.Data.Sponsor");
 
+                    b.Property<string>("AangebrachtDoor")
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime?>("DatumAangebracht")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DatumAanmelding")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DatumBeeindiging")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Fax")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("MagazijnFotograaf")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("MagazijnSchrijver")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("OpmerkingenLogo")
+                        .HasColumnType("longtext");
+
                     b.Property<int>("Pakket")
                         .HasColumnType("int");
+
+                    b.Property<string>("Partner")
+                        .HasColumnType("longtext");
 
                     b.Property<decimal?>("ToegezegdBedrag")
                         .HasPrecision(18, 2)
@@ -1087,6 +1134,13 @@ namespace BerghAdmin.Migrations
                     b.HasOne("BerghAdmin.Data.Persoon", null)
                         .WithOne("BihzUser")
                         .HasForeignKey("BerghAdmin.Data.Kentaa.BihzUser", "PersoonId");
+                });
+
+            modelBuilder.Entity("BerghAdmin.Data.MagazineJaar", b =>
+                {
+                    b.HasOne("BerghAdmin.Data.Ambassadeur", null)
+                        .WithMany("MagazineJaren")
+                        .HasForeignKey("AmbassadeurId");
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.VerzondenMail", b =>
@@ -1251,11 +1305,13 @@ namespace BerghAdmin.Migrations
                         .WithMany()
                         .HasForeignKey("CompagnonId");
 
-                    b.HasOne("BerghAdmin.Data.Persoon", "ContactPersoon")
+                    b.HasOne("BerghAdmin.Data.Persoon", "ContactPersoon1")
                         .WithMany()
-                        .HasForeignKey("ContactPersoonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContactPersoon1Id");
+
+                    b.HasOne("BerghAdmin.Data.Persoon", "ContactPersoon2")
+                        .WithMany()
+                        .HasForeignKey("ContactPersoon2Id");
 
                     b.HasOne("BerghAdmin.Data.Donateur", null)
                         .WithOne()
@@ -1265,7 +1321,9 @@ namespace BerghAdmin.Migrations
 
                     b.Navigation("Compagnon");
 
-                    b.Navigation("ContactPersoon");
+                    b.Navigation("ContactPersoon1");
+
+                    b.Navigation("ContactPersoon2");
                 });
 
             modelBuilder.Entity("BerghAdmin.Data.Ambassadeur", b =>
@@ -1296,6 +1354,11 @@ namespace BerghAdmin.Migrations
                     b.Navigation("BihzActie");
 
                     b.Navigation("BihzUser");
+                });
+
+            modelBuilder.Entity("BerghAdmin.Data.Ambassadeur", b =>
+                {
+                    b.Navigation("MagazineJaren");
                 });
 #pragma warning restore 612, 618
         }

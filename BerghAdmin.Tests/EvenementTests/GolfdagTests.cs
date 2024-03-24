@@ -183,7 +183,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             await service.SaveAsync(golfdag);
             await service.AddSponsorAsync(golfdag, new GolfdagSponsor() { Naam = sponsorNaam,  
                                                                             EmailAdres = "sponsor@bedrijf.nl", 
-                                                                            ContactPersoon = contactPersoon });
+                                                                            ContactPersoon1 = contactPersoon });
             var golfdagById = service.GetById(golfdag.Id);
             var sponsor = golfdag?.Sponsoren.FirstOrDefault();
             var isSponsorVan = sponsor?.GolfdagenGesponsored.FirstOrDefault(f => f.Id == golfdagById!.Id) != null;

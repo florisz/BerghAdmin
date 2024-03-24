@@ -2,16 +2,22 @@
 @page "/ApplicatieManagement/personen"
 
 @using BerghAdmin.Authorization
-@using Microsoft.AspNetCore.Identity
-@using Syncfusion.Blazor.Buttons
-@using Syncfusion.Blazor.Inputs
 @using BerghAdmin.Data
-@using BerghAdmin.Pages.Personen
+@using BerghAdmin.General
 @using BerghAdmin.Services.Import
+@using BerghAdmin.Pages.Personen
+
 @using System.IO
+@using Microsoft.AspNetCore.Identity
+
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Navigations
 
 @inject IJSRuntime jsRuntime
-@inject IDataImporterService importerService 
+@inject IImporterServiceFactory factory
+@inject SfDialogService DialogService
 
 @attribute [Authorize(Policy = "IsAdministrator")]
 
@@ -22,13 +28,15 @@
 
 <div class="form-group">
     <SfUploader ID="UploadFiles">
-        <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+        <UploaderEvents ValueChange="OnChangeAsync"></UploaderEvents>
     </SfUploader>
 </div>
+<ErrorDialog @ref="errorDialog" />
 
 @code
 {
     public int[] rolContext = new int[] { };
+    private ErrorDialog errorDialog = new();
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -42,7 +50,7 @@
         this.IsVisible = true;
     }
 
-    private void OnChange(UploadChangeEventArgs args)
+    private async Task OnChangeAsync(UploadChangeEventArgs args)
     {
         foreach (var file in args.Files)
         {
@@ -52,9 +60,21 @@
                 throw new Exception("File heeft meer dan 512K bytes");
             }
 
-            // TO DO pass a File property to the importerService
             var stream = file.File.OpenReadStream();
-            importerService.ImportData(stream);
+            if (file.FileInfo.Name.StartsWith("Persoon"))
+            {
+                var persoonImporter = factory.GetInstance("Persoon");
+                await persoonImporter.ImportDataAsync(stream);
+            }
+            else if (file.FileInfo.Name.StartsWith("Ambassadeur"))
+            {
+                var ambassadeurImporter = factory.GetInstance("Ambassadeur");
+                await ambassadeurImporter.ImportDataAsync(stream);
+            }
+            else
+            {
+                await DialogService.AlertAsync("Naam van import file moet beginnen met 'Persoon' of 'Ambassadeur'");
+            }
         }
     }
 }

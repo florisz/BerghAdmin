@@ -46,11 +46,11 @@ public class DebugSeedDataService : ISeedDataService
 
         var rollen = await SeedHelper.InsertRollen(_rolService);
 
-        await InsertTestPersonen(rollen);
+        //await InsertTestPersonen(rollen);
         await InsertFietstochten();
-        await InsertSponsoren();
-        await InsertGolfdagen();
-        await InsertDocumenten();
+        //await InsertSponsoren();
+        //await InsertGolfdagen();
+        //await InsertDocumenten();
     }
 
     private async Task InsertTestPersonen(Dictionary<RolTypeEnum, Rol> rollen)
@@ -61,7 +61,7 @@ public class DebugSeedDataService : ISeedDataService
             Voornaam = "Appie",
             Achternaam = "Apenoot",
             Adres = "Straat 1",
-            EmailAdres = "appie@aapnootmies.com",
+            EmailAdres = "h.arendsen@live.nl",
             GeboorteDatum = new DateTime(1970, 1, 1),
             Geslacht = GeslachtEnum.Man,
             Land = "Nederland",
@@ -79,7 +79,7 @@ public class DebugSeedDataService : ISeedDataService
             Voornaam = "Bert",
             Achternaam = "Bengel",
             Adres = "Straat 2",
-            EmailAdres = "bert@aapnootmies.com",
+            EmailAdres = "f.arendsen@harriearendsen.nl",
             GeboorteDatum = new DateTime(1970, 1, 1),
             Geslacht = GeslachtEnum.Man,
             Land = "Nederland",
@@ -389,12 +389,13 @@ public class DebugSeedDataService : ISeedDataService
         var ambassadeur = new Ambassadeur()
         {
             Id = 0,
+            DebiteurNummer = "1231",
             DatumAangebracht = new DateTime(2015, 5, 9),
             Naam = "De Gulle Gever",
             Pakket = PakketEnum.Ambassadeur,
             ToegezegdBedrag = 2000,
             TotaalBedrag = 16000, 
-            ContactPersoon = persoon1!,
+            ContactPersoon1 = persoon1!,
             Compagnon = persoon2
         };
         await _ambassadeurService.SaveAsync(ambassadeur);
@@ -403,12 +404,13 @@ public class DebugSeedDataService : ISeedDataService
         ambassadeur = new Ambassadeur()
         {
             Id = 0,
+            DebiteurNummer = "1232",
             DatumAangebracht = new DateTime(2020, 2, 23),
             Naam = "De Uitdeler",
             Pakket = PakketEnum.Ambassadeur,
             ToegezegdBedrag = 2000,
             TotaalBedrag = 6000,
-            ContactPersoon = persoon2!
+            ContactPersoon1 = persoon2!
         };
         await _ambassadeurService.SaveAsync(ambassadeur);
 
@@ -416,12 +418,13 @@ public class DebugSeedDataService : ISeedDataService
         ambassadeur = new Ambassadeur()
         {
             Id = 0,
+            DebiteurNummer = "1233",
             DatumAangebracht = new DateTime(2003, 10, 30),
             Naam = "Meer is Beter",
             Pakket = PakketEnum.Ambassadeur,
             ToegezegdBedrag = 2000,
             TotaalBedrag = 40000,
-            ContactPersoon = persoon3!
+            ContactPersoon1 = persoon3!
         };
         await _ambassadeurService.SaveAsync(ambassadeur);
 
@@ -430,9 +433,9 @@ public class DebugSeedDataService : ISeedDataService
         {
             Id = 0,
             Naam = "Mepgraag",
-            ContactPersoon = persoon1!,
+            ContactPersoon1 = persoon1!,
             Opmerkingen = "Voorzichtig",
-            DebiteurNummer = 1234,
+            DebiteurNummer = "1234",
             Mobiel = "06-12345678"
         };
         await _sponsorService.SaveAsync<GolfdagSponsor>(sponsor);
@@ -441,9 +444,9 @@ public class DebugSeedDataService : ISeedDataService
         {
             Id = 0,
             Naam = "In de put",
-            ContactPersoon = persoon2!,
+            ContactPersoon1 = persoon2!,
             Opmerkingen = "Niet vrolijk",
-            DebiteurNummer = 5678,
+            DebiteurNummer = "1235",
             Mobiel = "06-12345678"
         };
         await _sponsorService.SaveAsync<GolfdagSponsor>(sponsor);
@@ -452,9 +455,9 @@ public class DebugSeedDataService : ISeedDataService
         {
             Id = 0,
             Naam = "Holeinone",
-            ContactPersoon = persoon3!,
+            ContactPersoon1 = persoon3!,
             Opmerkingen = "Raak!",
-            DebiteurNummer = 9012,
+            DebiteurNummer = "1236",
             Mobiel = "06-12345678"
         };
         await _sponsorService.SaveAsync<GolfdagSponsor>(sponsor);

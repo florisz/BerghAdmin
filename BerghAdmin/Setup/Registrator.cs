@@ -129,7 +129,9 @@ public class Registrator
         _builder.Services.AddScoped<IDocumentService, DocumentService>();
         _builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
         _builder.Services.AddScoped<IPdfConverter, PdfConverter>();
-        _builder.Services.AddScoped<IDataImporterService, DataImporterService>();
+        _builder.Services.AddTransient<IImporterService, PersoonImporterService>();
+        _builder.Services.AddTransient<IImporterService, AmbassadeurImporterService>();
+        _builder.Services.AddScoped<IImporterServiceFactory, ImporterServiceFactory>();
         _builder.Services.AddScoped<IFileSystem, FileSystem>();
         _builder.Services.AddScoped<IMailAttachmentsService>((provider) =>
         {
@@ -143,6 +145,7 @@ public class Registrator
         _builder.Services.AddScoped<IGolfdagenService, GolfdagenService>();
         _builder.Services.AddScoped<ISponsorService, SponsorService>();
         _builder.Services.AddScoped<IAmbassadeurService, AmbassadeurService>();
+        _builder.Services.AddScoped<IMagazineService, MagazineService>();
         _builder.Services.AddScoped<IDonatieService, DonatieService>();
         _builder.Services.AddScoped<IUserService, UserService>();
         _builder.Services.AddScoped<IBihzUserService, BihzUserService>();

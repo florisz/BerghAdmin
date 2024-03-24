@@ -7,13 +7,13 @@ using System;
 namespace BerghAdmin.Tests.EnumTests
 {
     [TestFixture]
-    public class EnumTests
+    public class RolEnumTests
     {
         [Test]
         public void TestTextIsEmpty()
         {
             var rolData = GetAlleRollen();
-            Assert.AreEqual(8, rolData.Length);
+            Assert.AreEqual(9, rolData.Length);
         }
 
         private static RolData[] GetAlleRollen()

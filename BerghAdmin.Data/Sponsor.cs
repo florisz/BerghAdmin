@@ -4,25 +4,35 @@ namespace BerghAdmin.Data;
 
 public class Sponsor : Donateur
 {
-    public Sponsor()
-    {
-        ContactPersoon = new Persoon();
-    }
-    public int? DebiteurNummer { get; set; }
+    public string DebiteurNummer { get; set; }
     public string Naam { get; set; }
-    public Persoon ContactPersoon { get; set; }
+    public Persoon? ContactPersoon1 { get; set; }
+    public Persoon? ContactPersoon2 { get; set; }
     public Persoon? Compagnon { get; set; }
 
     [NotMapped]
-    public string ContactPersoonVolledigeNaam => ContactPersoon.VolledigeNaam;
+    public string ContactPersoon1VolledigeNaam => ContactPersoon1.VolledigeNaam;
     [NotMapped]
-    public string ContactPersoonTelefoon => $"m:{ContactPersoon.Telefoon}/t:{ContactPersoon.Mobiel}";
+    public string ContactPersoon1Telefoon => GetTelefoon(ContactPersoon1);
     [NotMapped]
-    public string ContactPersoonEmailAdres => ContactPersoon.EmailAdres;
+    public string ContactPersoon1EmailAdres => ContactPersoon1.EmailAdres;
+    [NotMapped]
+    public string ContactPersoon2VolledigeNaam => ContactPersoon2.VolledigeNaam;
+    [NotMapped]
+    public string ContactPersoon2Telefoon => GetTelefoon(ContactPersoon2);
+    [NotMapped]
+    public string ContactPersoon2EmailAdres => ContactPersoon2.EmailAdres;
     [NotMapped]
     public string? CompagnonVolledigeNaam => Compagnon?.VolledigeNaam;
     [NotMapped]
-    public string? CompagnonTelefoon => $"m:{Compagnon?.Telefoon}/t:{Compagnon?.Mobiel}";
+    public string? CompagnonTelefoon => GetTelefoon(Compagnon);
     [NotMapped]
     public string? CompagnonEmailAdres => Compagnon?.EmailAdres;
+
+    private string GetTelefoon(Persoon? persoon)
+    {         
+        return string.IsNullOrEmpty(persoon.Telefoon) && string.IsNullOrEmpty(persoon.Mobiel)
+                       ? ""
+                       : $"m:{persoon.Telefoon}/t:{persoon.Mobiel}";
+    }
 }

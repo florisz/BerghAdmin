@@ -77,7 +77,7 @@ else
     <div class="form-group row">
         <div class="form-group col-lg-3">
             <label class="col-form-label">Debiteurnummer:</label>
-            <SfNumericTextBox @bind-Value="@_currentAmbassadeur.DebiteurNummer" TValue="int?" Min="0" Max="100000" Decimals="0" Format="######" ShowSpinButton=false />
+            <SfTextBox @bind-Value="@_currentAmbassadeur.DebiteurNummer" TValue="string" />
         </div>
 
         <div class="form-group col-lg-3">
@@ -98,11 +98,11 @@ else
     </div>
     <div class="form-group row">
         <div class="form-group col-lg-6">
-            <label class="col-form-text">@_currentAmbassadeur!.ContactPersoonVolledigeNaam</label>
+            <label class="col-form-text">@_currentAmbassadeur!.ContactPersoon1VolledigeNaam</label>
             <br/>
-            <label class="col-form-text">@_currentAmbassadeur!.ContactPersoonTelefoon</label>
+            <label class="col-form-text">@_currentAmbassadeur!.ContactPersoon1Telefoon</label>
             <br />
-            <label class="col-form-text">@_currentAmbassadeur!.ContactPersoonEmailAdres</label>
+            <label class="col-form-text">@_currentAmbassadeur!.ContactPersoon1EmailAdres</label>
         </div>
         <div class="form-group col-lg-6">
             <label class="col-form-text">@_currentAmbassadeur!.CompagnonVolledigeNaam</label>
@@ -201,7 +201,7 @@ else
         {
             var persoon = await _persoonService.GetById(gerelateerdPersoon.Id);
             if (persoonType == "Contactpersoon")
-                _currentAmbassadeur.ContactPersoon = persoon!;
+                _currentAmbassadeur.ContactPersoon1 = persoon!;
             else
                 _currentAmbassadeur.Compagnon = persoon;
         }

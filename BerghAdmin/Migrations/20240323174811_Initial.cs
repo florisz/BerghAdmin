@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BerghAdmin.Migrations
 {
     /// <inheritdoc />
-    public partial class NewVersion : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -193,7 +193,11 @@ namespace BerghAdmin.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    Created = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    CreatedBy = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ContentType = table.Column<int>(type: "int", nullable: false),
+                    DocumentType = table.Column<int>(type: "int", nullable: false),
                     TemplateType = table.Column<int>(type: "int", nullable: false),
                     Content = table.Column<byte[]>(type: "longblob", nullable: false),
                     IsMergeTemplate = table.Column<bool>(type: "tinyint(1)", nullable: false),
@@ -367,12 +371,11 @@ namespace BerghAdmin.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nummer = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Nummer = table.Column<int>(type: "int", nullable: false),
                     Omschrijving = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Bedrag = table.Column<float>(type: "float", precision: 18, scale: 2, nullable: true),
-                    Datum = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Datum = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsVerzonden = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     FactuurType = table.Column<int>(type: "int", nullable: false),
                     EmailTekstId = table.Column<int>(type: "int", nullable: true),
@@ -753,10 +756,12 @@ namespace BerghAdmin.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    DebiteurNummer = table.Column<int>(type: "int", nullable: true),
+                    DebiteurNummer = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Naam = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ContactPersoonId = table.Column<int>(type: "int", nullable: false),
+                    ContactPersoon1Id = table.Column<int>(type: "int", nullable: true),
+                    ContactPersoon2Id = table.Column<int>(type: "int", nullable: true),
                     CompagnonId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -774,11 +779,15 @@ namespace BerghAdmin.Migrations
                         principalTable: "Personen",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Sponsoren_Personen_ContactPersoonId",
-                        column: x => x.ContactPersoonId,
+                        name: "FK_Sponsoren_Personen_ContactPersoon1Id",
+                        column: x => x.ContactPersoon1Id,
                         principalTable: "Personen",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Sponsoren_Personen_ContactPersoon2Id",
+                        column: x => x.ContactPersoon2Id,
+                        principalTable: "Personen",
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -787,12 +796,24 @@ namespace BerghAdmin.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    ToegezegdBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
-                    TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    AangebrachtDoor = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     DatumAangebracht = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    Pakket = table.Column<int>(type: "int", nullable: false),
+                    DatumAanmelding = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DatumBeeindiging = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Fax = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MagazijnSchrijver = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MagazijnFotograaf = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OpmerkingenLogo = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Partner = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Pakket = table.Column<int>(type: "int", nullable: false),
+                    ToegezegdBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    TotaalBedrag = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -821,6 +842,27 @@ namespace BerghAdmin.Migrations
                         principalTable: "Sponsoren",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "MagazineJaren",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Jaar = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AmbassadeurId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MagazineJaren", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MagazineJaren_Ambassadeur_AmbassadeurId",
+                        column: x => x.AmbassadeurId,
+                        principalTable: "Ambassadeur",
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -947,6 +989,11 @@ namespace BerghAdmin.Migrations
                 column: "GolfdagenId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_MagazineJaren_AmbassadeurId",
+                table: "MagazineJaren",
+                column: "AmbassadeurId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MailbccGeadresseerden_bccGeadresseerdenId1",
                 table: "MailbccGeadresseerden",
                 column: "bccGeadresseerdenId1");
@@ -977,9 +1024,14 @@ namespace BerghAdmin.Migrations
                 column: "CompagnonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Sponsoren_ContactPersoonId",
+                name: "IX_Sponsoren_ContactPersoon1Id",
                 table: "Sponsoren",
-                column: "ContactPersoonId");
+                column: "ContactPersoon1Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sponsoren_ContactPersoon2Id",
+                table: "Sponsoren",
+                column: "ContactPersoon2Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VerzondenMails_InhoudId",
@@ -990,9 +1042,6 @@ namespace BerghAdmin.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Ambassadeur");
-
             migrationBuilder.DropTable(
                 name: "AspNetUserClaims");
 
@@ -1024,6 +1073,9 @@ namespace BerghAdmin.Migrations
                 name: "GolfdagPersoon");
 
             migrationBuilder.DropTable(
+                name: "MagazineJaren");
+
+            migrationBuilder.DropTable(
                 name: "MailbccGeadresseerden");
 
             migrationBuilder.DropTable(
@@ -1052,6 +1104,9 @@ namespace BerghAdmin.Migrations
 
             migrationBuilder.DropTable(
                 name: "Golfdagen");
+
+            migrationBuilder.DropTable(
+                name: "Ambassadeur");
 
             migrationBuilder.DropTable(
                 name: "VerzondenMails");

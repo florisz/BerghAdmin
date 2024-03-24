@@ -11,6 +11,9 @@ namespace BerghAdmin.Services.Seeding
 
         public static async Task<Dictionary<RolTypeEnum, Rol>> InsertRollen(IRolService rolService)
         {
+            var rolCompagnon = new Rol { Id = Convert.ToInt32(RolTypeEnum.Compagnon), Beschrijving = "Compagnon", MeervoudBeschrijving = "Compagnons" };
+            await rolService.AddRol(rolCompagnon);
+
             var rolContactpersoon = new Rol { Id = Convert.ToInt32(RolTypeEnum.Contactpersoon), Beschrijving = "Contactpersoon", MeervoudBeschrijving = "Contactpersonen" };
             await rolService.AddRol(rolContactpersoon);
 
@@ -50,6 +53,28 @@ namespace BerghAdmin.Services.Seeding
             return rollen;
         }
 
+        public static async Task InsertJaarMagazines(IMagazineService magazineService)
+        {
+            await magazineService.DeleteAll();
 
+            await magazineService.AddMagazine(new MagazineJaar { Id = 1, Jaar = "2012" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 2, Jaar = "2013" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 3, Jaar = "2014" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 4, Jaar = "2015" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 5, Jaar = "2016" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 6, Jaar = "2017" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 7, Jaar = "2018" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 8, Jaar = "2019" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 9, Jaar = "2020" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 10, Jaar = "2021" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 11, Jaar = "2022" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 12, Jaar = "2023" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 13, Jaar = "2024" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 14, Jaar = "2025" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 15, Jaar = "2026" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 16, Jaar = "2027" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 17, Jaar = "2028" });
+            await magazineService.AddMagazine(new MagazineJaar { Id = 18, Jaar = "2029" });
+        }  
     }
 }

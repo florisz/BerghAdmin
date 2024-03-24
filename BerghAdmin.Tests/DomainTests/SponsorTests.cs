@@ -61,9 +61,9 @@ namespace BerghAdmin.Tests.DomainTests
                 Telefoon = "080076543",
                 Mobiel = "0612345678",
                 Opmerkingen = "Opmerkingen",
-                ContactPersoon = new Persoon() { EmailAdres = "aap@noot.com" },
+                ContactPersoon1 = new Persoon() { EmailAdres = "aap@noot.com" },
                 Compagnon = new Persoon() { EmailAdres = "mies@wim.com" },
-                DebiteurNummer = 123456,
+                DebiteurNummer = "123456",
                 ToegezegdBedrag = 100,
                 TotaalBedrag = 200,
                 DatumAangebracht = new DateTime(2021, 1, 1),
@@ -115,9 +115,9 @@ namespace BerghAdmin.Tests.DomainTests
                 Telefoon = "080076543",
                 Mobiel = "0612345678",
                 Opmerkingen = "Opmerkingen",
-                ContactPersoon = new Persoon() { EmailAdres = "aap@noot.com" },
+                ContactPersoon1 = new Persoon() { EmailAdres = "aap@noot.com" },
                 Compagnon = new Persoon() { EmailAdres = "mies@wim.com" },
-                DebiteurNummer = 123456,
+                DebiteurNummer = "123456",
                 GolfdagenGesponsored = new List<Golfdag>() { new Golfdag() { Titel = "Golfdag1" } }
             };
             var service = this.GetRequiredService<ISponsorService>();

@@ -88,9 +88,9 @@
         <GridColumn Field=@nameof(Ambassadeur.TotaalBedrag) HeaderText="Totaal" TextAlign="TextAlign.Left" Width="60" />
         <GridColumn Field=@nameof(Ambassadeur.VolledigeAdres) HeaderText="Adres" TextAlign="TextAlign.Left" Width="170" />
         <GridColumn Field=@nameof(Ambassadeur.Telefoon) HeaderText="Telefoon" TextAlign="TextAlign.Left" Width="80" />
-        <GridColumn Field=@nameof(Ambassadeur.ContactPersoonVolledigeNaam) HeaderText="Contact Naam" TextAlign="TextAlign.Left" Width="120" />
-        <GridColumn Field=@nameof(Ambassadeur.ContactPersoonEmailAdres) HeaderText="Contact Email" TextAlign="TextAlign.Left" Width="120" />
-        <GridColumn Field=@nameof(Ambassadeur.ContactPersoonTelefoon) HeaderText="Contact Telefoon" TextAlign="TextAlign.Left" Width="120" />
+        <GridColumn Field=@nameof(Ambassadeur.ContactPersoon1VolledigeNaam) HeaderText="Contact Naam" TextAlign="TextAlign.Left" Width="120" />
+        <GridColumn Field=@nameof(Ambassadeur.ContactPersoon1EmailAdres) HeaderText="Contact Email" TextAlign="TextAlign.Left" Width="120" />
+        <GridColumn Field=@nameof(Ambassadeur.ContactPersoon1Telefoon) HeaderText="Contact Telefoon" TextAlign="TextAlign.Left" Width="120" />
         <GridColumn Field=@nameof(Ambassadeur.IsVerwijderd) HeaderText="Status" FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })" Width="90">
             <Template>
                 @{
@@ -219,14 +219,14 @@
         }
         else
         {
-            var url = _navigationManager.CreateUrlWithContext(selectedAmbassadeurs.ElementAt(0).Id, "/Ambassadeurs/EditAmbassadeur");
+            var url = _navigationManager.CreateUrlWithContext(selectedAmbassadeurs.ElementAt(0).Id, "Ambassadeurs/EditAmbassadeur");
             _navigationManager.NavigateTo(url);
         }
     }
 
     private void AddAmbassadeur()
     {
-        var url = _navigationManager.CreateUrlWithContext(0, "/Ambassadeurs/EditAmbassadeur");
+        var url = _navigationManager.CreateUrlWithContext(0, "Ambassadeurs/EditAmbassadeur");
         _navigationManager.NavigateTo(url);
     }
 
@@ -325,10 +325,10 @@
     {
         var emailAddressesList = new List<MailAddress>();
         var selectedAmbassadeursWithMailAddress = (await this._ambassadeursGrid.GetSelectedRecordsAsync())
-            .Where(p => !string.IsNullOrWhiteSpace(p.ContactPersoon.EmailAdres));
+            .Where(p => !string.IsNullOrWhiteSpace(p.ContactPersoon1.EmailAdres));
         foreach (var ambassadeur in selectedAmbassadeursWithMailAddress)
         {
-            emailAddressesList.Add(new(ambassadeur.ContactPersoon.EmailAdres, ambassadeur.ContactPersoon.VolledigeNaam, ambassadeur.ContactPersoon.Id));
+            emailAddressesList.Add(new(ambassadeur.ContactPersoon1.EmailAdres, ambassadeur.ContactPersoon1.VolledigeNaam, ambassadeur.ContactPersoon1.Id));
         }
         return emailAddressesList;
     }

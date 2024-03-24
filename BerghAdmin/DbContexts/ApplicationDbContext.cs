@@ -28,7 +28,7 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
     public DbSet<BihzDonatie>? BihzDonaties { get; set; }
     public DbSet<BihzProject>? BihzProjects { get; set; }
     public DbSet<BihzUser>? BihzUsers { get; set; }
-
+    public DbSet<MagazineJaar>? MagazineJaren { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -56,8 +56,8 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .IsUnique();
         modelBuilder
             .Entity<Persoon>()
-            .HasMany(r => r.Rollen)
-            .WithMany(p => p.Personen);
+            .HasMany(p => p.Rollen)
+            .WithMany(r => r.Personen);
         modelBuilder
             .Entity<Persoon>()
             .HasMany(persoon => persoon.Fietstochten)
@@ -92,7 +92,22 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
         // Ambassadeurs
         modelBuilder
             .Entity<Ambassadeur>()
-            .HasOne(a => a.ContactPersoon);
+            .HasOne(a => a.ContactPersoon1);
+        modelBuilder
+            .Entity<Ambassadeur>()
+            .HasOne(a => a.ContactPersoon2);
+        modelBuilder
+            .Entity<Ambassadeur>()
+            .HasOne(a => a.Compagnon);
+        modelBuilder
+            .Entity<Ambassadeur>()
+            .HasMany(a => a.MagazineJaren);
+        modelBuilder
+            .Entity<Ambassadeur>()
+            .Property(d => d.ToegezegdBedrag).HasPrecision(18, 2);
+        modelBuilder
+            .Entity<Ambassadeur>()
+            .Property(d => d.TotaalBedrag).HasPrecision(18, 2);
         modelBuilder
             .Entity<Ambassadeur>()
             .ToTable("Ambassadeur");
@@ -104,7 +119,7 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .HasOne(g => g.Compagnon);
         modelBuilder
             .Entity<GolfdagSponsor>()
-            .HasOne(g => g.ContactPersoon);
+            .HasOne(g => g.ContactPersoon1);
         modelBuilder
             .Entity<GolfdagSponsor>()
             .ToTable("GolfdagSponsor");
