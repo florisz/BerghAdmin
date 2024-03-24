@@ -59,7 +59,8 @@ public class AmbassadeursImportTest : DatabaseTestSetup
     }
 
 
-    [Test]
+    // Test not valid anymore; was used during development
+    //[Test]
     public async Task ImportAmbassadeursTest()
     {
         var importerService = this.GetRequiredService<IImporterService>();

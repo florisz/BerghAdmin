@@ -182,6 +182,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             var golfdag = new Golfdag() { Titel = golfdagNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
             await service.SaveAsync(golfdag);
             await service.AddSponsorAsync(golfdag, new GolfdagSponsor() { Naam = sponsorNaam,  
+                                                                            DebiteurNummer = "123",
                                                                             EmailAdres = "sponsor@bedrijf.nl", 
                                                                             ContactPersoon1 = contactPersoon });
             var golfdagById = service.GetById(golfdag.Id);
@@ -203,7 +204,7 @@ namespace BerghAdmin.Tests.EvenementenTests
 
             var golfdag = new Golfdag() { Titel = golfdagNaam, GeplandeDatum = new DateTime(2022, 1, 1) };
             await service.SaveAsync(golfdag);
-            await service.AddSponsorAsync(golfdag, new GolfdagSponsor() { Naam = sponsorNaam, EmailAdres = "aap@noot.com" });
+            await service.AddSponsorAsync(golfdag, new GolfdagSponsor() { Naam = sponsorNaam, DebiteurNummer = "123", EmailAdres = "aap@noot.com" });
 
             var sponsor = golfdag.Sponsoren.FirstOrDefault();
             Assert.IsNotNull(sponsor);

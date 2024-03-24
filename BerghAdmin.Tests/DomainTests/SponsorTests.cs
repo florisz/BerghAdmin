@@ -34,6 +34,7 @@ namespace BerghAdmin.Tests.DomainTests
             var ambassadeur = new Ambassadeur
             {
                 Id = 0,
+                DebiteurNummer = "123",
                 Naam = naamAmbassadeur
             };
             var service = this.GetRequiredService<IAmbassadeurService>();
