@@ -30,9 +30,12 @@ public class Sponsor : Donateur
     public string? CompagnonEmailAdres => Compagnon?.EmailAdres;
 
     private string GetTelefoon(Persoon? persoon)
-    {         
-        return string.IsNullOrEmpty(persoon.Telefoon) && string.IsNullOrEmpty(persoon.Mobiel)
-                       ? ""
-                       : $"m:{persoon.Telefoon}/t:{persoon.Mobiel}";
+    {
+        if (persoon == null) return "";
+        
+        var telefoon = string.IsNullOrEmpty(persoon.Telefoon)? "<?>": persoon.Telefoon;
+        var mobiel = string.IsNullOrEmpty(persoon.Mobiel)? "<?>": persoon.Mobiel;
+
+        return $"t:{telefoon}/m:{mobiel}";
     }
 }
