@@ -15,7 +15,7 @@ stages:
       displayName: 'Build code'
       inputs:
         command: 'build'
-        arguments: '--configuration release'
+        arguments: '--configuration ${env:CONFIGURATION}'
         projects: '**/*.csproj'
     - task: DotNetCoreCLI@2
       displayName: 'Run unit tests'
