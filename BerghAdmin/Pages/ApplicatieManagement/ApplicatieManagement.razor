@@ -60,7 +60,7 @@
                 throw new Exception("File heeft meer dan 512K bytes");
             }
 
-            var stream = file.File.OpenReadStream();
+            using var stream = file.File.OpenReadStream();
             if (file.FileInfo.Name.StartsWith("Persoon"))
             {
                 var persoonImporter = factory.GetInstance("Persoon");

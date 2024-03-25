@@ -34,23 +34,24 @@ namespace BerghAdmin.Services.Import
             _logger = logger;
         }
 
-        public async Task ImportDataAsync(Stream csvData)
+        public async Task ImportDataAsync(Stream csvStream)
         {
+            _logger.LogInformation("Start: import data ambassadeurs");
             try
             {
-                // Create an instance of StreamReader to read from a file.
-                // The using statement also closes the StreamReader.
                 var configuration = new CsvConfiguration(CultureInfo.InvariantCulture);
                 configuration.Delimiter = ";";
                 configuration.HasHeaderRecord = true;
 
-
-                using (var textReader = new StreamReader(csvData, Encoding.UTF8))
+                var memoryStream = await ReadExternalStreamAsync(csvStream);
+                _logger.LogInformation("Incoming stream converted to memory stream");
+                using (var textReader = new StreamReader(memoryStream, Encoding.UTF8))
                 using (var csv = new CsvReader(textReader, configuration))
                 {
                     var records = csv.GetRecordsAsync<CsvAmbassadeurRecord>();
                     await foreach (var record in records)
                     {
+                        _logger.LogInformation($"record of deb: {record.Debiteurnummer} read from csv stream");
                         Persoon contactPersoon1 = null;
                         Persoon contactPersoon2 = null;
                         Persoon compagnon = null;
@@ -58,10 +59,12 @@ namespace BerghAdmin.Services.Import
                         if (!String.IsNullOrEmpty(record.Emailadres))
                         {
                             contactPersoon1 = await SaveContactpersoon(record);
+                            _logger.LogInformation($"Contact persoon 1 with email: {contactPersoon1.EmailAdres} saved");
                         }
                         if (!String.IsNullOrEmpty(record.CompagnonEmail))
                         {
                             compagnon = await SaveCompagnon(record);
+                            _logger.LogInformation($"Compagnon with email: {compagnon.EmailAdres} saved");
                         }
 
                         // now create the ambassadeur
@@ -94,26 +97,38 @@ namespace BerghAdmin.Services.Import
                         // vul alle MagazineJaren
                         AddMagazineJaren(ambassadeur, record);
 
-                        _logger.LogTrace($"Save Ambassadeur: {ambassadeur.Naam}");
+                        _logger.LogInformation($"Save Ambassadeur: {ambassadeur.Naam}");
 
                         await _ambassadeurService.SaveAsync(ambassadeur);
-                        _logger.LogTrace($"Ambassadeur met debiteurnummer: {ambassadeur.DebiteurNummer} ingelezen");
+                        _logger.LogInformation($"Ambassadeur met debiteurnummer: {ambassadeur.DebiteurNummer} ingelezen");
                     }
                 }
-                _logger.LogTrace("Alle ambassadeurs ingelezen");
+                _logger.LogInformation("Alle ambassadeurs ingelezen");
                 var ambassadeurs = await _ambassadeurService.GetAll();
                 var personen = await _persoonService.GetPersonen();
                 var contactPersoonRol = _rolService.GetRolById(RolTypeEnum.Contactpersoon);
                 var compagnonPersoonRol = _rolService.GetRolById(RolTypeEnum.Compagnon);
-                _logger.LogTrace($"# personen={personen.Count}");
-                _logger.LogTrace($"# ambassadeurs={ambassadeurs.ToList().Count}");
-                _logger.LogTrace($"# contact personen={contactPersoonRol.Personen.Count}");
-                _logger.LogTrace($"# compagnons={compagnonPersoonRol.Personen.Count}");
+                _logger.LogInformation($"# personen={personen.Count}");
+                _logger.LogInformation($"# ambassadeurs={ambassadeurs.ToList().Count}");
+                _logger.LogInformation($"# contact personen={contactPersoonRol.Personen.Count}");
+                _logger.LogInformation($"# compagnons={compagnonPersoonRol.Personen.Count}");
             }
             catch (Exception ex)
             {
+                _logger.LogInformation($"Exception {ex.Message} thrown");
                 throw new ApplicationException($"Csv import exception {ex.Message}", ex);
             }
+        }
+
+        private async Task<MemoryStream> ReadExternalStreamAsync(Stream csvStream)
+        {
+            // convert incoming stream into memory stream
+            var memoryStream = new MemoryStream();
+            await csvStream.CopyToAsync(memoryStream);
+            memoryStream.Position = 0; // Reset the position of the memory stream to the beginning
+            csvStream.Close();
+
+            return memoryStream;
         }
 
         private DateTime? ParseDatum(string datumString, string[] formats)
