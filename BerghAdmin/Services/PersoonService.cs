@@ -119,6 +119,22 @@ public class PersoonService : IPersoonService
         return Task.FromResult(personen ?? new PersoonListItem[] { });
     }
 
+    public Task<PersoonListItem[]> GetCompagnons()
+    {
+        _logger.LogDebug($"Get alle compagnons; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+
+        var personen = _dbContext
+                .Personen?
+                .Where(p => p.Rollen.Any(r => r.Id == Convert.ToInt32(RolTypeEnum.Compagnon)))
+                .OrderBy(p => p.Achternaam)
+                .Select(p => new PersoonListItem() { Id = p.Id, VolledigeNaamMetRollenEnEmail = p.VolledigeNaamMetRollenEnEmail })
+                .ToArray();
+
+        _logger.LogDebug($"Get alle compagnons returned {((personen == null) ? 0 : personen.Count())} personen");
+
+        return Task.FromResult(personen ?? new PersoonListItem[] { });
+    }
+
     // TO DO : merge with GetFietstochtDeelnemers
     public Task<PersoonListItem[]> GetContactPersonen()
     {
@@ -177,5 +193,4 @@ public class PersoonService : IPersoonService
             persoon.Rollen.Add(rol!);
         }
     }
-
 }

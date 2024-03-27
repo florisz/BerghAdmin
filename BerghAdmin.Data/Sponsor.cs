@@ -11,17 +11,17 @@ public class Sponsor : Donateur
     public Persoon? Compagnon { get; set; }
 
     [NotMapped]
-    public string ContactPersoon1VolledigeNaam => ContactPersoon1.VolledigeNaam;
+    public string? ContactPersoon1VolledigeNaam => ContactPersoon1?.VolledigeNaam;
     [NotMapped]
-    public string ContactPersoon1Telefoon => GetTelefoon(ContactPersoon1);
+    public string? ContactPersoon1Telefoon => GetTelefoon(ContactPersoon1);
     [NotMapped]
-    public string ContactPersoon1EmailAdres => ContactPersoon1.EmailAdres;
+    public string? ContactPersoon1EmailAdres => ContactPersoon1?.EmailAdres;
     [NotMapped]
-    public string ContactPersoon2VolledigeNaam => ContactPersoon2.VolledigeNaam;
+    public string? ContactPersoon2VolledigeNaam => ContactPersoon2?.VolledigeNaam;
     [NotMapped]
     public string ContactPersoon2Telefoon => GetTelefoon(ContactPersoon2);
     [NotMapped]
-    public string ContactPersoon2EmailAdres => ContactPersoon2.EmailAdres;
+    public string? ContactPersoon2EmailAdres => ContactPersoon2?.EmailAdres;
     [NotMapped]
     public string? CompagnonVolledigeNaam => Compagnon?.VolledigeNaam;
     [NotMapped]

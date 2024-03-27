@@ -87,24 +87,35 @@ else
     </div>
 
     <div class="form-group row">
-        <div class="form-group col-lg-6">
-            <label class="col-form-label">Contactpersoon</label>
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Contactpersoon 1</label>
             <SfButton Type="button" CssClass="e-outline large-margin" IsToggle="true" IsPrimary="true" Content="Wijzigen" OnClick="@OnWijzigenContactPersoon" />
         </div>
-        <div class="form-group col-lg-6">
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Contactpersoon 2</label>
+            <SfButton Type="button" CssClass="e-outline large-margin" IsToggle="true" IsPrimary="true" Content="Wijzigen" OnClick="@OnWijzigenContactPersoon" />
+        </div>
+        <div class="form-group col-lg-3">
             <label class="col-form-label">Compagnon</label>
             <SfButton Type="button" CssClass="e-outline large-margin" IsToggle="true" IsPrimary="true" Content="Wijzigen" OnClick="@OnWijzigenCompagnon" />
         </div>
     </div>
     <div class="form-group row">
-        <div class="form-group col-lg-6">
+        <div class="form-group col-lg-3">
             <label class="col-form-text">@_currentAmbassadeur!.ContactPersoon1VolledigeNaam</label>
-            <br/>
+            <br />
             <label class="col-form-text">@_currentAmbassadeur!.ContactPersoon1Telefoon</label>
             <br />
             <label class="col-form-text">@_currentAmbassadeur!.ContactPersoon1EmailAdres</label>
         </div>
-        <div class="form-group col-lg-6">
+        <div class="form-group col-lg-3">
+            <label class="col-form-text">@_currentAmbassadeur!.ContactPersoon2VolledigeNaam</label>
+            <br />
+            <label class="col-form-text">@_currentAmbassadeur!.ContactPersoon2Telefoon</label>
+            <br />
+            <label class="col-form-text">@_currentAmbassadeur!.ContactPersoon2EmailAdres</label>
+        </div>
+        <div class="form-group col-lg-3">
             <label class="col-form-text">@_currentAmbassadeur!.CompagnonVolledigeNaam</label>
             <br />
             <label class="col-form-text">@_currentAmbassadeur!.CompagnonTelefoon</label>
@@ -186,7 +197,7 @@ else
 
         // maak lijst met personen met rol contactpersoon
         var lijstPersonen = await _persoonService
-                                .GetContactPersonen();
+                                .GetCompagnons();
 
         _addGerelateerdPersoonDialog.DialogOpen(lijstPersonen, "Compagnon");
     }
