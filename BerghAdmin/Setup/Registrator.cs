@@ -114,6 +114,10 @@ public class Registrator
         _builder.Services.AddHttpClient();
         _builder.Services.Configure<SeedSettings>(_builder.Configuration.GetSection("Seeding"));
         _builder.Services.Configure<ApiConfiguration>(_builder.Configuration.GetSection("ApiConfiguration"));
+        _builder.Services.AddLogging(loggingBuilder =>
+        {
+            loggingBuilder.AddSerilog(dispose: true);
+        });
         _builder.Services.AddSingleton<EndpointHandler>();
         _builder.Services.AddScoped<IBetalingenRepository, EFBetalingenRepository>();
         _builder.Services.AddScoped<IBetalingenService, BetalingenService>();
@@ -129,8 +133,8 @@ public class Registrator
         _builder.Services.AddScoped<IDocumentService, DocumentService>();
         _builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
         _builder.Services.AddScoped<IPdfConverter, PdfConverter>();
-        _builder.Services.AddTransient<IImporterService, PersoonImporterService>();
-        _builder.Services.AddTransient<IImporterService, AmbassadeurImporterService>();
+        _builder.Services.AddScoped<IImporterService, PersoonImporterService>();
+        _builder.Services.AddScoped<IImporterService, AmbassadeurImporterService>();
         _builder.Services.AddScoped<IImporterServiceFactory, ImporterServiceFactory>();
         _builder.Services.AddScoped<IFileSystem, FileSystem>();
         _builder.Services.AddScoped<IMailAttachmentsService>((provider) =>

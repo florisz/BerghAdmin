@@ -7,10 +7,6 @@ public class Program
 
     public static void Main(string[] args)
     {
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .CreateBootstrapLogger();
-
         var builder = WebApplication.CreateBuilder(args);
         builder.Host.UseSerilog((hc, lc) => lc
             .WriteTo.Console()

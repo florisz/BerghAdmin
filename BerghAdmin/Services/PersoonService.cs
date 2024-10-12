@@ -21,7 +21,7 @@ public class PersoonService : IPersoonService
 
     public async Task DeletePersoonAsync(int id)
     {
-        _logger.LogDebug($"Delete persoon with id:{id}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+        _logger.LogDebug($"Delete persoon with id:{id}");
 
         var persoon = _dbContext.Personen?.FirstOrDefault(x => x.Id == id);
         if (persoon != null)
@@ -51,7 +51,7 @@ public class PersoonService : IPersoonService
     {
         Persoon? persoon;
 
-        _logger.LogDebug($"Get persoon by id {id}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+        _logger.LogDebug($"Get persoon by id {id}");
 
         // add try catch
         try
@@ -75,7 +75,7 @@ public class PersoonService : IPersoonService
 
     public Task<Persoon?> GetByEmailAdres(string emailAdres)
     {
-        _logger.LogDebug($"Get persoon by email adres {emailAdres}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+        _logger.LogDebug($"Get persoon by email adres {emailAdres}");
 
         var persoon = _dbContext
                 .Personen?
@@ -89,7 +89,7 @@ public class PersoonService : IPersoonService
 
     public Task<List<Persoon>> GetPersonen()
     {
-        _logger.LogDebug($"Get alle personen; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+        _logger.LogDebug($"Get alle personen");
 
         var personen = _dbContext
             .Personen?
@@ -105,7 +105,7 @@ public class PersoonService : IPersoonService
 
     public Task<PersoonListItem[]> GetFietstochtDeelnemers()
     {
-        _logger.LogDebug($"Get alle fietsers en begeleiders; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+        _logger.LogDebug($"Get alle fietsers en begeleiders");
 
         var personen = _dbContext
                 .Personen?
@@ -121,7 +121,7 @@ public class PersoonService : IPersoonService
 
     public Task<PersoonListItem[]> GetCompagnons()
     {
-        _logger.LogDebug($"Get alle compagnons; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+        _logger.LogDebug($"Get alle compagnons");
 
         var personen = _dbContext
                 .Personen?
@@ -138,7 +138,7 @@ public class PersoonService : IPersoonService
     // TO DO : merge with GetFietstochtDeelnemers
     public Task<PersoonListItem[]> GetContactPersonen()
     {
-        _logger.LogDebug($"Get alle contactpersonen; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+        _logger.LogDebug($"Get alle contactpersonen");
 
         var personen = _dbContext
                 .Personen?
@@ -155,7 +155,7 @@ public class PersoonService : IPersoonService
 
     public async Task SavePersoonAsync(Persoon persoon)
     {
-        _logger.LogDebug($"SaveAsync persoon with name {persoon.VolledigeNaam}; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={_dbContext.ContextId}");
+        _logger.LogDebug($"SaveAsync persoon with name {persoon.VolledigeNaam}");
         var debugView = _dbContext.ChangeTracker.DebugView.LongView;
         if (persoon.Id == 0)
         {

@@ -1,21 +1,15 @@
-using BerghAdmin.Data;
-using BerghAdmin.Services.Documenten;
-using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Sponsoren;
 using CsvHelper;
 using CsvHelper.Configuration;
-using Microsoft.AspNetCore.Http;
-using Microsoft.SqlServer.Server;
-using System;
-using System.Diagnostics;
 using System.Globalization;
-using System.IO.Abstractions;
 using System.Text;
 
 namespace BerghAdmin.Services.Import
 {
     public class AmbassadeurImporterService : IImporterService
     {
+        // Debiteurnummer	Sponsor	Schrijver 	Fotograaf	2012	2013	2014	2015	2016	2017	2018	2019	2020	2021	2022	2023	2024	OpmerkingLogo	BedragToegezegd	BedragOntvangen	Pakket	DatumAangebracht	Aanbrenger	Adres	Postcode	Plaats	Land	AmbassadeurTelefoon	Mobiel	Contactpersoon	Partner	Emailadres	AanmeldingAmbassadeur	BeeindigingAmbassadeurschap	Compagnon	CompagnonEmail
+
         string[] DateOnlyFormats = { "dd-MM-yyyy", "d-MM-yyyy", "dd-M-yyyy", "d-M-yyyy" };
         string[] DateTimeFormats = { "dd-MM-yyyy HH:mm", "d-MM-yyyy HH:mm", "dd-M-yyyy HH:mm", "d-M-yyyy HH:mm" };
 
