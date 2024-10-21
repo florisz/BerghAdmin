@@ -81,6 +81,36 @@ namespace BerghAdmin.Tests.DomainTests
             Assert.AreEqual(4, personenList.Count);
         }
 
+        [Test]
+        public void TestVolledigeNaamMetTussenvoegsels()
+        {
+            var persoon = new Persoon();
+            persoon.Voornaam = "Henk";
+            persoon.Tussenvoegsel = "van den";
+            persoon.Achternaam = "Tillaart";
+            Assert.AreEqual("Henk van den Tillaart", persoon.VolledigeNaam);
+        }
+
+        [Test]
+        public void TestVolledigeNaamMetTussenvoegselsEnVoorletters()
+        {
+            var persoon = new Persoon();
+            persoon.Voornaam = "Henk";
+            persoon.Voorletters = "H. E.  N.  K.";
+            persoon.Tussenvoegsel = "van den";
+            persoon.Achternaam = "Tillaart";
+            Assert.AreEqual(persoon.VolledigeNaam, "Henk (H. E. N. K.) van den Tillaart", persoon.VolledigeNaam);
+        }
+
+        [Test]
+        public void TestVolledigeNaamZonderTussenvoegsels()
+        {
+            var persoon = new Persoon();
+            persoon.Voornaam = "Henk";
+            persoon.Achternaam = "Tillaart";
+            Assert.AreEqual("Henk Tillaart", persoon.VolledigeNaam);
+        }
+
         private static List<Persoon> PersonenWithRollen(List<Persoon> personen, List<Rol> rollen)
         {
             return personen

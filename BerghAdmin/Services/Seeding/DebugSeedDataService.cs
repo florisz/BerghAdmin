@@ -42,6 +42,7 @@ public class DebugSeedDataService : ISeedDataService
 
     public async Task SeedInitialData()
     {
+        await InsertFietstochten();
         if (SeedHelper.DatabaseHasData(_rolService))
         {
             return;
@@ -49,6 +50,7 @@ public class DebugSeedDataService : ISeedDataService
 
         var rollen = await SeedHelper.InsertRollen(_rolService);
         await SeedHelper.InsertMagazineJaren(_magazineService);
+        await InsertTestPersonen(rollen);
         //await InsertTestPersonen(rollen);
         await InsertFietstochten();
         //await InsertSponsoren();
@@ -335,31 +337,40 @@ public class DebugSeedDataService : ISeedDataService
     {
         try
         {
-            // add alle fietstochten
-            var fietstocht = new Fietstocht()
+            // voeg de fietstocht toe als deze nog niet bestaat
+            var titel = "Klaver Vier Tocht 2015";
+            var dateTime = new DateTime(2015, 5, 9);
+            if (await _fietstochtenService.GetByTitel(titel) == null)
             {
-                Id = 0,
-                GeplandeDatum = new DateTime(2015, 5, 9),
-                Titel = "Klaver Vier Tocht 2015"
-            };
-            await _fietstochtenService.SaveAsync(fietstocht);
-            fietstocht = new Fietstocht()
+                await AddNieuweFietstocht(titel, dateTime);
+            }
+
+            titel = "Bergh-Leipzig-Bergh 2019";
+            dateTime = new DateTime(2019, 5, 24);
+            if (await _fietstochtenService.GetByTitel(titel) == null)
             {
-                Id = 0,
-                GeplandeDatum = new DateTime(2019, 5, 24),
-                Titel = "Bergh-Leipzig-Bergh 2019"
-            };
-            await _fietstochtenService.SaveAsync(fietstocht);
-            fietstocht = new Fietstocht()
+                await AddNieuweFietstocht(titel, dateTime);
+            }
+
+            titel = "Hanzetocht 2023";
+            dateTime = new DateTime(2023, 5, 3);
+            if (await _fietstochtenService.GetByTitel(titel) == null)
             {
-                Id = 0,
-                GeplandeDatum = new DateTime(2023, 5, 3),
-                Titel = "Hanzetocht 2023",
-                KentaaProjectId = 17805
-            };
-            await _fietstochtenService.SaveAsync(fietstocht);
+                await AddNieuweFietstocht(titel, dateTime);
+            }
+
+            titel = "Zwitserland 2027";
+            dateTime = new DateTime(2027, 5,22);
+            if (await _fietstochtenService.GetByTitel(titel) == null)
+            {
+                await AddNieuweFietstocht(titel, dateTime);
+            }
 
             // AddAsync deelnemers to fietstochten
+            var fietstocht = await _fietstochtenService.GetByTitel("Klaver Vier Tocht 2015");
+            if (fietstocht == null || fietstocht.Deelnemers.Count > 0)
+                return;
+
             var persoon = await _persoonService.GetByEmailAdres("appie@aapnootmies.com");
             if (persoon != null)
                 fietstocht.Deelnemers.Add(persoon);
@@ -379,6 +390,17 @@ public class DebugSeedDataService : ISeedDataService
         {
             Console.WriteLine(ex.Message);
         }
+    }
+
+    private async Task AddNieuweFietstocht(string titel, DateTime dateTime)
+    {
+        var fietstocht = new Fietstocht()
+        {
+            Id = 0,
+            GeplandeDatum = dateTime,
+            Titel = titel
+        };
+        await _fietstochtenService.SaveAsync(fietstocht);
     }
 
     private async Task InsertSponsoren()

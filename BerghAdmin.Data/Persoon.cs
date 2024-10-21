@@ -1,5 +1,6 @@
 using BerghAdmin.Data.Kentaa;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.RegularExpressions;
 
 namespace BerghAdmin.Data;
 
@@ -42,16 +43,28 @@ public class Persoon : Donateur
         => string.Join(", ", Rollen.Select(r => r.Beschrijving));
 
     [NotMapped]
+    public string GetFietstochtenAsString
+        => string.Join(", ", Fietstochten.Select(f => f.Titel));
+
+    [NotMapped]
+    public string GetGolfdagenAsString
+        => string.Join(", ", Golfdagen.Select(g => g.Titel));
+
+    [NotMapped]
     public string VolledigeNaam
-        => string.Join(" ", new string?[] {
+    { 
+        get {
+            var result = string.Join(" ", new string?[] {
                                 Voornaam,
                                 string.IsNullOrEmpty(Voorletters)? "" : $"({Voorletters})",
                                 Tussenvoegsel,
-                                Achternaam }
-        );
+                                Achternaam });
+            return Regex.Replace(result, @"\s+", " ");
+        }
+    }
     [NotMapped]
     public string VolledigeNaamMetRollen
-         => $"{VolledigeNaam} ( {GetRollenAsString} )";
+         => $"{VolledigeNaam} ({GetRollenAsString})";
 
     [NotMapped]
     public string VolledigeNaamMetRollenEnEmail

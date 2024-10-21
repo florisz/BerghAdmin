@@ -7,6 +7,7 @@ using BerghAdmin.Services.Bihz;
 using BerghAdmin.Services.Documenten;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
+using BerghAdmin.Services.Export;
 using BerghAdmin.Services.Import;
 using BerghAdmin.Services.Seeding;
 using BerghAdmin.Services.Sponsoren;
@@ -119,9 +120,35 @@ public class Registrator
             loggingBuilder.AddSerilog(dispose: true);
         });
         _builder.Services.AddSingleton<EndpointHandler>();
+
+        _builder.Services.AddScoped<IAmbassadeurService, AmbassadeurService>();
+        _builder.Services.AddScoped<IBetalingenImporterService, BetalingenImporterService>();
         _builder.Services.AddScoped<IBetalingenRepository, EFBetalingenRepository>();
         _builder.Services.AddScoped<IBetalingenService, BetalingenService>();
-        _builder.Services.AddScoped<IBetalingenImporterService, BetalingenImporterService>();
+        _builder.Services.AddScoped<IBihzUserService, BihzUserService>();
+        _builder.Services.AddScoped<IBihzActieService, BihzActieService>();
+        _builder.Services.AddScoped<IBihzProjectService, BihzProjectService>();
+        _builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
+        _builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
+        _builder.Services.AddScoped<IDocumentService, DocumentService>();
+        _builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
+        _builder.Services.AddScoped<IDonatieService, DonatieService>();
+        _builder.Services.AddScoped<IExcelService, ExcelService>();
+        _builder.Services.AddScoped<IFietstochtenService, FietstochtenService>();
+        _builder.Services.AddScoped<IFileSystem, FileSystem>();
+        _builder.Services.AddScoped<IGolfdagenService, GolfdagenService>();
+        _builder.Services.AddScoped<IImporterService, PersoonImporterService>();
+        _builder.Services.AddScoped<IImporterService, AmbassadeurImporterService>();
+        _builder.Services.AddScoped<IImporterServiceFactory, ImporterServiceFactory>();
+        _builder.Services.AddScoped<IMagazineService, MagazineService>();
+        _builder.Services.AddScoped<IMailAttachmentsService>((provider) =>
+        {
+            var rootPath = Path.Combine(_builder.Environment.ContentRootPath, "wwwroot");
+            return new MailAttachmentsService(rootPath,
+                provider.GetRequiredService<IFileSystem>(),
+                provider.GetRequiredService<ILogger<MailAttachmentsService>>());
+        });
+        _builder.Services.AddScoped<IPdfConverter, PdfConverter>();
         _builder.Services.AddScoped<IPersoonService, PersoonService>();
         _builder.Services.AddScoped<IRolService, RolService>();
 #if (DEBUG)
@@ -130,33 +157,9 @@ public class Registrator
         _builder.Services.AddTransient<ISeedDataService, ReleaseSeedDataService>();
 #endif
         _builder.Services.AddTransient<ISeedUsersService, ReleaseSeedUsersService>();
-        _builder.Services.AddScoped<IDocumentService, DocumentService>();
-        _builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
-        _builder.Services.AddScoped<IPdfConverter, PdfConverter>();
-        _builder.Services.AddScoped<IImporterService, PersoonImporterService>();
-        _builder.Services.AddScoped<IImporterService, AmbassadeurImporterService>();
-        _builder.Services.AddScoped<IImporterServiceFactory, ImporterServiceFactory>();
-        _builder.Services.AddScoped<IFileSystem, FileSystem>();
-        _builder.Services.AddScoped<IMailAttachmentsService>((provider) =>
-        {
-            var rootPath = Path.Combine(_builder.Environment.ContentRootPath, "wwwroot");
-            return new MailAttachmentsService(rootPath,
-                provider.GetRequiredService<IFileSystem>(),
-                provider.GetRequiredService<ILogger<MailAttachmentsService>>());
-        });
         _builder.Services.AddScoped<ISendMailService, SendMailService>();
-        _builder.Services.AddScoped<IFietstochtenService, FietstochtenService>();
-        _builder.Services.AddScoped<IGolfdagenService, GolfdagenService>();
         _builder.Services.AddScoped<ISponsorService, SponsorService>();
-        _builder.Services.AddScoped<IAmbassadeurService, AmbassadeurService>();
-        _builder.Services.AddScoped<IMagazineService, MagazineService>();
-        _builder.Services.AddScoped<IDonatieService, DonatieService>();
         _builder.Services.AddScoped<IUserService, UserService>();
-        _builder.Services.AddScoped<IBihzUserService, BihzUserService>();
-        _builder.Services.AddScoped<IBihzActieService, BihzActieService>();
-        _builder.Services.AddScoped<IBihzProjectService, BihzProjectService>();
-        _builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
-        _builder.Services.AddScoped<IBihzDonatieService, BihzDonatieService>();
 
         var syncFusionLicenseKey = _builder.Configuration.GetValue<string>("SyncfusionConfiguration:LicenseKey");
         Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncFusionLicenseKey);

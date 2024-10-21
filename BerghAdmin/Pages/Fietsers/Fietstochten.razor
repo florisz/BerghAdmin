@@ -14,9 +14,9 @@
 @inject IFietstochtenService _fietstochtenService
 @inject NavigationManager _navigationManager
 @inject ILogger<Fietstochten> _logger
-
 @inject NavigationManager NavigationManager
 @inject IJSRuntime jsRuntime
+@inject SfDialogService DialogService
 
 @attribute [Authorize(Policy = "IsBeheerFietsers")]
 
@@ -38,14 +38,16 @@
         <GridColumn Field=@nameof(Fietstocht.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true"></GridColumn>
         <GridColumn Field=@nameof(Fietstocht.Titel) HeaderText="Titel" TextAlign="TextAlign.Left"  Width="110"></GridColumn>
         <GridColumn Field=@nameof(Fietstocht.GeplandeDatum) HeaderText="Datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left"  Width="70"></GridColumn>
-        <GridColumn Field=@nameof(Fietstocht.AantalDeelnemers) HeaderText="# deelnemers" TextAlign="TextAlign.Left"  Width="120"></GridColumn>
+        <GridColumn Field=@nameof(Fietstocht.AantalDeelnemers) HeaderText="# deelnemers" TextAlign="TextAlign.Left" Width="120"></GridColumn>
     </GridColumns>
 </SfGrid>
 <br />
 
  <br />
 <div class='e-statustext'>Deelnemers aan fietstocht: <b>@_selectedFietsTocht.Titel</b></div>
-<SfGrid DataSource="@_huidigeDeelnemers">
+<SfGrid @ref="@_deelnemersGrid"
+    DataSource="@_huidigeDeelnemers"
+    AllowSorting="true" >
     <SfToolbar>
         <ToolbarItems>
             <ToolbarItem Text="Toevoegen deelnemers" PrefixIcon="e-icons e-circle-add" Align="ItemAlign.Left" OnClick="ToevoegenDeelnemers" />
@@ -62,14 +64,44 @@
         <GridColumn Field=@nameof(Persoon.GeboorteDatum) HeaderText="Geb.datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="70" />
         <GridColumn Field=@nameof(Persoon.Mobiel) HeaderText="Mobiel" TextAlign="TextAlign.Left"  Width="70" />
         <GridColumn Field=@nameof(Persoon.EmailAdres) HeaderText="Email" TextAlign="TextAlign.Left"  Width="120" />
-        <GridColumn Field=@nameof(Persoon.GetRollenAsString) HeaderText="Rollen" TextAlign="TextAlign.Left"  Width="200" />
+        <GridColumn Field=@nameof(Persoon.IsReserve) HeaderText="Reserve?" Width="150">
+            <Template>
+                @{
+                    var persoon = (Persoon)context;
+                    if (!persoon.IsVerwijderd)
+                    {
+                        if (!persoon.IsReserve)
+                        {
+                            <div class="statustemp e-activecolor">
+                                <span class="statustxt e-activecolor">Actief</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="statustemp e-activereservecolor">
+                                <span class="statustxt e-activecolor">Actief (reserve)</span>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="statustemp e-inactivecolor">
+                            <span class="statustxt e-inactivecolor">Inactief</span>
+                        </div>
+                    }
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field=@nameof(Persoon.GetRollenAsString) HeaderText="Rollen" TextAlign="TextAlign.Left" Width="200" />
     </GridColumns>
+    <GridEvents OnRecordDoubleClick="OnDoubleClickPersoon" TValue="Persoon" />
 </SfGrid>
 
 <AddDeelnemersToFietstochtDialog @ref="_addDeelnemersDialog" OnDeelnemersAdded="OnDeelnemersAddedHandler" />
 
 @code
 {
+    SfGrid<Persoon> _deelnemersGrid = new();
     public IEnumerable<Fietstocht> _fietstochtenList = new List<Fietstocht>();
     public IEnumerable<Persoon> _huidigeDeelnemers { get; set; } = new List<Persoon>();
     public Fietstocht _selectedFietsTocht { get; set; } = new();
@@ -111,6 +143,11 @@
             var persoon = args.RowInfo.RowData as Persoon;
             return;
         }
+    }
+    // Double click row
+    public async Task OnDoubleClickPersoon(RecordDoubleClickEventArgs<Persoon> args)
+    {
+        await EditPersoon();
     }
 
     private async Task ToevoegenDeelnemers()
@@ -170,4 +207,25 @@
         fietstocht
             .Deelnemers
             .OrderBy(d => d.VolledigeNaam);
+
+    private async Task EditPersoon()
+    {
+        // get selected personen first
+        var selectedPersonen = await this._deelnemersGrid.GetSelectedRecordsAsync();
+        if (selectedPersonen.Count == 0)
+        {
+            await DialogService.AlertAsync("Selecteer eerst een persoon.");
+        }
+        else if (selectedPersonen.Count > 1)
+        {
+            await DialogService.AlertAsync("Er zijn meerdere personen geselecteerd. Selecteer eerst een persoon of gebruik de rechtermuisclick.");
+        }
+        else
+        {
+            // open the edit dialog for the selected person
+            var url = _navigationManager.CreateUrlWithContext(selectedPersonen.ElementAt(0).Id, "Personen/EditPersoon");
+            _navigationManager.NavigateTo(url);
+        }
+    }
+
 }

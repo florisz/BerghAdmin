@@ -2,6 +2,7 @@
 @using System.Security.Claims
 @using System.Collections.ObjectModel;
 
+@using BerghAdmin.Services.Export
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Identity
@@ -31,6 +32,7 @@
 @inject ISendMailService _sendMailService
 @inject IMailAttachmentsService _mailAttachmentsService;
 @inject SfDialogService DialogService
+@inject IExcelService _excelService
 
 @attribute [Authorize(Policy = "IsAnyRole")]
 
@@ -63,25 +65,27 @@
                         }
                     </ItemTemplate>
                 </MultiSelectTemplates>
-                <MultiSelectEvents 
-                    TItem="Rol" TValue="int[]">
-                </MultiSelectEvents>
+                <MultiSelectEvents TItem="Rol" TValue="int[]" OnValueSelect="@OnValueSelectHandler" OnValueRemove="@OnValueRemoveHandler" />
             </SfMultiSelect>
         </div>
     </div>
     @* <AuthorizeView Policy="IsAdministrator"> *@
     <div class="row">
-        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
+        <div class="col-xs-3 col-sm-3 col-lg-3 col-md-3 search-item">
             <label class="col-form-label">Toon alle rollen</label>
                 <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
         </div>
-        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
+        <div class="col-xs-3 col-sm-3 col-lg-3 col-md-3 search-item">
             <label class="col-form-label">Inclusief Verwijderd</label>
             <SfCheckBox TChecked="bool" @bind-Checked="@ToonVerwijderd" @onchange="onToonVerwijderdChange" />
         </div>
-        <div class="col-xs-4 col-sm-4 col-lg-4 col-md-4 search-item">
+        <div class="col-xs-3 col-sm-3 col-lg-3 col-md-3 search-item">
             <label class="col-form-label">Zonder Reserves</label>
             <SfCheckBox TChecked="bool" @bind-Checked="@ZonderReserves" @onchange="onZonderReservesChange" />
+        </div>
+        <div class="col-xs-3 col-sm-3 col-lg-3 col-md-3 search-item">
+            <label class="col-form-label">Alleen Reserves</label>
+            <SfCheckBox TChecked="bool" @bind-Checked="@AlleenReserves" @onchange="onAlleenReservesChange" />
         </div>
     </div>
 </div>
@@ -118,6 +122,7 @@
             <ToolbarItem Text="Email" TooltipText="Stuur email" PrefixIcon="e-icons e-send" Align="ItemAlign.Left" OnClick="ShowSendMailDialog" />
             <ToolbarItem Text="Kopieer" TooltipText="Kopieer email adressen" PrefixIcon="e-icons e-copy" Align="ItemAlign.Left" OnClick="CopySelectedEmailAddressesAsync" />
             <ToolbarItem Text="Export" TooltipText="Export naar excel" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ExportToExcelAsync" />
+            <ToolbarItem Text="Export Alles" TooltipText="Export naar excel" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ExportAllToExcelAsync" />
             <ToolbarItem Type="ItemType.Input" Align="Syncfusion.Blazor.Navigations.ItemAlign.Right">
                 <Template>
                     <SfTextBox Placeholder="Enter values to search" Input="OnInputSearchString"></SfTextBox>
@@ -127,8 +132,7 @@
         </ToolbarItems>
     </SfToolbar>
     <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple" PersistSelection="true"></GridSelectionSettings>
-    <GridEvents ContextMenuItemClicked="OnContextMenuClick" TValue="Persoon" />
-
+    <GridEvents OnRecordDoubleClick="OnDoubleClickPersoon" ContextMenuItemClicked="OnContextMenuClick" TValue="Persoon" />
     <GridColumns>
         <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
         <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true" Visible="false" />
@@ -182,6 +186,7 @@
 
     private bool ToonVerwijderd { get; set; } = false;
     private bool ZonderReserves { get; set; } = false;
+    private bool AlleenReserves { get; set; } = false;
 
     // Everything to handle persons
     public List<int> _selectedRollen = new();
@@ -190,7 +195,7 @@
     public List<Fietstocht> _fietsTochtenList = new();
     SfGrid<Persoon> _personenGrid = new();
 
-    private void ValueRemovedHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args)
+    private void OnValueRemoveHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args)
     {
         _selectedRollen.Remove(args.ItemData.Id);
         RefreshList();
@@ -257,7 +262,24 @@
             FileName = fileName
         };
         await this._personenGrid.ExportToExcelAsync(exportProperties);
+        
         await jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
+    }
+
+    // export to excel
+    private async Task ExportAllToExcelAsync()
+    {
+        string fileName = $"AllePersonen_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+        await _excelService.ExportPersonenAsync(fileName);
+
+        await jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
+    }
+
+    // Double click row
+    public async Task OnDoubleClickPersoon(RecordDoubleClickEventArgs<Persoon> args)
+    {
+        await EditPersoon();
     }
 
     // Everything to handle the context menu
@@ -266,7 +288,6 @@
     {
         if (args.Item.Id == "edit-persoon")
         {
-            var persoon = args.RowInfo.RowData as Persoon;
             await EditPersoon();
             return;
         }
@@ -350,6 +371,19 @@
 
     private async Task onZonderReservesChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
     {
+        if(ZonderReserves && AlleenReserves)
+        {
+            AlleenReserves = false;
+        }
+        await RefreshList();
+    }
+
+    private async Task onAlleenReservesChange(Microsoft.AspNetCore.Components.ChangeEventArgs args)
+    {
+        if (ZonderReserves && AlleenReserves)
+        {
+            ZonderReserves = false;
+        }
         await RefreshList();
     }
 
@@ -382,7 +416,12 @@
             if (!ToonVerwijderd)
             {
                 personen = personen.Where(p => !p.IsVerwijderd).ToList();
-
+            }
+            if (AlleenReserves)
+            {
+                personen = personen
+                        .Where(p => p.IsReserve == true)
+                        .ToList<Persoon>();
             }
         }
         else
@@ -402,6 +441,13 @@
                         .Where(p => p.IsReserve == false)
                         .ToList<Persoon>();
             }
+            if (AlleenReserves)
+            {
+                personen = personen
+                        .Where(p => p.IsReserve == true)
+                        .ToList<Persoon>();
+            }
+
         }
 
         return personen;
