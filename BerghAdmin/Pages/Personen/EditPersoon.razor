@@ -25,11 +25,6 @@
     [SupplyParameterFromQuery(Name = "ReturnUrl")]
     public string? ReturnUrl { get; set; }
 
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        await jsRuntime.InvokeAsync<object>("SetSideMenu", "fietser");
-    }
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
