@@ -15,6 +15,15 @@ public class Persoon : Donateur
     }
 
     public GeslachtEnum Geslacht { get; set; }
+    [NotMapped]
+    public string? Aanhef
+    {
+        get { 
+              return Geslacht == GeslachtEnum.Man ? "de heer" : 
+                     Geslacht == GeslachtEnum.Vrouw ? "mevrouw" : 
+                     ""; 
+        }
+    }
     public string? Voorletters { get; set; }
     public string? Voornaam { get; set; }
     public string? Achternaam { get; set; }

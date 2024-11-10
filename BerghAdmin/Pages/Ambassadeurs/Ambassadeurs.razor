@@ -7,8 +7,9 @@
 @using BerghAdmin.General
 @using BerghAdmin.Pages.Mail
 @using BerghAdmin.Pages.Personen
+@using BerghAdmin.Services.DateTimeProvider
+@using BerghAdmin.Services.Facturen
 @using BerghAdmin.Services.Sponsoren
-@using BerghAdmin.Services.Documenten
 
 @using Microsoft.AspNetCore.Identity
 
@@ -21,9 +22,8 @@
 @inject SfDialogService DialogService
 @inject UserManager<User> _userManager
 @inject IAmbassadeurService _ambassadeurService
-@inject IDocumentService _documentService
-@inject IDocumentMergeService _mergeService
-@inject IPdfConverter _pdfConverter
+@inject IDateTimeProvider _dateTimeProvider
+@inject IFactuurService _factuurService
 
 @attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
 
@@ -112,7 +112,7 @@
         </GridColumn>
     </GridColumns>
 </SfGrid>
-
+<ConfirmDialog @ref="confirmDialog" />
 <SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
 
 @code
@@ -123,6 +123,7 @@
     SfGrid<Ambassadeur> _ambassadeursGrid = new();
     public List<Ambassadeur> _ambassadeursList = new();
     SendMailDialog sendMailDialog = new();
+    private ConfirmDialog confirmDialog = new();
     private User? CurrentUser;
     private bool ToonVerwijderd { get; set; } = false;
 
@@ -254,7 +255,7 @@
     // export to excel
     private async Task ExportToExcelAsync()
     {
-        string fileName = $"ambassadeurs_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+        string fileName = $"ambassadeurs_{_dateTimeProvider.Now:yyyyMMdd_HHmmss}.xlsx";
         ExcelExportProperties exportProperties = new()
             {
                 FileName = fileName
@@ -265,42 +266,26 @@
 
     private async Task MaakFactuurAsync()
     {
-        var template = _mergeService.GetMergeTemplateByName("Ambassadeur Factuur Template");
-        //var mergeFields = _mergeService.GetMergeFieldsFor(template).ToArray();
-        //var stream = _mergeService.Merge(template, fieldValues);
-        var mergeDictionary = new Dictionary<string, string>
+        bool isConfirm = await DialogService.ConfirmAsync("Moeten er nieuwe factuur(en) gemaakt worden?", "Nieuwe factuur(en).");
+
+        if (isConfirm)
         {
-            { "AmbassadeurNaam", "Royal Fassin B.V." },
-            { "ContactpersoonAanhef", "de heer" },
-            { "ContactpersoonVoornaam", "Thomas" },
-            { "ContactpersoonAchternaam", "Fassin" },
-            { "AmbassadeurAdres", "Ulenpasweg 8" },
-            { "AmbassadeurPostcode", "7041 GB" },
-            { "AmbassadeurWoonplaats", "'s Heerenberg" },
-            { "Dagtekening", "25 oktober 2023" },
-            { "FactuurNummer", "202300752" },
-            { "DebiteurNummer", "00172" },
-            { "HuidigeDatum", "24 juli 2021" },
-            { "FactuurBedrag", "€ 5.000,-" },
-            { "FactuurTotaalBedrag", "€ 5.000,-" },
-        };
-
-        File.WriteAllBytes($"c:/tmp/AmbassadeursTemplate.docx", template.Content);
-
-        var mergedStream = _mergeService.Merge(template, mergeDictionary);
-        using FileStream outputFileStream = new($"c:/tmp/{template.Name}.docx", FileMode.Create);
-        mergedStream.Position = 0;
-        mergedStream.CopyTo(outputFileStream);
-
-        outputFileStream.Position = 0;
-        var pdfStream = _pdfConverter.ConvertWordToPdf(outputFileStream);
-        var pdfOutputStream = new FileStream($"c:/tmp/{template.Name}.pdf", FileMode.Create);
-
-        pdfStream.Position = 0;
-        pdfStream.CopyTo(pdfOutputStream);
-        pdfStream.Close();
-        pdfOutputStream.Close();
-
+            // get selected personen first
+            var selectedAmbassadeurs = await this._ambassadeursGrid.GetSelectedRecordsAsync();
+            if (selectedAmbassadeurs.Count == 0)
+            {
+                await DialogService.AlertAsync("Selecteer eerst één of meer ambassadeurs.");
+            }
+            else
+            {
+                // create a factuur for each selected ambassadeur
+                foreach (var ambassadeur in selectedAmbassadeurs)
+                {
+                    await _factuurService.MaakFactuurVoorAmbassadeur("Ambassadeur Factuur Template", ambassadeur);
+                }
+                await jsRuntime.InvokeVoidAsync("alert", $"Er zijn {selectedAmbassadeurs.Count} factuur(en) aangemaakt.");
+            }
+        }
     }
 
     private async void OnMailMessageConfigured(MailMessageConfiguredEventArgs eventArgs)
@@ -332,7 +317,9 @@
         }
         return emailAddressesList;
     }
+
 }
+
 <style>
     .statustemp {
         position: relative;
@@ -341,45 +328,45 @@
         text-align: center;
     }
 
-        .statustemp.e-inactivecolor {
-            background-color: #ffd7cc;
-            width: 64px;
-        }
+    .statustemp.e-inactivecolor {
+        background-color: #ffd7cc;
+        width: 64px;
+    }
 
-        .statustemp.e-activecolor {
-            background-color: #ccffcc;
-            width: 57px;
-            cursor: pointer;
-        }
+    .statustemp.e-activecolor {
+        background-color: #ccffcc;
+        width: 57px;
+        cursor: pointer;
+    }
 
-        .statustemp.e-activereservecolor {
-            background-color: #fffecc;
-            width: 107px;
-            cursor: pointer;
-        }
+    .statustemp.e-activereservecolor {
+        background-color: #fffecc;
+        width: 107px;
+        cursor: pointer;
+    }
 
     td.e-rowcell {
         cursor: pointer;
     }
 
-        td.e-rowcell .statustxt.e-inactivecolor {
-            color: #e60000;
-            position: relative;
-            top: 0px;
-        }
+    td.e-rowcell .statustxt.e-inactivecolor {
+        color: #e60000;
+        position: relative;
+        top: 0px;
+    }
 
-        td.e-rowcell .statustxt.e-activecolor {
-            color: #00cc00;
-            position: relative;
-            top: 0px;
-        }
+    td.e-rowcell .statustxt.e-activecolor {
+        color: #00cc00;
+        position: relative;
+        top: 0px;
+    }
 
-        td.e-rowcell .reservediv.reserve {
-            color: #900C3F;
-        }
+    td.e-rowcell .reservediv.reserve {
+        color: #900C3F;
+    }
 
-        td.e-rowcell .reservediv.no-reserve {
-            color: #166344;
-        }
+    td.e-rowcell .reservediv.no-reserve {
+        color: #166344;
+    }
 
 </style>

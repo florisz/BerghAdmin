@@ -2,6 +2,7 @@
 
 @using BerghAdmin.Data
 @using BerghAdmin.General
+@using BerghAdmin.Services.DateTimeProvider
 @using BerghAdmin.Services.Documenten
 @using BerghAdmin.Services.Import
 
@@ -12,6 +13,7 @@
 @inject IDocumentService _documentService
 @inject SfDialogService _dialogService
 @inject NavigationManager _navigationManager
+@inject IDateTimeProvider _dateTimeProvider
 
 @attribute [Authorize(Policy = "IsAdministrator")]
 
@@ -119,7 +121,7 @@
             }
 
             SelectedTemplate.Content = await StreamToByteArray(file.File);
-            SelectedTemplate.Created = DateTime.Now;
+            SelectedTemplate.Created = _dateTimeProvider.Now;
             _documentService.SaveDocument(SelectedTemplate);
         }
     }

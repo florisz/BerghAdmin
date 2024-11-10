@@ -2,6 +2,7 @@
 @using System.Security.Claims
 @using System.Collections.ObjectModel;
 
+@using BerghAdmin.Services.DateTimeProvider
 @using BerghAdmin.Services.Export
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Authorization
@@ -33,6 +34,7 @@
 @inject IMailAttachmentsService _mailAttachmentsService;
 @inject SfDialogService DialogService
 @inject IExcelService _excelService
+@inject IDateTimeProvider _dateTimeProvider
 
 @attribute [Authorize(Policy = "IsAnyRole")]
 
@@ -256,7 +258,7 @@
         string typeName = RolContext.Any()
             ? RolContext.First().ToString()
             : "Personen";
-        string fileName = $"{typeName}_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+        string fileName = $"{typeName}_{_dateTimeProvider.Now:yyyyMMdd_HHmmss}.xlsx";
         ExcelExportProperties exportProperties = new()
         {
             FileName = fileName
@@ -269,7 +271,7 @@
     // export to excel
     private async Task ExportAllToExcelAsync()
     {
-        string fileName = $"AllePersonen_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+        string fileName = $"AllePersonen_{_dateTimeProvider.Now:yyyyMMdd_HHmmss}.xlsx";
 
         await _excelService.ExportPersonenAsync(fileName);
 

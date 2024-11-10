@@ -58,16 +58,14 @@ public class DocumentMergeService : IDocumentMergeService
         throw new NotImplementedException();
     }
 
-    public Stream Merge(Document template, Dictionary<string, string> mergeFields)
+    public Stream Merge(MemoryStream template, Dictionary<string, string> mergeFields)
     {
         _logger.LogDebug("Entering document merge {mergefields}", mergeFields);
-
-        var inputStream = new MemoryStream(template.Content);
 
         var fieldNames = mergeFields.Keys.ToArray();
         var fieldValues = mergeFields.Values.ToArray();
 
-        var wordDocument = new WordDocument(inputStream, FormatType.Docx);
+        var wordDocument = new WordDocument(template, FormatType.Docx);
         wordDocument.MailMerge.Execute(fieldNames, fieldValues);
 
         var outputStream = new MemoryStream();

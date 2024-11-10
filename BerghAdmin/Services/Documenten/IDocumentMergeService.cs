@@ -7,6 +7,6 @@ public interface IDocumentMergeService
     Document GetMergeTemplateByName(string name);
     void SaveMergeTemplate(Document mergeTemplate);
     void DeleteMergeTemplate(int id);
-    Stream Merge(Document template, Dictionary<string, string> mergeFields);
+    Stream Merge(MemoryStream template, Dictionary<string, string> mergeFields);
     IEnumerable<string> GetMergeFieldsFor(Document document);
 }

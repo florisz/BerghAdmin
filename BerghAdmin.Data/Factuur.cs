@@ -21,7 +21,7 @@ public class Factuur
         }
     }
     public string? Omschrijving { get; set; }
-    public float? Bedrag { get; set; }
+    public decimal? Bedrag { get; set; }
     public DateTime Datum { get; set; }
     public bool IsVerzonden { get; set; }
     public FactuurTypeEnum FactuurType { get; set; } = FactuurTypeEnum.Unknown;

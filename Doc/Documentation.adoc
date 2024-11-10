@@ -97,7 +97,22 @@ zijn veelal brieven of e-mails die naar *Donateurs* of *Sponsors* worden gestuur
 gebaseerd op een *Template* waarbij de gegevens ingevuld moeten worden. Het is de bedoeling dat dit systeem hier
 de geautomatiseerde ondersteuning voor gaat bieden. 
 
+=== Facturen
+Facturen worden gegenereerd voor *Ambassadeurs* en *GolfDagSponsors*. De facturen worden gegenereerd op basis van de bijbehorende template. Templates zijn gemaakt in Word en bevatten merge velden die samengevoegd worden met gegevens die uit het systeem komen. Per template is er een lijst met velden die gmerged worden in het uiteindelijke document. Voor elk van de templates is er een functie in het systeem die het samenvoegen verzorgt.
 
+Gebruikerstappen voor het maken van een factuur:
+
+* Systeem stuurt een email dat er nieuwe facturen klaarstaan
+* Financiële administratie logt in en krijgt een overzicht van de facturen die klaarstaan
+* Financiële administratie selecteert de facturen die verstuurd moeten worden
+* Systeem genereert de facturen en stuurt deze naar de geselecteerde *Ambassadeurs* en *GolfDagSponsors*
+* Systeem logt de verzonden facturen en de status van de betalingen
+
+De status van de factuur wordt bijgehouden in een statusdiagram:
+
+[[FactuurStatusDiagram, Factuur status diagram]]
+.Status diagram Factuur 
+image::FactuurStatusDiagram.png[]
 ==  Ontwerp
 
 === Koppeling Kentaa

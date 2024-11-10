@@ -1,0 +1,13 @@
+@startuml
+
+state MaakFactuur {
+    [*] -right-> TeVersturen
+    TeVersturen -right-> Verzonden : Verstuur factuur
+    Verzonden --> Betaald : Betaling ontvangen
+    Verzonden --> Achterstallig : Betaling te laat
+    Achterstallig -left-> Betaald : Betaling ontvangen
+}
+
+Betaald --> [*]
+
+@enduml

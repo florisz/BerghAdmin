@@ -8,4 +8,5 @@ public interface IFactuurService
     Task<Factuur?> GetFactuurAsync(int nummer);
     Task<List<Factuur>> GetFacturenAsync(int jaar);
     Task<bool> SaveFactuurAsync(Factuur factuur);
+    Task MaakFactuurVoorAmbassadeur(string templateName, Ambassadeur ambassadeur);
 }

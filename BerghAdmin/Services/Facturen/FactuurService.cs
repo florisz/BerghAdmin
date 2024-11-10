@@ -1,5 +1,7 @@
-﻿using BerghAdmin.DbContexts;
+﻿using BerghAdmin.Data;
+using BerghAdmin.DbContexts;
 using BerghAdmin.Services.DateTimeProvider;
+using BerghAdmin.Services.Documenten;
 using Microsoft.EntityFrameworkCore;
 
 namespace BerghAdmin.Services.Facturen;
@@ -9,11 +11,19 @@ public class FactuurService : IFactuurService
     private readonly ApplicationDbContext _dbContext;
     private readonly IDateTimeProvider _dateTimeProvider;
     private ILogger<FactuurService> _logger;
+    private IDocumentMergeService _mergeService;
+    private IPdfConverter _pdfConverter;
 
-    public FactuurService(ApplicationDbContext dbContext, IDateTimeProvider dateTimeProvider, ILogger<FactuurService> logger)
+    public FactuurService(ApplicationDbContext dbContext, 
+                            IDateTimeProvider dateTimeProvider,
+                            IDocumentMergeService mergeService,
+                            IPdfConverter pdfConverter,
+                            ILogger<FactuurService> logger)
     {
         _dbContext = dbContext;
         _dateTimeProvider = dateTimeProvider;
+        _mergeService = mergeService;
+        _pdfConverter = pdfConverter;
         _logger = logger;
         logger.LogDebug($"FactuurService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
     }
@@ -55,19 +65,66 @@ public class FactuurService : IFactuurService
             }
         }
 
-        return factuur;
+        return await GetFactuurAsync(nummer);
     }
 
     public async Task<bool> SaveFactuurAsync(Factuur factuur)
     {
-        if (FactuurExists(factuur.Nummer))
+        _logger.LogDebug($"SaveAsync factuur with nummer {factuur.Nummer}");
+
+        var debugView = _dbContext.ChangeTracker.DebugView.LongView;
+        if (factuur.Id == 0)
         {
-            return false;
+            _dbContext
+                .Facturen?
+                .Add(factuur);
+
+            _logger.LogInformation($"Factuur with nummer {factuur.Nummer} was added");
         }
-        _dbContext.Facturen!.Add(factuur);
+        else
+        {
+            _dbContext
+                .Facturen?
+                .Update(factuur);
+
+            _logger.LogInformation($"Factuur with nummer {factuur.Nummer} was updated");
+        }
+
         await _dbContext.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task MaakFactuurVoorAmbassadeur(string templateName, Ambassadeur ambassadeur)
+    {
+        var template = _mergeService.GetMergeTemplateByName(templateName);
+
+        var factuur = await GetNewFactuurAsync();
+
+        var mergeDictionary = new Dictionary<string, string>();
+        mergeDictionary.Add("AmbassadeurNaam", ambassadeur.Naam);
+        mergeDictionary.Add("ContactpersoonAanhef", ambassadeur.ContactPersoon1.Aanhef);
+        mergeDictionary.Add("ContactpersoonVoornaam", ambassadeur.ContactPersoon1.Voornaam);
+        mergeDictionary.Add("ContactpersoonAchternaam", ambassadeur.ContactPersoon1.Achternaam);
+        mergeDictionary.Add("AmbassadeurAdres", ambassadeur.VolledigeAdres);
+        mergeDictionary.Add("AmbassadeurPostcode", ambassadeur.Postcode);
+        mergeDictionary.Add("AmbassadeurWoonplaats", ambassadeur.Plaats);
+        mergeDictionary.Add("Dagtekening", _dateTimeProvider.Now.ToString("d"));
+        mergeDictionary.Add("FactuurNummer", factuur!.FactuurNummer);
+        mergeDictionary.Add("DebiteurNummer", ambassadeur.DebiteurNummer);
+        mergeDictionary.Add("HuidigeDatum", _dateTimeProvider.Now.ToString("d"));
+        mergeDictionary.Add("FactuurBedrag", string.Format("€ {0:N2} Euro", ambassadeur.ToegezegdBedrag));
+        mergeDictionary.Add("FactuurTotaalBedrag", string.Format("€ {0:N2} Euro", ambassadeur.ToegezegdBedrag));
+
+        // Convert template Document content to MemoryStream
+        using var templateStream = new MemoryStream(template.Content);
+        using var mergedStream = _mergeService.Merge(templateStream, mergeDictionary);
+        mergedStream.Position = 0;
+        using var pdfStream = _pdfConverter.ConvertWordToPdf(mergedStream);
+
+        await SaveStreamAsFactuur(pdfStream, ambassadeur, factuur);
+
+        return;
     }
 
     private int GetNextFactuurNummer()
@@ -90,5 +147,32 @@ public class FactuurService : IFactuurService
 
     private bool FactuurExists(int nummer)
         => _dbContext.Facturen!.Any(f => f.Nummer == nummer);
+
+    private async Task SaveStreamAsFactuur(Stream factuurStream, Ambassadeur ambassadeur, Factuur factuur)
+    {
+        factuur.Omschrijving = "Factuur voor " + ambassadeur.Naam + "; datum: " + factuur.Datum;
+        factuur.Bedrag = ambassadeur.ToegezegdBedrag;
+        factuur.IsVerzonden = false;
+        factuur.FactuurType = FactuurTypeEnum.Pdf;
+        factuur.FactuurTekst = new Document()
+        {
+            Content = await StreamToByteArray(factuurStream),
+            ContentType = ContentTypeEnum.Factuur,
+            DocumentType = DocumentTypeEnum.Pdf,
+            TemplateType = TemplateTypeEnum.Ambassadeur,
+            IsMergeTemplate = false,
+            Owner = "BerghAdmin",
+            Name = "Factuur " + factuur.FactuurNummer + ".pdf"
+        };
+
+        await SaveFactuurAsync(factuur);
+    }
+
+    private async Task<byte[]> StreamToByteArray(Stream stream)
+    {
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        return memoryStream.ToArray();
+    }
 
 }

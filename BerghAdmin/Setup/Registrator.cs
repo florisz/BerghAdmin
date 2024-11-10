@@ -4,10 +4,12 @@ using BerghAdmin.Authorization;
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services.Betalingen;
 using BerghAdmin.Services.Bihz;
+using BerghAdmin.Services.DateTimeProvider;
 using BerghAdmin.Services.Documenten;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Export;
+using BerghAdmin.Services.Facturen;
 using BerghAdmin.Services.Import;
 using BerghAdmin.Services.Seeding;
 using BerghAdmin.Services.Sponsoren;
@@ -134,6 +136,7 @@ public class Registrator
         _builder.Services.AddScoped<IDocumentMergeService, DocumentMergeService>();
         _builder.Services.AddScoped<IDonatieService, DonatieService>();
         _builder.Services.AddScoped<IExcelService, ExcelService>();
+        _builder.Services.AddScoped<IFactuurService, FactuurService>();
         _builder.Services.AddScoped<IFietstochtenService, FietstochtenService>();
         _builder.Services.AddScoped<IFileSystem, FileSystem>();
         _builder.Services.AddScoped<IGolfdagenService, GolfdagenService>();
@@ -153,8 +156,10 @@ public class Registrator
         _builder.Services.AddScoped<IRolService, RolService>();
 #if (DEBUG)
         _builder.Services.AddTransient<ISeedDataService, DebugSeedDataService>();
+        _builder.Services.AddTransient<IDateTimeProvider, TestDateTimeProvider>();
 #elif (RELEASE)
         _builder.Services.AddTransient<ISeedDataService, ReleaseSeedDataService>();
+        _builder.Services.AddTransient<IDateTimeProvider, DateTimeProvider>();
 #endif
         _builder.Services.AddTransient<ISeedUsersService, ReleaseSeedUsersService>();
         _builder.Services.AddScoped<ISendMailService, SendMailService>();

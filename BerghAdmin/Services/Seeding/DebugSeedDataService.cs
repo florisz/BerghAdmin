@@ -1,3 +1,4 @@
+using BerghAdmin.Services.DateTimeProvider;
 using BerghAdmin.Services.Documenten;
 using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Sponsoren;
@@ -16,6 +17,7 @@ public class DebugSeedDataService : ISeedDataService
     private readonly IAmbassadeurService _ambassadeurService;
     private readonly IDocumentService _documentService;
     private readonly IMagazineService _magazineService;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
     public DebugSeedDataService(
         IRolService rolService,
@@ -26,6 +28,7 @@ public class DebugSeedDataService : ISeedDataService
         IAmbassadeurService ambassadeurService,
         IDocumentService documentService,
         IMagazineService magazineService,
+        IDateTimeProvider dateTimeProvider,
         IOptions<SeedSettings> settings)
     {
         _settings = settings.Value;
@@ -38,11 +41,11 @@ public class DebugSeedDataService : ISeedDataService
         _ambassadeurService = ambassadeurService;
         _documentService = documentService;
         _magazineService = magazineService;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task SeedInitialData()
     {
-        await InsertFietstochten();
         if (SeedHelper.DatabaseHasData(_rolService))
         {
             return;
@@ -532,8 +535,8 @@ public class DebugSeedDataService : ISeedDataService
             DocumentType = DocumentTypeEnum.Word,
             TemplateType = TemplateTypeEnum.Ambassadeur,
             Content = File.ReadAllBytes($"{_settings.DocumentBasePath}/TemplateFactuurSponsor.docx"),
-            Created = DateTime.Now,
-            Owner = "Henk"
+            Created = _dateTimeProvider.Now,
+            Owner = "Wilbert"
         };
         await _documentService.SaveDocument(document);
         document = new Document
@@ -544,7 +547,7 @@ public class DebugSeedDataService : ISeedDataService
             DocumentType = DocumentTypeEnum.Word,
             TemplateType = TemplateTypeEnum.Ambassadeur,
             Content = File.ReadAllBytes($"{_settings.DocumentBasePath}/AmbassadeurFactuurTemplate.docx"),
-            Created = DateTime.Now,
+            Created = _dateTimeProvider.Now,
             Owner = "Wilbert"
         };
         await _documentService.SaveDocument(document);
