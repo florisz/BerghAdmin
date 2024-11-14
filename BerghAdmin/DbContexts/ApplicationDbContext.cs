@@ -104,6 +104,9 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .HasMany(a => a.MagazineJaren);
         modelBuilder
             .Entity<Ambassadeur>()
+            .HasMany(f => f.Facturen);
+        modelBuilder
+            .Entity<Ambassadeur>()
             .Property(d => d.ToegezegdBedrag).HasPrecision(18, 2);
         modelBuilder
             .Entity<Ambassadeur>()
@@ -124,6 +127,15 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .Entity<GolfdagSponsor>()
             .ToTable("GolfdagSponsor");
         // GolfdagSponsor - end
+
+        // Facturen
+        modelBuilder
+            .Entity<Factuur>()
+            .HasOne(d => d.FactuurTekst);
+        modelBuilder
+            .Entity<Factuur>()
+            .HasOne(d => d.EmailTekst);
+        // Facturen - end
 
         // Money fields
         modelBuilder

@@ -1,4 +1,6 @@
-﻿using BerghAdmin.Services.DateTimeProvider;
+﻿using BerghAdmin.Data;
+using BerghAdmin.Services.DateTimeProvider;
+using BerghAdmin.Services.Documenten;
 using BerghAdmin.Services.Facturen;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +17,9 @@ namespace BerghAdmin.Tests.FactuurTests
         {
             services
                 .AddScoped<IFactuurService, FactuurService>()
+                .AddScoped<IDocumentService, DocumentService>()
+                .AddScoped<IDocumentMergeService, DocumentMergeService>()
+                .AddScoped<IPdfConverter, PdfConverter>()
                 .AddScoped<IDateTimeProvider, TestDateTimeProvider>()
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
         }
@@ -23,7 +28,8 @@ namespace BerghAdmin.Tests.FactuurTests
         public async Task GetNewFactuurTest()
         {
             var factuurService = this.GetRequiredService<IFactuurService>();
-            var factuur = await factuurService.GetNewFactuurAsync();
+            Ambassadeur ambassadeur = new Ambassadeur() { DebiteurNummer = "1", Naam = "aap" };
+            var factuur = await factuurService.GetNewFactuurAsync(ambassadeur);
             // TO DO: solve whatif twee facturen op precies hetzelfde moment hetzelfde nummer krijgen
             var nummer = factuur!.Nummer;
             factuur = await factuurService.GetFactuurAsync(nummer);
@@ -48,7 +54,8 @@ namespace BerghAdmin.Tests.FactuurTests
             var dateTimeProvider = this.GetRequiredService<IDateTimeProvider>();
 
             var datum = dateTimeProvider.Now;
-            var factuur = await factuurService.GetNewFactuurAsync(datum);
+            var ambassadeur = new Ambassadeur() { DebiteurNummer = "1", Naam = "aap" };
+            var factuur = await factuurService.GetNewFactuurAsync(datum, ambassadeur);
 
             Assert.IsNotNull(factuur);
             Assert.AreEqual(factuur!.Datum.ToShortDateString(), dateTimeProvider.Now.ToShortDateString());

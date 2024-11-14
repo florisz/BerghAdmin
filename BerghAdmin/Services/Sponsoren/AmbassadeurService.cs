@@ -1,7 +1,5 @@
-﻿using BerghAdmin.Data;
-using BerghAdmin.DbContexts;
+﻿using BerghAdmin.DbContexts;
 using BerghAdmin.General;
-using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow.ValueContentAnalysis;
 using Microsoft.EntityFrameworkCore;
 
 namespace BerghAdmin.Services.Sponsoren;

@@ -316,9 +316,12 @@ namespace BerghAdmin.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<float?>("Bedrag")
+                    b.Property<int?>("AmbassadeurId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Bedrag")
                         .HasPrecision(18, 2)
-                        .HasColumnType("float");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("Datum")
                         .HasColumnType("datetime(6)");
@@ -342,6 +345,8 @@ namespace BerghAdmin.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AmbassadeurId");
 
                     b.HasIndex("EmailTekstId");
 
@@ -1018,6 +1023,9 @@ namespace BerghAdmin.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("FactuurVerzendWijze")
+                        .HasColumnType("int");
+
                     b.Property<string>("Naam")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -1106,6 +1114,10 @@ namespace BerghAdmin.Migrations
 
             modelBuilder.Entity("BerghAdmin.Data.Factuur", b =>
                 {
+                    b.HasOne("BerghAdmin.Data.Ambassadeur", null)
+                        .WithMany("Facturen")
+                        .HasForeignKey("AmbassadeurId");
+
                     b.HasOne("BerghAdmin.Data.Document", "EmailTekst")
                         .WithMany()
                         .HasForeignKey("EmailTekstId");
@@ -1355,6 +1367,8 @@ namespace BerghAdmin.Migrations
 
             modelBuilder.Entity("BerghAdmin.Data.Ambassadeur", b =>
                 {
+                    b.Navigation("Facturen");
+
                     b.Navigation("MagazineJaren");
                 });
 #pragma warning restore 612, 618

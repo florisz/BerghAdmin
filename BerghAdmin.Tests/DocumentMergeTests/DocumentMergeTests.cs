@@ -160,7 +160,8 @@ public class DocumentMergeTests : DatabaseTestSetup
 
     private void MergeDocument(IDocumentMergeService mergeService, Document template, Dictionary<string, string> mergeDictionary)
     {
-        var mergedStream = mergeService.Merge(template, mergeDictionary);
+        using var templateStream = new MemoryStream(template.Content);
+        var mergedStream = mergeService.Merge(templateStream, mergeDictionary);
         Assert.IsTrue(mergedStream.Length > 0);
         using FileStream outputFileStream = new($"./DocumentMergeTests/TestDocumenten/{template.Name}.docx", FileMode.Create);
         mergedStream.Position = 0;

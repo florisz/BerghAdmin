@@ -39,7 +39,7 @@
 </div>
 
 @*
-    The grid showing all persons
+    The grid showing all ambassadeurs
 *@
 <SfGrid @ref="@_ambassadeursGrid"
         DataSource="@_ambassadeursList"
@@ -270,7 +270,7 @@
 
         if (isConfirm)
         {
-            // get selected personen first
+            // get selected personen 
             var selectedAmbassadeurs = await this._ambassadeursGrid.GetSelectedRecordsAsync();
             if (selectedAmbassadeurs.Count == 0)
             {

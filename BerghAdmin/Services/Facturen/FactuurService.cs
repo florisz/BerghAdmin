@@ -40,15 +40,21 @@ public class FactuurService : IFactuurService
                     .Facturen!
                     .FirstOrDefaultAsync(f => f.Nummer == nummer);
 
+    public async Task<Factuur?> GetFactuurWithPdfAsync(int nummer)
+        => await _dbContext
+                    .Facturen!
+                    .Include(t => t.FactuurTekst)   
+                    .FirstOrDefaultAsync(f => f.Nummer == nummer);
 
 
-    public async Task<Factuur?> GetNewFactuurAsync()
-        => await GetNewFactuurAsync(_dateTimeProvider.Now);
 
-    public async Task<Factuur?> GetNewFactuurAsync(DateTime dateTime)
-        => await GetNewFactuurAsync(GetNextFactuurNummer(), dateTime);
+    public async Task<Factuur?> GetNewFactuurAsync(Ambassadeur ambassadeur)
+        => await GetNewFactuurAsync(_dateTimeProvider.Now, ambassadeur);
 
-    public async Task<Factuur?> GetNewFactuurAsync(int nummer, DateTime dateTime)
+    public async Task<Factuur?> GetNewFactuurAsync(DateTime dateTime, Ambassadeur ambassadeur)
+        => await GetNewFactuurAsync(GetNextFactuurNummer(), dateTime, ambassadeur);
+
+    public async Task<Factuur?> GetNewFactuurAsync(int nummer, DateTime dateTime, Ambassadeur ambassadeur)
     {
         int tries = 0;
         bool returnValue = false;
@@ -57,7 +63,7 @@ public class FactuurService : IFactuurService
         while (!returnValue)
         {
             factuur = new Factuur(nummer, dateTime);
-            returnValue = await SaveFactuurAsync(factuur);
+            returnValue = await SaveFactuurAsync(factuur, ambassadeur);
 
             if (!returnValue && tries++ > 3)
             {
@@ -68,7 +74,7 @@ public class FactuurService : IFactuurService
         return await GetFactuurAsync(nummer);
     }
 
-    public async Task<bool> SaveFactuurAsync(Factuur factuur)
+    public async Task<bool> SaveFactuurAsync(Factuur factuur, Ambassadeur ambassadeur)
     {
         _logger.LogDebug($"SaveAsync factuur with nummer {factuur.Nummer}");
 
@@ -90,6 +96,10 @@ public class FactuurService : IFactuurService
             _logger.LogInformation($"Factuur with nummer {factuur.Nummer} was updated");
         }
 
+        _dbContext
+            .Ambassadeurs?
+            .Update(ambassadeur);
+
         await _dbContext.SaveChangesAsync();
 
         return true;
@@ -99,7 +109,7 @@ public class FactuurService : IFactuurService
     {
         var template = _mergeService.GetMergeTemplateByName(templateName);
 
-        var factuur = await GetNewFactuurAsync();
+        var factuur = await GetNewFactuurAsync(ambassadeur);
 
         var mergeDictionary = new Dictionary<string, string>();
         mergeDictionary.Add("AmbassadeurNaam", ambassadeur.Naam);
@@ -145,11 +155,9 @@ public class FactuurService : IFactuurService
         return nummer;
     }
 
-    private bool FactuurExists(int nummer)
-        => _dbContext.Facturen!.Any(f => f.Nummer == nummer);
-
     private async Task SaveStreamAsFactuur(Stream factuurStream, Ambassadeur ambassadeur, Factuur factuur)
     {
+        factuurStream.Position = 0;
         factuur.Omschrijving = "Factuur voor " + ambassadeur.Naam + "; datum: " + factuur.Datum;
         factuur.Bedrag = ambassadeur.ToegezegdBedrag;
         factuur.IsVerzonden = false;
@@ -162,10 +170,13 @@ public class FactuurService : IFactuurService
             TemplateType = TemplateTypeEnum.Ambassadeur,
             IsMergeTemplate = false,
             Owner = "BerghAdmin",
-            Name = "Factuur " + factuur.FactuurNummer + ".pdf"
+            Name = "Factuur " + factuur.FactuurNummer + ".pdf",
+            Created = _dateTimeProvider.Now
         };
 
-        await SaveFactuurAsync(factuur);
+        ambassadeur.Facturen.Add(factuur);
+        
+        await SaveFactuurAsync(factuur, ambassadeur);
     }
 
     private async Task<byte[]> StreamToByteArray(Stream stream)

@@ -11,6 +11,7 @@ using BerghAdmin.Services.Evenementen;
 using BerghAdmin.Services.Export;
 using BerghAdmin.Services.Facturen;
 using BerghAdmin.Services.Import;
+using BerghAdmin.Services.PdfHandling;
 using BerghAdmin.Services.Seeding;
 using BerghAdmin.Services.Sponsoren;
 using BerghAdmin.Services.UserManagement;
@@ -237,7 +238,11 @@ public class Registrator
         });
 
         app.UseSerilogRequestLogging();
-
+        app.MapWhen(
+            context => context.Request.Path.ToString().Contains("ShowPdf.mdwr", StringComparison.InvariantCultureIgnoreCase),
+            appBranch => {
+                appBranch.UsePdfViewer();
+            });
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 

@@ -79,7 +79,12 @@ else
             <label class="col-form-label">Debiteurnummer:</label>
             <SfTextBox @bind-Value="@_currentAmbassadeur.DebiteurNummer" TValue="string" />
         </div>
-
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Verzendwijze factuur:</label>
+            <SfDropDownList TValue="FactuurVerzendwijzeEnum" TItem="FactuurVerzendwijze" DataSource="@factuurVerzendwijzeValues" @bind-Value="@_currentAmbassadeur.FactuurVerzendWijze">
+                <DropDownListFieldSettings Value="FactuurVerzendwijzeValue"></DropDownListFieldSettings>
+            </SfDropDownList>
+        </div>
         <div class="form-group col-lg-3">
             <label class="col-form-label">Is Verwijderd:</label>
             <SfCheckBox TChecked="bool" @bind-Checked="@_currentAmbassadeur.IsVerwijderd" />
@@ -147,6 +152,7 @@ else
     private Ambassadeur _currentAmbassadeur { get; set; } = new Ambassadeur();
     private bool IsNewAmbassadeur() { return Id == 0; }
     AddGerelateerdPersoonDialog _addGerelateerdPersoonDialog;
+    private FactuurVerzendwijze[] factuurVerzendwijzeValues = FactuurVerzendwijzeService.GetFactuurVerzendwijzeValues();
 
     protected override async Task OnInitializedAsync()
     {

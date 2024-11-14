@@ -6,6 +6,7 @@ public class Sponsor : Donateur
 {
     public string DebiteurNummer { get; set; }
     public string Naam { get; set; }
+    public FactuurVerzendwijzeEnum FactuurVerzendWijze { get; set; }
     public Persoon? ContactPersoon1 { get; set; }
     public Persoon? ContactPersoon2 { get; set; }
     public Persoon? Compagnon { get; set; }
