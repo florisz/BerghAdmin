@@ -3,11 +3,17 @@
 state MaakFactuur {
     [*] -right-> TeVersturen
     TeVersturen -right-> Verzonden : Verstuur factuur
-    Verzonden --> Betaald : Betaling ontvangen
-    Verzonden --> Achterstallig : Betaling te laat
-    Achterstallig -left-> Betaald : Betaling ontvangen
+    Verzonden -down-> Betaald : Betaling ontvangen
+    Verzonden -down-> Achterstallig : Betaling te laat
+    Verzonden -down-> NietBetaald : Betaling niet ontvangen
+    Achterstallig -right-> Betaald : Betaling ontvangen
+    Achterstallig -left-> NietBetaald : Betaling niet ontvangen
+    Achterstallig -down-> Gecrediteerd : Factuur gecrediteerd
+    Verzonden --> Gecrediteerd : Factuur gecrediteerd
+    NietBetaald -down-> Gecrediteerd : Factuur gecrediteerd
 }
 
-Betaald --> [*]
+Betaald --> [*] 
+Gecrediteerd --> [*]
 
 @enduml
