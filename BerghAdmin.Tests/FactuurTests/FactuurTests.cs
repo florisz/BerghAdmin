@@ -32,7 +32,7 @@ namespace BerghAdmin.Tests.FactuurTests
             var factuur = await factuurService.GetNewFactuurAsync(ambassadeur);
             // TO DO: solve whatif twee facturen op precies hetzelfde moment hetzelfde nummer krijgen
             var nummer = factuur!.Nummer;
-            factuur = await factuurService.GetFactuurAsync(nummer);
+            factuur = await factuurService.GetFactuurByNummerAsync(nummer);
 
             Assert.IsNotNull(factuur);
             Assert.AreEqual(factuur!.Nummer, nummer);

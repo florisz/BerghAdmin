@@ -8,6 +8,7 @@
 @using BerghAdmin.Services.DateTimeProvider
 @using BerghAdmin.Services.Facturen
 @using BerghAdmin.Services.Sponsoren
+@using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Http.HttpResults
 @using Microsoft.AspNetCore.Identity
 @using Syncfusion.Blazor.SfPdfViewer
@@ -21,6 +22,7 @@
 @inject UserManager<User> _userManager
 @inject IDateTimeProvider _dateTimeProvider
 @inject IFactuurService _factuurService
+@inject IHttpContextAccessor _httpContextAccessor
 
 @attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
 
@@ -37,7 +39,7 @@
         AllowExcelExport="true"
         ShowColumnMenu="true"
         ContextMenuItems="@(new List<ContextMenuItemModel>() {
-                                new ContextMenuItemModel { Text = "Stuur factuur", Target = ".e-content", Id = "show-factuur" },
+                                new ContextMenuItemModel { Text = "Toon factuur", Target = ".e-content", Id = "show-factuur" },
                             })">
     <GridEditSettings AllowAdding="true"
                       AllowDeleting="true"
@@ -73,12 +75,12 @@
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
 
     SfGrid<Factuur> _factuurGrid = new();
+    public string _documentPath { get; set; } = "";
     public List<Factuur> _factuurList = new();
     SendMailDialog sendMailDialog = new();
     private ConfirmDialog confirmDialog = new();
     private User? CurrentUser;
     private bool ToonVerwijderd { get; set; } = false;
-    private int reportId { get; set;  }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -135,34 +137,6 @@
 
     private async Task ShowFactuur(int id)
     {
-        reportId = id;
-        jsRuntime.InvokeVoidAsync("open", "/ShowPdf.mdwr?pdfid=1", "_blank");
+        _navigationManager.NavigateTo($"ShowPdf?FactuurId={id}");
     }
-    // <SfButton Type="button" Content="Create PDF" OnClick="@CreatePDF" />
-    // <SfPdfViewer2 DocumentPath="@DocumentPath"
-    //               Height="100%"
-    //               Width="100%" />
-    // private string DocumentPath { get; set; } = "";
-
-    // protected async override Task OnAfterRenderAsync(bool firstRender)
-    // {
-    //     await jsRuntime.InvokeAsync<object>("SetSideMenu", "ambassadeur");
-    // }
-
-    // public void CreatePDF(MouseEventArgs args)
-    // {
-    //     var ambassadeur = new Ambassadeur() { Id = 1, Naam = "Test Ambassadeur" };
-    //     var factuur = _factuurService.GetFactuurWithPdfAsync(1).Result;
-    //     using var pdfStream = new MemoryStream(factuur.FactuurTekst.Content);
-
-    //     byte[] bytes;
-    //     using (var memoryStream = new MemoryStream())
-    //     {
-    //         pdfStream.CopyTo(memoryStream);
-    //         bytes = memoryStream.ToArray();
-    //     }
-    //     DocumentPath = "data:application/pdf;base64," + Convert.ToBase64String(bytes);
-
-    //     DocumentPath = "data:application/pdf;base64," + Convert.ToBase64String(pdfStream.ToArray());
-    // }
 }

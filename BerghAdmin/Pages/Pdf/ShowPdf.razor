@@ -1,0 +1,53 @@
+﻿@page "/ShowPdf"
+
+@using BerghAdmin.Authorization
+@using BerghAdmin.Data
+@using BerghAdmin.General
+
+@using BerghAdmin.Services.Facturen
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.WebUtilities
+
+@inject IHttpContextAccessor _httpContextAccessor
+@inject NavigationManager _navigationManager
+@inject IJSRuntime jsRuntime
+@inject ILogger<ShowPdf> _logger
+@inject IFactuurService _factuurService
+
+<div style="min-height:1200px;height:1200px;">
+    <SfPdfViewer2 Width="100%" Height="100%" ZoomMode="ZoomMode.FitToPage" DocumentPath="@DocumentPath"></SfPdfViewer2>
+</div>
+@code
+{
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "FactuurId")]
+    public int FactuurId { get; set; }
+
+    public string DocumentPath { get; set; } = "";
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "ambassadeur");
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var pdfContent = await GetPdf(FactuurId);
+
+        if (pdfContent != null && pdfContent.Length > 0)
+        {
+            DocumentPath = "data:application/pdf;base64," + Convert.ToBase64String(pdfContent.ToArray());
+        }
+    }
+
+    private async Task<byte[]> GetPdf(int id)
+    {
+        var factuur = await _factuurService.GetFactuurByIdWithPdfAsync(id);
+        if (factuur == null || factuur.FactuurTekst == null)
+        {
+            return new byte[0];
+        }
+        return factuur.FactuurTekst.Content;
+    }
+}

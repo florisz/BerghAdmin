@@ -35,18 +35,27 @@ public class FactuurService : IFactuurService
             .ToListAsync();
 
 
-    public async Task<Factuur?> GetFactuurAsync(int nummer)
+    public async Task<Factuur?> GetFactuurByNummerAsync(int nummer)
         => await _dbContext
                     .Facturen!
                     .FirstOrDefaultAsync(f => f.Nummer == nummer);
 
-    public async Task<Factuur?> GetFactuurWithPdfAsync(int nummer)
+    public async Task<Factuur?> GetFactuurByNummerWithPdfAsync(int nummer)
         => await _dbContext
                     .Facturen!
-                    .Include(t => t.FactuurTekst)   
+                    .Include(t => t.FactuurTekst)
                     .FirstOrDefaultAsync(f => f.Nummer == nummer);
 
+    public async Task<Factuur?> GetFactuurByIdAsync(int id)
+        => await _dbContext
+                    .Facturen!
+                    .FirstOrDefaultAsync(f => f.Id == id);
 
+    public async Task<Factuur?> GetFactuurByIdWithPdfAsync(int id)
+        => await _dbContext
+                    .Facturen!
+                    .Include(t => t.FactuurTekst)
+                    .FirstOrDefaultAsync(f => f.Id == id);
 
     public async Task<Factuur?> GetNewFactuurAsync(Ambassadeur ambassadeur)
         => await GetNewFactuurAsync(_dateTimeProvider.Now, ambassadeur);
@@ -71,7 +80,7 @@ public class FactuurService : IFactuurService
             }
         }
 
-        return await GetFactuurAsync(nummer);
+        return await GetFactuurByNummerAsync(nummer);
     }
 
     public async Task<bool> SaveFactuurAsync(Factuur factuur, Ambassadeur ambassadeur)
@@ -116,7 +125,7 @@ public class FactuurService : IFactuurService
         mergeDictionary.Add("ContactpersoonAanhef", ambassadeur.ContactPersoon1.Aanhef);
         mergeDictionary.Add("ContactpersoonVoornaam", ambassadeur.ContactPersoon1.Voornaam);
         mergeDictionary.Add("ContactpersoonAchternaam", ambassadeur.ContactPersoon1.Achternaam);
-        mergeDictionary.Add("AmbassadeurAdres", ambassadeur.VolledigeAdres);
+        mergeDictionary.Add("AmbassadeurAdres", ambassadeur.Adres);
         mergeDictionary.Add("AmbassadeurPostcode", ambassadeur.Postcode);
         mergeDictionary.Add("AmbassadeurWoonplaats", ambassadeur.Plaats);
         mergeDictionary.Add("Dagtekening", _dateTimeProvider.Now.ToString("d"));

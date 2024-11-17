@@ -75,6 +75,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Migrations\" />
+	  <Folder Include="Services\PdfHandling\" />
 	</ItemGroup>
 
 	<ItemGroup>

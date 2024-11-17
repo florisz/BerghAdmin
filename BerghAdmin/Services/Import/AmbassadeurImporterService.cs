@@ -77,15 +77,24 @@ namespace BerghAdmin.Services.Import
                             ToegezegdBedrag = Decimal.Parse(record.BedragToegezegd),
                             TotaalBedrag = Decimal.Parse(record.BedragOntvangen),
 
+
                             // Sponsor specific fields
                             DebiteurNummer = record.Debiteurnummer,
                             Naam = record.Sponsor,
                             ContactPersoon1 = contactPersoon1,
                             ContactPersoon2 = contactPersoon2,
                             Compagnon = compagnon,
+                            FactuurVerzendWijze = FactuurVerzendwijzeEnum.Mail,
 
                             // Donateur specific fields
+                            EmailAdres = record.Emailadres,
+                            Adres = record.Adres,
+                            Postcode = record.Postcode,
+                            Plaats = record.Plaats,
+                            Land = record.Land,
                             Telefoon = record.AmbassadeurTelefoon,
+                            Mobiel = record.Mobiel,
+                            Opmerkingen = "",
                             IsVerwijderd = false
                         };
                         // vul alle MagazineJaren
@@ -176,7 +185,9 @@ namespace BerghAdmin.Services.Import
         private async Task<Persoon> SaveContactpersoon(CsvAmbassadeurRecord record)
         {
             var contactPersoon = await _persoonService.GetByEmailAdres(record.Emailadres);
-            contactPersoon ??= new Persoon
+            if (contactPersoon == null)
+            {
+                contactPersoon = new Persoon
                 {
                     Geslacht = GeslachtEnum.Onbekend,
                     Voornaam = record.Voornaam,
@@ -191,6 +202,7 @@ namespace BerghAdmin.Services.Import
                     IsVerwijderd = false,
                     Rollen = new HashSet<Rol>()
                 };
+            }
             contactPersoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Contactpersoon));
             await _persoonService.SavePersoonAsync(contactPersoon);
 
@@ -200,7 +212,9 @@ namespace BerghAdmin.Services.Import
         private async Task<Persoon> SaveCompagnon(CsvAmbassadeurRecord record)
         {
             var compagnon = await _persoonService.GetByEmailAdres(record.CompagnonEmail);
-            compagnon ??= new Persoon
+            if (compagnon == null)
+            {
+                compagnon = new Persoon
                 {
                     Geslacht = GeslachtEnum.Onbekend,
                     Achternaam = record.Compagnon,
@@ -208,6 +222,7 @@ namespace BerghAdmin.Services.Import
                     IsVerwijderd = false,
                     Rollen = new HashSet<Rol>()
                 };
+            }
             compagnon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Compagnon));
             await _persoonService.SavePersoonAsync(compagnon);
 
