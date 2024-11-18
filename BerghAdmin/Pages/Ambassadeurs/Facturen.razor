@@ -59,13 +59,12 @@
 
     <GridColumns>
         <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
-        <GridColumn Field=@nameof(Factuur.Nummer) HeaderText="Nr" TextAlign="TextAlign.Left" Width="40" IsPrimaryKey="true" Visible="false" />
+        <GridColumn Field=@nameof(Factuur.FactuurNummer) HeaderText="Nr" TextAlign="TextAlign.Left" Width="40" />
         <GridColumn Field=@nameof(Factuur.Omschrijving) HeaderText="Omschrijving" TextAlign="TextAlign.Left" Width="100" />
         <GridColumn Field=@nameof(Factuur.Datum) HeaderText="Datum" Format="d" Type="ColumnType.Date" Width="60" />
         <GridColumn Field=@nameof(Factuur.Bedrag) HeaderText="Bedrag" Type="ColumnType.Decimal" Format="C2" Width="60" />
+        <GridColumn Field=@nameof(Factuur.GetFactuurStatusAsString) HeaderText="Status" Type="ColumnType.String" Width="80" />
         <GridColumn Field=@nameof(Factuur.FactuurType) HeaderText="Type" TextAlign="TextAlign.Left" Width="60" />
-        <GridColumn Field=@nameof(Factuur.IsBetaald) HeaderText="Betaald?" Type="ColumnType.Boolean" Width="30" />
-        <GridColumn Field=@nameof(Factuur.IsVerzonden) HeaderText="Verzonden?" Type="ColumnType.Boolean" Width="30" />
     </GridColumns>
 </SfGrid>
 

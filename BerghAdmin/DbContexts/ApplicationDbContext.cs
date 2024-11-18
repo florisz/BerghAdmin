@@ -89,6 +89,12 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
             .WithMany(s => s.GolfdagenGesponsored);
         // Evenementen - end
 
+        // Sponsor
+        modelBuilder
+            .Entity<Sponsor>()
+            .HasMany(e => e.Facturen);
+        // Sponsor - end
+
         // Ambassadeurs
         modelBuilder
             .Entity<Ambassadeur>()
@@ -102,9 +108,6 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
         modelBuilder
             .Entity<Ambassadeur>()
             .HasMany(a => a.MagazineJaren);
-        modelBuilder
-            .Entity<Ambassadeur>()
-            .HasMany(f => f.Facturen);
         modelBuilder
             .Entity<Ambassadeur>()
             .Property(d => d.ToegezegdBedrag).HasPrecision(18, 2);
@@ -131,10 +134,10 @@ public class ApplicationDbContext : IdentityUserContext<User, int>
         // Facturen
         modelBuilder
             .Entity<Factuur>()
-            .HasOne(d => d.FactuurTekst);
+            .HasOne(f => f.FactuurTekst);
         modelBuilder
             .Entity<Factuur>()
-            .HasOne(d => d.EmailTekst);
+            .HasOne(f => f.EmailTekst);
         // Facturen - end
 
         // Money fields

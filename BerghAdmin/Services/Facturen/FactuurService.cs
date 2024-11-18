@@ -71,7 +71,7 @@ public class FactuurService : IFactuurService
 
         while (!returnValue)
         {
-            factuur = new Factuur(nummer, dateTime);
+            factuur = new Factuur(nummer, dateTime, ambassadeur.Id);
             returnValue = await SaveFactuurAsync(factuur, ambassadeur);
 
             if (!returnValue && tries++ > 3)
@@ -104,11 +104,12 @@ public class FactuurService : IFactuurService
 
             _logger.LogInformation($"Factuur with nummer {factuur.Nummer} was updated");
         }
-
-        _dbContext
-            .Ambassadeurs?
-            .Update(ambassadeur);
-
+        if (ambassadeur != null)
+        {
+            _dbContext
+                .Ambassadeurs?
+                .Update(ambassadeur);
+        }
         await _dbContext.SaveChangesAsync();
 
         return true;
@@ -169,7 +170,7 @@ public class FactuurService : IFactuurService
         factuurStream.Position = 0;
         factuur.Omschrijving = "Factuur voor " + ambassadeur.Naam + "; datum: " + factuur.Datum;
         factuur.Bedrag = ambassadeur.ToegezegdBedrag;
-        factuur.IsVerzonden = false;
+        factuur.FactuurStatus = FactuurStatusEnum.TeVersturen;
         factuur.FactuurType = FactuurTypeEnum.Pdf;
         factuur.FactuurTekst = new Document()
         {

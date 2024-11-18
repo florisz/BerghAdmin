@@ -7,7 +7,6 @@ public class Ambassadeur : Sponsor
     public DateTime? DatumAanmelding { get; set; }
     public DateTime? DatumBeeindiging { get; set; }
     public ICollection<MagazineJaar> MagazineJaren { get; set; } = new List<MagazineJaar>();
-    public ICollection<Factuur> Facturen { get; set; } = new List<Factuur>();
     public string? Fax { get; set; }
     public string? MagazijnSchrijver { get; set; }
     public string? MagazijnFotograaf { get; set; }

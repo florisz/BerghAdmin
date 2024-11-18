@@ -316,9 +316,6 @@ namespace BerghAdmin.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("AmbassadeurId")
-                        .HasColumnType("int");
-
                     b.Property<decimal?>("Bedrag")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -329,14 +326,14 @@ namespace BerghAdmin.Migrations
                     b.Property<int?>("EmailTekstId")
                         .HasColumnType("int");
 
+                    b.Property<int>("FactuurStatus")
+                        .HasColumnType("int");
+
                     b.Property<int?>("FactuurTekstId")
                         .HasColumnType("int");
 
                     b.Property<int>("FactuurType")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsVerzonden")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("Nummer")
                         .HasColumnType("int");
@@ -344,13 +341,16 @@ namespace BerghAdmin.Migrations
                     b.Property<string>("Omschrijving")
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.Property<int?>("SponsorId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("AmbassadeurId");
+                    b.HasKey("Id");
 
                     b.HasIndex("EmailTekstId");
 
                     b.HasIndex("FactuurTekstId");
+
+                    b.HasIndex("SponsorId");
 
                     b.ToTable("Facturen");
                 });
@@ -1114,10 +1114,6 @@ namespace BerghAdmin.Migrations
 
             modelBuilder.Entity("BerghAdmin.Data.Factuur", b =>
                 {
-                    b.HasOne("BerghAdmin.Data.Ambassadeur", null)
-                        .WithMany("Facturen")
-                        .HasForeignKey("AmbassadeurId");
-
                     b.HasOne("BerghAdmin.Data.Document", "EmailTekst")
                         .WithMany()
                         .HasForeignKey("EmailTekstId");
@@ -1125,6 +1121,10 @@ namespace BerghAdmin.Migrations
                     b.HasOne("BerghAdmin.Data.Document", "FactuurTekst")
                         .WithMany()
                         .HasForeignKey("FactuurTekstId");
+
+                    b.HasOne("BerghAdmin.Data.Sponsor", null)
+                        .WithMany("Facturen")
+                        .HasForeignKey("SponsorId");
 
                     b.Navigation("EmailTekst");
 
@@ -1365,10 +1365,13 @@ namespace BerghAdmin.Migrations
                     b.Navigation("BihzUser");
                 });
 
-            modelBuilder.Entity("BerghAdmin.Data.Ambassadeur", b =>
+            modelBuilder.Entity("BerghAdmin.Data.Sponsor", b =>
                 {
                     b.Navigation("Facturen");
+                });
 
+            modelBuilder.Entity("BerghAdmin.Data.Ambassadeur", b =>
+                {
                     b.Navigation("MagazineJaren");
                 });
 #pragma warning restore 612, 618

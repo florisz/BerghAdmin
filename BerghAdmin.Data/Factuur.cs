@@ -4,10 +4,11 @@ namespace BerghAdmin.Data;
 
 public class Factuur
 {
-    public Factuur(int nummer, DateTime datum)
+    public Factuur(int nummer, DateTime datum, int sponsorId)
     {
         Nummer = nummer;
         Datum = datum;
+        SponsorId = sponsorId;
     }
 
     public int Id { get; set; }
@@ -23,17 +24,18 @@ public class Factuur
     public string? Omschrijving { get; set; }
     public decimal? Bedrag { get; set; }
     public DateTime Datum { get; set; }
-    public bool IsVerzonden { get; set; }
+    public FactuurStatusEnum FactuurStatus { get; set; }
     public FactuurTypeEnum FactuurType { get; set; } = FactuurTypeEnum.Unknown;
     public Document? EmailTekst { get; set; }
     public Document? FactuurTekst { get; set; }
+    public int SponsorId { get; set; }
 
-    // TO DO: work out logic
-    public bool IsBetaald()
-    {
-        return true; 
-    }
-
+    [NotMapped]
+    public string GetFactuurStatusAsString =>
+        FactuurStatusService
+            .GetFactuurStatusValues()
+            .FirstOrDefault(sv => sv.FactuurStatusValue == FactuurStatus)!
+            .FactuurStatusText;
 }
 
 public enum FactuurTypeEnum
