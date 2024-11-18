@@ -1,0 +1,116 @@
+﻿@using BerghAdmin.Data
+@using BerghAdmin.DbContexts;
+@using BerghAdmin.Events;
+@using BerghAdmin.General;
+@using BerghAdmin.Pages
+@using BerghAdmin.Services.Facturen
+
+@using Microsoft.EntityFrameworkCore;
+
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.Cards
+
+@using System.Collections;
+@using System.Collections.Generic
+@using System.Linq
+@using System.Security.Claims
+
+
+@inject NavigationManager _navigationManager
+@inject ApplicationDbContext _dbContext
+@inject IFactuurService _factuurService
+@inject ILogger<EditFactuurComponent> _logger
+
+@attribute [Authorize(Policy = "IsAnyRole")]
+
+<h3>Wijzig Factuur gegevens</h3>
+
+<EditForm Model="@_currentFactuur" >
+    <DataAnnotationsValidator />
+    <div class="form-group row">
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Nummer:</label>
+            <label class="col-form-label">@_currentFactuur.Nummer.ToString()</label>
+        </div>
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Status factuur:</label>
+            <SfDropDownList TValue="FactuurStatusEnum" TItem="FactuurStatus" DataSource="@factuurStatusValues" @bind-Value="@_currentFactuur.FactuurStatus">
+                <DropDownListFieldSettings Value="FactuurStatusValue"></DropDownListFieldSettings>
+            </SfDropDownList>
+        </div>
+        <div class="form-group col-lg-3">
+            <label class="col-form-label">Bedrag:</label>
+            <SfNumericTextBox @bind-Value="@_currentFactuur.Bedrag" Decimals="2" TValue="decimal?" Currency="€" Format="C2" ShowSpinButton=false />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <SfButton Type="button" CssClass="e-outline large-margin" IsToggle="true" IsPrimary="true" Content="Opslaan en sluiten" OnClick="@OnDialogSaveAndClose" />
+        <SfButton Type="button" CssClass="e-outline large-margin" IsToggle="false " IsPrimary="false" Content="Afbreken zonder opslaan" OnClick="@OnDialogClose" />
+    </div>
+</EditForm>
+
+@code 
+{
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public string? ReturnUrl { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? _authenticationStateTask { get; set; }
+
+    private Factuur _currentFactuur{ get; set; } = null;
+    private FactuurStatus[] factuurStatusValues = FactuurStatusService.GetFactuurStatusValues();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _logger.LogDebug($"Start Initializing EditFactuurDialoog; threadid={Thread.CurrentThread.ManagedThreadId}");
+        base.OnInitialized();
+
+        _currentFactuur = await _factuurService.GetFactuurByIdAsync(Id);
+        if (_currentFactuur == null)
+            throw new ApplicationException($"Factuur met id {Id} niet gevonden");
+
+        _logger.LogDebug($"Initialize EditFactuurDialoog; threadid={Thread.CurrentThread.ManagedThreadId}");
+    }
+
+    private void OnDialogClose()
+    {
+        // TO DO: If edits were made, ask for confirmation
+        _dbContext.UndoingChangesDbContextLevel();
+        _navigationManager.NavigateTo(ReturnUrl!);
+    }
+
+    private async Task OnDialogSaveAndClose()
+    {
+        await _factuurService.SaveFactuurAsync(_currentFactuur!, null);
+        _navigationManager.NavigateTo(ReturnUrl!);
+    }
+
+}
+
+<style>
+    .col-form-label {
+        padding-top: 1px;
+        padding-bottom: 1px;
+        color: #8d7f7f;
+    }
+
+    .col-form-text {
+        padding-top: 1px;
+        padding-bottom: 1px;
+        color: #8d7f7f;
+        text-indent: 10px;
+    }
+
+    .e-listbox-wrapper:not(.e-list-template) .e-list-item, .e-listbox-wrapper .e-list-nrt, .e-listbox-wrapper .e-selectall-parent, .e-listbox-container:not(.e-list-template) .e-list-item, .e-listbox-container .e-list-nrt, .e-listbox-container .e-selectall-parent {
+        height: 25px;
+        line-height: 1.5;
+        padding: 1px 16px 1px 16px;
+        position: relative;
+    }
+    .large-margin {
+        margin: 6px;
+    }
+</style>
