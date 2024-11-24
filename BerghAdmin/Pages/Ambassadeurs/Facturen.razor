@@ -3,6 +3,7 @@
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
 @using BerghAdmin.DbContexts
+@using BerghAdmin.General
 @using BerghAdmin.Pages.Mail
 @using BerghAdmin.Pages.Personen
 @using BerghAdmin.Services.DateTimeProvider
@@ -14,20 +15,27 @@
 @using Syncfusion.Blazor.SfPdfViewer
 
 @inject IJSRuntime jsRuntime
-@inject ILogger<Ambassadeurs> _logger
+@inject ILogger<Facturen> _logger
 @inject NavigationManager _navigationManager
 @inject ISendMailService _sendMailService
 @inject IMailAttachmentsService _mailAttachmentsService;
 @inject SfDialogService DialogService
 @inject UserManager<User> _userManager
 @inject IDateTimeProvider _dateTimeProvider
+@inject IAmbassadeurService _ambassadeurService
 @inject IFactuurService _factuurService
 @inject IHttpContextAccessor _httpContextAccessor
 
 @attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
 
-<h3>Facturen - Ambassadeurs</h3>
-
+@if (ToonFacturenPerAmbassadeur())
+{
+    <h3>Facturen - @CurrentAmbassadeur.Naam </h3>
+}
+else
+{
+    <h3>Facturen - Alle ambassadeurs</h3>
+}
 @*
     The grid showing all facturen
 *@
@@ -39,19 +47,22 @@
         AllowExcelExport="true"
         ShowColumnMenu="true"
         ContextMenuItems="@(new List<ContextMenuItemModel>() {
-                                new ContextMenuItemModel { Text = "Toon factuur", Target = ".e-content", Id = "show-factuur" },
+                                new ContextMenuItemModel { Text = "Toon/Print factuur", Target = ".e-content", Id = "show-factuur" },
+                                new ContextMenuItemModel { Text = "Email factuur", Target = ".e-content", Id = "mail-factuur" },
+                                new ContextMenuItemModel { Text = "Verwijder factuur", Target = ".e-content", Id = "delete-factuur" },
                             })">
     <GridEditSettings AllowAdding="true"
                       AllowDeleting="true"
                       AllowEditing="true"
                       Mode="EditMode.Dialog"
-                      AllowEditOnDblClick="false">
+                      AllowEditOnDblClick="false" >
     </GridEditSettings>
     <SfToolbar>
         <ToolbarItems>
-            <ToolbarItem Text="Open" TooltipText="Open factuur" PrefixIcon="e-icons e-edit" Align="ItemAlign.Left"  />
-            <ToolbarItem Text="Email" TooltipText="Stuur factuur" PrefixIcon="e-icons e-send" Align="ItemAlign.Left" />
-            <ToolbarItem Text="Export" TooltipText="Export naar excel" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" />
+            <ToolbarItem Text="Toon/Print" TooltipText="Toon en eventueel print factuur" PrefixIcon="e-icons e-edit" Align="ItemAlign.Left" OnClick="ShowFactuur" />
+            <ToolbarItem Text="Email" TooltipText="Email factuur naar sponsor" PrefixIcon="e-icons e-send" Align="ItemAlign.Left" OnClick="MailFactuur"/>
+            <ToolbarItem Text="Delete" TooltipText="Verwijder factuur (alleen voor status 'TeVersturen')" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="DeleteFactuur" />
+            <ToolbarItem Text="Terug" TooltipText="Terug naar voorgaande scherm" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="OnGoBack" />
         </ToolbarItems>
     </SfToolbar>
     <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple" PersistSelection="true"></GridSelectionSettings>
@@ -59,6 +70,7 @@
 
     <GridColumns>
         <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
+        <GridColumn Field=@nameof(Factuur.Id) HeaderText="Id" Visible="false" IsPrimaryKey="true" />
         <GridColumn Field=@nameof(Factuur.FactuurNummer) HeaderText="Nr" TextAlign="TextAlign.Left" Width="40" />
         <GridColumn Field=@nameof(Factuur.Omschrijving) HeaderText="Omschrijving" TextAlign="TextAlign.Left" Width="100" />
         <GridColumn Field=@nameof(Factuur.Datum) HeaderText="Datum" Format="d" Type="ColumnType.Date" Width="60" />
@@ -70,6 +82,12 @@
 
 @code
 {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "Id")]
+    public int? Id { get; set; } = 0;
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "ReturnUrl")]
+    public string? ReturnUrl { get; set; }
     [CascadingParameter]
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
 
@@ -77,9 +95,10 @@
     public string _documentPath { get; set; } = "";
     public List<Factuur> _factuurList = new();
     SendMailDialog sendMailDialog = new();
-    private ConfirmDialog confirmDialog = new();
     private User? CurrentUser;
+    private Ambassadeur CurrentAmbassadeur = null;
     private bool ToonVerwijderd { get; set; } = false;
+    private bool ToonFacturenPerAmbassadeur() { return Id != null; }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -92,6 +111,11 @@
 
         _logger.LogDebug($"Factuur page initialized; threadid={Thread.CurrentThread.ManagedThreadId}");
 
+        if (Id != null)
+        {
+            CurrentAmbassadeur = await _ambassadeurService.GetById(Id.Value!);
+        }
+
         await RefreshList();
 
         if (_authenticationStateTask != null)
@@ -101,9 +125,16 @@
         }
     }
 
+    private void OnGoBack()
+    {
+        // go to previous page TO DO: depends on where we came from, to be fixed
+        _navigationManager.NavigateTo(ReturnUrl!);
+    }
+
+
     public async Task RefreshList()
     {
-        _factuurList = await GetFacturen();
+        _factuurList = await GetFacturen(Id == null? null : Id.Value);
         await _factuurGrid.AutoFitColumnsAsync();
     }
 
@@ -114,28 +145,96 @@
         if (args.Item.Id == "show-factuur")
         {
             var factuur = args.RowInfo.RowData as Factuur;
-            await ShowFactuur(factuur.Id);
+            await ShowFactuur();
             return;
         }
     }
 
 
-    private async Task<List<Factuur>> GetFacturen()
+    private async Task<List<Factuur>> GetFacturen(int? ambassadeurId)
     {
         var facturen = await _factuurService.GetFacturenAsync(_dateTimeProvider.Now.Year);
-        if (facturen != null)
+        if (ambassadeurId != null)
         {
-            return facturen.ToList();
+            facturen = facturen
+                        .Where(f => f.SponsorId == ambassadeurId.Value)
+                        .ToList();
         }
-        facturen = facturen!
-                        .OrderBy(f => f.Nummer)
-                        .ToList<Factuur>();
-
-        return facturen!;
+        return facturen!
+                .OrderByDescending(f => f.Datum)
+                .ToList<Factuur>();
     }
 
-    private async Task ShowFactuur(int id)
+    private async Task ShowFactuur()
     {
-        _navigationManager.NavigateTo($"ShowPdf?FactuurId={id}");
+        // get selected factuur first
+        var factuur = await GetSelectedFactuur();
+        if (factuur != null)
+        {
+            var url = _navigationManager.CreateUrlWithContext(factuur.Id, $"ShowPdf?FactuurId={factuur.Id}");
+            _navigationManager.NavigateTo(url);
+        }
+    }
+
+    private async Task MailFactuur()
+    {
+        // get selected factuur first
+        var factuur = await GetSelectedFactuur();
+        if (factuur != null)
+        {
+
+        }
+    }
+
+    private async Task DeleteFactuur()
+    {
+        // get selected factuur first
+        var factuur = await GetSelectedFactuur();
+        if (factuur != null)
+        {
+            bool isConfirmed = await DialogService.ConfirmAsync($"Moet de factuur voor {factuur.Omschrijving} verwijderd worden?", "Verwijder factuur.");
+            if (isConfirmed)
+            {
+                if (factuur.FactuurStatus != FactuurStatusEnum.TeVersturen)
+                {
+                    await DialogService.AlertAsync("Factuur kan alleen verwijderd worden als de status 'TeVersturen' is.");
+                    return;
+                }
+                // verwijder factuur
+                await _factuurService.DeleteFactuurAsync(factuur);
+                await DeleteRecordFromGrid(factuur.Id);
+            }
+        }
+    }
+
+    private async Task DeleteRecordFromGrid(int id)
+    {
+        var records = await _factuurGrid!.GetCurrentViewRecords();
+        var record = records.Find(r => r.Id == id);
+        if (record == null)
+        {
+            await DialogService.AlertAsync("Factuur niet gevonden in de lijst.");
+            return;
+        }
+        await _factuurGrid.DeleteRecordAsync("Id", record!);
+        await _factuurGrid.EndEditAsync();
+        await _factuurGrid.Refresh();
+    }
+
+    private async Task<Factuur?> GetSelectedFactuur()
+    {
+        var facturen = await this._factuurGrid.GetSelectedRecordsAsync();
+        if (facturen.Count == 0)
+        {
+            await DialogService.AlertAsync("Selecteer eerst één factuur.");
+            return null;
+        }
+        else if (facturen.Count > 1)
+        {
+            await DialogService.AlertAsync("Er zijn meerdere facturen geselecteerd. Selecteer eerst een factuur of gebruik de rechtermuisclick.");
+            return null;
+        }
+        
+        return facturen.ElementAt(0);
     }
 }

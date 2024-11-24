@@ -64,10 +64,12 @@
         <ToolbarItems>
             <ToolbarItem Text="Toevoegen" TooltipText="Toevoegen ambassadeur" PrefixIcon="e-icons e-circle-add" Align="ItemAlign.Left" OnClick="AddAmbassadeur" />
             <ToolbarItem Text="Wijzig" TooltipText="Wijzig ambassadeur" PrefixIcon="e-icons e-edit" Align="ItemAlign.Left" OnClick="EditAmbassadeur" />
-            <ToolbarItem Text="Email" TooltipText="Stuur email" PrefixIcon="e-icons e-send" Align="ItemAlign.Left" OnClick="ShowSendMailDialog" />
-            <ToolbarItem Text="Kopieer emailadres(sen)" TooltipText="Kopieer email adressen" PrefixIcon="e-icons e-copy" Align="ItemAlign.Left" OnClick="CopySelectedEmailAddressesAsync" />
-            <ToolbarItem Text="Export" TooltipText="Export naar excel" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ExportToExcelAsync" />
-            <ToolbarItem Text="Factuur" TooltipText="Maak factuur voor deze ambassadeur" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="MaakFactuurAsync" />
+            <ToolbarItem Text="Email" TooltipText="Verzend een email naar de ambassadeur" PrefixIcon="e-icons e-send" Align="ItemAlign.Left" OnClick="ShowSendMailDialog" />
+            <ToolbarItem Text="Kopieer emailadres(sen)" TooltipText="Kopieer email adressen naar klembord" PrefixIcon="e-icons e-copy" Align="ItemAlign.Left" OnClick="CopySelectedEmailAddressesAsync" />
+            <ToolbarItem Text="Export" TooltipText="Export inhoud van de tabel naar excel" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ExportToExcelAsync" />
+            <ToolbarItem Text="Export alles" TooltipText="Export alle ambassadeur data naar excel" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ExportToExcelAsync" />
+            <ToolbarItem Text="Factuur maken" TooltipText="Maak factuur voor deze ambassadeur" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="MaakFactuurAsync" />
+            <ToolbarItem Text="Facturen tonen" TooltipText="Toon alle facturen voor deze ambassadeur" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ToonFacturenAsync" />
             <ToolbarItem Type="ItemType.Input" Align="Syncfusion.Blazor.Navigations.ItemAlign.Right">
                 <Template>
                     <SfTextBox Placeholder="Type tekst om te zoeken" Input="OnInputSearchString"></SfTextBox>
@@ -112,7 +114,6 @@
         </GridColumn>
     </GridColumns>
 </SfGrid>
-<ConfirmDialog @ref="confirmDialog" />
 <SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
 
 @code
@@ -123,8 +124,8 @@
     SfGrid<Ambassadeur> _ambassadeursGrid = new();
     public List<Ambassadeur> _ambassadeursList = new();
     SendMailDialog sendMailDialog = new();
-    private ConfirmDialog confirmDialog = new();
     private User? CurrentUser;
+
     private bool ToonVerwijderd { get; set; } = false;
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -208,7 +209,7 @@
 
     private async Task EditAmbassadeur()
     {
-        // get selected personen first
+        // get selected ambassadeurs first
         var selectedAmbassadeurs = await this._ambassadeursGrid.GetSelectedRecordsAsync();
         if (selectedAmbassadeurs.Count == 0)
         {
@@ -270,7 +271,7 @@
 
         if (isConfirm)
         {
-            // get selected personen 
+            // get selected personen
             var selectedAmbassadeurs = await this._ambassadeursGrid.GetSelectedRecordsAsync();
             if (selectedAmbassadeurs.Count == 0)
             {
@@ -285,6 +286,22 @@
                 }
                 await jsRuntime.InvokeVoidAsync("alert", $"Er zijn {selectedAmbassadeurs.Count} factuur(en) aangemaakt.");
             }
+        }
+    }
+
+    private async Task ToonFacturenAsync()
+    {
+        // get selected personen
+        var selectedAmbassadeurs = await this._ambassadeursGrid.GetSelectedRecordsAsync();
+        if (selectedAmbassadeurs.Count == 0 || selectedAmbassadeurs.Count > 1)
+        {
+            await DialogService.AlertAsync("Selecteer eerst één ambassadeur.");
+        }
+        else
+        {
+            // Open toon facturen window for the selected ambassadeur
+            var url = _navigationManager.CreateUrlWithContext(selectedAmbassadeurs.ElementAt(0).Id, "Ambassadeurs/Facturen");
+            _navigationManager.NavigateTo(url);
         }
     }
 

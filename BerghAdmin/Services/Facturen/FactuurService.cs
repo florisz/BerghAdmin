@@ -27,6 +27,18 @@ public class FactuurService : IFactuurService
         _logger = logger;
         logger.LogDebug($"FactuurService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
     }
+    public async Task DeleteFactuurAsync(Factuur factuur)
+    {
+        _logger.LogDebug($"Delete factuur with id:{factuur.Id}");
+
+        if (factuur != null)
+        {
+            _dbContext.Facturen?.Remove(factuur);
+            await _dbContext.SaveChangesAsync();
+
+            _logger.LogDebug($"Factuur with nummer {factuur.Nummer} deleted");
+        }
+    }
 
     public Task<List<Factuur>> GetFacturenAsync(int jaar)
         => _dbContext.Facturen!
