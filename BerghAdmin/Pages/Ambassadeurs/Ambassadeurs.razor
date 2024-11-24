@@ -5,9 +5,13 @@
 @using BerghAdmin.Data
 @using BerghAdmin.Events
 @using BerghAdmin.General
+@using BerghAdmin.Pages
 @using BerghAdmin.Pages.Mail
 @using BerghAdmin.Pages.Personen
+@using BerghAdmin.Services
+@using BerghAdmin.Services.Configuration
 @using BerghAdmin.Services.DateTimeProvider
+@using BerghAdmin.Services.Export
 @using BerghAdmin.Services.Facturen
 @using BerghAdmin.Services.Sponsoren
 
@@ -24,6 +28,7 @@
 @inject IAmbassadeurService _ambassadeurService
 @inject IDateTimeProvider _dateTimeProvider
 @inject IFactuurService _factuurService
+@inject IExcelService _excelService
 
 @attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
 
@@ -67,7 +72,7 @@
             <ToolbarItem Text="Email" TooltipText="Verzend een email naar de ambassadeur" PrefixIcon="e-icons e-send" Align="ItemAlign.Left" OnClick="ShowSendMailDialog" />
             <ToolbarItem Text="Kopieer emailadres(sen)" TooltipText="Kopieer email adressen naar klembord" PrefixIcon="e-icons e-copy" Align="ItemAlign.Left" OnClick="CopySelectedEmailAddressesAsync" />
             <ToolbarItem Text="Export" TooltipText="Export inhoud van de tabel naar excel" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ExportToExcelAsync" />
-            <ToolbarItem Text="Export alles" TooltipText="Export alle ambassadeur data naar excel" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ExportToExcelAsync" />
+            <ToolbarItem Text="Export alles" TooltipText="Export alle ambassadeur data naar excel" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ExportAllToExcelAsync" />
             <ToolbarItem Text="Factuur maken" TooltipText="Maak factuur voor deze ambassadeur" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="MaakFactuurAsync" />
             <ToolbarItem Text="Facturen tonen" TooltipText="Toon alle facturen voor deze ambassadeur" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="ToonFacturenAsync" />
             <ToolbarItem Type="ItemType.Input" Align="Syncfusion.Blazor.Navigations.ItemAlign.Right">
@@ -253,7 +258,7 @@
         await RefreshList();
     }
 
-    // export to excel
+    // export grid to excel
     private async Task ExportToExcelAsync()
     {
         string fileName = $"ambassadeurs_{_dateTimeProvider.Now:yyyyMMdd_HHmmss}.xlsx";
@@ -262,6 +267,16 @@
                 FileName = fileName
             };
         await this._ambassadeursGrid.ExportToExcelAsync(exportProperties);
+        await jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
+    }
+
+    // export all to excel
+    private async Task ExportAllToExcelAsync()
+    {
+        string fileName = $"AlleAmbassadeurs_{_dateTimeProvider.Now:yyyyMMdd_HHmmss}.xlsx";
+
+        await _excelService.ExportAmbassadeursAsync(fileName);
+
         await jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
     }
 

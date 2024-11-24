@@ -5,4 +5,5 @@ namespace BerghAdmin.Services.Export;
 public interface IExcelService
 {
     Task<bool> ExportPersonenAsync(string path);
+    Task<bool> ExportAmbassadeursAsync(string path);
 }

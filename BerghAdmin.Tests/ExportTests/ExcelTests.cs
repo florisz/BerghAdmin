@@ -30,5 +30,14 @@ namespace BerghAdmin.Tests.ExportTests
             Assert.IsFalse(rv);
         }
 
+        [Test]
+        public async Task ExportAmbassadeursTest()
+        {
+            var excelService = this.GetRequiredService<IExcelService>();
+            var rv = await excelService.ExportAmbassadeursAsync("not/a/valid/filename");
+
+            Assert.IsFalse(rv);
+        }
+
     }
 }
