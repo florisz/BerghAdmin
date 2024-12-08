@@ -2,7 +2,7 @@
 using BerghAdmin.Services.DateTimeProvider;
 using BerghAdmin.Services.Documenten;
 using BerghAdmin.Services.Facturen;
-
+using BerghAdmin.Services.Sponsoren;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -20,6 +20,7 @@ namespace BerghAdmin.Tests.FactuurTests
                 .AddScoped<IDocumentService, DocumentService>()
                 .AddScoped<IDocumentMergeService, DocumentMergeService>()
                 .AddScoped<IPdfConverter, PdfConverter>()
+                .AddScoped<IAmbassadeurService, AmbassadeurService>()
                 .AddScoped<IDateTimeProvider, TestDateTimeProvider>()
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
         }
@@ -27,15 +28,22 @@ namespace BerghAdmin.Tests.FactuurTests
         [Test]
         public async Task GetNewFactuurTest()
         {
-            var factuurService = this.GetRequiredService<IFactuurService>();
-            Ambassadeur ambassadeur = new Ambassadeur() { DebiteurNummer = "1", Naam = "aap" };
-            var factuur = await factuurService.GetNewFactuurAsync(ambassadeur);
-            // TO DO: solve whatif twee facturen op precies hetzelfde moment hetzelfde nummer krijgen
-            var nummer = factuur!.Nummer;
-            factuur = await factuurService.GetFactuurByNummerAsync(nummer);
+            try
+            {
+                var factuurService = this.GetRequiredService<IFactuurService>();
+                Ambassadeur ambassadeur = new Ambassadeur() { DebiteurNummer = "1", Naam = "aap" };
+                var factuur = await factuurService.GetNewFactuurAsync(ambassadeur);
+                // TO DO: solve whatif twee facturen op precies hetzelfde moment hetzelfde nummer krijgen
+                var nummer = factuur!.Nummer;
+                factuur = await factuurService.GetFactuurByNummerAsync(nummer);
 
-            Assert.IsNotNull(factuur);
-            Assert.AreEqual(factuur!.Nummer, nummer);
+                Assert.IsNotNull(factuur);
+                Assert.AreEqual(factuur!.Nummer, nummer);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.Message);
+            }
         }
 
         [Test]

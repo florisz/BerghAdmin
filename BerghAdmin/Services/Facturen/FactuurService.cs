@@ -2,6 +2,7 @@
 using BerghAdmin.DbContexts;
 using BerghAdmin.Services.DateTimeProvider;
 using BerghAdmin.Services.Documenten;
+using BerghAdmin.Services.Sponsoren;
 using Microsoft.EntityFrameworkCore;
 
 namespace BerghAdmin.Services.Facturen;
@@ -12,18 +13,21 @@ public class FactuurService : IFactuurService
     private readonly IDateTimeProvider _dateTimeProvider;
     private ILogger<FactuurService> _logger;
     private IDocumentMergeService _mergeService;
+    private IAmbassadeurService _ambassadeurService;
     private IPdfConverter _pdfConverter;
 
     public FactuurService(ApplicationDbContext dbContext, 
                             IDateTimeProvider dateTimeProvider,
                             IDocumentMergeService mergeService,
                             IPdfConverter pdfConverter,
+                            IAmbassadeurService ambassadeurService,
                             ILogger<FactuurService> logger)
     {
         _dbContext = dbContext;
         _dateTimeProvider = dateTimeProvider;
         _mergeService = mergeService;
         _pdfConverter = pdfConverter;
+        _ambassadeurService = ambassadeurService;
         _logger = logger;
         logger.LogDebug($"FactuurService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
     }
@@ -116,12 +120,8 @@ public class FactuurService : IFactuurService
 
             _logger.LogInformation($"Factuur with nummer {factuur.Nummer} was updated");
         }
-        if (ambassadeur != null)
-        {
-            _dbContext
-                .Ambassadeurs?
-                .Update(ambassadeur);
-        }
+        ambassadeur.Facturen.Add(factuur);
+        await _ambassadeurService.SaveAsync(ambassadeur);
         await _dbContext.SaveChangesAsync();
 
         return true;
