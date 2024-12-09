@@ -3,6 +3,7 @@
 @using BerghAdmin.Authorization
 @using BerghAdmin.Data
 @using BerghAdmin.DbContexts
+@using BerghAdmin.Events
 @using BerghAdmin.General
 @using BerghAdmin.Pages.Mail
 @using BerghAdmin.Pages.Personen
@@ -24,7 +25,6 @@
 @inject IDateTimeProvider _dateTimeProvider
 @inject IAmbassadeurService _ambassadeurService
 @inject IFactuurService _factuurService
-@inject IHttpContextAccessor _httpContextAccessor
 
 @attribute [Authorize(Policy = "IsBeheerAmbassadeurs")]
 
@@ -50,6 +50,12 @@ else
                                 new ContextMenuItemModel { Text = "Toon/Print factuur", Target = ".e-content", Id = "show-factuur" },
                                 new ContextMenuItemModel { Text = "Email factuur", Target = ".e-content", Id = "mail-factuur" },
                                 new ContextMenuItemModel { Text = "Verwijder factuur", Target = ".e-content", Id = "delete-factuur" },
+                                new ContextMenuItemModel { Text = "Zet status-TeVersturen", Target = ".e-content", Id = "set-status-teversturen" },
+                                new ContextMenuItemModel { Text = "Zet status-Verzonden", Target = ".e-content", Id = "set-status-verzonden" },
+                                new ContextMenuItemModel { Text = "Zet status-NietBetaald", Target = ".e-content", Id = "set-status-nietbetaald" },
+                                new ContextMenuItemModel { Text = "Zet status-Achterstallig", Target = ".e-content", Id = "set-status-achterstallig" },
+                                new ContextMenuItemModel { Text = "Zet status-Betaald", Target = ".e-content", Id = "set-status-betaald" },
+                                new ContextMenuItemModel { Text = "Zet status-Gecrediteerd", Target = ".e-content", Id = "set-status-gecrediteerd" },
                             })">
     <GridEditSettings AllowAdding="true"
                       AllowDeleting="true"
@@ -79,6 +85,7 @@ else
         <GridColumn Field=@nameof(Factuur.FactuurType) HeaderText="Type" TextAlign="TextAlign.Left" Width="60" />
     </GridColumns>
 </SfGrid>
+<SendMailDialog @ref="sendMailDialog" OnMailMessageConfigured="OnMailMessageConfigured" />
 
 @code
 {
@@ -142,10 +149,50 @@ else
     // Triggers when the item is selected
     public async Task OnContextMenuClick(ContextMenuClickEventArgs<Factuur> args)
     {
+        var factuur = args.RowInfo.RowData as Factuur;
         if (args.Item.Id == "show-factuur")
         {
-            var factuur = args.RowInfo.RowData as Factuur;
             await ShowFactuur();
+            return;
+        }
+        if (args.Item.Id == "mail-factuur")
+        {
+            MailFactuur();
+            return;
+        }
+        if (args.Item.Id == "delete-factuur")
+        {
+            await DeleteFactuur();
+            return;
+        }
+        if (args.Item.Id == "set-status-teversturen")
+        {
+            await ZetStatusFactuur(FactuurStatusEnum.TeVersturen);
+            return;
+        }
+        if (args.Item.Id == "set-status-verzonden")
+        {
+            await ZetStatusFactuur(FactuurStatusEnum.Verzonden);
+            return;
+        }
+        if (args.Item.Id == "set-status-nietbetaald")
+        {
+            await ZetStatusFactuur(FactuurStatusEnum.NietBetaald);
+            return;
+        }
+        if (args.Item.Id == "set-status-achterstallig")
+        {
+            await ZetStatusFactuur(FactuurStatusEnum.Achterstallig);
+            return;
+        }
+        if (args.Item.Id == "set-status-betaald")
+        {
+            await ZetStatusFactuur(FactuurStatusEnum.Betaald);
+            return;
+        }
+        if (args.Item.Id == "set-status-gecrediteerd")
+        {
+            await ZetStatusFactuur(FactuurStatusEnum.Gecrediteerd);
             return;
         }
     }
@@ -176,14 +223,50 @@ else
         }
     }
 
-    private async Task MailFactuur()
+    private async void MailFactuur()
     {
-        // get selected factuur first
-        var factuur = await GetSelectedFactuur();
-        if (factuur != null)
+        // get selected facturen first
+        var facturen = await this._factuurGrid.GetSelectedRecordsAsync();
+        if (facturen.Count == 0)
         {
-
+            await DialogService.AlertAsync("Selecteer eerst één factuur.");
+            return;
         }
+        var factuur = facturen[0];
+        // verzend de eerste factuur
+        if (string.IsNullOrWhiteSpace(CurrentUser?.Email))
+        {
+            await DialogService.AlertAsync("Huidige gebruiker heeft geen email adres, niet vergeten in te vullen!.");
+        }
+
+        List<MailAddress>? selectedAddresses = GetAmbassadeurEmailAddress(factuur.SponsorId);
+        if (selectedAddresses == null)
+        {
+            return;
+        }
+        MailMessage message = new()
+            {
+                From = new MailAddress(CurrentUser.Email, CurrentUser.Name),
+                To = selectedAddresses
+            };
+        sendMailDialog.DialogOpen(message);
+    }
+
+    private async Task ZetStatusFactuur(FactuurStatusEnum newStatus)
+    {
+        // get selected facturen first
+        var facturen = await this._factuurGrid.GetSelectedRecordsAsync();
+        if (facturen.Count == 0)
+        {
+            await DialogService.AlertAsync("Selecteer eerst één factuur.");
+            return;
+        }
+        foreach (var factuur in facturen)
+        {
+            factuur.FactuurStatus = newStatus;
+            await _factuurService.SaveFactuurAsync(factuur);
+        }
+        await _factuurGrid.Refresh();
     }
 
     private async Task DeleteFactuur()
@@ -234,7 +317,37 @@ else
             await DialogService.AlertAsync("Er zijn meerdere facturen geselecteerd. Selecteer eerst een factuur of gebruik de rechtermuisclick.");
             return null;
         }
-        
+
         return facturen.ElementAt(0);
     }
+
+    private List<MailAddress>? GetAmbassadeurEmailAddress(int ambassadeurId)
+    {
+        var ambassadeur = _ambassadeurService.GetById(ambassadeurId).Result;
+        if (ambassadeur == null)
+        {
+            return null;
+        }
+        if (ambassadeur.ContactPersoon1 == null || string.IsNullOrEmpty(ambassadeur.ContactPersoon1.EmailAdres))
+        {
+            DialogService.AlertAsync($"Contactpersoon 1 van Ambassadeur {ambassadeur.Naam} is leeg of heeft geen emailadres. Kan factuur niet mailen.");
+            return null;
+        }
+        var emailAddressesList = new List<MailAddress>();
+        emailAddressesList.Add(new(ambassadeur.ContactPersoon1.EmailAdres, ambassadeur.ContactPersoon1.VolledigeNaam, ambassadeur.ContactPersoon1.Id));
+        
+        return emailAddressesList;
+    }
+
+    private async void OnMailMessageConfigured(MailMessageConfiguredEventArgs eventArgs)
+    {
+        var message = eventArgs.Message;
+
+        // Replace all content ids with inlined attachments
+        _mailAttachmentsService.ReplaceServerImagesWithInlinedAttachments(message);
+
+        bool isSandboxMode = false; // If SandboxMode is set to true, no mails are actually sent, so great for testing.
+        await _sendMailService.SendMail(message, isSandboxMode);
+    }
+
 }

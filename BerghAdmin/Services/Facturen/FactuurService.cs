@@ -99,7 +99,12 @@ public class FactuurService : IFactuurService
         return await GetFactuurByNummerAsync(nummer);
     }
 
-    public async Task<bool> SaveFactuurAsync(Factuur factuur, Ambassadeur ambassadeur)
+    public async Task<bool> SaveFactuurAsync(Factuur factuur)
+    { 
+        return await SaveFactuurAsync(factuur, null);
+    }
+
+    public async Task<bool> SaveFactuurAsync(Factuur factuur, Ambassadeur? ambassadeur)
     {
         _logger.LogDebug($"SaveAsync factuur with nummer {factuur.Nummer}");
 
@@ -120,8 +125,11 @@ public class FactuurService : IFactuurService
 
             _logger.LogInformation($"Factuur with nummer {factuur.Nummer} was updated");
         }
-        ambassadeur.Facturen.Add(factuur);
-        await _ambassadeurService.SaveAsync(ambassadeur);
+        if (ambassadeur != null)
+        {
+            ambassadeur.Facturen.Add(factuur);
+            await _ambassadeurService.SaveAsync(ambassadeur);
+        }
         await _dbContext.SaveChangesAsync();
 
         return true;

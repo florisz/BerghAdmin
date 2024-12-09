@@ -10,7 +10,8 @@ public interface IFactuurService
     Task<Factuur?> GetFactuurByIdAsync(int id);
     Task<Factuur?> GetFactuurByIdWithPdfAsync(int id);
     Task<List<Factuur>> GetFacturenAsync(int jaar);
-    Task<bool> SaveFactuurAsync(Factuur factuur, Ambassadeur ambassadeur);
+    Task<bool> SaveFactuurAsync(Factuur factuur);
+    Task<bool> SaveFactuurAsync(Factuur factuur, Ambassadeur? ambassadeur);
     Task DeleteFactuurAsync(Factuur factuur);
     Task MaakFactuurVoorAmbassadeur(string templateName, Ambassadeur ambassadeur);
 }

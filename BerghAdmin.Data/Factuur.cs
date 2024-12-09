@@ -14,13 +14,7 @@ public class Factuur
     public int Id { get; set; }
     public int Nummer { get; set; }
     [NotMapped]
-    public string FactuurNummer
-    {
-        get
-        {
-            return Nummer.ToString("00000");
-        }
-    }
+    public string FactuurNummer => DateTime.Now.Year.ToString() + Nummer.ToString("00000");
     public string? Omschrijving { get; set; }
     public decimal? Bedrag { get; set; }
     public DateTime Datum { get; set; }
