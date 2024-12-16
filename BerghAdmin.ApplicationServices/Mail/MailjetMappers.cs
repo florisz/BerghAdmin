@@ -64,6 +64,7 @@ namespace BerghAdmin.ApplicationServices.Mail
                     .WithTextPart(mailMessage.TextBody)
                     .WithHtmlPart(mailMessage.HtmlBody)
                     .WithInlinedAttachments(mailMessage.InlinedAttachments.ToMailjetAttachments())
+                    .WithAttachments(mailMessage.Attachments.ToMailjetAttachments())
                     .Build();
                 emails.Add(email);
             }

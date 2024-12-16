@@ -123,13 +123,12 @@ else
             CurrentAmbassadeur = await _ambassadeurService.GetById(Id.Value!);
         }
 
-        await RefreshList();
-
         if (_authenticationStateTask != null)
         {
             var authenticationState = await _authenticationStateTask;
             CurrentUser = await _userManager.GetUserAsync(authenticationState?.User);
         }
+        await RefreshList();
     }
 
     private void OnGoBack()
@@ -142,6 +141,7 @@ else
     public async Task RefreshList()
     {
         _factuurList = await GetFacturen(Id == null? null : Id.Value);
+        await _factuurGrid.AutoFitColumnsAsync();
         await _factuurGrid.AutoFitColumnsAsync();
     }
 
@@ -225,20 +225,21 @@ else
 
     private async void MailFactuur()
     {
-        // get selected facturen first
-        var facturen = await this._factuurGrid.GetSelectedRecordsAsync();
-        if (facturen.Count == 0)
-        {
-            await DialogService.AlertAsync("Selecteer eerst één factuur.");
-            return;
-        }
-        var factuur = facturen[0];
-        // verzend de eerste factuur
+        // warn user if there is no sender address
         if (string.IsNullOrWhiteSpace(CurrentUser?.Email))
         {
             await DialogService.AlertAsync("Huidige gebruiker heeft geen email adres, niet vergeten in te vullen!.");
         }
 
+        // get selected factuur
+        var facturen = await this._factuurGrid.GetSelectedRecordsAsync();
+        if (facturen.Count != 1)
+        {
+            await DialogService.AlertAsync("Selecteer eerst één factuur.");
+            return;
+        }
+
+        var factuur = facturen[0];
         List<MailAddress>? selectedAddresses = GetAmbassadeurEmailAddress(factuur.SponsorId);
         if (selectedAddresses == null)
         {
@@ -247,9 +248,31 @@ else
         MailMessage message = new()
             {
                 From = new MailAddress(CurrentUser.Email, CurrentUser.Name),
-                To = selectedAddresses
+                To = selectedAddresses,
+                Subject = $"Factuur Ambassadeur Bergh in het Zadel {factuur.FactuurNummer}"
             };
+        message.Attachments.Add(await CreatePdfAttachment(factuur));
         sendMailDialog.DialogOpen(message);
+    }
+
+    private async Task<MailAttachment> CreatePdfAttachment(Factuur factuur)
+    {
+        if (factuur == null)
+        {
+            throw new ArgumentNullException("Factuur is null");
+        }
+        var factuurPdf = await _factuurService.GetFactuurByIdWithPdfAsync(factuur.Id);
+        if (factuurPdf == null || factuurPdf.FactuurTekst == null)
+        {
+            throw new ArgumentNullException("FactuurPdf or FactuurTekst is null");
+        }
+        var content = Convert.ToBase64String(factuurPdf!.FactuurTekst!.Content);
+        var attachment = new MailAttachment(
+                                $"FactuurBihz_{factuurPdf.FactuurNummer}.pdf",
+                                "application/pdf",
+                                content,
+                                null);
+        return attachment;
     }
 
     private async Task ZetStatusFactuur(FactuurStatusEnum newStatus)

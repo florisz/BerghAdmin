@@ -9,6 +9,7 @@ public class MailMessage
     public List<MailAddress> Bcc { get; set; } = new();
     public string TextBody { get; set; } = string.Empty;
     public string HtmlBody { get; set; } = string.Empty;
+    public List<MailAttachment> Attachments { get; set; } = new();
     public List<MailAttachment> InlinedAttachments { get; set; } = new();
 
     private readonly Dictionary<string, Problem> validationProblems = new();
