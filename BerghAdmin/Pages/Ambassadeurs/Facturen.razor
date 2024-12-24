@@ -68,7 +68,6 @@ else
             <ToolbarItem Text="Toon/Print" TooltipText="Toon en eventueel print factuur" PrefixIcon="e-icons e-edit" Align="ItemAlign.Left" OnClick="ShowFactuur" />
             <ToolbarItem Text="Email" TooltipText="Email factuur naar sponsor" PrefixIcon="e-icons e-send" Align="ItemAlign.Left" OnClick="MailFactuur"/>
             <ToolbarItem Text="Delete" TooltipText="Verwijder factuur (alleen voor status 'TeVersturen')" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="DeleteFactuur" />
-            <ToolbarItem Text="Terug" TooltipText="Terug naar voorgaande scherm" PrefixIcon="e-icons e-export" Align="ItemAlign.Left" OnClick="OnGoBack" />
         </ToolbarItems>
     </SfToolbar>
     <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple" PersistSelection="true"></GridSelectionSettings>
@@ -105,7 +104,7 @@ else
     private User? CurrentUser;
     private Ambassadeur CurrentAmbassadeur = null;
     private bool ToonVerwijderd { get; set; } = false;
-    private bool ToonFacturenPerAmbassadeur() { return Id != null; }
+    private bool ToonFacturenPerAmbassadeur() { return Id != null && Id != 0; }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -141,7 +140,6 @@ else
     public async Task RefreshList()
     {
         _factuurList = await GetFacturen(Id == null? null : Id.Value);
-        await _factuurGrid.AutoFitColumnsAsync();
         await _factuurGrid.AutoFitColumnsAsync();
     }
 

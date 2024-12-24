@@ -1,7 +1,111 @@
-﻿@page "/Financien/betalingen"
+﻿@page "/Financien/Betalingen"
 
 @using BerghAdmin.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Syncfusion.Blazor.Buttons
+@using BerghAdmin.Data
+@using System.IO
+
+@inject NavigationManager NavManager
+@inject IJSRuntime jsRuntime
+@inject BerghAdmin.Services.Betalingen.IBetalingenImporterService importerService
+@inject BerghAdmin.Services.Betalingen.IBetalingenService betalingenService
 
 @attribute [Authorize(Policy = "IsBeheerFinancien")]
 
-<h1>Betalingen</h1>
+<h3>Financiën</h3>
+<SfGrid @ref="@BetalingenGrid" DataSource="@BetalingenList" SelectedRowIndex=0>
+    <GridEditSettings>
+    </GridEditSettings>
+    <GridEvents TValue="Betaling" />
+    <GridColumns>
+        <GridColumn Field=@nameof(Betaling.DatumTijd) HeaderText="Datum" Format="d" Type="ColumnType.Date" TextAlign="TextAlign.Left" Width="50"></GridColumn>
+        <GridColumn Field=@nameof(Betaling.Bedrag) HeaderText="Bedrag" TextAlign="TextAlign.Left" Width="40" IsPrimaryKey="true"></GridColumn>
+        <GridColumn Field=@nameof(Betaling.NaamTegenpartij) HeaderText="Naam TegenPartij" TextAlign="TextAlign.Left" Width="100"></GridColumn>
+        <GridColumn Field=@nameof(Betaling.Omschrijving1) HeaderText="Omschrijving" TextAlign="TextAlign.Left" Width="120"></GridColumn>
+        <GridColumn Field=@nameof(Betaling.TransactieReferentie) HeaderText="Referentie" TextAlign="TextAlign.Left" Width="120"></GridColumn>
+    </GridColumns>
+</SfGrid>
+
+<h4>Import</h4>
+<SfButton @onclick="OpenDialog" CssClass="e-flat">Import bankbestand</SfButton>
+
+<SfDialog Width="550px" IsModal="true" @bind-Visible="IsVisible">
+    <DialogEvents OnOverlayModalClick="@OnOverlayModalClick"></DialogEvents>
+    <DialogTemplates>
+        <Content>Import Rabobank export CSV bestand met betalingen</Content>
+    </DialogTemplates>
+    <SfUploader AutoUpload="false">
+        <UploaderEvents ValueChange="OnChange"></UploaderEvents>
+    </SfUploader>
+</SfDialog>
+
+@code
+{
+    public IEnumerable<Betaling> BetalingenList = new List<Betaling>();
+    SfGrid<Betaling> BetalingenGrid = new();
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await jsRuntime.InvokeAsync<object>("SetSideMenu", "financien");
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        BetalingenList = GetBetalingen();
+    }
+
+    private IEnumerable<Betaling> GetBetalingen()
+    {
+        var betalingen = betalingenService.GetAll();
+
+        if (betalingen == null)
+        {
+            return new List<Betaling>();
+        }
+
+        return betalingen
+                    .OrderByDescending(b => b.Volgnummer)
+                    .ToList<Betaling>();
+    }
+
+    private bool IsVisible { get; set; } = false;
+
+    private void OpenDialog()
+    {
+        this.IsVisible = true;
+    }
+
+    private void OnOverlayModalClick(OverlayModalClickEventArgs args)
+    {
+        this.IsVisible = false;
+        BetalingenGrid.Refresh();
+    }
+
+    private async Task OnChange(UploadChangeEventArgs args)
+    {
+        List<Betaling> betalingen = new List<Betaling>();
+
+        foreach (var file in args.Files)
+        {
+            if (file.FileInfo.Size > 512000)
+            {
+                // TO DO: is het nodig om dit te ondervangen?
+                throw new Exception("File heeft meer dan 512K bytes");
+            }
+            var stream = file.File.OpenReadStream();
+
+            // TO DO pass the File property to the importerService
+            betalingen = importerService.ImportBetalingen(stream);
+        }
+
+        foreach (var betaling in betalingen)
+        {
+            if (betalingenService!.GetByVolgnummer(betaling.Volgnummer) == null)
+            {
+                await betalingenService.SaveAsync(betaling);
+            }
+        }
+    }
+}
