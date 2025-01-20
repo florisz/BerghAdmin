@@ -1,5 +1,6 @@
 ﻿using BerghAdmin.Services.Sponsoren;
 using ClosedXML.Excel;
+using Microsoft.JSInterop;
 using Syncfusion.Blazor.Data;
 
 namespace BerghAdmin.Services.Export;

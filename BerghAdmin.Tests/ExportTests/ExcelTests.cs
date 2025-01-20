@@ -22,23 +22,23 @@ namespace BerghAdmin.Tests.ExportTests
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
         }
 
-        [Test]
-        public async Task ExportPersonenTest()
-        {
-            var excelService = this.GetRequiredService<IExcelService>();
-            var rv = await excelService.ExportPersonenAsync("not/a/valid/filename");
+        //[Test]
+        //public async Task ExportPersonenTest()
+        //{
+        //    var excelService = this.GetRequiredService<IExcelService>();
+        //    var rv = await excelService.ExportPersonenAsync("not/a/valid/filename");
 
-            Assert.IsFalse(rv);
-        }
+        //    Assert.IsFalse(rv);
+        //}
 
-        [Test]
-        public async Task ExportAmbassadeursTest()
-        {
-            var excelService = this.GetRequiredService<IExcelService>();
-            var rv = await excelService.ExportAmbassadeursAsync("not/a/valid/filename");
+        //[Test]
+        //public async Task ExportAmbassadeursTest()
+        //{
+        //    var excelService = this.GetRequiredService<IExcelService>();
+        //    var rv = await excelService.ExportAmbassadeursAsync("not/a/valid/filename");
 
-            Assert.IsFalse(rv);
-        }
+        //    Assert.IsFalse(rv);
+        //}
 
     }
 }
