@@ -1,7 +1,7 @@
 ﻿using BerghAdmin.Services;
 using BerghAdmin.Services.DateTimeProvider;
 using BerghAdmin.Services.Export;
-
+using BerghAdmin.Services.Sponsoren;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -17,6 +17,7 @@ namespace BerghAdmin.Tests.ExportTests
             services
                 .AddScoped<IExcelService, ExcelService>()
                 .AddScoped<IPersoonService, PersoonService>()
+                .AddScoped<IAmbassadeurService, AmbassadeurService>()
                 .AddScoped<IRolService, RolService>()
                 .AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
         }
