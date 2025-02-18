@@ -14,6 +14,7 @@ public class FactuurService : IFactuurService
     private ILogger<FactuurService> _logger;
     private IDocumentMergeService _mergeService;
     private IAmbassadeurService _ambassadeurService;
+    private IFactuurNummerService _factuurNummerGenerator;
     private IPdfConverter _pdfConverter;
 
     public FactuurService(ApplicationDbContext dbContext, 
@@ -21,6 +22,7 @@ public class FactuurService : IFactuurService
                             IDocumentMergeService mergeService,
                             IPdfConverter pdfConverter,
                             IAmbassadeurService ambassadeurService,
+                            IFactuurNummerService factuurNummerGenerator,
                             ILogger<FactuurService> logger)
     {
         _dbContext = dbContext;
@@ -28,6 +30,7 @@ public class FactuurService : IFactuurService
         _mergeService = mergeService;
         _pdfConverter = pdfConverter;
         _ambassadeurService = ambassadeurService;
+        _factuurNummerGenerator = factuurNummerGenerator;
         _logger = logger;
         logger.LogDebug($"FactuurService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
     }
@@ -77,7 +80,7 @@ public class FactuurService : IFactuurService
         => await GetNewFactuurAsync(_dateTimeProvider.Now, ambassadeur);
 
     public async Task<Factuur?> GetNewFactuurAsync(DateTime dateTime, Ambassadeur ambassadeur)
-        => await GetNewFactuurAsync(GetNextFactuurNummer(), dateTime, ambassadeur);
+        => await GetNewFactuurAsync(_factuurNummerGenerator.GetNextNummer(), dateTime, ambassadeur);
 
     public async Task<Factuur?> GetNewFactuurAsync(int nummer, DateTime dateTime, Ambassadeur ambassadeur)
     {
@@ -87,7 +90,7 @@ public class FactuurService : IFactuurService
 
         while (!returnValue)
         {
-            factuur = new Factuur(nummer, dateTime, ambassadeur.Id);
+            factuur = new Factuur(nummer, dateTime, ambassadeur.Id, "A");
             returnValue = await SaveFactuurAsync(factuur, ambassadeur);
 
             if (!returnValue && tries++ > 3)
@@ -165,24 +168,6 @@ public class FactuurService : IFactuurService
         await SaveStreamAsFactuur(pdfStream, ambassadeur, factuur);
 
         return;
-    }
-
-    private int GetNextFactuurNummer()
-    {
-        int nummer;
-
-        // generate next consecutive invoice number based on last invoice number
-        var laatsteFactuur = _dbContext.Facturen!.OrderByDescending(f => f.Nummer).FirstOrDefault();
-        if (laatsteFactuur == null)
-        {
-            nummer = 1;
-        }
-        else
-        {
-            nummer = laatsteFactuur!.Nummer + 1;
-        }
-
-        return nummer;
     }
 
     private async Task SaveStreamAsFactuur(Stream factuurStream, Ambassadeur ambassadeur, Factuur factuur)

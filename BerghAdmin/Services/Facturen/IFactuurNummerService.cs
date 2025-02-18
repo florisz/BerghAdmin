@@ -1,6 +1,7 @@
 ﻿namespace BerghAdmin.Services.Facturen;
 
-public interface INummerGenerator
+public interface IFactuurNummerService
+
 {
     int GetNextNummer();
 }

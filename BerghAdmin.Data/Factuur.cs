@@ -1,20 +1,23 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing;
 
 namespace BerghAdmin.Data;
 
 public class Factuur
 {
-    public Factuur(int nummer, DateTime datum, int sponsorId)
+    public Factuur(int nummer, DateTime datum, int sponsorId, string aanduiding)
     {
         Nummer = nummer;
         Datum = datum;
         SponsorId = sponsorId;
+        // A voor Ambassadeur, G voor Golfer
+        Aanduiding = aanduiding;
     }
 
     public int Id { get; set; }
     public int Nummer { get; set; }
     [NotMapped]
-    public string FactuurNummer => DateTime.Now.Year.ToString() + Nummer.ToString("00000");
+    public string FactuurNummer => Aanduiding + DateTime.Now.Year.ToString() + Nummer.ToString("00000");
     public string? Omschrijving { get; set; }
     public decimal? Bedrag { get; set; }
     public DateTime Datum { get; set; }
@@ -23,6 +26,7 @@ public class Factuur
     public Document? EmailTekst { get; set; }
     public Document? FactuurTekst { get; set; }
     public int SponsorId { get; set; }
+    public string? Aanduiding { get; set; }
 
     [NotMapped]
     public string GetFactuurStatusAsString =>

@@ -2,16 +2,17 @@
 
 namespace BerghAdmin.Services.Facturen;
 
-public class NummerGenerator : INummerGenerator
+public class FactuurNummerService : IFactuurNummerService
+
 {
     private readonly ApplicationDbContext _dbContext;
-    private ILogger<NummerGenerator> _logger;
+    private ILogger<FactuurNummerService> _logger;
 
-    public NummerGenerator(ApplicationDbContext dbContext, ILogger<NummerGenerator> logger)
+    public FactuurNummerService(ApplicationDbContext dbContext, ILogger<FactuurNummerService> logger)
     {
         _dbContext = dbContext;
         _logger = logger;
-        logger.LogDebug($"NummerGenerator created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
+        logger.LogDebug($"FactuurNummerService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
     }
 
     public int GetNextNummer()

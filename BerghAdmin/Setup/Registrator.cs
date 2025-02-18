@@ -138,6 +138,7 @@ public class Registrator
         _builder.Services.AddScoped<IDonatieService, DonatieService>();
         _builder.Services.AddScoped<IExcelService, ExcelService>();
         _builder.Services.AddScoped<IFactuurService, FactuurService>();
+        _builder.Services.AddScoped<IFactuurNummerService, FactuurNummerService>();
         _builder.Services.AddScoped<IFietstochtenService, FietstochtenService>();
         _builder.Services.AddScoped<IFileSystem, FileSystem>();
         _builder.Services.AddScoped<IGolfdagenService, GolfdagenService>();

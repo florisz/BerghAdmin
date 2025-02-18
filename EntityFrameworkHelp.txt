@@ -40,34 +40,69 @@ DROP TABLE Rollen;
 
 /* clean to seed again */
 DELETE FROM GolfdagSponsor WHERE Id > 0;
-DELETE FROM Ambassadeur WHERE Id > 0;
+DELETE FROM magazinejaren WHERE Id > 0;
 DELETE FROM GolfdagPersoon WHERE GolfdagenId > 0;
 DELETE FROM GolfdagGolfdagSponsor WHERE GolfdagenGesponsoredId > 0;
 DELETE FROM GolfDagen WHERE GolfdagId > 0;
 DELETE FROM FietsTochtPersoon WHERE DeelnemersId > 0;
 DELETE FROM FietsTochten WHERE FietstochtId > 0;
+DELETE FROM Facturen WHERE Id > 0;
 DELETE FROM Documenten WHERE Id > 0;
 DELETE FROM PersoonRol WHERE RollenId > 0;
-DELETE FROM Personen WHERE Id > 0;
 DELETE FROM AspNetUsers WHERE Id > 0;
 DELETE FROM Rollen WHERE Id > 0;
 DELETE FROM sponsoren WHERE Id > 0;
+DELETE FROM Donateur WHERE Id > 0;
+DELETE FROM BihzActies WHERE Id > 0;
+DELETE FROM BihzUsers WHERE Id > 0;
+DELETE FROM Personen WHERE Id > 0;
+DELETE FROM Rollen WHERE Id > 0;
+DELETE FROM Ambassadeur WHERE Id > 0;
+DELETE FROM aspnetuserclaims WHERE Id > 0;
+DELETE FROM aspnetuserlogins WHERE UserId > 0;
+DELETE FROM aspnetusers WHERE Id > 0;
+DELETE FROM aspnetusertokens WHERE UserId > 0;
+DELETE FROM betalingen WHERE Id > 0;
+DELETE FROM bihzacties WHERE Id > 0;
+DELETE FROM bihzusers WHERE Id > 0;
+DELETE FROM donaties WHERE Id > 0;
+DELETE FROM mailbccgeadresseerden WHERE bccGeadresseerdenId > 0;
+DELETE FROM mailccgeadresseerden WHERE ccGeadresseerdenId > 0;
+DELETE FROM verzondenmails WHERE Id > 0;
+
 
 /* overall insight in data in MySql database */
 SHOW TABLES;
-SELECT *  FROM GolfdagSponsor;
-SELECT *  FROM GolfdagPersoon;
-SELECT *  FROM GolfdagGolfdagSponsor;
-SELECT *  FROM GolfDagen;
-SELECT *  FROM FietsTochtPersoon;
-SELECT *  FROM FietsTochten;
-SELECT *  FROM Documenten;
-SELECT *  FROM PersoonRol;
-SELECT *  FROM Personen;
-SELECT *  FROM AspNetUsers;
-SELECT *  FROM Rollen;
-SELECT *  FROM Sponsoren;
-SELECT *  FROM Donateur;
+SELECT * FROM GolfdagSponsor;
+SELECT * FROM GolfdagPersoon;
+SELECT * FROM GolfdagGolfdagSponsor;
+SELECT * FROM GolfDagen;
+SELECT * FROM FietsTochtPersoon;
+SELECT * FROM FietsTochten;
+SELECT * FROM Documenten;
+SELECT * FROM Facturen;
+SELECT * FROM PersoonRol;
+SELECT * FROM Personen;
+SELECT * FROM AspNetUsers;
+SELECT * FROM Rollen;
+SELECT * FROM Sponsoren;
+SELECT * FROM Donateur;
 SELECT * FROM Ambassadeur;
+SELECT * FROM aspnetuserclaims;
+SELECT * FROM aspnetuserlogins;
+SELECT * FROM aspnetusers;
+SELECT * FROM aspnetusertokens;
+SELECT * FROM betalingen;
+SELECT * FROM bihzacties;
+SELECT * FROM bihzdonaties;
+SELECT * FROM bihzprojects;
+SELECT * FROM bihzusers;
+SELECT * FROM donaties;
+SELECT * FROM facturen;
+SELECT * FROM magazinejaren;
+SELECT * FROM mailbccgeadresseerden;
+SELECT * FROM mailccgeadresseerden;
+SELECT * FROM verzondenmails;
+
 
 
