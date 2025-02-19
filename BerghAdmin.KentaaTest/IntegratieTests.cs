@@ -4,6 +4,7 @@ using BerghAdmin.DbContexts;
 using BerghAdmin.Services;
 using BerghAdmin.Services.Bihz;
 using BerghAdmin.Services.Configuration;
+using BerghAdmin.Services.DateTimeProvider;
 using BerghAdmin.Services.Documenten;
 using BerghAdmin.Services.Donaties;
 using BerghAdmin.Services.Evenementen;
@@ -19,7 +20,9 @@ using KM = BerghAdmin.ApplicationServices.KentaaInterface.KentaaModel;
 
 namespace BerghAdmin.Tests.Kentaa
 {
-    [TestFixture]
+    // deze testen staan tijdlijk uit omdat we niks met Kentaa doen in dit systeem
+    // later kan waarschijnlijk de hele functionaliteit er uit
+    //[TestFixture]
     public class IntegratieTests : DatabaseTestSetup
     {
         private IFietstochtenService? _fietstochtenService;
@@ -29,6 +32,7 @@ namespace BerghAdmin.Tests.Kentaa
         private IBihzProjectService? _bihzProjectService;
         private IBihzUserService? _bihzUserService;
         private IPersoonService? _persoonService;
+        
         protected override void RegisterServices(ServiceCollection services)
         {
             var kentaaConfiguration = new ConfigurationBuilder()
@@ -51,9 +55,12 @@ namespace BerghAdmin.Tests.Kentaa
                 .AddScoped<ISeedDataService, DebugSeedDataService>()
                 .AddScoped<IFietstochtenService, FietstochtenService>()
                 .AddScoped<ISponsorService, SponsorService>()
+                .AddScoped<IAmbassadeurService, AmbassadeurService>()
+                .AddScoped<IMagazineService, MagazineService>()
                 .AddScoped<IDocumentService, DocumentService>()
                 .AddScoped<IGolfdagenService, GolfdagenService>()
                 .AddScoped<IDonatieService, DonatieService>()
+                .AddScoped<IDateTimeProvider, DateTimeProvider>()
                 .AddHttpClient()
                 .AddScoped<IKentaaInterfaceService, KentaaInterfaceService>()
                 .Configure<KentaaConfiguration>(kentaaConfiguration.GetSection("KentaaConfiguration"))
@@ -86,7 +93,7 @@ namespace BerghAdmin.Tests.Kentaa
             _bihzUserService = GetRequiredService<IBihzUserService>();
         }
 
-        [Test]
+        //[Test]
         public async Task ProcessKentaaActions()
         {
             await InsertInitialData();
@@ -102,7 +109,7 @@ namespace BerghAdmin.Tests.Kentaa
             Assert.IsTrue(await actions.CountAsync() == bihzActions?.Count());
         }
 
-        [Test]
+        //[Test]
         public async Task ProcessKentaaProjects()
         {
             await InsertInitialData();
@@ -121,7 +128,7 @@ namespace BerghAdmin.Tests.Kentaa
             Assert.IsTrue(aProject!.Gesloten == false);
         }
 
-        [Test]
+        //[Test]
         public async Task ProcessKentaaUsers()
         {
             await InsertInitialData();
@@ -137,7 +144,7 @@ namespace BerghAdmin.Tests.Kentaa
             Assert.IsTrue(await users.CountAsync() == bihzUsers?.Count());
         }
 
-        [Test]
+        //[Test]
         public async Task ProcessKentaaDonations()
         {
             await InsertInitialData();
@@ -162,7 +169,7 @@ namespace BerghAdmin.Tests.Kentaa
             Assert.IsTrue(await donations.CountAsync() == bihzDonaties?.Count());
         }
 
-        [Test]
+        //[Test]
         public async Task FullKentaaIntegrationTest()
         {
             await InsertInitialData();

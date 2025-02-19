@@ -17,6 +17,7 @@ namespace BerghAdmin.Tests.FactuurTests
         {
             services
                 .AddScoped<IFactuurService, FactuurService>()
+                .AddScoped<IFactuurNummerService, FactuurNummerService>()
                 .AddScoped<IDocumentService, DocumentService>()
                 .AddScoped<IDocumentMergeService, DocumentMergeService>()
                 .AddScoped<IPdfConverter, PdfConverter>()

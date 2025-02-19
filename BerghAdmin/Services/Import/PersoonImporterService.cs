@@ -67,7 +67,7 @@ namespace BerghAdmin.Services.Import
         {
             var persoon = new Persoon
             {
-                Geslacht = string.IsNullOrEmpty(record.GeslachtId) ? GeslachtEnum.Onbekend : record.GeslachtId == "1" ? GeslachtEnum.Man : GeslachtEnum.Vrouw,
+                Geslacht = string.IsNullOrEmpty(record.Geslacht) ? GeslachtEnum.Onbekend : record.Geslacht == "man" ? GeslachtEnum.Man : GeslachtEnum.Vrouw,
                 Voornaam = record.Voornaam,
                 Voorletters = record.Voorletters,
                 Tussenvoegsel = record.Tussenvoegsel,
@@ -76,37 +76,37 @@ namespace BerghAdmin.Services.Import
                 Postcode = record.Postcode,
                 Plaats = record.Plaats,
                 Land = record.Land,
-                GeboorteDatum = ConvertToDateType(record.GeboorteDag, record.GeboorteMaand, record.GeboorteJaar),
+                GeboorteDatum = ConvertToDateType(record.Geboortedatum),
 
                 Telefoon = record.Telefoon,
                 Mobiel = record.Mobiel,
                 EmailAdres = record.Emailadres,
                 KledingMaten = record.Kledingmaten,
-                IsVerwijderd = record.IsVerwijderd == "1",
+                IsVerwijderd = false,
                 Nummer = record.Nummer,
                 Rollen = new HashSet<Rol>()
             };
-            if (record.IsRenner == "1")
+            if (record.Groep.Contains("Renner"))
             {
                 persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Fietser) ?? throw new ArgumentNullException("Id", "GetRole Fietser"));
             }
-            if (record.IsBegeleider == "1")
+            if (record.Groep.Contains("Begeleider"))
             {
                 persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Begeleider) ?? throw new ArgumentNullException("Id", "GetRole Begeleider"));
             }
-            if (record.IsReserve == "1")
+            if (record.Groep.Contains("Reserve"))
             {
                 persoon.IsReserve = true;
             }
-            if (record.IsCommissielid == "1")
+            if (record.Groep.Contains("Commissielid"))
             {
                 persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.CommissieLid) ?? throw new ArgumentNullException("Id", "GetRole CommissieLid"));
             }
-            if (record.IsVriendvan == "1")
+            if (record.Groep.Contains("Vriend Van"))
             {
                 persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.VriendVan) ?? throw new ArgumentNullException("Id", "GetRole VriendVan"));
             }
-            if (record.IsMailingAbonnee == "1")
+            if (record.Groep.Contains("Mailing abonnee"))
             {
                 persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.MailingAbonnee) ?? throw new ArgumentNullException("Id", "GetRole MailingAbonne"));
             }
@@ -118,7 +118,7 @@ namespace BerghAdmin.Services.Import
         {
             _logger.LogInformation($"Persoon {persoon.VolledigeNaamMetRollenEnEmail} wordt bijgewerkt...");
 
-            var geslacht = string.IsNullOrEmpty(record.GeslachtId) ? GeslachtEnum.Onbekend : record.GeslachtId == "1" ? GeslachtEnum.Man : GeslachtEnum.Vrouw;
+            var geslacht = string.IsNullOrEmpty(record.Geslacht) ? GeslachtEnum.Onbekend : record.Geslacht == "man" ? GeslachtEnum.Man : GeslachtEnum.Vrouw;
             if (persoon.Geslacht != geslacht) {
                 _logger.LogInformation($"Geslacht is bijgewerkt van '{persoon.Geslacht}' naar '{geslacht}'");
                 persoon.Geslacht = geslacht;
@@ -163,7 +163,7 @@ namespace BerghAdmin.Services.Import
                 _logger.LogInformation($"Land is bijgewerkt van '{persoon.Land}' naar '{record.Land}'");
                 persoon.Land = record.Land;
             }
-            var geboorteDatum = ConvertToDateType(record.GeboorteDag, record.GeboorteMaand, record.GeboorteJaar);
+            var geboorteDatum = ConvertToDateType(record.Geboortedatum);
             if (persoon.GeboorteDatum != geboorteDatum)
             {
                 _logger.LogInformation($"Geboortedatum is bijgewerkt van '{persoon.GeboorteDatum}' naar '{geboorteDatum}'");
@@ -184,42 +184,37 @@ namespace BerghAdmin.Services.Import
                 _logger.LogInformation($"Kledingmaten is bijgewerkt van '{persoon.KledingMaten}' naar '{record.Kledingmaten}'");
                 persoon.KledingMaten = record.Kledingmaten;
             }
-            if (persoon.IsVerwijderd != (record.IsVerwijderd == "1"))
-            {
-                _logger.LogInformation($"IsVerwijderd is bijgewerkt van '{persoon.IsVerwijderd}' naar '{record.IsVerwijderd}'");
-                persoon.IsVerwijderd = record.IsVerwijderd == "1";
-            }
             if (persoon.Nummer != record.Nummer)
             {
                 _logger.LogInformation($"Nummer is bijgewerkt van '{persoon.Nummer}' naar '{record.Nummer}'");
                 persoon.Nummer = record.Nummer;
             }
-            if (record.IsRenner == "1" && persoon.Rollen.Contains(_rolService.GetRolById(RolTypeEnum.Fietser)) == false)
+            if (record.Groep.Contains("Renner") && persoon.Rollen.Contains(_rolService.GetRolById(RolTypeEnum.Fietser)) == false)
             {
                 _logger.LogInformation($"Rol Fietser is toegevoegd");
                 persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Fietser) ?? throw new ArgumentNullException("Id", "GetRole Fietser"));
             }
-            if (record.IsBegeleider == "1" && persoon.Rollen.Contains(_rolService.GetRolById(RolTypeEnum.Begeleider)) == false)
+            if (record.Groep.Contains("Begeleider") && persoon.Rollen.Contains(_rolService.GetRolById(RolTypeEnum.Begeleider)) == false)
             {
                 _logger.LogInformation($"Rol Begeleider is toegevoegd");
                 persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.Begeleider) ?? throw new ArgumentNullException("Id", "GetRole Begeleider"));
             }
-            if (record.IsReserve == "1" && persoon.IsReserve == false)
+            if (record.Groep.Contains("Reserve") && persoon.IsReserve == false)
             {
                 _logger.LogInformation($"IsReserve is toegevoegd");
                 persoon.IsReserve = true;
             }
-            if (record.IsCommissielid == "1" && persoon.Rollen.Contains(_rolService.GetRolById(RolTypeEnum.CommissieLid)) == false)
+            if (record.Groep.Contains("Commissielid") && persoon.Rollen.Contains(_rolService.GetRolById(RolTypeEnum.CommissieLid)) == false)
             {
                 _logger.LogInformation($"Rol CommissieLid is toegevoegd");
                 persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.CommissieLid) ?? throw new ArgumentNullException("Id", "GetRole CommissieLid"));
             }
-            if (record.IsVriendvan == "1" && persoon.Rollen.Contains(_rolService.GetRolById(RolTypeEnum.VriendVan)) == false)
+            if (record.Groep.Contains("Vriend Van") && persoon.Rollen.Contains(_rolService.GetRolById(RolTypeEnum.VriendVan)) == false)
             {
                 _logger.LogInformation($"Rol VriendVan is toegevoegd");
                 persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.VriendVan) ?? throw new ArgumentNullException("Id", "GetRole VriendVan"));
             }
-            if (record.IsMailingAbonnee == "1" && persoon.Rollen.Contains(_rolService.GetRolById(RolTypeEnum.MailingAbonnee)) == false)
+            if (record.Groep.Contains("Mailing abonnee") && persoon.Rollen.Contains(_rolService.GetRolById(RolTypeEnum.MailingAbonnee)) == false)
                 {
                 _logger.LogInformation($"Rol MailingAbonnee is toegevoegd");
                 persoon.Rollen.Add(_rolService.GetRolById(RolTypeEnum.MailingAbonnee) ?? throw new ArgumentNullException("Id", "GetRole MailingAbonnee"));
@@ -250,9 +245,9 @@ namespace BerghAdmin.Services.Import
             }
         }
 
-        private static DateTime? ConvertToDateType(string day, string month, string year)
+        private static DateTime? ConvertToDateType(string geboortedatum)
         {
-            if (DateTime.TryParseExact($"{day}/{month}/{year}", "d/M/yyyy", null, DateTimeStyles.None, out var date))
+            if (DateTime.TryParseExact(geboortedatum, "d-M-yyyy", null, DateTimeStyles.None, out var date))
                 return date;
          
             return null;
