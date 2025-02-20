@@ -86,7 +86,7 @@
         else
         {
             // open the download dialog for the selected template
-            var url = _navigationManager.CreateUrlWithContext(selectedTemplates.ElementAt(0).Id, "/ApplicatieManagement/templates/download");
+            var url = _navigationManager.CreateUrlWithSelectedIdAndReturnUrl(selectedTemplates.ElementAt(0).Id, "/ApplicatieManagement/templates/download");
             _navigationManager.NavigateTo(url);
         }
     }

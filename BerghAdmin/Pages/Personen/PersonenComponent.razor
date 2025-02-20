@@ -181,7 +181,10 @@
     [Parameter]
     public int[] RolContext { get; set; } = Array.Empty<int>();
     [Parameter]
-    public bool ToonAlles { get; set; } = false;
+    public bool ToonAlles { get; set; } = false; 
+    [Parameter]
+    public int? SelectedId { get; set; } = null;
+
     [CascadingParameter]
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
 
@@ -198,16 +201,16 @@
     public List<Fietstocht> _fietsTochtenList = new();
     SfGrid<Persoon> _personenGrid = new();
 
-    private void OnValueRemoveHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args)
+    private async Task OnValueRemoveHandler(Syncfusion.Blazor.DropDowns.RemoveEventArgs<Rol> args)
     {
         _selectedRollen.Remove(args.ItemData.Id);
-        RefreshList();
+        await RefreshList();
     }
 
-    private void OnValueSelectHandler(Syncfusion.Blazor.DropDowns.SelectEventArgs<Rol> args)
+    private async Task OnValueSelectHandler(Syncfusion.Blazor.DropDowns.SelectEventArgs<Rol> args)
     {
         _selectedRollen.Add(args.ItemData.Id);
-        RefreshList();
+        await RefreshList();
     }
 
     // search in the grid functionaity
@@ -265,7 +268,7 @@
             FileName = fileName
         };
         await this._personenGrid.ExportToExcelAsync(exportProperties);
-        
+
         await jsRuntime.InvokeVoidAsync("alert", $"Excel bestand geëxporteerd in download directory.\n{fileName}");
     }
 
@@ -326,7 +329,7 @@
         else
         {
             // open the edit dialog for the selected person
-            var url = _navigationManager.CreateUrlWithContext(selectedPersonen.ElementAt(0).Id, "Personen/EditPersoon");
+            var url = _navigationManager.CreateUrlWithSelectedIdAndReturnUrl(selectedPersonen.ElementAt(0).Id, "Personen/EditPersoon");
             _navigationManager.NavigateTo(url);
         }
     }
@@ -334,7 +337,7 @@
     private void AddPersoon()
     {
         // open the edit dialog for a this new person
-        var url = _navigationManager.CreateUrlWithContext(0, "Personen/EditPersoon");
+        var url = _navigationManager.CreateUrlWithSelectedIdAndReturnUrl(0, "Personen/EditPersoon");
         _navigationManager.NavigateTo(url);
     }
 
@@ -356,6 +359,7 @@
             CurrentUser = await _userManager.GetUserAsync(authenticationState?.User);
         }
     }
+
 
     public void ActionCompletedHandler(ActionEventArgs<Persoon> args)
     {
@@ -403,7 +407,21 @@
             _personenList = personen.OrderBy(p => p.Achternaam).ToList<Persoon>();
         }
         await _personenGrid.AutoFitColumnsAsync();
+        if (SelectedId != null)
+        {
+            // selecteer de regel met de gespecificeerde id
+            await _personenGrid.GoToPageAsync(1);
+            await SelectRow(SelectedId.Value);
+        }
+        StateHasChanged();
         return;
+    }
+
+    private async Task SelectRow(int id)
+    {
+        var index = await _personenGrid.GetRowIndexByPrimaryKeyAsync(id);
+        // tijdelijk uitgecomment omdat het niet werkt
+        // await _personenGrid.SelectRowAsync(index);
     }
 
     private async Task<List<Persoon>> GetPersonen(List<int> rolTypes)

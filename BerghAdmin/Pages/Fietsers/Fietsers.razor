@@ -10,11 +10,20 @@
 
 <h3>Deelnemers aan fietstochten</h3>
 
-<PersonenComponent RolContext="@rolContext" />
+<PersonenComponent RolContext="@rolContext" SelectedId="@SelectedId" />
 
 @code
 {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "SelectedId")]
+    public int? SelectedId { get; set; } = null;
+
     public int[] rolContext = new int[] { Convert.ToInt32(RolTypeEnum.Fietser), Convert.ToInt32(RolTypeEnum.Begeleider), Convert.ToInt32(RolTypeEnum.Vrijwilliger) };
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {

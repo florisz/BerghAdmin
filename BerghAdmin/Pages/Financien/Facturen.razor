@@ -13,7 +13,7 @@
     protected override async Task OnInitializedAsync()
     {
         // Open toon facturen window for the selected ambassadeur
-        var url = _navigationManager.CreateUrlWithContext(0, "Ambassadeurs/Facturen");
+        var url = _navigationManager.CreateUrlWithSelectedIdAndReturnUrl(0, "Ambassadeurs/Facturen");
         _navigationManager.NavigateTo(url);
     }
 }

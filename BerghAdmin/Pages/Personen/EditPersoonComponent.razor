@@ -206,7 +206,7 @@ else
     public int Id { get; set; }
     [Parameter]
     public string? ReturnUrl { get; set; }
-    
+
     [CascadingParameter]
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
 
@@ -251,8 +251,8 @@ else
     {
         // TO DO: If edits were made, ask for confirmation
         _dbContext.UndoingChangesDbContextLevel();
-        // go to previous page TO DO: depends on where we came from, to be fixed
-        _navigationManager.NavigateTo(ReturnUrl);
+        var url = _navigationManager.CreateUrlWithSelectedId(Id, ReturnUrl);
+        _navigationManager.NavigateTo(url);
     }
 
     private async Task OnDialogSaveAndClose()
@@ -260,13 +260,13 @@ else
         _fietstochtenService.SetFietstochten(_currentPersoon, _fietsTochtenListBox!.GetDataByValue(_selectedFietsTochtenArray));
         _persoonService.SetRollen(_currentPersoon, _rollenListBox!.GetDataByValue(_selectedRollenArray));
         await _persoonService.SavePersoonAsync(_currentPersoon);
-        
-        // go to previous page TO DO: depends on where we came from, to be fixed
-        _navigationManager.NavigateTo(ReturnUrl);
-    }
-    
-}
 
+        // go to previous page TO DO: depends on where we came from, to be fixed
+        var url = _navigationManager.CreateUrlWithSelectedId(Id, ReturnUrl);
+        _navigationManager.NavigateTo(url);
+    }
+
+}
 <style>
     .col-form-label {
         padding-top: 1px;

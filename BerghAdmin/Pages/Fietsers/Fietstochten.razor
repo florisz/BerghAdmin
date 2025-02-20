@@ -223,7 +223,7 @@
         else
         {
             // open the edit dialog for the selected person
-            var url = _navigationManager.CreateUrlWithContext(selectedPersonen.ElementAt(0).Id, "Personen/EditPersoon");
+            var url = _navigationManager.CreateUrlWithSelectedIdAndReturnUrl(selectedPersonen.ElementAt(0).Id, "Personen/EditPersoon");
             _navigationManager.NavigateTo(url);
         }
     }

@@ -216,7 +216,7 @@ else
         var factuur = await GetSelectedFactuur();
         if (factuur != null)
         {
-            var url = _navigationManager.CreateUrlWithContext(factuur.Id, $"ShowPdf?FactuurId={factuur.Id}");
+            var url = _navigationManager.CreateUrlWithSelectedIdAndReturnUrl(factuur.Id, $"ShowPdf?FactuurId={factuur.Id}");
             _navigationManager.NavigateTo(url);
         }
     }
