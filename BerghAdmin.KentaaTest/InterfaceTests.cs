@@ -31,10 +31,10 @@ public class InterfaceTests : DatabaseTestSetup
         var service = this.GetRequiredService<IKentaaInterfaceService>();
 
         var kentaaDonation = await service.GetDonationById(2587623);
-    
-        Assert.IsNotNull(kentaaDonation);
-        Assert.AreEqual("Floris", kentaaDonation.first_name);
-        Assert.AreEqual("Zwarteveen", kentaaDonation.last_name);   
+
+        Assert.That(kentaaDonation, !Is.EqualTo(null));
+        Assert.That("Floris" == kentaaDonation.first_name);
+        Assert.That("Zwarteveen" == kentaaDonation.last_name);   
     }
 
     [Test]
@@ -48,7 +48,7 @@ public class InterfaceTests : DatabaseTestSetup
         };
         var kentaaDonations = service.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(filter);
 
-        Assert.IsTrue(await kentaaDonations.AnyAsync());
+        Assert.That(await kentaaDonations.AnyAsync());
     }
 
     [Test]
@@ -62,7 +62,7 @@ public class InterfaceTests : DatabaseTestSetup
         };
         var kentaaDonations = service.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(filter);
 
-        Assert.IsTrue(await kentaaDonations.AnyAsync());
+        Assert.That(await kentaaDonations.AnyAsync());
     }
 
     [Test]
@@ -76,7 +76,7 @@ public class InterfaceTests : DatabaseTestSetup
         };
         var kentaaUsers = service.GetKentaaResourcesByQuery<KM.Users, KM.User>(filter);
 
-        Assert.IsTrue(await kentaaUsers.AnyAsync());
+        Assert.That(await kentaaUsers.AnyAsync());
     }
 
     [Test]
@@ -90,7 +90,7 @@ public class InterfaceTests : DatabaseTestSetup
         };
         var kentaaActions = service.GetKentaaResourcesByQuery<KM.Actions, KM.Action>(filter);
 
-        Assert.IsTrue(await kentaaActions.AnyAsync());
+        Assert.That(await kentaaActions.AnyAsync());
     }
 
     [Test]
@@ -104,7 +104,7 @@ public class InterfaceTests : DatabaseTestSetup
         };
         var kentaaProjects = service.GetKentaaResourcesByQuery<KM.Projects, KM.Project>(filter);
 
-        Assert.IsTrue(await kentaaProjects.AnyAsync());
+        Assert.That(await kentaaProjects.AnyAsync());
     }
 
     [Test]
@@ -120,7 +120,7 @@ public class InterfaceTests : DatabaseTestSetup
         };
         var kentaaDonations = service.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(filter);
 
-        Assert.IsTrue(await kentaaDonations.CountAsync() == 8);
+        Assert.That(await kentaaDonations.CountAsync() == 8);
     }
 
     [Test]
@@ -136,6 +136,6 @@ public class InterfaceTests : DatabaseTestSetup
         };
         var kentaaDonations = service.GetKentaaResourcesByQuery<KM.Donations, KM.Donation>(filter);
 
-        Assert.IsTrue(await kentaaDonations.CountAsync() == 11);
+        Assert.That(await kentaaDonations.CountAsync() == 11);
     }
 }

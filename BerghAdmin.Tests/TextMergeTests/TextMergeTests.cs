@@ -47,35 +47,35 @@ namespace BerghAdmin.Tests.MailMergeTests
         public void TestTextIsEmpty()
         {
             var mergeResult = CreateService().Merge((string?)null, null);
-            Assert.AreEqual("", mergeResult);
+            Assert.That("" == mergeResult);
         }
 
         [Test]
         public void TestSimpleTextHasNoMergeFieldsWithoutDictionary()
         {
             var mergeResult = CreateService().Merge(_simpleText, null);
-            Assert.AreEqual(_simpleText, mergeResult);
+            Assert.That(_simpleText == mergeResult);
         }
 
         [Test]
         public void TestSimpleTextHasNoMergeFieldsWithDictionary()
         {
             var mergeResult = CreateService().Merge(_simpleText, _mergeFieldValues);
-            Assert.AreEqual(_simpleText, mergeResult);
+            Assert.That(_simpleText == mergeResult);
         }
 
         [Test]
         public void TestNonSimpleTextHasNoMergeFieldsWithoutDictionary()
         {
             var mergeResult = CreateService().Merge(_nonSimpleText, null);
-            Assert.AreEqual(_nonSimpleText, mergeResult);
+            Assert.That(_nonSimpleText == mergeResult);
         }
 
         [Test]
         public void TestNonSimpleTextHasNoMergeFieldsWithDictionary()
         {
             var mergeResult = CreateService().Merge(_nonSimpleText, _mergeFieldValues);
-            Assert.AreEqual(_nonSimpleText, mergeResult);
+            Assert.That(_nonSimpleText == mergeResult);
         }
 
         [Test]
@@ -112,21 +112,21 @@ namespace BerghAdmin.Tests.MailMergeTests
         public void TestHasOneMergeFieldWithDictionary()
         {
             var mergeResult = CreateService().Merge(_textWithOneMergeField, _mergeFieldValues);
-            Assert.AreEqual("<p>Hallo Jan Jansen</p>", mergeResult);
+            Assert.That("<p>Hallo Jan Jansen</p>" == mergeResult);
         }
 
         [Test]
         public void TestHasOneMergeFieldTwiceWithDictionary()
         {
             var mergeResult = CreateService().Merge(_textWithOneMergeFieldTwice, _mergeFieldValues);
-            Assert.AreEqual("<p>Hallo Jan JansenJan Jansen</p>", mergeResult);
+            Assert.That("<p>Hallo Jan JansenJan Jansen</p>" == mergeResult);
         }
 
         [Test]
         public void TestHasMultipleMergeFieldWithDictionary()
         {
             var mergeResult = CreateService().Merge(_textWithMultipleMergeFields, _mergeFieldValues);
-            Assert.AreEqual("<p>Hallo Jan Jansen<br/>wonend op: Hoofdstraat 1<br/>te: 1234 AB Amsterdam</p>", mergeResult);
+            Assert.That("<p>Hallo Jan Jansen<br/>wonend op: Hoofdstraat 1<br/>te: 1234 AB Amsterdam</p>" == mergeResult);
         }
         private static TextMergeService CreateService()
         {

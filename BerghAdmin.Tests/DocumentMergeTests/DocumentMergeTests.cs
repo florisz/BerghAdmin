@@ -64,12 +64,12 @@ public class DocumentMergeTests : DatabaseTestSetup
     {
         var service = this.GetRequiredService<IDocumentService>();
         var doc = service.GetDocumentById(1);
-        Assert.NotNull(doc);
+        Assert.That(doc != null);
         
         // not really necessary but to avoid warnings
         if (doc != null)
         {
-            Assert.AreEqual(doc.Name, "TestTemplate1");
+            Assert.That(doc.Name == "TestTemplate1");
         }
     }
 
@@ -78,16 +78,16 @@ public class DocumentMergeTests : DatabaseTestSetup
     {
         var service = this.GetRequiredService<IDocumentMergeService>();
         var template = service.GetMergeTemplateById(4);
-        Assert.NotNull(template);
-        Assert.AreEqual(template!.Name, "TestTemplate4");
+        Assert.That(template != null);
+        Assert.That(template!.Name == "TestTemplate4");
         var mergeFields = service.GetMergeFieldsFor(template).ToArray();
-        Assert.Contains("AmbassadeurNaam", mergeFields);
-        Assert.Contains("ContactpersoonAanhef", mergeFields);
-        Assert.Contains("AmbassadeurAdres", mergeFields);
-        Assert.Contains("AmbassadeurWoonplaats", mergeFields);
-        Assert.Contains("AmbassadeurPostcode", mergeFields);
-        Assert.Contains("Dagtekening", mergeFields);
-        Assert.Contains("FactuurBedrag", mergeFields);
+        Assert.That(mergeFields.Contains("AmbassadeurNaam"));
+        Assert.That(mergeFields.Contains("ContactpersoonAanhef"));
+        Assert.That(mergeFields.Contains("AmbassadeurAdres"));
+        Assert.That(mergeFields.Contains("AmbassadeurWoonplaats"));
+        Assert.That(mergeFields.Contains("AmbassadeurPostcode"));
+        Assert.That(mergeFields.Contains("Dagtekening"));
+        Assert.That(mergeFields.Contains("FactuurBedrag"));
         Assert.Pass();
     }
 
@@ -97,8 +97,8 @@ public class DocumentMergeTests : DatabaseTestSetup
         var mergeService = this.GetRequiredService<IDocumentMergeService>();
         var template = mergeService.GetMergeTemplateById(2);
 
-        Assert.NotNull(template);
-        Assert.AreEqual(template!.Name, "TestTemplate2");
+        Assert.That(template != null);
+        Assert.That(template!.Name == "TestTemplate2");
 
         var mergeDictionary = new Dictionary<string, string>
         {
@@ -119,8 +119,8 @@ public class DocumentMergeTests : DatabaseTestSetup
     {
         var mergeService = this.GetRequiredService<IDocumentMergeService>();
         var template = mergeService.GetMergeTemplateById(3);
-        Assert.NotNull(template);
-        Assert.AreEqual(template!.Name, "TestTemplate3");
+        Assert.That(template != null);
+        Assert.That(template!.Name == "TestTemplate3");
         var mergeDictionary = new Dictionary<string, string>
         {
             ["MergeField1"] = "MergeField1.Value"
@@ -135,8 +135,8 @@ public class DocumentMergeTests : DatabaseTestSetup
         var mergeService = this.GetRequiredService<IDocumentMergeService>();
         var template = mergeService.GetMergeTemplateById(4);
 
-        Assert.NotNull(template);
-        Assert.AreEqual(template!.Name, "TestTemplate4");
+        Assert.That(template != null);
+        Assert.That(template!.Name == "TestTemplate4");
 
         var mergeDictionary = new Dictionary<string, string>
         {
@@ -162,7 +162,7 @@ public class DocumentMergeTests : DatabaseTestSetup
     {
         using var templateStream = new MemoryStream(template.Content);
         var mergedStream = mergeService.Merge(templateStream, mergeDictionary);
-        Assert.IsTrue(mergedStream.Length > 0);
+        Assert.That(mergedStream.Length > 0);
         using FileStream outputFileStream = new($"./DocumentMergeTests/TestDocumenten/{template.Name}.docx", FileMode.Create);
         mergedStream.Position = 0;
         mergedStream.CopyTo(outputFileStream);

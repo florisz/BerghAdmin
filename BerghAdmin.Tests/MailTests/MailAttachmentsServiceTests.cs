@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 
 using NUnit.Framework;
-
+using NUnit.Framework.Legacy;
 using System.IO.Abstractions.TestingHelpers;
 using System.Text.RegularExpressions;
 
@@ -42,7 +42,7 @@ namespace BerghAdmin.Tests.MailTests
         {
             var message = ReplaceImage("<div><p>Logo: <img src=\"images/LogoBihz.jpg\" /></p><p>Logo copy: <img src=\"images/logoBIHZ.JPG\" /></p></div>");
 
-            Assert.AreEqual(2, Regex.Matches(message.HtmlBody, _imageWithContentIdPattern).Count);
+            Assert.That(2 == Regex.Matches(message.HtmlBody, _imageWithContentIdPattern).Count);
         }
 
         private static MailAttachmentsService CreateService()

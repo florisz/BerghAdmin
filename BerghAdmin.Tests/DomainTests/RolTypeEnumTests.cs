@@ -24,7 +24,7 @@ public class RolTypeEnumTests
     [TestCase(8, RolTypeEnum.VriendVan)]
     [TestCase(9, RolTypeEnum.Vrijwilliger)]
     public void TestRolTypeEnum(int val, RolTypeEnum enm)
-        => Assert.AreEqual(val, (int)enm);
+        => Assert.That(val == (int)enm);
 
 }
 

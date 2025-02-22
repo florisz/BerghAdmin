@@ -4,10 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BerghAdmin.KentaaTest;
 
-public class Program
+public class KentaaTestProgram
 {
 
-    public static async Task Main()
+    public static async Task KentaaTestMainMain(string[] args)
     {
         var services = new ServiceCollection();
 

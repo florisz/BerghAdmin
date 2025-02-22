@@ -31,7 +31,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             await service.SaveAsync(new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
             var fietstocht = await service.GetByTitel(fietstochtNaam);
 
-            Assert.AreEqual(fietstocht?.Titel, fietstochtNaam);
+            Assert.That(fietstocht?.Titel == fietstochtNaam);
         }
 
         [Test]
@@ -43,12 +43,12 @@ namespace BerghAdmin.Tests.EvenementenTests
             await service.SaveAsync(new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
             var fietstocht = await service.GetByTitel(fietstochtNaam);
 
-            Assert.IsNotNull(fietstocht);
+            Assert.That(fietstocht, !Is.EqualTo(null));
             if (fietstocht != null)
             {
                 var fietstochtById = await service.GetById(fietstocht.Id);
-                Assert.IsNotNull(fietstochtById);
-                Assert.AreEqual(fietstochtById!.Titel, fietstochtNaam);
+                Assert.That(fietstochtById, !Is.EqualTo(null));
+                Assert.That(fietstochtById!.Titel == fietstochtNaam);
             }
         }
 
@@ -61,7 +61,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             await service.SaveAsync(new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2022, 1, 1) });
             var errorCode = await service.SaveAsync(new Fietstocht() { Titel = fietstochtNaam, GeplandeDatum = new DateTime(2023, 1, 1) });
 
-            Assert.AreEqual(errorCode, ErrorCodeEnum.Conflict);
+            Assert.That(errorCode == ErrorCodeEnum.Conflict);
         }
 
         [Test]
@@ -78,8 +78,8 @@ namespace BerghAdmin.Tests.EvenementenTests
             await service.SaveAsync(fietstocht);
 
             var fietstochtById = await service.GetById(fietstocht.Id);
-            Assert.IsNotNull(fietstochtById);
-            Assert.AreEqual(fietstochtById!.Titel, fietstochtUpdatedNaam);
+            Assert.That(fietstochtById, !Is.EqualTo(null));
+            Assert.That(fietstochtById!.Titel == fietstochtUpdatedNaam);
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             var bihzProject = new BihzProject() { Id = 1, ProjectId = projectId };
 
             var fietstochtByProject = await service.GetByProject(bihzProject);
-            Assert.IsNotNull(fietstochtByProject);
+            Assert.That(fietstochtByProject, !Is.EqualTo(null));
         }
 
         [Test]
@@ -109,7 +109,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             var bihzProject = new BihzProject() { Id = 1, Titel = projectTitel };
 
             var fietstochtByProject = await service.GetByProject(bihzProject);
-            Assert.IsNotNull(fietstochtByProject);
+            Assert.That(fietstochtByProject, !Is.EqualTo(null));
         }
 
         [Test]
@@ -125,7 +125,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             var bihzProject = new BihzProject() { Id = 1, ProjectId = projectId, Titel = projectTitel };
 
             var fietstochtByProject = await service.GetByProject(bihzProject);
-            Assert.IsNotNull(fietstochtByProject);
+            Assert.That(fietstochtByProject, !Is.EqualTo(null));
         }
 
         [Test]
@@ -142,7 +142,7 @@ namespace BerghAdmin.Tests.EvenementenTests
 
             var fietstochten = await service.GetAll();
 
-            Assert.AreEqual(3, fietstochten?.ToList().Count);
+            Assert.That(3 == fietstochten?.ToList().Count);
         }
 
         [Test]
@@ -162,9 +162,9 @@ namespace BerghAdmin.Tests.EvenementenTests
             var persoon = fietstochtById?.Deelnemers.FirstOrDefault();
             var isDeelnemerVan = persoon?.Fietstochten?.FirstOrDefault(f => f.Id == fietstocht.Id) != null;
 
-            Assert.IsNotNull(fietstochtById);
-            Assert.AreEqual(1, fietstochtById?.Deelnemers.Count);
-            Assert.IsTrue(isDeelnemerVan);
+            Assert.That(fietstochtById, !Is.EqualTo(null));
+            Assert.That(1 == fietstochtById?.Deelnemers.Count);
+            Assert.That(isDeelnemerVan == true);
         }
 
         [Test]
@@ -181,17 +181,17 @@ namespace BerghAdmin.Tests.EvenementenTests
             var service2 = this.GetRequiredService<IFietstochtenService>();
             var fietstochtById = await service2.GetById(fietstocht.Id);
             var persoon = fietstochtById?.Deelnemers.FirstOrDefault();
-            Assert.IsNotNull(fietstochtById);
-            Assert.IsNotNull(persoon);
+            Assert.That(fietstochtById, !Is.EqualTo(null));
+            Assert.That(persoon, !Is.EqualTo(null));
 
             // try to delete an exisitng deelnemer from the fietstocht
             var result = await service2.DeleteDeelnemerAsync(fietstochtById!, persoon!);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
-            Assert.AreEqual(0, fietstochtById!.Deelnemers?.Count);
+            Assert.That(ErrorCodeEnum.Ok == result);
+            Assert.That(0 == fietstochtById!.Deelnemers?.Count);
 
             // try to delete a non exisitng deelnemer from the fietstocht
             result = await service2.DeleteDeelnemerAsync(fietstochtById, persoon!);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
+            Assert.That(ErrorCodeEnum.Ok == result);
         }
 
         [Test]
@@ -208,16 +208,16 @@ namespace BerghAdmin.Tests.EvenementenTests
 
             var service2 = this.GetRequiredService<IFietstochtenService>();
             var fietstochtById = await  service2.GetById(fietstocht.Id);
-            Assert.IsNotNull(fietstochtById);
+            Assert.That(fietstochtById, !Is.EqualTo(null));
 
             // try to delete an exisitng deelnemer from the fietstocht
             var result = await service2.DeleteDeelnemerAsync(fietstochtById!, persoon);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
-            Assert.AreEqual(0, fietstochtById!.Deelnemers?.Count);
+            Assert.That(ErrorCodeEnum.Ok == result);
+            Assert.That(0 == fietstochtById!.Deelnemers?.Count);
 
             // try to delete a non exisitng deelnemer from the fietstocht
             result = await service2.DeleteDeelnemerAsync(fietstochtById!, persoon);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
+            Assert.That(ErrorCodeEnum.Ok == result);
         }
     }
 }

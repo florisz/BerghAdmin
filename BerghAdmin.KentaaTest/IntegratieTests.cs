@@ -106,7 +106,7 @@ namespace BerghAdmin.Tests.Kentaa
             }
             var bihzActions = _bihzActionService!.GetAll();
 
-            Assert.IsTrue(await actions.CountAsync() == bihzActions?.Count());
+            Assert.That(await actions.CountAsync() == bihzActions?.Count());
         }
 
         //[Test]
@@ -122,10 +122,10 @@ namespace BerghAdmin.Tests.Kentaa
             }
 
             var projects = _bihzProjectService!.GetAll();
-            Assert.AreEqual(await kentaaProjects.CountAsync(), projects.Count());
+            Assert.That(await kentaaProjects.CountAsync() == projects.Count());
             var aProject = projects.FirstOrDefault(p => p.Titel == "Fietstocht 2023");
-            Assert.IsNotNull(aProject);
-            Assert.IsTrue(aProject!.Gesloten == false);
+            Assert.That(aProject, !Is.EqualTo(null));
+            Assert.That(aProject!.Gesloten == false);
         }
 
         //[Test]
@@ -141,7 +141,7 @@ namespace BerghAdmin.Tests.Kentaa
             }
             var bihzUsers = await _bihzUserService!.GetAll();
 
-            Assert.IsTrue(await users.CountAsync() == bihzUsers?.Count());
+            Assert.That(await users.CountAsync() == bihzUsers?.Count());
         }
 
         //[Test]
@@ -166,7 +166,7 @@ namespace BerghAdmin.Tests.Kentaa
             }
             var bihzDonaties = _bihzDonatieService!.GetAll();
 
-            Assert.IsTrue(await donations.CountAsync() == bihzDonaties?.Count());
+            Assert.That(await donations.CountAsync() == bihzDonaties?.Count());
         }
 
         //[Test]
@@ -201,8 +201,8 @@ namespace BerghAdmin.Tests.Kentaa
                 var persoon = await _persoonService!.GetByEmailAdres(emailAdress);
 
                 // check if the link to action is set for the three configured test persons
-                Assert.IsNotNull(persoon, $"Persoon met email adres: -{emailAdress}- is niet bekend");
-                Assert.IsTrue(persoon?.BihzActie != null);
+                Assert.That(persoon != null, $"Persoon met email adres: -{emailAdress}- is niet bekend");
+                Assert.That(persoon?.BihzActie != null == true);
             }
 
             // step 4: read all donations, create Donatie if needed and link to Personen
@@ -211,10 +211,10 @@ namespace BerghAdmin.Tests.Kentaa
 
             // check if persoon chappie has donaties
             var chappie = await _persoonService!.GetByEmailAdres("chappie@aapnootmies.com");
-            Assert.IsNotNull(chappie, "Persoon met email adres: -chappie@aapnootmies.com- is niet bekend");
-            Assert.IsTrue(chappie?.BihzActie != null, "Persoon heeft geen gelinkte Action in Kentaa");
-            Assert.True(chappie!.Donaties != null, "Geen Donaties voor test persoon Chappie");
-            Assert.True(chappie!.Donaties!.Sum(d => d.Bedrag) >= 75, "Chappie moet minimaal 75 euro opgehaald hebben");
+            Assert.That(chappie != null, "Persoon met email adres: -chappie@aapnootmies.com- is niet bekend");
+            Assert.That(chappie?.BihzActie != null, "Persoon heeft geen gelinkte Action in Kentaa");
+            Assert.That(chappie!.Donaties != null, "Geen Donaties voor test persoon Chappie");
+            Assert.That(chappie!.Donaties!.Sum(d => d.Bedrag) >= 75, "Chappie moet minimaal 75 euro opgehaald hebben");
 
             Assert.Pass();
         }

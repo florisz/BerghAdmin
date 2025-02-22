@@ -86,8 +86,8 @@ namespace BerghAdmin.Tests.BetalingenTests
                 }
             }
 
-            Assert.IsTrue(betalingen.Count >= 8, "Import must result in at least 8 betalingen");
-            Assert.AreEqual(betalingen.Count, _betalingenService!.GetAll()?.Count());
+            Assert.That(betalingen.Count >= 8, "Import must result in at least 8 betalingen");
+            Assert.That(betalingen.Count == _betalingenService!.GetAll()?.Count());
         }
     }
 }

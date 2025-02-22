@@ -1,5 +1,6 @@
 ﻿using BerghAdmin.ApplicationServices.Mail;
 using Mailjet.Client.TransactionalEmails;
+using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
 
 namespace BerghAdmin.Tests.MailTests
@@ -14,7 +15,7 @@ namespace BerghAdmin.Tests.MailTests
 
             SendContact? actual = address.ToMailjetAddress();
 
-            Assert.IsNull(actual);
+            Assert.That(actual == null);
         }
 
         [Test]
@@ -24,9 +25,9 @@ namespace BerghAdmin.Tests.MailTests
 
             SendContact? actual = address.ToMailjetAddress();
 
-            Assert.IsNotNull(actual);
-            Assert.AreEqual("test@test.xyz", actual!.Email);
-            Assert.AreEqual(null, actual!.Name);
+            Assert.That(actual, !Is.EqualTo(null));
+            Assert.That("test@test.xyz" == actual!.Email);
+            Assert.That(null == actual!.Name);
         }
 
         [Test]
@@ -36,9 +37,9 @@ namespace BerghAdmin.Tests.MailTests
 
             SendContact? actual = address.ToMailjetAddress();
 
-            Assert.IsNotNull(actual);
-            Assert.AreEqual("test@test.xyz", actual!.Email);
-            Assert.AreEqual("Test address", actual!.Name);
+            Assert.That(actual, !Is.EqualTo(null));
+            Assert.That("test@test.xyz" == actual!.Email);
+            Assert.That("Test address" == actual!.Name);
         }
 
         [Test]
@@ -48,7 +49,7 @@ namespace BerghAdmin.Tests.MailTests
 
             var actual = addresses.ToMailjetAddresses();
 
-            CollectionAssert.IsEmpty(actual);
+            Assert.That(actual.IsNullOrEmpty());
         }
 
         [Test]
@@ -58,7 +59,7 @@ namespace BerghAdmin.Tests.MailTests
 
             Attachment? actual = attachment.ToMailjetAttachment();
 
-            Assert.IsNull(actual);
+            Assert.That(actual == null);
         }
 
         [Test]
@@ -68,11 +69,11 @@ namespace BerghAdmin.Tests.MailTests
 
             Attachment? actual = attachment.ToMailjetAttachment();
 
-            Assert.IsNotNull(actual);
-            Assert.AreEqual(attachment.FilenameOnServer, actual!.Filename);
-            Assert.AreEqual(attachment.ContentType, actual.ContentType);
-            Assert.AreEqual(attachment.Base64Content, actual.Base64Content);
-            Assert.AreEqual(attachment.ContentID, actual.ContentID);
+            Assert.That(actual, !Is.EqualTo(null));
+            Assert.That(attachment.FilenameOnServer == actual!.Filename);
+            Assert.That(attachment.ContentType == actual.ContentType);
+            Assert.That(attachment.Base64Content == actual.Base64Content);
+            Assert.That(attachment.ContentID == actual.ContentID);
         }
 
 
@@ -83,7 +84,7 @@ namespace BerghAdmin.Tests.MailTests
 
             var actual = attachments.ToMailjetAttachments();
 
-            CollectionAssert.IsEmpty(actual);
+            Assert.That(actual.IsNullOrEmpty());
         }
 
         [Test]
@@ -93,7 +94,7 @@ namespace BerghAdmin.Tests.MailTests
 
             IEnumerable<TransactionalEmail> actual = message.ToMailjetMessages();
 
-            Assert.IsEmpty(actual);
+            Assert.That(actual.IsNullOrEmpty());
         }
 
         [Test]
@@ -109,15 +110,15 @@ namespace BerghAdmin.Tests.MailTests
 
             var actual = message.ToMailjetMessages();
 
-            Assert.AreEqual(1, actual.Count());
+            Assert.That(1 == actual.Count());
             TransactionalEmail email = actual.First();
-            Assert.AreEqual("sender@test.xyz", email.From.Email);
-            Assert.AreEqual(null, email.From.Name);
-            Assert.AreEqual("recipient@test.xyz", email.To.First().Email);
-            Assert.AreEqual(null, email.To.First().Name);
-            Assert.AreEqual("Subject", email.Subject);
-            Assert.AreEqual("Contents", email.TextPart);
-            Assert.AreEqual(string.Empty, email.HTMLPart);
+            Assert.That("sender@test.xyz" == email.From.Email);
+            Assert.That(null == email.From.Name);
+            Assert.That("recipient@test.xyz" == email.To.First().Email);
+            Assert.That(null == email.To.First().Name);
+            Assert.That("Subject" == email.Subject);
+            Assert.That("Contents" == email.TextPart);
+            Assert.That(string.Empty == email.HTMLPart);
         }
 
         [Test]
@@ -153,29 +154,29 @@ namespace BerghAdmin.Tests.MailTests
             IEnumerable<TransactionalEmail> actual = message.ToMailjetMessages();
 
             var emails = actual.ToList();
-            Assert.AreEqual(2, emails.Count);
+            Assert.That(2 == emails.Count);
             TransactionalEmail firstEmail = emails[0];
-            Assert.AreEqual("sender@test.xyz", firstEmail.From.Email);
-            Assert.AreEqual("Sender", firstEmail.From.Name);
-            Assert.AreEqual("recipient1@test.xyz", firstEmail.To.First().Email);
-            Assert.AreEqual("Recipient 1", firstEmail.To.First().Name);
-            Assert.AreEqual("Subject", firstEmail.Subject);
-            Assert.AreEqual("Contents", firstEmail.TextPart);
-            Assert.AreEqual("<h1>HTML</h1><p>Text</p><img src=\"images/test.jpg\" />", firstEmail.HTMLPart);
-            Assert.AreEqual(2, firstEmail.Cc.Count);
-            Assert.AreEqual(2, firstEmail.Bcc.Count);
-            Assert.AreEqual(1, firstEmail.InlinedAttachments.Count);
+            Assert.That("sender@test.xyz" == firstEmail.From.Email);
+            Assert.That("Sender" == firstEmail.From.Name);
+            Assert.That("recipient1@test.xyz" == firstEmail.To.First().Email);
+            Assert.That("Recipient 1" == firstEmail.To.First().Name);
+            Assert.That("Subject" == firstEmail.Subject);
+            Assert.That("Contents" == firstEmail.TextPart);
+            Assert.That("<h1>HTML</h1><p>Text</p><img src=\"images/test.jpg\" />" == firstEmail.HTMLPart);
+            Assert.That(2 == firstEmail.Cc.Count);
+            Assert.That(2 == firstEmail.Bcc.Count);
+            Assert.That(1 == firstEmail.InlinedAttachments.Count);
             TransactionalEmail secondEmail = emails[1];
-            Assert.AreEqual("sender@test.xyz", secondEmail.From.Email);
-            Assert.AreEqual("Sender", secondEmail.From.Name);
-            Assert.AreEqual("recipient2@test.xyz", secondEmail.To.First().Email);
-            Assert.AreEqual("Recipient 2", secondEmail.To.First().Name);
-            Assert.AreEqual("Subject", secondEmail.Subject);
-            Assert.AreEqual("Contents", secondEmail.TextPart);
-            Assert.AreEqual("<h1>HTML</h1><p>Text</p><img src=\"images/test.jpg\" />", secondEmail.HTMLPart);
-            Assert.AreEqual(2, secondEmail.Cc.Count);
-            Assert.AreEqual(2, secondEmail.Bcc.Count);
-            Assert.AreEqual(1, secondEmail.InlinedAttachments.Count);
+            Assert.That("sender@test.xyz" == secondEmail.From.Email);
+            Assert.That("Sender" == secondEmail.From.Name);
+            Assert.That("recipient2@test.xyz" == secondEmail.To.First().Email);
+            Assert.That("Recipient 2" == secondEmail.To.First().Name);
+            Assert.That("Subject" == secondEmail.Subject);
+            Assert.That("Contents" == secondEmail.TextPart);
+            Assert.That("<h1>HTML</h1><p>Text</p><img src=\"images/test.jpg\" />" == secondEmail.HTMLPart);
+            Assert.That(2 == secondEmail.Cc.Count);
+            Assert.That(2 == secondEmail.Bcc.Count);
+            Assert.That(1 == secondEmail.InlinedAttachments.Count);
         }
     }
 }

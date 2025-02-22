@@ -38,8 +38,8 @@ namespace BerghAdmin.Tests.FactuurTests
                 var nummer = factuur!.Nummer;
                 factuur = await factuurService.GetFactuurByNummerAsync(nummer);
 
-                Assert.IsNotNull(factuur);
-                Assert.AreEqual(factuur!.Nummer, nummer);
+                Assert.That(factuur, !Is.EqualTo(null));
+                Assert.That(factuur!.Nummer == nummer);
             }
             catch (Exception ex)
             {
@@ -66,8 +66,8 @@ namespace BerghAdmin.Tests.FactuurTests
             var ambassadeur = new Ambassadeur() { DebiteurNummer = "1", Naam = "aap" };
             var factuur = await factuurService.GetNewFactuurAsync(datum, ambassadeur);
 
-            Assert.IsNotNull(factuur);
-            Assert.AreEqual(factuur!.Datum.ToShortDateString(), dateTimeProvider.Now.ToShortDateString());
+            Assert.That(factuur, !Is.EqualTo(null));
+            Assert.That(factuur!.Datum.ToShortDateString() == dateTimeProvider.Now.ToShortDateString());
         }
     }
 }

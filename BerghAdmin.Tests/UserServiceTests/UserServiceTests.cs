@@ -54,8 +54,8 @@ public class UserServiceTests : DatabaseTestSetup
         }
 
         var user = await service.GetUserAsync(userName);
-        Assert.IsNotNull(user); 
-        Assert.AreEqual(userName, user!.UserName);
+        Assert.That(user, !Is.EqualTo(null)); 
+        Assert.That(userName == user!.UserName);
     }
 
     [Test]
@@ -73,12 +73,12 @@ public class UserServiceTests : DatabaseTestSetup
         }
 
         var user = await service.GetUserAsync(userName);
-        Assert.IsNotNull(user);
+        Assert.That(user, !Is.EqualTo(null));
 
         var userClaims = await service.GetUserClaimsAsync(userName);
-        Assert.AreEqual(1, userClaims.Count);
-        Assert.AreEqual("role", userClaims[0].Type);
-        Assert.AreEqual("administrator", userClaims[0].Value);
+        Assert.That(1 == userClaims.Count);
+        Assert.That("role" == userClaims[0].Type);
+        Assert.That("administrator" == userClaims[0].Value);
     }
 
     [Test]
@@ -96,14 +96,14 @@ public class UserServiceTests : DatabaseTestSetup
         }
 
         var user = await service.GetUserAsync(userName);
-        Assert.IsNotNull(user);
+        Assert.That(user, !Is.EqualTo(null));
 
         var userClaims = await service.GetUserClaimsAsync(userName);
-        Assert.AreEqual(2, userClaims.Count);
-        Assert.AreEqual("role", userClaims[0].Type);
-        Assert.AreEqual("administrator", userClaims[0].Value);
-        Assert.AreEqual("role", userClaims[1].Type);
-        Assert.AreEqual("beheersecretariaat", userClaims[1].Value);
+        Assert.That(2 == userClaims.Count);
+        Assert.That("role" == userClaims[0].Type);
+        Assert.That("administrator" == userClaims[0].Value);
+        Assert.That("role" == userClaims[1].Type);
+        Assert.That("beheersecretariaat" == userClaims[1].Value);
     }
 
     [Test]
@@ -123,9 +123,9 @@ public class UserServiceTests : DatabaseTestSetup
         }
 
         var users = service.GetUsers();
-        Assert.IsNotNull(users);
-        Assert.AreEqual(5, users.Count);
-        Assert.IsTrue(users.All(u => u.UserName != null && u.UserName.StartsWith(userName)));
+        Assert.That(users, !Is.EqualTo(null));
+        Assert.That(5 == users.Count);
+        Assert.That(users.All(u => u.UserName != null && u.UserName.StartsWith(userName)) == true);
     }
 
     [Test]
@@ -149,8 +149,8 @@ public class UserServiceTests : DatabaseTestSetup
             Assert.Fail(string.Join(",", result.Errors.Select(e => $"{e.Code}: {e.Description}").ToArray()));
         }
         var updatedUser = await service.GetUserAsync(userName);
-        Assert.IsNotNull(updatedUser);
-        Assert.AreEqual(updatedUser!.PhoneNumber, "06-12345678");
+        Assert.That(updatedUser, !Is.EqualTo(null));
+        Assert.That(updatedUser!.PhoneNumber == "06-12345678");
     }
 
     [Test]
@@ -167,7 +167,7 @@ public class UserServiceTests : DatabaseTestSetup
         }
 
         var user = await service.GetUserAsync(userName);
-        Assert.IsNotNull(user);
+        Assert.That(user, !Is.EqualTo(null));
 
         var newPassword = "NewP@ssword#123";
         result = await service.UpdateUserPasswordAsync(user!, newPassword);
@@ -177,8 +177,8 @@ public class UserServiceTests : DatabaseTestSetup
         }
 
         var updatedUser = await service.GetUserAsync(userName);
-        Assert.IsNotNull(updatedUser);
-        Assert.IsFalse(string.IsNullOrEmpty(updatedUser!.PasswordHash));
+        Assert.That(updatedUser, !Is.EqualTo(null));
+        Assert.That(string.IsNullOrEmpty(updatedUser!.PasswordHash) == false);
     }
 
     [Test]
@@ -196,7 +196,7 @@ public class UserServiceTests : DatabaseTestSetup
         }
 
         var user = await service.GetUserAsync(userName);
-        Assert.IsNotNull(user);
+        Assert.That(user, !Is.EqualTo(null));
 
         var newClaims = new Claim[] { BeheerSecretariaatPolicyHandler.Claim, BeheerGolfersPolicyHandler.Claim };
         result = await service.UpdateUserAsync(user!, newClaims);
@@ -206,14 +206,14 @@ public class UserServiceTests : DatabaseTestSetup
         }
 
         var updatedUser = await service.GetUserAsync(userName);
-        Assert.IsNotNull(updatedUser);
+        Assert.That(updatedUser, !Is.EqualTo(null));
 
         var updatedClaims = await service.GetUserClaimsAsync(userName);
-        Assert.AreEqual(2, updatedClaims.Count);
-        Assert.AreEqual("role", updatedClaims[0].Type);
-        Assert.AreEqual("beheersecretariaat", updatedClaims[0].Value);
-        Assert.AreEqual("role", updatedClaims[1].Type);
-        Assert.AreEqual("beheergolfers", updatedClaims[1].Value);
+        Assert.That(2 == updatedClaims.Count);
+        Assert.That("role" == updatedClaims[0].Type);
+        Assert.That("beheersecretariaat" == updatedClaims[0].Value);
+        Assert.That("role" == updatedClaims[1].Type);
+        Assert.That("beheergolfers" == updatedClaims[1].Value);
     }
 
     private User CreateUser(string naam)

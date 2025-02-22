@@ -41,8 +41,8 @@ namespace BerghAdmin.Tests.DomainTests
             await service.SaveAsync(ambassadeur);
             var ambassadeurRead = await service.GetByNaam(naamAmbassadeur);
 
-            Assert.IsNotNull(ambassadeurRead);
-            Assert.AreEqual(naamAmbassadeur, ambassadeurRead!.Naam);
+            Assert.That(ambassadeurRead, !Is.EqualTo(null));
+            Assert.That(naamAmbassadeur == ambassadeurRead!.Naam);
         }
 
         [Test]
@@ -75,8 +75,8 @@ namespace BerghAdmin.Tests.DomainTests
             await service.SaveAsync(ambassadeur);
             var ambassadeurRead = await service.GetByNaam(naamAmbassadeur);
 
-            Assert.IsNotNull(ambassadeurRead);
-            Assert.AreEqual(naamAmbassadeur, ambassadeurRead!.Naam);
+            Assert.That(ambassadeurRead, !Is.EqualTo(null));
+            Assert.That(naamAmbassadeur == ambassadeurRead!.Naam);
         }
 
         [Test]

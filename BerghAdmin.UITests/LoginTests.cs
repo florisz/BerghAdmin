@@ -21,9 +21,9 @@ public class LoginTests : PageTest
     {
         var page = await Page.GotoAsync("https://bergh-test-admin-webapp.azurewebsites.net/Identity/Account/Login?ReturnUrl=%2F");
 
-        Assert.NotNull(page);
-        Assert.IsTrue(page!.Ok);
-        Assert.AreEqual((int)HttpStatusCode.OK, page!.Status);
+        Assert.That(page, !Is.EqualTo(null));
+        Assert.That(page!.Ok == true);
+        Assert.That((int)HttpStatusCode.OK == page!.Status);
     }
 
     [Test]

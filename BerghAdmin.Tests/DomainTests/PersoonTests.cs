@@ -17,7 +17,7 @@ namespace BerghAdmin.Tests.DomainTests
         public void TestGetRollenEmpty()
         {
             var persoon = new Persoon { Id = 1 };
-            Assert.AreEqual(string.Empty, persoon.GetRollenAsString);
+            Assert.That(string.Empty == persoon.GetRollenAsString);
         }
         
         [Test]
@@ -29,7 +29,7 @@ namespace BerghAdmin.Tests.DomainTests
                                                 new Rol { Id = Convert.ToInt32(RolTypeEnum.Contactpersoon),Beschrijving = "Aap" } 
                                             } 
                                       };
-            Assert.AreEqual("Aap", persoon.GetRollenAsString);
+            Assert.That("Aap" == persoon.GetRollenAsString);
         }
         
         [Test]
@@ -43,7 +43,7 @@ namespace BerghAdmin.Tests.DomainTests
                                                 new Rol { Id = Convert.ToInt32(RolTypeEnum.Golfer), Beschrijving = "Mies" }, 
                                             } 
                                       };
-            Assert.AreEqual("Aap, Noot, Mies", persoon.GetRollenAsString);
+            Assert.That("Aap, Noot, Mies" == persoon.GetRollenAsString);
         }
 
         // Actually not a real test but a search for the correct lambda
@@ -62,23 +62,23 @@ namespace BerghAdmin.Tests.DomainTests
             var personen = new List<Persoon> { persoon1, persoon2, persoon3, persoon4 };
             
             var personenList = PersonenWithRollen(personen, new List<Rol> { rol1 });
-            Assert.AreEqual(1, personenList.Count);
+            Assert.That(1 == personenList.Count);
             personenList = PersonenWithRollen(personen, new List<Rol> { rol2 });
-            Assert.AreEqual(2, personenList.Count);
+            Assert.That(2 == personenList.Count);
             personenList = PersonenWithRollen(personen, new List<Rol> { rol3 });
-            Assert.AreEqual(2, personenList.Count);
+            Assert.That(2 == personenList.Count);
             personenList = PersonenWithRollen(personen, new List<Rol> { rol4 });
-            Assert.AreEqual(4, personenList.Count);
+            Assert.That(4 == personenList.Count);
             personenList = PersonenWithRollen(personen, new List<Rol> { rol1, rol2 });
-            Assert.AreEqual(2, personenList.Count);
+            Assert.That(2 == personenList.Count);
             personenList = PersonenWithRollen(personen, new List<Rol> { rol2, rol3 });
-            Assert.AreEqual(3, personenList.Count);
+            Assert.That(3 == personenList.Count);
             personenList = PersonenWithRollen(personen, new List<Rol> { rol1, rol3 });
-            Assert.AreEqual(2, personenList.Count);
+            Assert.That(2 == personenList.Count);
             personenList = PersonenWithRollen(personen, new List<Rol> { rol1, rol2, rol3 });
-            Assert.AreEqual(3, personenList.Count);
+            Assert.That(3 == personenList.Count);
             personenList = PersonenWithRollen(personen, new List<Rol> { rol1, rol2, rol3, rol4 });
-            Assert.AreEqual(4, personenList.Count);
+            Assert.That(4 == personenList.Count);
         }
 
         [Test]
@@ -88,7 +88,7 @@ namespace BerghAdmin.Tests.DomainTests
             persoon.Voornaam = "Henk";
             persoon.Tussenvoegsel = "van den";
             persoon.Achternaam = "Tillaart";
-            Assert.AreEqual("Henk van den Tillaart", persoon.VolledigeNaam);
+            Assert.That("Henk van den Tillaart" == persoon.VolledigeNaam);
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace BerghAdmin.Tests.DomainTests
             persoon.Voorletters = "H. E.  N.  K.";
             persoon.Tussenvoegsel = "van den";
             persoon.Achternaam = "Tillaart";
-            Assert.AreEqual(persoon.VolledigeNaam, "Henk (H. E. N. K.) van den Tillaart", persoon.VolledigeNaam);
+            Assert.That(persoon.VolledigeNaam == "Henk (H. E. N. K.) van den Tillaart", persoon.VolledigeNaam);
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace BerghAdmin.Tests.DomainTests
             var persoon = new Persoon();
             persoon.Voornaam = "Henk";
             persoon.Achternaam = "Tillaart";
-            Assert.AreEqual("Henk Tillaart", persoon.VolledigeNaam);
+            Assert.That("Henk Tillaart" == persoon.VolledigeNaam);
         }
 
         private static List<Persoon> PersonenWithRollen(List<Persoon> personen, List<Rol> rollen)

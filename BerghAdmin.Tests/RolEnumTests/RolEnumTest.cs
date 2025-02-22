@@ -13,7 +13,7 @@ namespace BerghAdmin.Tests.EnumTests
         public void TestTextIsEmpty()
         {
             var rolData = GetAlleRollen();
-            Assert.AreEqual(9, rolData.Length);
+            Assert.That(9 == rolData.Length);
         }
 
         private static RolData[] GetAlleRollen()

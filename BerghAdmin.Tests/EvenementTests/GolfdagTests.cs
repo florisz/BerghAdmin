@@ -31,9 +31,9 @@ namespace BerghAdmin.Tests.EvenementenTests
             await service.SaveAsync(new Golfdag() { Titel = golfdagNaam, GeplandeDatum = new DateTime(2022, 1, 1), Locatie = golfdagLocatie });
             var golfdag = service.GetByTitel(golfdagNaam);
 
-            Assert.IsNotNull(golfdag);
-            Assert.AreEqual(golfdag?.Titel, golfdagNaam);
-            Assert.AreEqual(golfdag?.Locatie, golfdagLocatie);
+            Assert.That(golfdag, !Is.EqualTo(null));
+            Assert.That(golfdag?.Titel == golfdagNaam);
+            Assert.That(golfdag?.Locatie == golfdagLocatie);
         }
 
         [Test]
@@ -46,10 +46,10 @@ namespace BerghAdmin.Tests.EvenementenTests
             
             // get by titel to get the id
             var golfdag = service.GetByTitel(golfdagNaam);
-            Assert.IsNotNull(golfdag);
+            Assert.That(golfdag, !Is.EqualTo(null));
             var golfdagById = service.GetById(golfdag!.Id);
-            Assert.IsNotNull(golfdagById);
-            Assert.AreEqual(golfdagById!.Titel, golfdagNaam);
+            Assert.That(golfdagById, !Is.EqualTo(null));
+            Assert.That(golfdagById!.Titel == golfdagNaam);
     }
 
         [Test]
@@ -61,7 +61,7 @@ namespace BerghAdmin.Tests.EvenementenTests
             await service.SaveAsync(new Golfdag() { Titel = golfdagNaam, GeplandeDatum = new DateTime(2022, 1, 1)});
             var errorCode = await service.SaveAsync(new Golfdag() { Titel = golfdagNaam, GeplandeDatum = new DateTime(2023, 1, 1) });
 
-            Assert.AreEqual(errorCode, ErrorCodeEnum.Conflict);
+            Assert.That(errorCode == ErrorCodeEnum.Conflict);
         }
 
         [Test]
@@ -78,8 +78,8 @@ namespace BerghAdmin.Tests.EvenementenTests
             await service.SaveAsync(golfdag);
 
             var golfdagById = service.GetById(golfdag.Id);
-            Assert.IsNotNull(golfdagById);
-            Assert.AreEqual(golfdagById!.Titel, golfdagUpdatedNaam);
+            Assert.That(golfdagById, !Is.EqualTo(null));
+            Assert.That(golfdagById!.Titel == golfdagUpdatedNaam);
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace BerghAdmin.Tests.EvenementenTests
 
             var golfdagen = service.GetAll();
 
-            Assert.AreEqual(3, golfdagen?.ToList().Count);
+            Assert.That(3 == golfdagen?.ToList().Count);
         }
 
         [Test]
@@ -116,9 +116,9 @@ namespace BerghAdmin.Tests.EvenementenTests
             var persoon = golfdagById?.Deelnemers.FirstOrDefault();
             var isDeelnemerVan = persoon?.Golfdagen?.FirstOrDefault(f => f.Id == golfdag.Id) != null;
 
-            Assert.IsNotNull(golfdagById);
-            Assert.AreEqual(1, golfdagById?.Deelnemers.Count);
-            Assert.IsTrue(isDeelnemerVan);
+            Assert.That(golfdagById, !Is.EqualTo(null));
+            Assert.That(1 == golfdagById?.Deelnemers.Count);
+            Assert.That(isDeelnemerVan == true);
         }
 
         [Test]
@@ -135,17 +135,17 @@ namespace BerghAdmin.Tests.EvenementenTests
             var service2 = this.GetRequiredService<IGolfdagenService>();
             var golfdagById = service2.GetById(golfdag.Id);
             var persoon = golfdagById?.Deelnemers.FirstOrDefault();
-            Assert.IsNotNull(golfdagById);
-            Assert.IsNotNull(persoon);
+            Assert.That(golfdagById, !Is.EqualTo(null));
+            Assert.That(persoon, !Is.EqualTo(null));
 
             // try to delete an exisitng deelnemer from the golfdag
             var result = await service2.DeleteDeelnemerAsync(golfdagById!, persoon!);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
-            Assert.AreEqual(0, golfdagById!.Deelnemers?.Count);
+            Assert.That(ErrorCodeEnum.Ok == result);
+            Assert.That(0 == golfdagById!.Deelnemers?.Count);
 
             // try to delete a non exisitng deelnemer from the golfdag
             result = await service2.DeleteDeelnemerAsync(golfdagById, persoon!);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
+            Assert.That(ErrorCodeEnum.Ok == result);
         }
 
         [Test]
@@ -162,12 +162,12 @@ namespace BerghAdmin.Tests.EvenementenTests
 
             // try to delete an exisitng deelnemer from the golfdag
             var result = await service.DeleteDeelnemerAsync(golfdag!, persoon.Id);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
-            Assert.AreEqual(0, golfdag!.Deelnemers?.Count);
+            Assert.That(ErrorCodeEnum.Ok == result);
+            Assert.That(0 == golfdag!.Deelnemers?.Count);
 
             // try to delete a non existing deelnemer from the golfdag
             result = await service.DeleteDeelnemerAsync(golfdag!, persoon);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
+            Assert.That(ErrorCodeEnum.Ok == result);
         }
 
         [Test]
@@ -188,10 +188,10 @@ namespace BerghAdmin.Tests.EvenementenTests
             var golfdagById = service.GetById(golfdag.Id);
             var sponsor = golfdag?.Sponsoren.FirstOrDefault();
             var isSponsorVan = sponsor?.GolfdagenGesponsored.FirstOrDefault(f => f.Id == golfdagById!.Id) != null;
-            Assert.IsNotNull(sponsor);
-            Assert.AreEqual(sponsor!.Naam, sponsorNaam);
-            Assert.IsNotNull(golfdagById);
-            Assert.AreEqual(1, golfdagById?.Sponsoren.Count);
+            Assert.That(sponsor, !Is.EqualTo(null));
+            Assert.That(sponsor!.Naam == sponsorNaam);
+            Assert.That(golfdagById, !Is.EqualTo(null));
+            Assert.That(1 == golfdagById?.Sponsoren.Count);
         }
 
         [Test]
@@ -207,16 +207,16 @@ namespace BerghAdmin.Tests.EvenementenTests
             await service.AddSponsorAsync(golfdag, new GolfdagSponsor() { Naam = sponsorNaam, DebiteurNummer = "123", EmailAdres = "aap@noot.com" });
 
             var sponsor = golfdag.Sponsoren.FirstOrDefault();
-            Assert.IsNotNull(sponsor);
+            Assert.That(sponsor, !Is.EqualTo(null));
 
             // try to delete an existing deelnemer from the golfdag
             var result = await service.DeleteSponsorAsync(golfdag, sponsor!);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
-            Assert.AreEqual(0, golfdag.Deelnemers?.Count);
+            Assert.That(ErrorCodeEnum.Ok == result);
+            Assert.That(0 == golfdag.Deelnemers?.Count);
 
             // try to delete a non exisitng deelnemer from the golfdag
             result = await service.DeleteSponsorAsync(golfdag, sponsor!);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
+            Assert.That(ErrorCodeEnum.Ok == result);
         }
 
         [Test]
@@ -233,12 +233,12 @@ namespace BerghAdmin.Tests.EvenementenTests
 
             // try to delete an exisitng deelnemer from the golfdag
             var result = await service.DeleteDeelnemerAsync(golfdag!, persoon.Id);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
-            Assert.AreEqual(0, golfdag!.Deelnemers?.Count);
+            Assert.That(ErrorCodeEnum.Ok == result);
+            Assert.That(0 == golfdag!.Deelnemers?.Count);
 
             // try to delete a non existing deelnemer from the golfdag
             result = await service.DeleteDeelnemerAsync(golfdag!, persoon);
-            Assert.AreEqual(ErrorCodeEnum.Ok, result);
+            Assert.That(ErrorCodeEnum.Ok == result);
         }
     }
 }
