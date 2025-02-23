@@ -76,7 +76,7 @@
     <div class="row">
         <div class="col-xs-3 col-sm-3 col-lg-3 col-md-3 search-item">
             <label class="col-form-label">Toon alle rollen</label>
-                <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
+            <SfCheckBox TChecked="bool" @bind-Checked="@ToonAlles" @onchange="onToonAllesChange" />
         </div>
         <div class="col-xs-3 col-sm-3 col-lg-3 col-md-3 search-item">
             <label class="col-form-label">Inclusief Verwijderd</label>
@@ -93,30 +93,32 @@
     </div>
 </div>
 
-    @* </AuthorizeView> *@
+@* </AuthorizeView> *@
 <br />
 @*
     The grid showing all persons
 *@
 <SfGrid @ref="@_personenGrid"
-        DataSource="@_personenList"
-        AllowPaging="true"
-        AllowResizing="true"
-        AllowSelection="true"
-        AllowExcelExport="true" 
-        ShowColumnMenu="true"
-        ContextMenuItems="@(new List<ContextMenuItemModel>() {
+DataSource="@_personenList"
+AllowPaging="false"
+AllowResizing="true"
+AllowSelection="true"
+AllowExcelExport="true"
+AllowFiltering="true"
+EnableAltRow="false"
+ShowColumnMenu="true"
+ContextMenuItems="@(new List<ContextMenuItemModel>() {
                                 new ContextMenuItemModel { Text = "Toevoegen persoon", Target = ".e-content", Id = "add-persoon" },
                                 new ContextMenuItemModel { Text = "Wijzig persoon", Target = ".e-content", Id = "edit-persoon" },
                                 new ContextMenuItemModel { Text = "Stuur email", Target = ".e-content", Id = "send-email" },
                                 new ContextMenuItemModel { Text = "Kopieer emailadres(sen)", Target = ".e-content", Id = "copy-emailaddresses" },
                             })">
     <GridEditSettings 
-        AllowAdding="true" 
-        AllowDeleting="true"
-        AllowEditing="true"
-        Mode="EditMode.Dialog"
-        AllowEditOnDblClick="false">
+    AllowAdding="true" 
+    AllowDeleting="true"
+    AllowEditing="true"
+    Mode="EditMode.Dialog"
+    AllowEditOnDblClick="false">
     </GridEditSettings>
     <SfToolbar>
         <ToolbarItems>
@@ -419,9 +421,12 @@
 
     private async Task SelectRow(int id)
     {
+        await Task.Delay(200);
         var index = await _personenGrid.GetRowIndexByPrimaryKeyAsync(id);
-        // tijdelijk uitgecomment omdat het niet werkt
-        // await _personenGrid.SelectRowAsync(index);
+        if (index != -1)
+        {
+            await _personenGrid.SelectRowAsync(index);
+        }
     }
 
     private async Task<List<Persoon>> GetPersonen(List<int> rolTypes)
