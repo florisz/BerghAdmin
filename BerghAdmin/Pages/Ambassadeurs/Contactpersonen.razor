@@ -10,10 +10,14 @@
 
 <h3>Contactpersonen van Ambassadeurs</h3>
 
-<PersonenComponent RolContext="@rolContext" />
+<PersonenComponent RolContext="@rolContext" SelectedId="@SelectedId" />
 
 @code
 {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "SelectedId")]
+    public int? SelectedId { get; set; } = null;
+
     public int[] rolContext = new int[] { Convert.ToInt32(RolTypeEnum.Contactpersoon) };
 
     protected async override Task OnAfterRenderAsync(bool firstRender)

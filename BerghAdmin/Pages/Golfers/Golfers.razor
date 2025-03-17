@@ -12,10 +12,14 @@
 
 <h3>Golfers</h3>
 
-<PersonenComponent RolContext="@rolContext" />
+<PersonenComponent RolContext="@rolContext" SelectedId="@SelectedId" />
 
 @code
 {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "SelectedId")]
+    public int? SelectedId { get; set; } = null;
+
     public int[] rolContext = new int[] { Convert.ToInt32(RolTypeEnum.Golfer) };
 
     protected async override Task OnAfterRenderAsync(bool firstRender)

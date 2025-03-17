@@ -23,7 +23,7 @@
 
 <h3>Applicatie Management</h3>
 
-<PersonenComponent RolContext="@rolContext" ToonAlles="true" />
+<PersonenComponent RolContext="@rolContext" SelectedId="@SelectedId" ToonAlles="true" />
 <br/>
 
 <div class="form-group">
@@ -35,6 +35,10 @@
 
 @code
 {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "SelectedId")]
+    public int? SelectedId { get; set; } = null;
+
     public int[] rolContext = new int[] { };
     private ErrorDialog errorDialog = new();
 

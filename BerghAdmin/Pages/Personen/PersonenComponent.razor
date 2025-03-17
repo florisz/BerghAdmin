@@ -413,7 +413,6 @@ ContextMenuItems="@(new List<ContextMenuItemModel>() {
         if (SelectedId != null)
         {
             // selecteer de regel met de gespecificeerde id
-            await _personenGrid.GoToPageAsync(1);
             await SelectRow(SelectedId.Value);
         }
         StateHasChanged();
@@ -428,6 +427,7 @@ ContextMenuItems="@(new List<ContextMenuItemModel>() {
         {
             await _personenGrid.SelectRowAsync(index);
             await _personenGrid.ScrollIntoViewAsync(0, index);
+            await _personenGrid.AutoFitColumnsAsync();
         }
     }
 
