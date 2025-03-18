@@ -145,6 +145,8 @@ else
     public int Id { get; set; }
     [Parameter]
     public string? ReturnUrl { get; set; }
+    [Parameter]
+    public int? SelectedId { get; set; } = null;
 
     [CascadingParameter]
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
@@ -177,13 +179,15 @@ else
     {
         // TO DO: If edits were made, ask for confirmation
         _dbContext.UndoingChangesDbContextLevel();
-        _navigationManager.NavigateTo(ReturnUrl!);
+        var url = _navigationManager.CreateUrlWithSelectedId(Id, ReturnUrl!);
+        _navigationManager.NavigateTo(url);
     }
 
     private async Task OnDialogSaveAndClose()
     {
         await _ambassadeurService.SaveAsync(_currentAmbassadeur!);
-        _navigationManager.NavigateTo(ReturnUrl!);
+        var url = _navigationManager.CreateUrlWithSelectedId(Id, ReturnUrl!);
+        _navigationManager.NavigateTo(url);
     }
 
     private async Task OnWijzigenContactPersoon()

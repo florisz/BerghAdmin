@@ -138,7 +138,7 @@ ContextMenuItems="@(new List<ContextMenuItemModel>() {
         </ToolbarItems>
     </SfToolbar>
     <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Multiple" PersistSelection="true"></GridSelectionSettings>
-    <GridEvents OnRecordDoubleClick="OnDoubleClickPersoon" ContextMenuItemClicked="OnContextMenuClick" TValue="Persoon" />
+    <GridEvents OnRecordDoubleClick="OnDoubleClickPersoon" ContextMenuItemClicked="OnContextMenuClick" TValue="Persoon" DataBound="DataboundHandler" />
     <GridColumns>
         <GridColumn Type="ColumnType.CheckBox" Width="25"></GridColumn>
         <GridColumn Field=@nameof(Persoon.Id) HeaderText="Id" TextAlign="TextAlign.Left" Width="0" IsPrimaryKey="true" Visible="false" />
@@ -409,7 +409,6 @@ ContextMenuItems="@(new List<ContextMenuItemModel>() {
             var personen = await GetPersonen(_selectedRollen);
             _personenList = personen.OrderBy(p => p.Achternaam).ToList<Persoon>();
         }
-        await _personenGrid.AutoFitColumnsAsync();
         if (SelectedId != null)
         {
             // selecteer de regel met de gespecificeerde id
@@ -421,16 +420,26 @@ ContextMenuItems="@(new List<ContextMenuItemModel>() {
 
     private async Task SelectRow(int id)
     {
+        // suggestion from an example from Syncfusion (ugly! but it works)
         await Task.Delay(200);
         var index = await _personenGrid.GetRowIndexByPrimaryKeyAsync(id);
         if (index != -1)
         {
             await _personenGrid.SelectRowAsync(index);
-            await _personenGrid.ScrollIntoViewAsync(0, index);
-            await _personenGrid.AutoFitColumnsAsync();
+            await _personenGrid.ScrollIntoViewAsync(-1, Convert.ToInt32(index));
         }
     }
 
+    public async Task DataboundHandler(object args)
+    {
+        await _personenGrid.AutoFitColumnsAsync(new string[] { "Id",
+                                                                "VolledigeNaam",
+                                                                "GeboorteDatum",
+                                                                "Mobiel",
+                                                                "EmailAdres",
+                                                                "GetRollenAsString",
+                                                                "IsVerwijderd" });
+    }
     private async Task<List<Persoon>> GetPersonen(List<int> rolTypes)
     {
         var personen = new List<Persoon>();

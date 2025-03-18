@@ -261,7 +261,6 @@ else
         _persoonService.SetRollen(_currentPersoon, _rollenListBox!.GetDataByValue(_selectedRollenArray));
         await _persoonService.SavePersoonAsync(_currentPersoon);
 
-        // go to previous page TO DO: depends on where we came from, to be fixed
         var url = _navigationManager.CreateUrlWithSelectedId(Id, ReturnUrl);
         _navigationManager.NavigateTo(url);
     }
