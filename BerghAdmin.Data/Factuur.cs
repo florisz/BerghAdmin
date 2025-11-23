@@ -5,7 +5,10 @@ namespace BerghAdmin.Data;
 
 public class Factuur
 {
-    public Factuur(int nummer, DateTime datum, int sponsorId, string aanduiding)
+    // create primary constructor
+    public Factuur() { }
+
+    public Factuur(int nummer, DateTime datum, int sponsorId, string aanduiding) 
     {
         Nummer = nummer;
         Datum = datum;

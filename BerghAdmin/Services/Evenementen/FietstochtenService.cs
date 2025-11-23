@@ -14,7 +14,7 @@ public class FietstochtenService : IFietstochtenService
     {
         _dbContext = dbContext;
         _logger = logger;
-        _logger.LogDebug($"FietstochtenService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
+        _logger.LogDebug("{Message}", "FietstochtenService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
     }
 
     public Task<List<Fietstocht>> GetAll()
@@ -72,7 +72,7 @@ public class FietstochtenService : IFietstochtenService
 
     public async Task<ErrorCodeEnum> SaveAsync(Fietstocht fietstocht)
     {
-        _logger.LogDebug($"Entering save fietstocht {fietstocht.Titel}");
+        _logger.LogDebug("{Message}", "Entering save fietstocht {fietstocht.Titel}");
         if (fietstocht == null)
         {
             throw new ApplicationException("Fietstocht parameter can not be null");
@@ -91,7 +91,7 @@ public class FietstochtenService : IFietstochtenService
         {
             _dbContext.Fietstochten?.Update(fietstocht);
         }
-        _logger.LogDebug($"In SaveAsync() before save; threadid={Thread.CurrentThread.ManagedThreadId}");
+        _logger.LogDebug("{Message}", "In SaveAsync() before save; threadid={Thread.CurrentThread.ManagedThreadId}");
 
         await _dbContext.SaveChangesAsync();
 
@@ -100,7 +100,7 @@ public class FietstochtenService : IFietstochtenService
 
     public async Task<ErrorCodeEnum> AddDeelnemerAsync(Fietstocht fietstocht, Persoon persoon)
     {
-        _logger.LogDebug($"Entering AddAsync deelnemer {persoon.VolledigeNaam} to {fietstocht.Titel}");
+        _logger.LogDebug("{Message}", "Entering AddAsync deelnemer {persoon.VolledigeNaam} to {fietstocht.Titel}");
 
         if (fietstocht == null) { throw new ApplicationException("parameter fietstocht can not be null"); }
         if (persoon == null) { throw new ApplicationException("parameter persoon can not be null"); }
@@ -119,7 +119,7 @@ public class FietstochtenService : IFietstochtenService
 
         await _dbContext.SaveChangesAsync();
 
-        _logger.LogInformation($"Deelnemer added {persoon.VolledigeNaam} to {fietstocht.Titel}");
+        _logger.LogInformation("{Message}", "Deelnemer added {persoon.VolledigeNaam} to {fietstocht.Titel}");
         return ErrorCodeEnum.Ok;
     }
 

@@ -40,13 +40,13 @@ else
     The grid showing all facturen
 *@
 <SfGrid @ref="@_factuurGrid"
-        DataSource="@_factuurList"
-        AllowPaging="true"
-        AllowResizing="true"
-        AllowSelection="true"
-        AllowExcelExport="true"
-        ShowColumnMenu="true"
-        ContextMenuItems="@(new List<ContextMenuItemModel>() {
+DataSource="@_factuurList"
+AllowPaging="true"
+AllowResizing="true"
+AllowSelection="true"
+AllowExcelExport="true"
+ShowColumnMenu="true"
+ContextMenuItems="@(new List<ContextMenuItemModel>() {
                                 new ContextMenuItemModel { Text = "Toon/Print factuur", Target = ".e-content", Id = "show-factuur" },
                                 new ContextMenuItemModel { Text = "Email factuur", Target = ".e-content", Id = "mail-factuur" },
                                 new ContextMenuItemModel { Text = "Verwijder factuur", Target = ".e-content", Id = "delete-factuur" },
@@ -58,10 +58,10 @@ else
                                 new ContextMenuItemModel { Text = "Zet status-Gecrediteerd", Target = ".e-content", Id = "set-status-gecrediteerd" },
                             })">
     <GridEditSettings AllowAdding="true"
-                      AllowDeleting="true"
-                      AllowEditing="true"
-                      Mode="EditMode.Dialog"
-                      AllowEditOnDblClick="false" >
+    AllowDeleting="true"
+    AllowEditing="true"
+    Mode="EditMode.Dialog"
+    AllowEditOnDblClick="false" >
     </GridEditSettings>
     <SfToolbar>
         <ToolbarItems>
@@ -102,7 +102,7 @@ else
     public List<Factuur> _factuurList = new();
     SendMailDialog sendMailDialog = new();
     private User? CurrentUser;
-    private Ambassadeur CurrentAmbassadeur = null;
+    private Ambassadeur? CurrentAmbassadeur;
     private bool ToonVerwijderd { get; set; } = false;
     private bool ToonFacturenPerAmbassadeur() { return Id != null && Id != 0; }
 
@@ -125,7 +125,7 @@ else
         if (_authenticationStateTask != null)
         {
             var authenticationState = await _authenticationStateTask;
-            CurrentUser = await _userManager.GetUserAsync(authenticationState?.User);
+            CurrentUser = await _userManager.GetUserAsync(authenticationState.User);
         }
         await RefreshList();
     }
@@ -195,17 +195,27 @@ else
         }
     }
 
-
     private async Task<List<Factuur>> GetFacturen(int? ambassadeurId)
     {
         var facturen = await _factuurService.GetFacturenAsync(_dateTimeProvider.Now.Year);
+        if (facturen == null || facturen.Count == 0)
+        {
+            return new List<Factuur>();
+        }
+
         if (ambassadeurId != null)
         {
             facturen = facturen
                         .Where(f => f.SponsorId == ambassadeurId.Value)
                         .ToList();
         }
-        return facturen!
+        if (facturen == null || facturen.Count == 0)
+        {
+            return new List<Factuur>();
+        }
+
+
+        return facturen
                 .OrderByDescending(f => f.Datum)
                 .ToList<Factuur>();
     }
@@ -245,7 +255,7 @@ else
         }
         MailMessage message = new()
             {
-                From = new MailAddress(CurrentUser.Email, CurrentUser.Name),
+                From = new MailAddress(CurrentUser!.Email!, CurrentUser.Name),
                 To = selectedAddresses,
                 Subject = $"Factuur Ambassadeur Bergh in het Zadel {factuur.FactuurNummer}"
             };

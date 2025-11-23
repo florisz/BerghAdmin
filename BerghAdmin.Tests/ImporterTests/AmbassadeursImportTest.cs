@@ -20,14 +20,6 @@ namespace BerghAdmin.Tests.ImporterTests;
 [TestFixture]
 public class AmbassadeursImportTest : DatabaseTestSetup
 {
-    private readonly IRolService _rolService;
-    private readonly IFietstochtenService _fietstochtenService;
-    private readonly IGolfdagenService _golfdagenService;
-    private readonly IPersoonService _persoonService;
-    private readonly ISponsorService _sponsorService;
-    private readonly IAmbassadeurService _ambassadeurService;
-    private readonly IDocumentService _documentService;
-
     protected override void RegisterServices(ServiceCollection services)
     {
         var databaseConfiguration = new ConfigurationBuilder()

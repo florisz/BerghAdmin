@@ -10,10 +10,13 @@
 @using Syncfusion.Blazor.Grids
 
 @inject IJSRuntime jsRuntime
-@inject IDocumentService _documentService
-@inject SfDialogService _dialogService
 @inject NavigationManager _navigationManager
+
+@inject SfDialogService _dialogService
+@inject SfUploader _sfUploader
+
 @inject IDateTimeProvider _dateTimeProvider
+@inject IDocumentService _documentService
 
 @attribute [Authorize(Policy = "IsAdministrator")]
 
@@ -106,7 +109,7 @@
         }
     }
 
-    private async Task ShowInterface()
+    private void ShowInterface()
     {
     }
 

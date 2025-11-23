@@ -45,7 +45,7 @@ namespace BerghAdmin.Services.Import
                     var records = csv.GetRecordsAsync<CsvAmbassadeurRecord>();
                     await foreach (var record in records)
                     {
-                        _logger.LogInformation($"record of deb: {record.Debiteurnummer} read from csv stream");
+                        _logger.LogInformation("{Message}", "record of deb: {record.Debiteurnummer} read from csv stream");
                         Persoon contactPersoon1 = null;
                         Persoon contactPersoon2 = null;
                         Persoon compagnon = null;
@@ -53,12 +53,12 @@ namespace BerghAdmin.Services.Import
                         if (!String.IsNullOrEmpty(record.Emailadres))
                         {
                             contactPersoon1 = await SaveContactpersoon(record);
-                            _logger.LogInformation($"Contact persoon 1 with email: {contactPersoon1.EmailAdres} saved");
+                            _logger.LogInformation("{Message}", "Contact persoon 1 with email: {contactPersoon1.EmailAdres} saved");
                         }
                         if (!String.IsNullOrEmpty(record.CompagnonEmail))
                         {
                             compagnon = await SaveCompagnon(record);
-                            _logger.LogInformation($"Compagnon with email: {compagnon.EmailAdres} saved");
+                            _logger.LogInformation("{Message}", "Compagnon with email: {compagnon.EmailAdres} saved");
                         }
 
                         // now create the ambassadeur
@@ -100,10 +100,10 @@ namespace BerghAdmin.Services.Import
                         // vul alle MagazineJaren
                         AddMagazineJaren(ambassadeur, record);
 
-                        _logger.LogInformation($"Save Ambassadeur: {ambassadeur.Naam}");
+                        _logger.LogInformation("{Message}", "Save Ambassadeur: {ambassadeur.Naam}");
 
                         await _ambassadeurService.SaveAsync(ambassadeur);
-                        _logger.LogInformation($"Ambassadeur met debiteurnummer: {ambassadeur.DebiteurNummer} ingelezen");
+                        _logger.LogInformation("{Message}", "Ambassadeur met debiteurnummer: {ambassadeur.DebiteurNummer} ingelezen");
                     }
                 }
                 _logger.LogInformation("Alle ambassadeurs ingelezen");
@@ -111,15 +111,15 @@ namespace BerghAdmin.Services.Import
                 var personen = await _persoonService.GetPersonen();
                 var contactPersoonRol = _rolService.GetRolById(RolTypeEnum.Contactpersoon);
                 var compagnonPersoonRol = _rolService.GetRolById(RolTypeEnum.Compagnon);
-                _logger.LogInformation($"# personen={personen.Count}");
-                _logger.LogInformation($"# ambassadeurs={ambassadeurs.ToList().Count}");
-                _logger.LogInformation($"# contact personen={contactPersoonRol.Personen.Count}");
-                _logger.LogInformation($"# compagnons={compagnonPersoonRol.Personen.Count}");
+                _logger.LogInformation("{Message}", "# personen={personen.Count}");
+                _logger.LogInformation("{Message}", "# ambassadeurs={ambassadeurs.ToList().Count}");
+                _logger.LogInformation("{Message}", "# contact personen={contactPersoonRol.Personen.Count}");
+                _logger.LogInformation("{Message}", "# compagnons={compagnonPersoonRol.Personen.Count}");
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Exception {ex.Message} thrown");
-                throw new ApplicationException($"Csv import exception {ex.Message}", ex);
+                _logger.LogInformation("{Message}", "Exception {ex.Message} thrown");
+                throw new ApplicationException("Csv import exception {ex.Message}", ex);
             }
         }
 

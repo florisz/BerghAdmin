@@ -17,7 +17,7 @@ public class GolfdagenService : IGolfdagenService
         _dbContext = dbContext;
         _persoonService = persoonService;
         _logger = logger;
-        logger.LogDebug($"GolfdagenService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
+        logger.LogDebug("{Message}", "GolfdagenService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
 }
 
     public IEnumerable<Golfdag>? GetAll()
@@ -42,7 +42,7 @@ public class GolfdagenService : IGolfdagenService
 
     public async Task<ErrorCodeEnum> SaveAsync(Golfdag golfdag)
     {
-        _logger.LogDebug($"Entering save golfdag {golfdag.Titel}");
+        _logger.LogDebug("{Message}", "Entering save golfdag {golfdag.Titel}");
         if (golfdag == null)
         {
             throw new ApplicationException("Golfdag parameter can not be null");
@@ -68,7 +68,7 @@ public class GolfdagenService : IGolfdagenService
 
     public async Task<ErrorCodeEnum> AddDeelnemerAsync(Golfdag golfdag, Persoon persoon)
     {
-        _logger.LogDebug($"Entering AddAsync deelnemer {persoon.VolledigeNaam} to {golfdag.Titel}");
+        _logger.LogDebug("{Message}", "Entering AddAsync deelnemer {persoon.VolledigeNaam} to {golfdag.Titel}");
 
         if (golfdag == null) { throw new ApplicationException("parameter golfdag can not be null"); }
         if (persoon == null) { throw new ApplicationException("parameter persoon can not be null"); }
@@ -87,7 +87,7 @@ public class GolfdagenService : IGolfdagenService
 
         await _dbContext.SaveChangesAsync();
 
-        _logger.LogInformation($"Deelnemer added {persoon.VolledigeNaam} to {golfdag.Titel}");
+        _logger.LogInformation("{Message}", "Deelnemer added {persoon.VolledigeNaam} to {golfdag.Titel}");
         return ErrorCodeEnum.Ok;
     }
 
@@ -136,7 +136,7 @@ public class GolfdagenService : IGolfdagenService
 
     public async Task<ErrorCodeEnum> AddSponsorAsync(Golfdag golfdag, GolfdagSponsor sponsor)
     {
-        _logger.LogDebug($"Entering AddAsync sponsor {sponsor.Naam} to {golfdag.Titel}");
+        _logger.LogDebug("{Message}", "Entering AddAsync sponsor {sponsor.Naam} to {golfdag.Titel}");
 
         if (golfdag == null) { throw new ApplicationException("parameter golfdag can not be null"); }
         if (sponsor == null) { throw new ApplicationException("parameter sponsor can not be null"); }
@@ -155,11 +155,11 @@ public class GolfdagenService : IGolfdagenService
 
         await _dbContext.SaveChangesAsync();
 
-        _logger.LogInformation($"Deelnemer added sponsor: {sponsor.Naam} to {golfdag.Titel}");
+        _logger.LogInformation("{Message}", "Deelnemer added sponsor: {sponsor.Naam} to {golfdag.Titel}");
         return ErrorCodeEnum.Ok;
     }
 
-    public async Task<ErrorCodeEnum> AddSponsorAsync(Golfdag golfdag, int sponsorId)
+    public Task<ErrorCodeEnum> AddSponsorAsync(Golfdag golfdag, int sponsorId)
     {
         throw new NotImplementedException();
     }
@@ -181,7 +181,7 @@ public class GolfdagenService : IGolfdagenService
         return ErrorCodeEnum.Ok;
     }
 
-    public async Task<ErrorCodeEnum> DeleteSponsorAsync(Golfdag golfdag, int sponsorId)
+    public Task<ErrorCodeEnum> DeleteSponsorAsync(Golfdag golfdag, int sponsorId)
     {
         throw new NotImplementedException();
     }

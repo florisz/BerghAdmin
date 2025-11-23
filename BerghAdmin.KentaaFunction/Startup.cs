@@ -42,7 +42,7 @@ public class Startup : FunctionsStartup
             .AddHttpClient<BerghAdminService>(client =>
             {
                 client.DefaultRequestHeaders.Add("api-key", config["ApiConfiguration:Key"]);
-                client.BaseAddress = new Uri(config["ApiConfiguration:Host"]);
+                client.BaseAddress = new Uri(config["ApiConfiguration:Host"]!);
             });
 
     }

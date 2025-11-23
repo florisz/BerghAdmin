@@ -11,11 +11,11 @@ public class FactuurService : IFactuurService
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private ILogger<FactuurService> _logger;
-    private IDocumentMergeService _mergeService;
-    private IAmbassadeurService _ambassadeurService;
-    private IFactuurNummerService _factuurNummerGenerator;
-    private IPdfConverter _pdfConverter;
+    private readonly ILogger<FactuurService> _logger;
+    private readonly IDocumentMergeService _mergeService;
+    private readonly IAmbassadeurService _ambassadeurService;
+    private readonly IFactuurNummerService _factuurNummerGenerator;
+    private readonly IPdfConverter _pdfConverter;
 
     public FactuurService(ApplicationDbContext dbContext, 
                             IDateTimeProvider dateTimeProvider,
@@ -32,18 +32,18 @@ public class FactuurService : IFactuurService
         _ambassadeurService = ambassadeurService;
         _factuurNummerGenerator = factuurNummerGenerator;
         _logger = logger;
-        logger.LogDebug($"FactuurService created; threadid={Thread.CurrentThread.ManagedThreadId}, dbcontext={dbContext.ContextId}");
+        logger.LogDebug("{Message}", $"FactuurService created; threadid={Environment.CurrentManagedThreadId}, dbcontext={dbContext.ContextId}");
     }
     public async Task DeleteFactuurAsync(Factuur factuur)
     {
-        _logger.LogDebug($"Delete factuur with id:{factuur.Id}");
+        _logger.LogDebug("{Message}", $"Delete factuur with id:{factuur.Id}");
 
         if (factuur != null)
         {
             _dbContext.Facturen?.Remove(factuur);
             await _dbContext.SaveChangesAsync();
 
-            _logger.LogDebug($"Factuur with nummer {factuur.Nummer} deleted");
+            _logger.LogDebug("{Message}", $"Factuur with nummer {factuur.Nummer} deleted");
         }
     }
 
@@ -86,7 +86,7 @@ public class FactuurService : IFactuurService
     {
         int tries = 0;
         bool returnValue = false;
-        Factuur factuur = null!;
+        Factuur factuur;
 
         while (!returnValue)
         {
@@ -109,16 +109,15 @@ public class FactuurService : IFactuurService
 
     public async Task<bool> SaveFactuurAsync(Factuur factuur, Ambassadeur? ambassadeur)
     {
-        _logger.LogDebug($"SaveAsync factuur with nummer {factuur.Nummer}");
+        _logger.LogDebug("{Message}", $"SaveAsync factuur with nummer {factuur.Nummer}");
 
-        var debugView = _dbContext.ChangeTracker.DebugView.LongView;
         if (factuur.Id == 0)
         {
             _dbContext
                 .Facturen?
                 .Add(factuur);
 
-            _logger.LogInformation($"Factuur with nummer {factuur.Nummer} was added");
+            _logger.LogInformation("{Message}", $"Factuur with nummer {factuur.Nummer} was added");
         }
         else
         {
@@ -126,7 +125,7 @@ public class FactuurService : IFactuurService
                 .Facturen?
                 .Update(factuur);
 
-            _logger.LogInformation($"Factuur with nummer {factuur.Nummer} was updated");
+            _logger.LogInformation("{Message}", $"Factuur with nummer {factuur.Nummer} was updated");
         }
         if (ambassadeur != null)
         {
@@ -140,24 +139,31 @@ public class FactuurService : IFactuurService
 
     public async Task MaakFactuurVoorAmbassadeur(string templateName, Ambassadeur ambassadeur)
     {
+        if (ambassadeur is null)
+        {
+            throw new ArgumentNullException(nameof(ambassadeur));
+        }
+
         var template = _mergeService.GetMergeTemplateByName(templateName);
 
         var factuur = await GetNewFactuurAsync(ambassadeur);
 
-        var mergeDictionary = new Dictionary<string, string>();
-        mergeDictionary.Add("AmbassadeurNaam", ambassadeur.Naam);
-        mergeDictionary.Add("ContactpersoonAanhef", ambassadeur.ContactPersoon1.Aanhef);
-        mergeDictionary.Add("ContactpersoonVoornaam", ambassadeur.ContactPersoon1.Voornaam);
-        mergeDictionary.Add("ContactpersoonAchternaam", ambassadeur.ContactPersoon1.Achternaam);
-        mergeDictionary.Add("AmbassadeurAdres", ambassadeur.Adres);
-        mergeDictionary.Add("AmbassadeurPostcode", ambassadeur.Postcode);
-        mergeDictionary.Add("AmbassadeurWoonplaats", ambassadeur.Plaats);
-        mergeDictionary.Add("Dagtekening", _dateTimeProvider.Now.ToString("d"));
-        mergeDictionary.Add("FactuurNummer", factuur!.FactuurNummer);
-        mergeDictionary.Add("DebiteurNummer", ambassadeur.DebiteurNummer);
-        mergeDictionary.Add("HuidigeDatum", _dateTimeProvider.Now.ToString("d"));
-        mergeDictionary.Add("FactuurBedrag", string.Format("€ {0:N2} Euro", ambassadeur.ToegezegdBedrag));
-        mergeDictionary.Add("FactuurTotaalBedrag", string.Format("€ {0:N2} Euro", ambassadeur.ToegezegdBedrag));
+        var mergeDictionary = new Dictionary<string, string?>
+        {
+            { "AmbassadeurNaam", ambassadeur.Naam },
+            { "ContactpersoonAanhef", ambassadeur.ContactPersoon1!.Aanhef },
+            { "ContactpersoonVoornaam", ambassadeur.ContactPersoon1!.Voornaam },
+            { "ContactpersoonAchternaam", ambassadeur.ContactPersoon1!.Achternaam },
+            { "AmbassadeurAdres", ambassadeur.Adres },
+            { "AmbassadeurPostcode", ambassadeur.Postcode },
+            { "AmbassadeurWoonplaats", ambassadeur.Plaats },
+            { "Dagtekening", _dateTimeProvider.Now.ToString("d") },
+            { "FactuurNummer", factuur!.FactuurNummer },
+            { "DebiteurNummer", ambassadeur.DebiteurNummer },
+            { "HuidigeDatum", _dateTimeProvider.Now.ToString("d") },
+            { "FactuurBedrag", string.Format("€ {0:N2} Euro", ambassadeur.ToegezegdBedrag) },
+            { "FactuurTotaalBedrag", string.Format("€ {0:N2} Euro", ambassadeur.ToegezegdBedrag) }
+        };
 
         // Convert template Document content to MemoryStream
         using var templateStream = new MemoryStream(template.Content);
@@ -194,7 +200,7 @@ public class FactuurService : IFactuurService
         await SaveFactuurAsync(factuur, ambassadeur);
     }
 
-    private async Task<byte[]> StreamToByteArray(Stream stream)
+    static private async Task<byte[]> StreamToByteArray(Stream stream)
     {
         using var memoryStream = new MemoryStream();
         await stream.CopyToAsync(memoryStream);

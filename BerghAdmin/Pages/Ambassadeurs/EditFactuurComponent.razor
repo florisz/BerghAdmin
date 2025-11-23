@@ -60,7 +60,7 @@
     [CascadingParameter]
     private Task<AuthenticationState>? _authenticationStateTask { get; set; }
 
-    private Factuur _currentFactuur{ get; set; } = null;
+    private Factuur? _currentFactuur { get; set; } = null;
     private FactuurStatus[] factuurStatusValues = FactuurStatusService.GetFactuurStatusValues();
 
     protected override async Task OnInitializedAsync()

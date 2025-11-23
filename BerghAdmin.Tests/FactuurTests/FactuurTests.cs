@@ -48,15 +48,6 @@ namespace BerghAdmin.Tests.FactuurTests
         }
 
         [Test]
-        public async Task GetNewFactuurWhichExists()
-        {
-            // TO DO: this is a multi-threaded test, which is not supported by the current test setup
-            // if needed implement this one later
-
-            Assert.Pass();
-        }
-
-        [Test]
         public async Task GetNewFactuurWithSpecifiedDate()
         {
             var factuurService = this.GetRequiredService<IFactuurService>();

@@ -102,7 +102,7 @@
         <GridColumn Field=@nameof(Ambassadeur.IsVerwijderd) HeaderText="Status" FilterSettings="@(new FilterSettings { Type = Syncfusion.Blazor.Grids.FilterType.CheckBox })" Width="90">
             <Template>
                 @{
-                    var ambassadeur = (Ambassadeur)context;
+                    var ambassadeur = (Ambassadeur) context;
                     if (!ambassadeur.IsVerwijderd)
                     {
                         <div class="statustemp e-activecolor">
@@ -153,7 +153,7 @@
         if (_authenticationStateTask != null)
         {
             var authenticationState = await _authenticationStateTask;
-            CurrentUser = await _userManager.GetUserAsync(authenticationState?.User);
+            CurrentUser = await _userManager.GetUserAsync(authenticationState.User);
         }
     }
 

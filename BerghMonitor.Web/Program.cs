@@ -38,7 +38,6 @@ builder.Services
     .AddHealthChecksUI(setup =>
     {
         var webhookSettings = builder.Configuration.GetSection("HealthChecksUI:Webhooks");
-        UIHealthReport x = null;
 
         // string name
         // string uri
@@ -49,9 +48,9 @@ builder.Services
         // Func<string, UIHealthReport, string>? customDescriptionFunc = null
         setup.AddWebhookNotification(
             "mail-admin",
-            webhookSettings["Uri"],
-            webhookSettings["Payload"],
-            webhookSettings["RestoredPayload"],
+            webhookSettings["Uri"]!,
+            webhookSettings["Payload"]!,
+            webhookSettings["RestoredPayload"]!,
             shouldNotifyFunc:
                 (name, report) => DateTime.UtcNow.Hour is >= 8 and <= 23,
                 customMessageFunc: (name,report) =>
